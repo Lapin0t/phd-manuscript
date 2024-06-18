@@ -7,7 +7,6 @@
   author: "Peio Borthelle",
 )
 
-
 #show: front-matter
 
 #include "head/cover-page.typ"

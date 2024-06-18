@@ -37,27 +37,27 @@ Aussi présenter:
 
 == Indexed Interaction Trees
 
+Hello Interaction trees~#mcite(<XiaZHHMPZ20>)
+
 #definition[Indexed Container][
   Given $I, J cl base.Set$ an _event structure_, or _indexed container with input $I$ and output $J$_
   is a record defined as follows.
   $ & kw.rec th icont.t th I th J th kw.whr \
-    & quad icont.qry cl J -> base.Set \
-    & quad icont.rsp th {j cl J} : icont.qry th j -> base.Set \
-    //& quatree.rsp cl Pi [j cl J] itree.qry th j -> base.Set th \
-    & quad icont.nxt th {j cl J} th {q cl icont.qry th j} cl icont.rsp th q -> I
-    //& quad itree.nxt cl Pi [j cl J] th [q cl itree.qry th j] itree.rsp th q -> I th
+    & quad icont.qry cl I -> base.Set \
+    & quad icont.rsp th {i cl I} : icont.qry th i -> base.Set \
+    & quad icont.nxt th {i cl I} th {q cl icont.qry th i} cl icont.rsp th q -> J
   $
 ]
 
 #definition[Extension of an Indexed Container][
   The _extension_ of an indexed container $E cl icont.t th I th J$ is a functor
-  $icont.ext_E cl base.Set^I -> base.Set^J$ given by the following definition.
-  $ & kw.rec th icont.ext_E th X th j th kw.whr \
-    & quad icont.eqry cl icont.qry_E th j \
-    & quad icont.ekon cl (r cl icont.rsp_E th icont.qry) -> X th (icont.nxt_E th r) $
+  $icont.ext_E cl base.Set^J -> base.Set^I$ given by the following definition.
+  $ & kw.rec th icont.ext_E th X th i th kw.whr \
+    & quad icont.eqry cl E.icont.qry th i \
+    & quad icont.ekon cl (r cl E.icont.rsp th icont.eqry) -> X th (E.icont.nxt th r) $
 ]
 
-#definition[Interation Tree Step Functor][
+#definition[Interation Step Functor][
   Given an indexed container $E cl icont.t th I th I$
   we define the functor $itree.F_E cl base.Set^I -> base.Set^I -> base.Set^I $ by
   $ & kw.dat th itree.F_E th R th A th i th kw.whr \
@@ -69,9 +69,8 @@ Aussi présenter:
 #definition[Interaction Coalgebra][
   Given an indexed container $E cl icont.t th I th I$, an interaction coalgebra
   is a record defined by:
-  $ & kw.rec th itree.coalg_E th R cl base.Set_de(1) th kw.whr \
-    & quad itree.sort cl I -> base.Set \
-    & quad itree.out th {i cl I} cl itree.sort th i -> itree.F_E th R th itree.sort th i $
+  $ & kw.cls th itree.coalg_E th R th (S cl base.Set^I) th kw.whr \
+    & quad itree.out cl S => itree.F_E th R th S $
 ]
 
 #definition[Interation Tree][
@@ -80,9 +79,28 @@ Aussi présenter:
   base.Set^I -> base.Set^I$ is given by the following coinductive type:
   $ & kw.rec th itree.t_E th R th i th kw.whr \
     & quad itree.obs cl itree.F_E th R th (itree.t_E th R) th i $
+
+  It has a natural interaction coalgebra structure.
+  $ & kw.ins th itree.coalg_E th R th (itree.t_E th R) \
+    & quad itree.out := itree.obs $
 ]
 
+=== Monad Structure
+
+#definition[Generalized Substitution][
+  $ & itree.subst inst(itree.coalg_E th R_1 th S) th (k cl R_1 => itree.t_E th R_2) cl S => itree.t_E th R_2 \
+    & (itree.subst th k th s) .itree.obs kw.wit s .itree.out \
+    & quad | itree.retF r := k th r \
+    & quad | itree.tauF t := itree.tauF (itree.subst th k th t) \
+    & quad | itree.visF (e, th m) := itree.visF (e, th lambda r. itree.subst th k th (m th r)) $
+]
+
+//#definition[]
+
+
 === Bisimilarity
+
+#lorem(10)#margin-note[#lorem(20)] #lorem(10)
 
 == The Case of Iteration
 

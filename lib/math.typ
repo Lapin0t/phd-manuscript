@@ -11,6 +11,9 @@
 #let kw = (
   rec: [ #text(colors.kw, "record") ],
   dat: [ #text(colors.kw, "data") ],
+  cls: [ #text(colors.kw, "class") ],
+  ins: [ #text(colors.kw, "instance") ],
+  wit: [ #text(colors.kw, "with") ],
   //whr: [ #text(colors.kw, "where") ],
   whr: $:=$,
 )
@@ -24,16 +27,19 @@
   Type: de("Type"),
 )
 
+#let inst(it) = [ ⟬ #th #it #th ⟭ ]
+
 #let itree = (
   t: de("ITree"),
   obs: pr("observe"),
-  F: de("ITreeF"),
-  retF: cs("retF"),
-  tauF: cs("tauF"),
-  visF: cs("visF"),
-  coalg: de("ICoAlg"),
+  F: de("IStep"),
+  retF: cs("'ret"),
+  tauF: cs("'tau"),
+  visF: cs("'vis"),
+  coalg: de("ICoalg"),
   sort: pr("State"),
   out: pr("out"),
+  subst: de("subst"),
 )
 
 #let icont = (
