@@ -43,6 +43,6 @@
 }
 
 #let mcite(key, dy: 0em, ..args) = {
-  cite(key, style: "ieee", ..args)
+  cite(key, style: "/ieee-fullname.csl", ..args)
   margin-note(dy: dy, cite(key, style: "/ieee-author-title.csl", ..args))
 }

@@ -3,16 +3,18 @@
 = Coinductive Game Strategies
 
 As we have seen, Operational Game Semantics, and more generally interactive
-semantics, rest upon a dialogue following particular rules, a so-called game.
-The main task in this chapter will be to properly define what is meant by a
-"game", "strategy", "transition system", and to provide basic building blocks
-for manipulating them. This chapter thus takes a step back and temporarly puts
-on hold our concerns about programming language semantics, in order to
-introduce tools, to concretely represent games and strategies in type theory.
-These tools are in part novel, but consist mostly of natural extensions of
-pre-existing devices.
+semantics, rest upon a dialogue following particular rules, a so-called two
+player game. The main task in this chapter will be to properly define what is
+meant by a "game", "strategy", "transition system", and to provide basic
+building blocks for manipulating them. This chapter thus takes a step back and
+temporarly puts on hold our concerns about programming language semantics, in
+order to introduce tools, to concretely represent games and strategies in type
+theory. These tools are in part novel, but consist mostly of natural extensions
+of pre-existing devices.
 
 == A Matter of Computation
+
+TODO: pas très satisfaisant; move this.
 
 At heart, a strategy for a given two player game is an automaton of some kind,
 in the loose sense that it has some internal state, a memory, and alternates
@@ -20,22 +22,56 @@ between two kinds of transitions, the ones where the strategy chooses a move to
 play and the ones where it reacts to a move---any possible move---made by a
 hypothetic opponent. In the classical literature on automata, but also in most
 of the literature specifically dedicated to game semantics, these transitions
-are typically modelled by _relations_, which in type theory would translate as
-binary predicates. While perfectly doable, this approach has a serious
-drawback: computability. In type theory, there is a very clear distinction
-between a functional relation and an actual function and one cannot go from the
-former to the latter. As such, going with relations to represent transitions
+are typically modelled by _relations_ between input states, moves and output
+states.
 
-WIP, pas très satisfaisant.
+which in type theory would translate as
+binary functions into the type of propositions. While perfectly doable, this
+approach has a serious drawback: computability. In type theory, there is a very
+clear distinction between a functional relation and an actual function. While
+_some_ type theories do admit the principle of unique choice, enabling to build
+a concrete function whose graph is a given functional relation, 
 
-Aussi présenter:
+TODO: 
 
 - hancock interaction structures
 - interaction trees
 - capretta delay monad
 - coinductive resumption monad
 
-== Indexed Interaction Trees
+== Describing Game Rules
+
+Before talking about game _strategies_, we need to clarify what is meant by
+game. In the common sense, games are described by the allowed moves at any
+point of the game state, together with winning conditions and their associated
+rewards. As I am here only interested in games insofar as they provide a
+framework for structured interactions, usual notions such as "winning",
+"reward" or "optimal play" will be completely absent. Moreover, I will restrict
+my attention to games where two agents play in alternating fashion. As such,
+for my purpose, games will just consist of the description of allowed moves and
+the way they interact with a shared game state.
+
+Such a retricted view on games---two player, alternating, no notion of
+winning---might be more appropriately described as a _protocol_, as typically
+arises when studying networking. At this point it is quite natural---for who is
+familiar with the notion---to reach out to (indexed) polynomial functors.
+Indeed they provide a readily available gadget with a rich theory, encoding a
+variety of related notions: most usually inductive datatypes and algebraic
+theories, but also client-server protocols (TODO ref scots). My journey started
+there, but as we will see, it is not the end of the story. Indeed in the
+context of encoding games, polynomial functors have a rather problematic
+assymetry between the two players. To such an extent that it is impossible to
+give a satisfying construction for something as simple as "swapping the two
+player's roles" in a given game. In the solution I propose, polynomial functors
+are still part of the final picture, but the starting point of the following
+exposition is an intuitive understanding game moves.
+
+=== From Simple Games to Stateful Games
+
+The simplest 
+
+
+== Indexed Interaction Trees <sec-itree>
 
 Hello Interaction trees~#mcite(<XiaZHHMPZ20>)
 
@@ -85,7 +121,7 @@ Hello Interaction trees~#mcite(<XiaZHHMPZ20>)
     & quad itree.out := itree.obs $
 ]
 
-=== Monad Structure
+=== Monad Structure <sec-itree-monad>
 
 #definition[Generalized Substitution][
   $ & itree.subst inst(itree.coalg_E th R_1 th S) th (k cl R_1 => itree.t_E th R_2) cl S => itree.t_E th R_2 \
@@ -98,17 +134,17 @@ Hello Interaction trees~#mcite(<XiaZHHMPZ20>)
 //#definition[]
 
 
-=== Bisimilarity
+=== Bisimilarity <sec-itree-bisim>
 
 #lorem(10)#margin-note[#lorem(20)] #lorem(10)
 
-== The Case of Iteration
+== The Case of Iteration <sec-iter>
 
 === Iteration Operators and their Axioms
 
 === (Eventual) Guardedness
 
-== From Containers to Games
+== From Containers to Games <sec-hgames>
 
 === In Search of Symmetry
 
