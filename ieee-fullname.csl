@@ -303,7 +303,7 @@
     <layout delimiter=", ">
       <group prefix="[" suffix="]" delimiter=", ">
         <text variable="citation-number"/>
-        <text macro="citation-locator"/>
+                <!--<text macro="citation-locator"/>-->
       </group>
     </layout>
   </citation>

@@ -298,6 +298,7 @@
         <text macro="title"/>
         <text macro="issued"/>
         <text macro="citation-locator"/>
+                <!--<text macro="access"/>-->
       </group>
     </layout>
   </citation>

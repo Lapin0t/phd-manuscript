@@ -78,7 +78,7 @@
     author: author,
     date: if date != none { date } else { auto },
   )
-  set text(font: "EB Garamond", size: 11pt, weight: "regular")
+  set text(font: "EB Garamond", size: 9.5pt, weight: "regular")
   set page(
     width: 189mm,
     height: 246mm,

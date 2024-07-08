@@ -23,8 +23,17 @@
 #let de = x => text(colors.de, x)
 
 #let base = (
+  Prop: de("Prop"),
   Set: de("Set"),
   Type: de("Type"),
+  Cat: de("Cat"),
+)
+
+#let subs = (
+  Pow: de("Pow"),
+  Fam: de("Fam"),
+  dom: pr("support"),
+  idx: pr("index"),
 )
 
 #let inst(it) = [ ⟬ #th #it #th ⟭ ]
@@ -33,9 +42,6 @@
   t: de("ITree"),
   obs: pr("observe"),
   F: de("IStep"),
-  retF: cs("'ret"),
-  tauF: cs("'tau"),
-  visF: cs("'vis"),
   coalg: de("ICoalg"),
   sort: pr("State"),
   out: pr("out"),
@@ -57,13 +63,38 @@
   mv: pr("Move"),
   nx: pr("next"),
   emv: pr("move"),
-  sleep: pr("sleep"),
-  //resume: pr()
   g: de("Game"),
   client: pr("client"),
   server: pr("server"),
+  /*hsim: de("HSim"),
+  hstr: pr("hsim-tr"),
+  hscoh: pr("hsim-coh"),
+  sim: de("Sim"),
+  scli: pr("sim-client"),
+  ssrv: pr("sim-server"),*/
   extA: de(sym.times.circle),
-  extP: de($=>$),
+  extP: de(sym.arrow.r.triple),
+  actF: de("Action"),
+  retF: cs("'ret"),
+  tauF: cs("'tau"),
+  visF: cs("'vis"),
+)
+
+#let strat = (
+  t: de("Strat"),
+  stp: pr([$"state"^+$]),
+  stn: pr([$"state"^-$]),
+  play: pr("play"),
+  coplay: pr("coplay"),
+)
+
+#let ctx = (
+  ctxc: de("Ctx"),
+  nilc: cs($epsilon$),
+  conc: cs($triangle.r.filled.small$),
+  varc: de($in.rev$),
+  topc: cs("top"),
+  popc: cs("pop"),
 )
 
 //#let icont_x (i: none, j: none) = if (i and j) [$"ICont" th #i th #j $] else [ICont]

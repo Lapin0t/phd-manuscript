@@ -3,7 +3,8 @@
 #let my_thm(head) = return thmplain(
   "theorem",
   head,
-  inset: 0em,
+  radius: 0em,
+  inset: 0.5em,
   base: "heading",
   base_level: 1,
 )
@@ -12,6 +13,9 @@
 #let lemma = my_thm("Lemma")
 #let definition = my_thm("Definition")
 #let example = my_thm("Example")
+#let remark = my_thm("Remark")
+
+#let wip(it) = box(inset: 0em, fill: red)[WIP: #it]
 
 // Hack works by placing an invisible anchor and getting its location,
 // enabling to find its absolute location.
@@ -38,11 +42,15 @@
         page.width - page.margin.outside + 0.4cm
       }
     }
-    place(dx: dx - pos.x, dy: dy - 0.6em, note)
+    place(dx: dx - pos.x, dy: dy - 0.5em, note)
   }))
 }
 
+#let num-cite(key, ..args) = cite(key, style: "/ieee-fullname.csl", ..args)
+#let text-cite(key, ..args) = cite(key, style: "/ieee-author-title.csl", ..args)
+
 #let mcite(key, dy: 0em, ..args) = {
-  cite(key, style: "/ieee-fullname.csl", ..args)
-  margin-note(dy: dy, cite(key, style: "/ieee-author-title.csl", ..args))
+  num-cite(key, ..args)
+  sym.zwj
+  margin-note(dy: dy, text-cite(key, ..args))
 }
