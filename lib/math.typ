@@ -81,7 +81,7 @@
 )
 
 #let strat = (
-  t: de("Strat"),
+  t: de("Strategy"),
   stp: pr([$"state"^+$]),
   stn: pr([$"state"^-$]),
   play: pr("play"),

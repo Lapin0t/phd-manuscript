@@ -202,7 +202,7 @@ will be the same. Moreover, the current position is in fact given by the current
 Conway game.
 
 #example[L&S Game of Conway Games][
-  Notice that $I -> subs.Fam th J$ is just a reshuffling of $game.hg th I th J$:
+  Notice that $I -> subs.Fam th J$ is just a shuffling of $game.hg th I th J$:
 
   $ de("fam-to-hg") cl (I -> subs.Fam th J) -> game.hg th I th J \
     (de("fam-to-hg") th F) .game.mv th i := (F th i) .subs.dom \
@@ -228,7 +228,7 @@ Following Levy & Staton we now define transition systems over a given game.
 
   $ (G game.extA X) th i := (m cl G.game.mv th i) times X th (G.game.nx th m) \
     (G game.extP X) th i := (m cl G.game.mv th i) -> X th (G.game.nx th m) $
-]
+] <def-hg-ext>
 
 /*
 #definition[Action Functor][
@@ -249,17 +249,52 @@ Following Levy & Staton we now define transition systems over a given game.
 */
 
 #definition[Coalgebraic Strategy][
-  Given a game $G cl game.g th I^+ th I^-$ and an output family $R cl I^+ -> base.Set$,
+  Given a game $G cl game.g th I^+ th I^-$ and a family $R cl I^+ -> base.Set$,
   a _coalgebraic strategy over $G$ with output $R$_ is given by the following record.
 
   $ kw.rec strat.t th G th R kw.whr \
     quad strat.stp cl I^+ -> base.Set \
     quad strat.stn cl I^- -> base.Set \
     quad strat.play cl strat.stp => (R + strat.stp + G.game.client game.extA strat.stn) \
-    quad strat.play cl strat.stn => (G.game.server game.extP strat.stp) $
+    quad strat.coplay cl strat.stn => (G.game.server game.extP strat.stp) $
+  #margin-note(dy: -7em)[
+    When $R = emptyset$, this definition is called a _small-step system over $G$_ in
+    #text-cite(<LevyS14>)
+  ]
 
   Where $X => Y := forall th {i}, th X i -> Y i$ denotes the morphism of families.
-]
+] <def-strat>
+
+There is a lot to unpack here. First the states: instead of a mere set, as is
+usual in a classical transition system, they here consist of two families
+$strat.stp, strat.stn$ _over_ respectively the active and passive game
+positions. It is important not to confuse _positions_ and _states_. The former
+consist of the information used to determine which moves are allowed to be
+played. The latter consist of the information used by a given strategy to
+determine how to play. Their relationship is similar to that of types to terms.
+
+The $strat.play$ function takes as inputs an active position and an active
+state over it and returns one of three things:
+
+- The first possibility is that it returns an output in $R$ over the same
+  position. This case was not present in Levy & Staton~#num-cite(<LevyS14>), but
+  it allows a strategy to end the game, provided it exhibits an output. As we
+  will see in @sec-itree with interaction trees, this is crucial for
+  compositionality. We call this a _return step_.
+- The second possibility is that it returns a new active state over the same
+  position. In this case, the game has not progressed. This case allows for
+  strategies to be _partial_ in the same sense as Venanzio Capretta's delay 
+  monad~#mcite(<Capretta05>). We call this a _silent step_.
+- The third possibility is to return an element of $G.game.client game.extA
+  strat.stn$ over the current position. By @def-hg-ext, this data consists
+  of a client move valid at the current position, together with a passive state
+  over the next position. This case is the one which actually _chooses_ a move and
+  sends it to a hypothetical opponent. We call this an _active visible half-step_.
+
+The $strat.coplay$ function is simpler. By @def-hg-ext, it takes a passive
+position, a passive state over it and a currently valid server move and must
+return an active state over the next position, thereby "registering" the server
+move and preparing to play next. We call this a _passive visible half-step_.
 
 == Indexed Interaction Trees <sec-itree>
 
