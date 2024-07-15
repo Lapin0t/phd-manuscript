@@ -1,25 +1,18 @@
 = Introduction
 
-#lorem(100)
+- expliquer "we" vs "I"
 
 == Interactive Semantics: Context and Motivations
 
 == Mechanizing Mathematics (in Coq)
 
-vrai output: le code
-
-cette thèse:
-- mi manuel du code (idealisé)
-- mi guide de réimplementation
+- coder les maths: important pour l'accessibilité
+- coder les maths: important pour juger l'abstraction
+- cette thèse: manuel du code (idealisé), guide de réimplementation
+- def-eq vs prop-eq vs ext-eq
 
 == Running Example: Simply-Typed λ-Calculus
 
-#lorem(100)
-
 == A Primer to Operational Game Semantics
 
-#lorem(100)
-
 == Thesis Overview
-
-#lorem(100)

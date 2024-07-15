@@ -4,7 +4,8 @@
   "theorem",
   head,
   radius: 0em,
-  inset: 0.5em,
+  inset: (left: 1em, rest: 0.5em),
+  stroke: (left: stroke(thickness: 1pt, dash: "loosely-dotted"), rest: 0pt),
   base: "heading",
   base_level: 1,
 )
@@ -15,7 +16,11 @@
 #let example = my_thm("Example")
 #let remark = my_thm("Remark")
 
-#let wip(it) = box(inset: 0em, fill: red)[WIP: #it]
+// NOTES
+#let peio(it) = box(inset: 0em, fill: color.rgb("#ff700080"))[P: #it]
+#let tom(it)  = box(inset: 0em, fill: color.rgb("#ff700080"))[T: #it]
+#let guil(it) = box(inset: 0em, fill: color.rgb("#ff700080"))[G: #it]
+#let yann(it) = box(inset: 0em, fill: color.rgb("#ff700080"))[Y: #it]
 
 // Hack works by placing an invisible anchor and getting its location,
 // enabling to find its absolute location.

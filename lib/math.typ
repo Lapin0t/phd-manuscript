@@ -32,30 +32,32 @@
 #let subs = (
   Pow: de("Pow"),
   Fam: de("Fam"),
-  dom: pr("support"),
+  dom: pr("supp"),
   idx: pr("index"),
 )
 
 #let inst(it) = [ ⟬ #th #it #th ⟭ ]
 
+#let delay = (
+  t: de("Delay"),
+)
+
 #let itree = (
   t: de("ITree"),
   obs: pr("observe"),
-  F: de("IStep"),
-  coalg: de("ICoalg"),
-  sort: pr("State"),
-  out: pr("out"),
-  subst: de("subst"),
+  F: de("Action"),
+  retF: cs("\u{2035}ret"),
+  tauF: cs("\u{2035}tau"),
+  visF: cs("\u{2035}vis"),
+  unrollA: de($"unroll"^+$),
+  unrollP: de($"unroll"^-$),
 )
 
 #let icont = (
-  t: de("Event"),
+  t: de("Container"),
   qry: pr("Query"),
   rsp: pr("Reply"),
   nxt: pr("next"),
-  ext: de("Ext"),
-  eqry: pr("query"),
-  ekon: pr("resume"),
 )
 
 #let game = (
@@ -66,22 +68,23 @@
   g: de("Game"),
   client: pr("client"),
   server: pr("server"),
-  /*hsim: de("HSim"),
-  hstr: pr("hsim-tr"),
-  hscoh: pr("hsim-coh"),
+  hsim: de("HSim"),
+  hstr: pr("hs-move"),
+  hscoh: pr("hs-next"),
   sim: de("Sim"),
-  scli: pr("sim-client"),
-  ssrv: pr("sim-server"),*/
-  extA: de(sym.times.circle),
+  scli: pr("s-client"),
+  ssrv: pr("s-server"),
+  reixl: de(sym.angle.double.r),
+  reixr: de(sym.angle.double.l),
+  //extA: de(sym.times.circle),
+  extA: de(move(text("▶", size: 0.61em), dy: -0.055em) + h(-0.723em) + sym.dot.circle),
   extP: de(sym.arrow.r.triple),
-  actF: de("Action"),
-  retF: cs("'ret"),
-  tauF: cs("'tau"),
-  visF: cs("'vis"),
+  stratA: de($"Strat"^+$),
+  stratP: de($"Strat"^-$),
 )
 
 #let strat = (
-  t: de("Strategy"),
+  t: de("System"),
   stp: pr([$"state"^+$]),
   stn: pr([$"state"^-$]),
   play: pr("play"),

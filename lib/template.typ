@@ -179,5 +179,10 @@
   show raw: set text(font: ("Iosevka", "Fira Mono"), size: 9pt)
   show raw.where(block: true): block.with(inset: (x: 5pt))
 
+  // REPLACEMENTS
+  show "Agda": smallcaps("Agda")
+  show "Coq": smallcaps("Coq")
+  show "OGS": smallcaps("Ogs")
+
   body
 }
