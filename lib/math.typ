@@ -27,6 +27,7 @@
   Set: de("Set"),
   Type: de("Type"),
   Cat: de("Cat"),
+  endo: de("endo"),
 )
 
 #let subs = (
@@ -42,15 +43,46 @@
   t: de("Delay"),
 )
 
+#let rel = (
+  //r: math.sans("REL"),
+  r: math.italic(math.bold("r")),
+  irel: de("IRel"),
+  rel: de("Rel"),
+  diag: de("diag"),
+  diagS: de($Delta^r$),
+  rev: de("rev"),
+  revS: de(math.upright(math.sans("T"))),
+  seq: de("seq"),
+  seqS: de("⨾"),
+  lat: de(math.frak("L")),
+)
+
+#let tower = (
+  t: de("Tower"),
+  tb: cs("T-step"),
+  tinf: cs("T-inf"),
+  tind: de("tower"),
+  nu: de(sym.nu),
+)
+
+#let iteq(it) = math.class("relation")[$de(approx.eq) #h(-0.1em) de("[") #it de("]")$]
+#let itweq(it) = math.class("relation")[$de(approx) #h(-0.1em) de("[") #it de("]")$]
+
 #let itree = (
   t: de("ITree"),
   obs: pr("observe"),
   F: de("Action"),
+  RS: [$de("Action")^de(rel.r)_Sigma$],
   retF: cs("\u{2035}ret"),
   tauF: cs("\u{2035}tau"),
   visF: cs("\u{2035}vis"),
+  retR: cs($"\u{2035}ret"^rel.r$),
+  tauR: cs($"\u{2035}tau"^rel.r$),
+  visR: cs($"\u{2035}vis"^rel.r$),
   unrollA: de($"unroll"^+$),
   unrollP: de($"unroll"^-$),
+  sb: de("sbisim"),
+  wb: de("wbisim"),
 )
 
 #let icont = (

@@ -1,4 +1,4 @@
-#import "@preview/ctheorems:1.0.0": thmrules
+#import "@preview/ctheorems:1.1.2": thmrules
 #show: thmrules
 
 #import "lib/template.typ": template, front-matter, main-matter, back-matter

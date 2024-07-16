@@ -1,26 +1,50 @@
-#import "@preview/ctheorems:1.0.0": thmplain
+#import "@preview/ctheorems:1.1.2": thmplain, thmproof
 
 #let my_thm(head) = return thmplain(
   "theorem",
   head,
   radius: 0em,
-  inset: (left: 1em, rest: 0.5em),
   stroke: (left: stroke(thickness: 1pt, dash: "loosely-dotted"), rest: 0pt),
+  inset: (left: 1em, rest: 0.5em),
   base: "heading",
   base_level: 1,
 )
 
+#let proof = thmproof("proof", "Proof")
 #let theorem = my_thm("Theorem")
 #let lemma = my_thm("Lemma")
 #let definition = my_thm("Definition")
 #let example = my_thm("Example")
 #let remark = my_thm("Remark")
 
+#let centering(it) = align(center, box(it))
+#let text-tt(it) = text(size: 8pt, font: "Fira Mono", it)
+
 // NOTES
 #let peio(it) = box(inset: 0em, fill: color.rgb("#ff700080"))[P: #it]
 #let tom(it)  = box(inset: 0em, fill: color.rgb("#ff700080"))[T: #it]
 #let guil(it) = box(inset: 0em, fill: color.rgb("#ff700080"))[G: #it]
 #let yann(it) = box(inset: 0em, fill: color.rgb("#ff700080"))[Y: #it]
+
+#let mathpar(spacing: 1em, ..it) = {
+  it.pos()
+    .map(x => box(math.equation(block: false, x)))
+    .join(h(weak: true, spacing))
+}
+
+#let to-array(it) = {
+  if type(it) == array { it }
+  else { (it,) }
+}
+
+#let inferrule(hyp, conc, suppl: "") = {
+  math.equation(block: true,
+    math.frac(
+      centering(mathpar(..to-array(hyp))),
+      centering(mathpar(..to-array(conc)))
+    ) + suppl
+  )
+}
 
 // Hack works by placing an invisible anchor and getting its location,
 // enabling to find its absolute location.

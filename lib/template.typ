@@ -1,4 +1,5 @@
 #import "@preview/hydra:0.4.0": hydra
+#import "/lib/macros.typ": *
 
 #let in-outline = state("in-outline", false)
 #let flex-caption(long, short) = context {
@@ -153,6 +154,7 @@
     set align(left)
     pad(left: 1.5em, it)
   }
+  //show math.equation: set text(font: "Cambria Math")
 
   // FIGURES
   set figure(numbering: n => {
@@ -183,6 +185,7 @@
   show "Agda": smallcaps("Agda")
   show "Coq": smallcaps("Coq")
   show "OGS": smallcaps("Ogs")
+  show "coq-coinduction": text-tt("coq-coinduction")
 
   body
 }

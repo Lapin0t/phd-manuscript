@@ -157,10 +157,12 @@ displayed style of Benedikt Ahrens and Peter Lumsdaine~#mcite(<AhrensL19>), but
 I will resist the urge to dive too deeply into the structure of games and leave
 most of it for further work to expose. Indeed we will require none of it
 for our main goal of proving OGS correct. Moreover, as already noted by
-Pierre-Évariste Dagand and Conor McBride~#mcite(<DagandM13>, supplement: "p. 10")
+Pierre-Évariste Dagand and Conor McBride~#mcite(<DagandM13>, supplement: "Sec. 1.3")
 in the similar setting of indexed containers, the extremely rich
 structures at play require advanced concepts to faithfully describe, such as
 framed bicategories and two-sided fibrations.
+
+#peio["simulation" vs "morphism"?]
 
 #definition[Half-Game Simulation][
   Given two half-games $A, B cl game.hg th I th J$, a _half-game simulation
@@ -182,8 +184,8 @@ framed bicategories and two-sided fibrations.
 ]
 
 #remark[Half-Game is Functorial][
-  $game.hg$ extends to a strict functor $base.Set^"op" -> base.Set -> base.Cat$ as witnessed
-  by the following action on morphisms, which we write in infix style.
+  $game.hg$ extends to a strict functor $base.Set^"op" times base.Set -> base.Cat$ as witnessed
+  by the following action on morphisms, which we write curried and in infix style.
 
   $ - game.reixl - game.reixr - cl (I_2 -> I_1) -> game.hg th I_1 th J_1 -> (J_1 -> J_2) -> game.hg th I_2 th J_2 \
     (f game.reixl A game.reixr g) .game.mv th i := A .game.mv th (f th i) \
@@ -206,9 +208,9 @@ Let us introduce a couple example games, to get a feel for their expressivity.
 )
 
 *Conway Games* #sym.space Conway games are an important tool in the study of
-_combinatorial games_~#mcite(<Conway76>) and may in fact be considered their prime
+_combinatorial games_~#mcite(<Conway76>)#peio[check def there] and may in fact be considered their prime
 definition. I will explain how they are an instance of our notion. The
-definition of Conway games is exceedingly simple: a conway game $G cl
+definition of Conway games is exceedingly simple: a Conway game $G cl
 conway.t$ is given by two subsets of Conway games $G_L, G_R subset.eq
 conway.t$. This self-referential definition should be interpreted as a
 coinductive one. The left subset $G_L$ is to be thought of as the set of games
@@ -352,9 +354,7 @@ The #strat.coplay function is simpler. By @def-hg-ext, it takes a passive
 position, a passive state over it and a currently valid server move and must
 return an active state over the next position.
 
-== Indexed Interaction Trees <sec-itree>
-
-=== Coinductive Strategies
+== Strategies as Indexed Interaction Trees <sec-itree>
 
 In @def-tsys, I have defined strategies similarly to Levy &
 Staton~#mcite(<LevyS14>), that is, by a state-and-transition-function
@@ -396,10 +396,11 @@ $ X |-> R + X + G.game.client game.extA (G.game.server game.extP X)) $
 Since in this functor nothing really depends on the server positions $I^-$, we
 can play the same trick and eliminate the passive positions from the
 description of games, obtaining back indexed polynomial functors, or more
-precisely their type theoretic incarnation as _indexed containers_. Remember
-that the reason for preferring games over indexed containers was to ease
-swapping client and server. But since strategies are inherently biased towards
-one side, we might as well use the simpler notion.
+precisely their type theoretic incarnation as _indexed
+containers_~#mcite(<AltenkirchGHMM15>). Remember that the reason for preferring
+games over indexed containers was to ease swapping client and server. But since
+strategies are inherently biased towards one side, we might as well use the
+simpler notion.
 
 #definition[Indexed Container][
   Given $I cl base.Set$, an _indexed container with positions $I$_ is given
@@ -411,8 +412,8 @@ one side, we might as well use the simpler notion.
     quad icont.nxt th {i} th {q cl icont.qry th i} cl icont.rsp th q -> I $
 ]
 
-#definition[Extension of a Polynomial][
-  Given an indexed polynomial $Sigma cl icont.t th I$, we define it's extension
+#definition[Extension of a Container][
+  Given an indexed container $Sigma cl icont.t th I$, we define it's _extension_
   $[| Sigma |] cl base.Set^I -> base.Set^I$ as the following functor.
 
   $ [| Sigma |] th X th i :=
@@ -465,7 +466,7 @@ the _action functor on $Sigma$_.
   $itree.F_Sigma th R cl base.Set^I -> base.Set^I$ is defined by the following
   data type.
 
-  $ kw.dat itree.F_Sigma th R th X th i th base.Set kw.whr \
+  $ kw.dat itree.F_Sigma th R th X th i cl base.Set kw.whr \
     quad itree.retF th (r cl R th i) \
     quad itree.tauF th (t cl X th i) \
     quad itree.visF
@@ -486,7 +487,7 @@ theory implementations such as Agda and Coq.
 
   $ kw.rec itree.t_Sigma th R th i cl base.Set kw.whr \
     quad itree.obs cl itree.F_Sigma th R th (itree.t_Sigma th R) th i $
-]
+] <def-itree>
 
 Notice that this definition is to interaction trees~#mcite(<XiaZHHMPZ20>)
 what inductive families are to inductive data types. As we will discover
@@ -505,7 +506,7 @@ to the previous one of transition system over a game.
 
   $ game.stratA_G th R := itree.t_floor(G) th R \
     game.stratP_G th R := G.game.server game.extP game.stratA_G th R $
-]
+] <def-strat>
 
 #lemma[System Unrolling][
   Together, $game.stratA_G th R$ and $game.stratP_G th R$ form the state families
@@ -513,7 +514,7 @@ to the previous one of transition system over a game.
   the following _unrolling maps_, assuming $S cl strat.t_G th R$.
 
   $ itree.unrollA cl S .strat.stp => game.stratA_G th R \
-    itree.unrollP cl S .strat.stp => game.stratP_G th R \
+    itree.unrollP cl S .strat.stn => game.stratP_G th R \
     \
     (itree.unrollA th s) .itree.obs th kw.wit S .strat.play th s \
     quad | cs("inj"_1) th r := itree.retF th r \
@@ -521,17 +522,328 @@ to the previous one of transition system over a game.
     quad | cs("inj"_3) th (m , s') := itree.visF th m th (itree.unrollP th s') \
     itree.unrollP th s th m := itree.unrollA th (S .strat.coplay th s th m) $
 
-  Where $cs("inj"_1), cs("inj"_2), cs("inj"_3)$ denote the obvious injections into
-  the ternary coproduct.
+  $cs("inj"_1)$, $cs("inj"_2)$ and $cs("inj"_3)$ denote the obvious injections
+  into the ternary coproduct. These functions can be shown to be the
+  computational part of the unique coalgebra morphism between $S$ and
+  strategies.
+] <def-unroll>
+
+== Bisimilarity
+
+The natural notion of equality on automata is the notion bisimilarity.
+Intuitively, a bisimulation between two automata consists of a relation between
+their respective states, which is preserved by the transition functions. Two
+automata are then said to be _bisimilar_ when one can exhibit a bisimulation
+relation between them. Another way to phrase this is that two automata are
+bisimilar whenever they are related by the greatest bisimulation relation, the
+_bisimilarity_, yielding again a coinductive notion. As our strategies feature
+_silent moves_ (the #itree.tauF nodes of the action functor), we will need to
+consider two variants, _strong_ and _weak_ bisimilarity. Strong bisimilarity
+requires that both strategy trees match at each step, fully synchronized. Weak
+bisimilarity on the other hand, allows both strategies to differ by a finite
+amount of #itree.tauF nodes in between any two synchronization points.
+
+Before translating these ideas into type theory, we will need a bit of
+preliminary tools. Most implementations of type theory provide some form of
+support for coinductive records (such as @def-itree) and for cofixpoints, or
+coinductive definitions (such as @def-unroll). However, these features---in
+particular cofixpoints---are at times brittle, because the theory relies on a
+syntactic _guardedness_ criterion to decide whether a given definition should
+be accepted. For simple definitions---in fact more precisely for
+computationally relevant definitions---I will indulge the whims of syntactic
+guardedness. But for complex bisimilarity proofs such as which will appear
+later in this thesis, being at the mercy of a syntactic implementation detail
+is a recipy for failure.
+
+To tackle this problem, Agda provides more robust capabilities in the form of
+_sized types_, for which the well-formedness criterion is based on typing.
+However they are not available in Coq, the language in which this thesis has
+been formalized. Moreover, in Agda's experimental tradition, while they do work
+when used in the intended programming patterns, their semantics are still not
+fully clear #peio[ref multi-clocked guarded TT]. We will take an entirely
+different route, building coinduction for ourselves, _inside_ type theory.
+Indeed, as demonstrated by Damien Pous' coq-coinduction
+library~#mcite(<Pous16>, supplement: [https://github.com/damien-pous/coinduction]),
+powerful coinductive constructions and reasoning principles for propositional
+types are derivable in the presence of impredicativity.
+
+=== Coinduction with Complete Lattices
+
+The basis of coq-coinduction is the observation that with impredicativity,
+#base.Prop forms a complete lattice. In fact not only propositions, but also
+predicates $X -> base.Prop$ or relations $X -> Y -> base.Prop$, our case of
+interest for bisimilarity. By the Knaster-Tarski theorem one can obtain the
+greatest fixpoint $nu f := or.big { x | x lt.tilde f th x }$ of any monotone
+endo-map $f$ on the complete lattice.
+
+This is only the first part of the story. Indeed this will provide us with the
+greatest fixpoint $nu f$, in our case, bisimilarity, but the reasoning
+principles will be cumbersome. At first sight, the only principle available is the
+following one.
+
+#centering(inferrule(
+  [$x lt.tilde f th x$],
+  [$x lt.tilde nu f$]
+))
+
+Programming solely with this principle is painful, much in the same way as
+manipulating inductive types solely using eliminators, instead of using
+pattern-matching and recursive functions. Thankfully, in the context of
+bisimulations, a line of work has developped a theory of _enhanced_
+bisimulations, in which the premise is weakened to $x lt.tilde f th (g th x)$---
+bisimulation _up-to $g$_---for some _compatible_ $g$, which must verify $g
+compose f lt.tilde f compose g$. This eases bisimilarity proofs where, for
+example, the relation between states is only preserved by the transition
+functions up-to transitive closure, provided the transitive closure has been
+proven compatible.
+
+Satisfyingly, the least upper bound of all compatible function is still
+compatible. It is called the _companion_ of $f$, written $t_f$, and moreover
+satisfies $t_f bot th approx nu f$. This enables to work with the following
+generalized principle.
+
+#centering(inferrule(
+  [$x lt.tilde f th (t_f th x)$],
+  [$x lt.tilde nu f$]
+))
+
+In this way, one delays until actually required in the proof the choice and use
+of any particular enhancement $g lt.tilde t_f$. This theory based on the
+companion is the one at use in the Coq formalization of this thesis. However,
+since I started writing the formalization, an even more practical solution 
+emerged: Steven Schäfer and Gert Smolka's _tower induction_~#mcite(<SchaferS17>).
+Although it has been merged into coq-coinduction, I did not have the time to
+port my Coq development to the new version. I will nonetheless present it
+here and use it in the rest of the thesis.
+
+Tower induction rests upon the inductive definition of the tower predicate,
+whose elements can be understood as all the transfinite iterations of $f$,
+starting from $top$.
+
+#definition[Tower][
+  Given a complete lattice $X$ and a monotone endo-map $f cl X -> X$, the
+  _$f$-tower_ is an inductive predicate defined as follows.
+
+  $ kw.dat th tower.t_f cl X -> base.Prop kw.whr \
+    quad tower.tb {x} cl tower.t_f th x -> tower.t_f th (f th x) \
+    quad tower.tinf {P} cl P subset.eq tower.t_f -> tower.t_f th (and.big P) $
+
+  We will write $x in tower.t_f$ for $tower.t_f th x$.
+] <def-tower>
+
+#theorem[Tower Induction][
+  Given a complete lattice $X$, a monotone endo-map $f cl X -> X$ and an inf-closed
+  predicate $P cl X -> base.Prop$, the following principle is true.
+
+  #inferrule(
+    [$forall x in tower.t_f, P th x -> P th (f th x)$],
+    [$forall x in tower.t_f, P th x$],
+    suppl: tower.tind
+  )
+] <thm-tower-ind>
+#proof[
+  Assuming that $P$ is inf-closed and that the premise is valid, i.e.,
+
+  $ K cl forall th {M} -> M subset.eq P -> P th (and.big M) \
+    H cl forall th {x} -> x in tower.t_f -> P th x -> P th (f th x), $
+
+  define the following by induction.
+
+  $ tower.tind cl forall th {x} -> x in tower.t_f -> P th x \
+    tower.tind th (tower.tb t) := H th t th (tower.tind th t) \
+    tower.tind th (tower.tinf s) := K th (tower.tind compose s) $
+  #v(-2em)
 ]
 
-=== Bisimilarity
+#theorem[Tower Fixpoint][
+  Given a complete lattice $X$ and a monotone endo-map $f cl X -> X$, pose
+  $tower.nu f := and.big tower.t_f$.
+  The following statements are true:
+  1. $tower.nu f in tower.t_f$
+  2. $f th (tower.nu f) lt.tilde tower.nu f$,
+  3. $tower.nu f lt.tilde f th (tower.nu f)$,
+  4. for all $x$, if $x lt.tilde f th x$, then $x lt.tilde tower.nu f$.
+] <lem-tower-fix>
+#proof[
+  1. By $tower.tinf th (lambda t. th t)$.
+  2. Using 1., by tower induction on $P th x := f th x lt.tilde x$
+  3. Using 1., by $tower.tb$ we have $f th (tower.nu f) in tower.t_f$, the result
+     follows by definition of $tower.nu f$ as an infimum.
+  4. Using 1., by tower induction on $P th y := x lt.tilde y$.
+  #v(-2em)
+]
 
-==== Coinduction with Complete Lattices
+And this is it! I really want to stress the fact that this is the entirety of the
+mathematical content of this theory of coinduction, and yet it
+provides an exceedingly versatile and easy to use theorem. It is easily shown
+to subsume the tools provided by the companion construction and by parametrized
+coinduction~#mcite(<HurNDV13>). The coq-coinduction library follows-up with
+some helpers for deriving inf-closedness of predicates, the definition of the
+most useful instances of complete lattices and some generic duality and
+symmetry arguments. Schäfer and Smolka~#mcite(<SchaferS17>) follow-up by
+deriving the companion and then provide a case study on strong bisimilarity in
+the Calculus of Communicating Processes (CCS).
 
-==== Strong Bisimilarity
+=== Strong Bisimilarity
 
-==== Weak Bisimilarity
+#peio[intro nulle, citer @Levy11]
+Equipped with this new construction of coinductive fixpoints we will apply them, in the
+complete lattice of relations. Bisimilarity (both strong and weak), are typically built
+on non-indexed automata, which moreover do not have _outputs_. As such they consist of
+a single relation, on such automata. As our automata (indexed interaction trees,
+@def-itree) are indexed and moreover have an output, our bisimilarity notions will
+instead take the form of family-relation transformers. More precisely, in this section
+our goal is, given a family-relation $R^rel.r$ on outputs $R^1, R^2$ of type
+
+$ R^rel.r cl forall th {i} -> R^1 th i -> R^2 th i -> base.Prop, $
+
+to capture strong bisimilarity as
+
+$ - iteq(R^rel.r) - cl
+  forall th {i} -> itree.t_Sigma th R^1 th i
+                -> itree.t_Sigma th R^2 th i
+                -> base.Prop. $
+
+We start with some preliminary notations for our indexed relations.
+
+#definition[Family Relation][
+  Given $I cl base.Set$ and two families $X, Y cl I -> base.Set$, the set of
+  _family relations between $X$ and $Y$_ is defined as follows.
+
+  $ rel.irel th X th Y := forall th {i} -> X th i -> Y th i -> base.Prop $
+
+  We define the standard operators of diagonal, converse and sequential composition
+  on family relations.
+
+  $ rel.diagS cl rel.irel th X th X \
+    rel.diagS th a th b := a = b \
+    \
+    -^rel.revS cl rel.irel th X th Y -> rel.irel th Y th X \
+    R^rel.revS th a th b := R th b th a \
+    \
+    - rel.seqS - cl rel.irel th X th Y -> rel.irel th Y th Z -> rel.irel th X th Z \
+    (R rel.seqS S) th a th c := exists th b, R th a th b and S th b th c $
+]
+
+#definition[Family Equivalence][
+  Given $X cl I -> base.Set$ and $R cl rel.irel th X th X$ the following
+  statements are taken as definitions.
+  - _$R$ is reflexive_ whenever $rel.diagS lt.tilde R$.
+  - _$R$ is symmetric_ whenever $R^rel.revS lt.tilde R$.
+  - _$R$ is transitive_ whenever $R rel.seqS R lt.tilde R$.
+  - _$R$ is an equivalence_ whenever all the above is true.
+]
+
+As these indexed relations are quite a mouthful, the following definition will
+be quite heavy in symbols. However, it is important to stress that it is
+entirely straightforward. Indeed, it follows more or less directly from
+a relational interpretation of type theory.
+
+#definition[Action Relator][
+  Given $Sigma cl icont.t th I$, an output relation $R^rel.r cl rel.irel th R^1
+  th R^2$, and a parameter relation $X^rel.r cl rel.irel th X^1 th X^2$, the
+  _action relator over $Sigma$_ of type
+
+  $ itree.RS th R^rel.r th X^rel.r
+      cl rel.irel th (itree.F_Sigma th R^1 th X^1) th (itree.F_Sigma th R^1 th X^2) $
+
+  is defined by the following data type.
+
+  $ kw.dat itree.RS th R^rel.r th X^rel.r th {i} kw.whr \
+    quad itree.retR {r^1 th r^2} th (r^rel.r cl R^rel.r th r^1 th r^2)
+      cl itree.RS th R^rel.r th X^rel.r th (itree.retF th r^1) (itree.retF th r^2) \
+    quad itree.tauR {t^1 th t^2} th (t^rel.r cl X^rel.r th t^1 th t^2)
+      cl itree.RS th R^rel.r th X^rel.r th (itree.tauF th t^1) (itree.tauF th t^2) \
+    quad itree.visR
+      th {q th k^1 th k^2} th (k^rel.r cl (r cl Sigma .icont.rsp th q) -> X^rel.r th (k^1 th r) (k^2 th r)) \
+      quad quad cl itree.RS th R^rel.r th X^rel.r th (itree.visF th q th k^1) (itree.visF th q th k^2) $
+]
+
+#lemma[
+  #peio[ref relator, also @Levy11]
+  All the following statements are true (understood as universally quantified).
+
+  $ rel.diagS
+      & lt.tilde itree.RS th rel.diagS th rel.diagS \
+    (itree.RS th R^rel.r th X^rel.r)^rel.revS 
+      & lt.tilde itree.RS th R^rel.r^rel.revS th X^rel.r^rel.revS \
+    itree.RS th R^rel.r_1 th X^rel.r_1 rel.seqS itree.RS th R^rel.r_2 th X^rel.r_2
+      & lt.tilde itree.RS th (R^rel.r_1 rel.seqS R^rel.r_2) th (X^rel.r_1 rel.seqS X^rel.r_2) $
+
+  Moreover $itree.RS$ is monotone in both arguments.
+] <lem-actrel-props>
+#proof[By direct case analysis.]
+
+#definition[Interaction Relation Lattice][
+  Given $Sigma cl icont.t th I$, we define the _interaction relation lattice over $Sigma$_ as follows.
+
+  $rel.lat_Sigma := forall th {R^1 th R^2} -> rel.irel th R^1 th R^2 -> rel.irel th (itree.t_Sigma th R^1) th (itree.t_Sigma th R^2))$
+
+  It is ultimately a set of dependent functions into $base.Prop$, as such it
+  forms a complete lattice structure by pointwise lifting of the
+  structure on $base.Prop$.
+]
+
+#definition[Strong Bisimilarity][
+  Given $Sigma cl icont.t th I$, we define the _strong bisimulation map over
+  $Sigma$_ as the following monotone endo-map on the interaction lattice over $Sigma$.
+
+  $ itree.sb_Sigma cl rel.lat_Sigma -> rel.lat_Sigma \
+    itree.sb_Sigma th x th R^rel.r th t^1 th t^2 := \
+      quad itree.RS th R^rel.r th (x th R^rel.r) th (t^1 .itree.obs) th (t^2 .itree.obs) $
+
+  We define heterogeneous and homogeneous _strong bisimilarity_ as follows.
+
+  $ a iteq(R^rel.r) b := tower.nu th itree.sb_Sigma th R^rel.r th a th b \
+    a de(approx.eq) b := a iteq(rel.diagS) b $
+]
+
+#lemma[
+  Given $Sigma cl icont.t th I$, for all $x in tower.t_(itree.sb_Sigma)$, the
+  following statements are true.
+
+  $ R^rel.r_1 lt.tilde R^rel.r_2 -> x th R^rel.r_1 & lt.tilde x th R^rel.r_2 \
+    rel.diagS & lt.tilde x th rel.diagS \
+    (x th R^rel.r)^rel.revS & lt.tilde x th R^rel.r^rel.revS \
+    x th R^rel.r_1 rel.seqS x th R^rel.r_2 & lt.tilde x th (R^rel.r_1 rel.seqS R^rel.r_2) $
+
+  As a consequence, when $R^rel.r cl rel.irel th X th X$ is an equivalence relation,
+  $x th R^rel.r$ is an equivalence relation. In particular all these statements are true for
+  the strong bisimilarity $-iteq(R^rel.r)-$.
+] <lem-sbisim-props>
+#proof[
+  All the statements are proven by direct tower induction, applying the corresponding
+  statement from @lem-actrel-props.
+
+  For example for the first one, pose $P th x$ to be the goal, i.e.,
+
+  $ P th x := forall th {X^1 th X^2} th {R^rel.r_1 th R^rel.r_2 cl rel.irel th X^1 th X^2} \
+    quad quad quad -> R^rel.r_1 lt.tilde R^rel.r_2 -> x th R^rel.r_1 lt.tilde x th R^rel.r_2. $ 
+
+  $P$ is inf-closed. Moreover, the premise of tower induction requires that
+
+  $ P th x -> P th (itree.sb_Sigma th x), $
+
+  i.e., introducing all arguments of the implication,
+  #inferrule(
+    (
+      [$forall th {X^1 th X^2} th {R^rel.r_1 th R^rel.r_2}
+        -> R^rel.r_1 lt.tilde R^rel.r_2
+        -> x th R^rel.r_1 lt.tilde x th R^rel.r_2$],
+      [$R^rel.r_1 lt.tilde R^rel.r_2$],
+      [$itree.RS th R^rel.r_1 th (x th R^rel.r_1) th (t_1 .itree.obs) th (t_2 .itree.obs)$]
+    ),
+    [$itree.RS th R^rel.r_2 th (x th R^rel.r_2) th (t_1 .itree.obs) th (t_2 .itree.obs)$],
+    suppl: ","
+  )
+
+  which follows by direct application of the fact that #itree.RS is monotone in
+  both arguments (@lem-actrel-props).
+]
+
+=== Weak Bisimilarity
+
+== Core Operations
 
 === Monad Structure
 
@@ -539,4 +851,4 @@ to the previous one of transition system over a game.
 
 == Iteration Operators <sec-iter>
 
-=== Fixpoints of Equations
+=== Fixed points of Equations
