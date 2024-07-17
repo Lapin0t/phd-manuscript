@@ -26,9 +26,9 @@
 #let guil(it) = box(inset: 0em, fill: color.rgb("#ff700080"))[G: #it]
 #let yann(it) = box(inset: 0em, fill: color.rgb("#ff700080"))[Y: #it]
 
-#let mathpar(spacing: 1em, ..it) = {
+#let mathpar(spacing: 1em, block: false, inset: 0em, ..it) = {
   it.pos()
-    .map(x => box(math.equation(block: false, x)))
+    .map(x => box(inset: inset, math.equation(block: block, x)))
     .join(h(weak: true, spacing))
 }
 

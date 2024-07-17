@@ -22,6 +22,9 @@
 #let cs = x => text(colors.cs, x)
 #let de = x => text(colors.de, x)
 
+#let crel(it) = math.class("relation", it)
+#let cnorm(it) = math.class("normal", it)
+
 #let base = (
   Prop: de("Prop"),
   Set: de("Set"),
@@ -70,12 +73,16 @@
 
 #let itree = (
   t: de("ITree"),
+  tp: de(sym.prime.double.rev + "ITree"),
   obs: pr("observe"),
   F: de("Action"),
   RS: [$de("Action")^de(rel.r)_Sigma$],
   retF: cs("\u{2035}ret"),
   tauF: cs("\u{2035}tau"),
   visF: cs("\u{2035}vis"),
+  ret: de("ret"),
+  tau: de("tau"),
+  vis: de("vis"),
   retR: cs($"\u{2035}ret"^rel.r$),
   tauR: cs($"\u{2035}tau"^rel.r$),
   visR: cs($"\u{2035}vis"^rel.r$),
@@ -83,6 +90,12 @@
   unrollP: de($"unroll"^-$),
   sb: de("sbisim"),
   wb: de("wbisim"),
+  eat: de("Eat"),
+  eatR: cs("eat-refl"),
+  eatS: cs("eat-step"),
+  eatlr: de(crel(math.attach(sym.arrow.stroked.br, tr: "e"))),
+  eatrl: de(crel(math.attach(sym.arrow.stroked.bl, tr: "e"))),
+
 )
 
 #let icont = (

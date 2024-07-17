@@ -487,6 +487,12 @@ theory implementations such as Agda and Coq.
 
   $ kw.rec itree.t_Sigma th R th i cl base.Set kw.whr \
     quad itree.obs cl itree.F_Sigma th R th (itree.t_Sigma th R) th i $
+
+  Furthermore, define the following shorthands:
+
+  $ (itree.ret th x) .itree.obs := itree.retF th x \
+    (itree.tau th t) .itree.obs := itree.tauF th t \
+    (itree.vis th q th k) .itree.obs := itree.visF th q th k $
 ] <def-itree>
 
 Notice that this definition is to interaction trees~#mcite(<XiaZHHMPZ20>)
@@ -715,18 +721,18 @@ We start with some preliminary notations for our indexed relations.
   We define the standard operators of diagonal, converse and sequential composition
   on family relations.
 
-  $ rel.diagS cl rel.irel th X th X \
-    rel.diagS th a th b := a = b \
-    \
-    -^rel.revS cl rel.irel th X th Y -> rel.irel th Y th X \
-    R^rel.revS th a th b := R th b th a \
-    \
-    - rel.seqS - cl rel.irel th X th Y -> rel.irel th Y th Z -> rel.irel th X th Z \
-    (R rel.seqS S) th a th c := exists th b, R th a th b and S th b th c $
+  #mathpar(spacing: 2em, block: false, inset: 0.5em,
+    [$ & rel.diagS cl rel.irel th X th X \
+       & rel.diagS th a th b := a = b $],
+    [$ & -^rel.revS cl rel.irel th X th Y -> rel.irel th Y th X \
+       & R^rel.revS th a th b := R th b th a $],
+    [$ & - rel.seqS - cl rel.irel th X th Y -> rel.irel th Y th Z -> rel.irel th X th Z \
+       & (R rel.seqS S) th a th c := exists th b, R th a th b and S th b th c $]
+  )
 ]
 
 #definition[Family Equivalence][
-  Given $X cl I -> base.Set$ and $R cl rel.irel th X th X$ the following
+  Given $R cl rel.irel th X th X$ the following
   statements are taken as definitions.
   - _$R$ is reflexive_ whenever $rel.diagS lt.tilde R$.
   - _$R$ is symmetric_ whenever $R^rel.revS lt.tilde R$.
@@ -763,10 +769,13 @@ a relational interpretation of type theory.
   #peio[ref relator, also @Levy11]
   All the following statements are true (understood as universally quantified).
 
+  #let xx = [$R^rel.r$]
+  #let yy = [$X^rel.r$]
+
   $ rel.diagS
       & lt.tilde itree.RS th rel.diagS th rel.diagS \
     (itree.RS th R^rel.r th X^rel.r)^rel.revS 
-      & lt.tilde itree.RS th R^rel.r^rel.revS th X^rel.r^rel.revS \
+      & lt.tilde itree.RS th xx^rel.revS th yy^rel.revS \
     itree.RS th R^rel.r_1 th X^rel.r_1 rel.seqS itree.RS th R^rel.r_2 th X^rel.r_2
       & lt.tilde itree.RS th (R^rel.r_1 rel.seqS R^rel.r_2) th (X^rel.r_1 rel.seqS X^rel.r_2) $
 
@@ -780,8 +789,8 @@ a relational interpretation of type theory.
   $rel.lat_Sigma := forall th {R^1 th R^2} -> rel.irel th R^1 th R^2 -> rel.irel th (itree.t_Sigma th R^1) th (itree.t_Sigma th R^2))$
 
   It is ultimately a set of dependent functions into $base.Prop$, as such it
-  forms a complete lattice structure by pointwise lifting of the
-  structure on $base.Prop$.
+  forms a complete lattice by pointwise lifting of the structure on
+  $base.Prop$.
 ]
 
 #definition[Strong Bisimilarity][
@@ -802,14 +811,16 @@ a relational interpretation of type theory.
   Given $Sigma cl icont.t th I$, for all $x in tower.t_(itree.sb_Sigma)$, the
   following statements are true.
 
+  #let xx = [$R^rel.r$]
+
   $ R^rel.r_1 lt.tilde R^rel.r_2 -> x th R^rel.r_1 & lt.tilde x th R^rel.r_2 \
     rel.diagS & lt.tilde x th rel.diagS \
-    (x th R^rel.r)^rel.revS & lt.tilde x th R^rel.r^rel.revS \
+    (x th R^rel.r)^rel.revS & lt.tilde x th xx^rel.revS \
     x th R^rel.r_1 rel.seqS x th R^rel.r_2 & lt.tilde x th (R^rel.r_1 rel.seqS R^rel.r_2) $
 
   As a consequence, when $R^rel.r cl rel.irel th X th X$ is an equivalence relation,
-  $x th R^rel.r$ is an equivalence relation. In particular all these statements are true for
-  the strong bisimilarity $-iteq(R^rel.r)-$.
+  $x th R^rel.r$ is an equivalence relation. In particular the strong
+  bisimilarity $de(approx.eq)$ is an equivalence relation.
 ] <lem-sbisim-props>
 #proof[
   All the statements are proven by direct tower induction, applying the corresponding
@@ -817,14 +828,14 @@ a relational interpretation of type theory.
 
   For example for the first one, pose $P th x$ to be the goal, i.e.,
 
-  $ P th x := forall th {X^1 th X^2} th {R^rel.r_1 th R^rel.r_2 cl rel.irel th X^1 th X^2} \
-    quad quad quad -> R^rel.r_1 lt.tilde R^rel.r_2 -> x th R^rel.r_1 lt.tilde x th R^rel.r_2. $ 
+  $ P th x := & forall th {R^1 th R^2} th {R^rel.r_1 th R^rel.r_2 cl rel.irel th R^1 th R^2} \
+              & -> R^rel.r_1 lt.tilde R^rel.r_2 -> x th R^rel.r_1 lt.tilde x th R^rel.r_2. $ 
 
   $P$ is inf-closed. Moreover, the premise of tower induction requires that
 
   $ P th x -> P th (itree.sb_Sigma th x), $
 
-  i.e., introducing all arguments of the implication,
+  i.e., introducing all arguments of the implication we need to prove
   #inferrule(
     (
       [$forall th {X^1 th X^2} th {R^rel.r_1 th R^rel.r_2}
@@ -841,7 +852,245 @@ a relational interpretation of type theory.
   both arguments (@lem-actrel-props).
 ]
 
+This concludes for strong bisimilarity: we have defined it and proved by
+@lem-sbisim-props the most important properties, namely that when $R^rel.r$ is
+well-behaved, not only it is an equivalence relation, but bisimulation proofs
+can work up-to reflexivity, symmetry and transitivity.
+
 === Weak Bisimilarity
+
+As hinted previously, we wish to characterize a second notion of bisimilarity, which
+would gloss over the precise number of silent #itree.tauF moves of the two interaction trees. While
+strong bisimilarity will play the role of (extensional) equality between trees, that is,
+a technical tool, weak bisimilarity will play the role of a semantic equivalence.
+
+To define weak bisimilarity, we will follow a similar route to strong bisimilarity, 
+reusing the action relator, but when defining the monotone endo-map, we will insert
+a gagdet, allowing to skip over a finite number of silent moves. Let us define this
+gadget. For readability, we will define a shorthand for trees where the top layer of
+actions has been exposed:
+
+$ itree.tp_Sigma th R := itree.F_Sigma th R th (itree.t_Sigma th R) $
+
+#definition[Eating Relation][
+  Given $Sigma cl icont.t th I$ and $R cl base.Set^I$, define the _eating relation_
+  $itree.eat_Sigma^R cl rel.irel th (itree.tp_Sigma th R) th (itree.tp_Sigma th R)$ as follows.
+
+  $ kw.dat th itree.eat_Sigma^R th {i} := \
+    quad itree.eatR th {t} cl itree.eat_Sigma^R th t th t \
+    quad itree.eatS th {t_1 th t_2} cl itree.eat_Sigma^R th (t_1 .itree.obs) th t_2
+         -> itree.eat_Sigma^R th (itree.tauF th t_1) th t_2 $
+
+  We define the following shorthands:
+  #let xx = $itree.eat_Sigma^R$
+  $ itree.eatlr := xx \
+    itree.eatrl := xx^rel.revS $
+]
+
+#lemma[
+  For all $Sigma$ and $R$, the eating relation $itree.eat_Sigma^R$ is reflexive and
+  transitive.
+]
+#proof[By direct induction.]
+
+#definition[Weak Bisimilarity][
+  Given $Sigma cl icont.t th I$, we define the _weak bisimulation map over
+  $Sigma$_ as the following monotone endo-map on the interaction lattice over $Sigma$.
+
+  #let xx = [$itree.eat_Sigma^R$]
+
+  $ itree.wb_Sigma cl rel.lat_Sigma -> rel.lat_Sigma \
+    itree.wb_Sigma th x th R^rel.r th t^1 th t^2 := \
+      quad (itree.eatlr rel.seqS itree.RS th R^rel.r th (x th R^rel.r) rel.seqS itree.eatrl) th (t^1 .itree.obs) th (t^2 .itree.obs) $
+
+  We define heterogeneous and homogeneous _weak bisimilarity_ as follows.
+
+  $ a itweq(R^rel.r) b := tower.nu th itree.wb_Sigma th R^rel.r th a th b \
+    a de(approx) b := a itweq(rel.diagS) b $
+]
+
+#lemma[
+  Given $Sigma cl icont.t th I$, for all $x in tower.t_(itree.wb_Sigma)$, the
+  following statements are true.
+
+  #let xx = [$R^rel.r$]
+
+  $ R^rel.r_1 lt.tilde R^rel.r_2 -> x th R^rel.r_1 & lt.tilde x th R^rel.r_2 \
+    rel.diagS & lt.tilde x th rel.diagS \
+    (x th R^rel.r)^rel.revS & lt.tilde x th xx^rel.revS $
+
+  In particular the weak bisimilarity $de(approx)$ is reflexive and symmetric.
+] <lem-wbisim-props>
+#proof[
+  By direct tower induction, as for @lem-sbisim-props.
+]
+
+Notice that in the previous lemma we have left out the statement regarding
+sequential composition of relations. Indeed it is well-known that weak bisimulation
+proofs up-to transitivity is not valid. However we would still like to prove weak
+bisimilarity transitive!
+
+#lemma[
+  Given $Sigma cl icont.t th I$ and $R^rel.r cl rel.irel th R th R$, if $R$ is transitive,
+  then so is $itweq(R^rel.r)$.
+]
+#proof[
+  Pose the following shorthands, respectively for the "one
+  step sychnronization then weak bisimilarity" and for the one step unfolding of weak
+  bisimilarity.
+
+  #let sync = de(crel(math.attach(sym.approx, tr: "s")))
+  #let weak = de(crel(math.attach(sym.approx, tr: "w")))
+  #let eat = itree.eatlr
+  #let eatr = itree.eatrl
+
+  $ "" sync "" & := itree.RS th R^rel.r th itweq(R^rel.r) \
+    "" weak "" & := "" eat rel.seqS sync rel.seqS eatr $
+
+  Prove the following statements by direct induction on the eating relation for all $a, b, c$.
+
+  1. $a eat itree.tauF th b sync c -> a sync c$
+  2. $ a sync itree.tauF th b eatr c -> a sync c$
+
+  Observe that the following statements are true by case analysis.
+
+  3. $itree.tauF th a weak b -> a .itree.obs weak b$
+  4. $a weak itree.tauF b -> a weak b .itree.obs$
+
+  Using 3. and 4., prove the following statements by induction.
+
+  5. $a crel((weak rel.seqS eat)) itree.retF th r -> a crel((eat rel.seqS sync)) itree.retF r$
+  6. $a crel((weak rel.seqS eat)) itree.visF th q th k -> a crel((eat rel.seqS sync)) itree.visF th q th k$
+  7. $itree.retF th r crel((eatr rel.seqS weak)) b -> itree.retF th r crel((sync rel.seqS eatr)) b$
+  8. $itree.visF th q th k crel((eatr rel.seqS weak)) b -> itree.visF th q th k crel((sync rel.seqS eatr)) b$
+
+  Finally, note that the following is true by (nested) induction.
+
+  9. $a crel((eatr rel.seqS eat)) b -> a eat b or a eatr b$
+
+  Then, we prove the following statment.
+
+  10. $cnorm(weak) rel.seqS cnorm(weak) th th lt.tilde th th cnorm(eat) rel.seqS itree.RS th R^rel.r th (itweq(R^rel.r) rel.seqS itweq(R^rel.r)) rel.seqS eatr$
+
+  Introducing and decomposing the hypotheses, we obtain the following:
+
+  $ a eat x_1 sync x_2 eatr b eat y_1 sync y_2 eatr c $
+
+  By applying 9. in the middle, assume w.l.o.g. that the left case is true,
+  i.e., $x_2 eat y_1$ (for the right case, swap applications of 5. and 6. with
+  corresponding applications of 7. and 8.). By case on $y_1$.
+
+  - When $y_1 = itree.retF th r$,
+
+    $ & a & eat x_1 & sync x_2 &          & eat itree.retF th r & sync y_2 eatr c & \
+    & a & eat x_1 & sync x_2 & eatr x_2 & eat itree.retF th r & sync y_2 eatr c & quad "by refl." \
+    & a &         & weak     &      x_2 & eat itree.retF th r & sync y_2 eatr c & quad "by def." \
+    & a &         & eat      &      x_3 & sync itree.retF th r & sync y_2 eatr c & quad "by 5." \
+  $
+
+    By concatenation (@lem-actrel-props) between $x_3$ and $y_2$, we obtain 
+
+    $ itree.RS th (R^rel.r rel.seqS R^rel.r) th (itweq(R^rel.r) rel.seqS
+    itweq(R^rel.r)) th x_3 th y_2. $
+
+    By transitivity, $R^rel.r rel.seqS R^rel.r lt.tilde R^rel.r$. By
+    monotonicity (@lem-actrel-props) we obtain the following and conclude.
+
+    $ itree.RS th R^rel.r th (itweq(R^rel.r) rel.seqS
+    itweq(R^rel.r)) th x_3 th y_2. $
+
+  - When $y_1 = itree.visF th q th k$, the reasoning is the same, swapping
+    lemma 5. with lemma 6.
+  - When $y_1 = itree.tauF th t$,
+
+    $ & a & eat x_1 & sync x_2 & eat itree.tauF th t & sync y_2 eatr c & \
+      & a & eat x_1 & sync x_2 &                     & sync y_2 eatr c & quad "by 1." \
+    $
+
+    By @lem-actrel-props, using concatenation between $x_2$ and $y_2$, we obtain 
+
+    $ itree.RS th (R^rel.r rel.seqS R^rel.r) th (itweq(R^rel.r) rel.seqS
+    itweq(R^rel.r)) th x_3 th y_2, $
+
+    we then conclude as before by transitivity of $R^rel.r$.
+
+  This conclude the proof of 10. Finally, we prove transitivity of
+  $itweq(R^rel.r)$ by tower induction on
+
+  $ P th x := cnorm(itweq(R^rel.r)) rel.seqS cnorm(itweq(R^rel.r)) lt.tilde x th R^rel.r. $
+
+  $P$ is inf-closed. Assuming $P th x$, let us prove $P th (itree.wb_Sigma th x)$, i.e.,
+
+  $ cnorm(itweq(R^rel.r)) rel.seqS cnorm(itweq(R^rel.r)) th th lt.tilde th th itree.wb_Sigma th x th R^rel.r $
+
+  By one step unfolding, it suffices to prove the following.
+
+  $ cnorm(weak) rel.seqS cnorm(weak)
+    th th lt.tilde th th
+    cnorm(eat) rel.seqS itree.RS th R^rel.r th (x th R^rel.r) rel.seqS cnorm(eatr) $
+
+  We apply 10. and conclude by monotonicity on $P th x$.
+]
+
+#lemma[Up-to strong bisimilarity][
+  Given $Sigma cl icont.t th I$ and $R^rel.r cl rel.irel th R th R$, if $R$ is transitive,
+  for all $x in tower.t_(itree.wb_Sigma)$,
+
+  $ cnorm(iteq(R^rel.r)) rel.seqS x th R^rel.r rel.seqS cnorm(iteq(R^rel.r))
+    lt.tilde x th R^rel.r $
+]
+#proof[
+  #let strong = de(crel(math.attach(sym.approx.eq, tr: "s")))
+  #let sync = crel(math.attach(de(sym.approx), tr: de("s"), br: "x"))
+  #let weak = crel(math.attach(de(sym.approx), tr: de("w"), br: "x"))
+  #let eat = itree.eatlr
+  #let eatr = itree.eatrl
+
+  Let us define the following shorthand.
+
+  $ "" strong "" & := itree.RS th R^rel.r th iteq(R^rel.r) \
+    "" sync "" & := itree.RS th R^rel.r th (x th R^rel.r) \
+    "" weak "" & := cnorm(eat) rel.seqS sync rel.seqS eatr $
+
+  Prove the following statements by direct induction.
+
+  1. $a crel((strong rel.seqS eat)) b -> a crel((eat rel.seqS strong)) b $
+  2. $a crel((eatr rel.seqS strong)) b -> a crel((strong rel.seqS eatr)) b $
+
+  Then, prove the goal by tower induction on
+
+  $ P th x := cnorm(iteq(R^rel.r)) rel.seqS x th R^rel.r rel.seqS cnorm(iteq(R^rel.r))
+    lt.tilde x th R^rel.r. $
+
+  $P$ is inf-closed. Assuming $P th x$, let us prove $P th (itree.wb_Sigma th x)$, i.e.,
+
+  $ cnorm(iteq(R^rel.r)) rel.seqS itree.wb_Sigma th x th R^rel.r rel.seqS cnorm(iteq(R^rel.r))
+    lt.tilde itree.wb_Sigma th x th R^rel.r. $
+
+  By one-step unfolding it suffices to prove the following.
+
+  $ strong rel.seqS weak rel.seqS strong
+    th th lt.tilde th th weak $
+
+  Introducing and destructing the hypotheses we proceed as follows.
+
+  $ a & strong b & eat x_1    & sync x_2 & eatr c     & strong d & \
+    a & eat y_1  & strong x_1 & sync x_2 & strong y_2 & eatr d   & quad "by 1. and 2." $
+
+  By concatenation (@lem-actrel-props) between $y_1$ and $y_2$, we obtain 
+
+  $ itree.RS th (R^rel.r rel.seqS R^rel.r rel.seqS R^rel.r)
+      th (cnorm(iteq(R^rel.r)) rel.seqS x th R^rel.r rel.seqS cnorm(iteq(R^rel.r)))
+      th y_1 th y_2. $
+
+  By transitivity of $R^rel.r$, $P th x$ and monotonicity (@lem-actrel-props)
+  we deduce $itree.RS th R^rel.r th (x th R^rel.r) th y_1 th y_2$ and conclude.
+]
+
+This sequence of juggling concludes our core properties for weak bisimilarity:
+we know that for well-behaved $R^rel.r$ it is an equivalence relation and that
+it supports coinductive proofs up-to reflexivity, up-to symmetry and up-to
+strong bisimilarity.
 
 == Core Operations
 
