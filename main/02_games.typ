@@ -82,42 +82,43 @@ The definition of game obtained by Levy & Staton in
 #mcite(<LevyS14>) arises quite naturally from what is intuitively understood by
 a "game". Let's build it up first hand.
 
-In the common sense of the word, a game is described by the moves allowed at any
-point of the play, together with winning conditions and their associated
-rewards. As I am here only interested in games insofar as they provide a
-framework for structured interactions, usual notions from classical game theory
-such as "winning", "reward" or "optimal play" will be completely absent.
-Moreover, I will restrict my attention to games where two agents play in
-alternating fashion. As such, for my purpose, games will just consist of the
-description of allowed moves.#margin-note[Games in such a retricted view---two
-player, alternating, no notion of winning---are similar to combinatorial
-games and might perhaps be more appropriately named _protocols_, as
+In the common sense of the word, a game is described by the moves
+allowed at any point of the play, together with winning conditions and
+their associated rewards. As I am here only interested in games
+insofar as they provide a framework for structured interactions, usual
+notions from classical game theory such as "winning", "reward" or
+"optimal play" will be completely absent. Moreover, I will restrict
+attention to games where two agents play in alternating turns. Thus,
+for my purpose, games will just consist of the description of allowed
+moves.#margin-note[Games in such a retricted view---two-player,
+alternating, no notion of winning---are similar to combinatorial games
+and might perhaps be more appropriately named _protocols_, as
 typically arises in the field of computer networks.]
 
 Starting from the idea that a game is described by the moves allowed for each
-player, arguably the simplest formal translation is to say that a game consists
-of a pair of two sets $(M^+, M^-)$, encoding the set of moves allowed for each
-player. For example taking $M^+$ and $M^-$ to be both equal to the set of UTF-8
+player, arguably the simplest formalization is to say that a game consists
+of a pair $(M^+, M^-)$ of sets, encoding the set of moves allowed for each
+player. For example, taking $M^+$ and $M^-$ to be both equal to the set of UTF-8
 character strings, we can think of this as the "game of chatting" where the two
 players are to alternatively exchange text messages. This definition readily
 encodes simple kinds of interactions: at a coarse level we could argue that a
 lot of low-level protocols consist in two players alternatively exchanging byte
 sequences. However, games-as-set-pairs are very restrictive in the sense that
-any move from say $M^+$ is valid at any point where it is the first player's
-turn. As such, games-as-set-pairs are missing a shared game state, a game
+any move from, say, $M^+$ is valid at any point where it is the first player's
+turn. Thus, games-as-set-pairs are missing a shared game state, a game
 _position_, something enabling the set of allowed moves to evolve over the
 course of the dialogue. In particular, our game of interest, Operational Game
 Semantics, makes use of such evolution of moves: since players introduce
 variables while playing, moves mentioning some variable $x$ should only be
-allowed after $x$ has been introduced.
+allowed after $x$ has been introduced. 
 
-Still, this definition has the quality of being quite symmetric: swapping the
-two sets we get an involution $(M^+, M^-) |-> (M^-, M^+)$ exchanging the roles of
+Still, this definition has the advantage of being quite symmetric: swapping the
+two sets, we get an involution $(M^+, M^-) |-> (M^-, M^+)$ exchanging the roles of
 both players. There are two lessons to be learnt from this naive definition:
 
 - A game should be described by a pair of two objects of the same sort, each
-  describing what moves one player can do.
-- For describing moves, mere sets can be a first approximation, but a bit too
+  describing what moves one player can do. 
+- For describing moves, mere sets can be a first approximation, but are a bit too
   coarse for our purpose.
 
 Back to the drawing board, let's refine this notion of games-as-set-pairs. As
@@ -151,17 +152,18 @@ following definitions.
 
 === Categorical Structure
 
-In order to make (half-)games into proper categories, we will define their
+In order to make (half-)games into a proper category, we will define their
 morphisms. As games are parametrized over sets of positions, game morphisms
-could be naturally defined parametrized over position morphisms, in the
-displayed style of Benedikt Ahrens and Peter Lumsdaine~#mcite(<AhrensL19>), but
-I will resist the urge to dive too deeply into the structure of games and leave
-most of it for further work to expose. Indeed we will require none of it
-for our main goal of proving OGS correct. Moreover, as already noted by
-Pierre-Évariste Dagand and Conor McBride~#mcite(<DagandM13>, supplement: "Sec. 1.3")
-in the similar setting of indexed containers, the extremely rich
-structures at play require advanced concepts to faithfully describe, such as
-framed bicategories and two-sided fibrations.
+could be naturally defined as parametrized over position morphisms, in the
+displayed style of Benedikt Ahrens and Peter Lumsdaine~#mcite(<AhrensL19>),
+#tom[Normalement ça se fait pas trop de donner les prénoms, et chuis un peu
+d'accord que ça devient vite lourd.] but I will resist the urge to dive too
+deeply into the structure of games and leave most of it for further work to
+expose. Indeed, we will require none of it for our main goal of proving
+correctness of OGS. Moreover, as already noted by Pierre-Évariste Dagand and
+Conor McBride~#mcite(<DagandM13>, supplement: "Sec. 1.3") in the similar setting
+of indexed containers, describing the extremely rich structures at play requires
+advanced concepts, such as framed bicategories and two-sided fibrations.
 
 #peio["simulation" vs "morphism"?]
 
@@ -169,10 +171,14 @@ framed bicategories and two-sided fibrations.
   Given two half-games $A, B cl game.hg th I th J$, a _half-game simulation
   from $A$ to $B$_ is given by the following record.
 
+#tom[by a record of the following type (partout...)?]
+  
+
   $ kw.rec game.hsim th A th B kw.whr \
     quad game.hstr {i} cl A .game.mv th i -> B .game.mv th i \
     quad game.hscoh {i} th (m cl A .game.mv th i) cl B .game.nx th (game.hstr th m) = A .game.nx th m$
 ]
+
 
 #definition[Simulation][
   Given two half-games $A, B cl game.g th I^+ th I^-$, a
@@ -184,9 +190,9 @@ framed bicategories and two-sided fibrations.
     quad game.ssrv cl game.hsim th B .game.server th A .game.server $
 ]
 
-#remark[Half-Game is Functorial][
-  $game.hg$ extends to a strict functor $base.Set^"op" times base.Set -> base.Cat$ as witnessed
-  by the following action on morphisms, which we write curried and in infix style.
+#remark[Half-Game is Functorial][ $game.hg$ extends to a strict functor
+  $base.Set^"op" times base.Set -> base.Cat$ as witnessed by the following
+  action on morphisms, presented in curried form and written in infix notation.
 
   $ - game.reixl - game.reixr - cl (I_2 -> I_1) -> game.hg th I_1 th J_1 -> (J_1 -> J_2) -> game.hg th I_2 th J_2 \
     (f game.reixl A game.reixr g) .game.mv th i := A .game.mv th (f th i) \
@@ -209,13 +215,13 @@ Let us introduce a couple example games, to get a feel for their expressivity.
 )
 
 *Conway Games* #sym.space Conway games are an important tool in the study of
-_combinatorial games_~#mcite(<Conway76>)#peio[check def there] and may in fact be considered their prime
-definition. I will explain how they are an instance of our notion. The
-definition of Conway games is exceedingly simple: a Conway game $G cl
-conway.t$ is given by two subsets of Conway games $G_L, G_R subset.eq
-conway.t$. This self-referential definition should be interpreted as a
-coinductive one. The left subset $G_L$ is to be thought of as the set of games
-reachable by the left player in one move, and symmetrically for $G_R$.
+_combinatorial games_~#mcite(<Conway76>)#peio[check def there] and may in fact
+be considered their prime definition. I will explain how they are an instance of
+our notion. We will use the following coinductive, exceedingly simple
+definition: a Conway game $G cl conway.t$ is given by two subsets of Conway
+games $G_L, G_R subset.eq conway.t$. The left subset $G_L$ is to be thought of
+as the set of games reachable by the left player in one move, and symmetrically
+for $G_R$.
 
 #margin-note[For a more in-depth discussion of the two notions of subsets in
     type theory, see #text-cite(<HancockH06>, supplement: [pp. 194--198])]
@@ -227,7 +233,16 @@ of subsets as predicates:
 $ subs.Pow cl base.Set -> base.Set \
   subs.Pow th X kw.whr X -> base.Prop $
 
-However there is another one, more intensional, viewing subsets as families:
+However there is another, more intensional one, viewing subsets as families:
+
+#tom[Proof-relevant plus que intentional, non?] 
+
+#tom[Euh... et en fait je comprends pas la def... Ah si, c'est la version
+fibrée! Qui l'eut cru venant de toi... Bon, bref, ça coule pas de source à cet
+endroit.]
+
+#tom[De plus, les deux defs n'étant pas équivalentes, est-ce qu'il ne vaudrait
+pas mieux assumer la différence et appeler ça des proof-relevant Conway games?]
 
 $ kw.rec subs.Fam (X cl base.Set) cl base.Set kw.whr \
   quad subs.dom cl base.Set \
@@ -249,14 +264,21 @@ does not known whose turn it is to play, the sets of active and passive position
 will be the same. Moreover, the current position is in fact given by the current
 Conway game.
 
-#example[Game of Conway Games][
-  Notice that $I -> subs.Fam th J$ is just a shuffling of $game.hg th I th J$:
+#example[Game of Conway Games][ We start by noticing that $I -> subs.Fam th J$
+  is just a shuffling of $game.hg th I th J$:
 
   $ de("fam-to-hg") cl (I -> subs.Fam th J) -> game.hg th I th J \
     (de("fam-to-hg") th F) .game.mv th i := (F th i) .subs.dom \
-    (de("fam-to-hg") th F) .game.nx th {i} th d := (F th i).subs.idx th d $
+    (de("fam-to-hg") th F) .game.nx th {i} th m := (F th i).subs.idx th m $
 
-  Then, the _game of Conway games_ can be given as follows.
+Furthermore, the projection maps $conway.lft$ and $conway.rgt$ have the
+following type,
+
+  $ conway.lft,conway.rgt cl conway.t -> subs.Fam th conway.t$
+
+so that applying $de("fam-to-hg")$ yields half-games.
+
+Then, the _game of Conway games_ can be given as follows.
 
   $ conway.ls cl game.g th conway.t th conway.t \
     conway.ls .game.client := de("fam-to-hg") th conway.lft \
@@ -265,13 +287,17 @@ Conway game.
 
 #peio[inj LS $=>$ Conway]
 
+#tom[Bon c'est rigolo, mais le sens de tout ça n'est pas hyper clair, si? Est-ce
+que les parties au sens de Conway sont les mêmes que celles de Levy-Staton sur
+$conway.ls$?]
+
 *Applicative Bisimilarity* #sym.space #peio[applicative bisim]
 
 *OGS Game* #sym.space #peio[ogs stlc?]
 
 === Strategies as Transition Systems
 
-Following Levy & Staton~#num-cite(<LevyS14>) we now define client strategies as
+Following Levy & Staton~#num-cite(<LevyS14>), we now define client strategies as
 transition systems over a given game. We will only define _client_ strategies,
 since _server_ strategies can be simply derived from client strategies on the
 dual game---the prime benefit of our symmetric notion of game. We first need to
