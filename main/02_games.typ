@@ -4,7 +4,7 @@
 
 As we have seen, Operational Game Semantics, and more generally interactive
 semantics, rest upon a dialogue following particular rules, a so-called two
-player game. The main task in this chapter is be to properly define what is
+player game. The main task in this chapter is to properly define what is
 meant by a "game", "strategy", "transition system", and to provide basic
 building blocks for manipulating them. This chapter thus takes a step back and
 temporarly puts on hold our concerns about programming language semantics, in
@@ -24,7 +24,7 @@ transition to an active state.
 
 In the classical literature on automata, these transitions would typically be
 represented by a _relation_ between input states, moves and output states. On
-the other hand, in game semantics the traditional approach is more extensional.
+the other hand, in game semantics, the traditional approach is more extensional.
 There, a strategy is represented by a subset of traces (finite or infinite
 sequences of moves), i.e., by a formal language, subject to additional
 conditions. While perfectly valid in a classical logic or set-theoretic
@@ -32,16 +32,16 @@ meta-theory, when translated directly to type theory, both of these
 representations eschew the computational content of strategies.
 
 Our basis for an idiomatic type theoretical encoding of automata follows the
-notion of _interaction tree_ introduced by Li-yao Xia _et
-al._~#mcite(<XiaZHHMPZ20>), originally motivated by representing executable
+notion of _interaction tree_ introduced by Li-yao Xia et
+al.~#mcite(<XiaZHHMPZ20>), originally motivated by representing executable
 denotational semantics of programs with general recursion. Interaction trees
 are a coinductive data structure encoding possibly non-terminating
-computations, interacting with their environment by mean of uninterpreted
-event. Recognizing "programs" as Player strategies, "environment" as yet
+computation, interacting with its environment by means of uninterpreted
+events. Recognizing "programs" as Player strategies, "environments" as yet
 unknown Opponent strategies and "uninterpreted events" as move exchanges, we
 are quite close to our setting of alternating two player games. However, there
 are two remaining obstactles in order to apply interaction trees to our
-usecase.
+use case.
 
 - *Duality.* We would like strategies and counter-strategies to have similar
   representations, intuitively simply by swapping the sets of moves allowed for
@@ -58,17 +58,18 @@ usecase.
   allowed at certain points of the game but not at others, dependending on what
   has been played before.
 
-Happily, both of these points can be resolved by swapping interaction tree's
-notion of event with the notion of game introduced by Paul Levy and Sam
-Staton~#mcite(<LevyS14>). The rest of the chapter is organized as follows.
+Happily, both of these points can be resolved by swapping the notion
+of event from interaction trees, with the notion of game introduced by
+Paul Levy and Sam Staton~#mcite(<LevyS14>). The rest of the chapter is
+organized as follows.
 
-- In @sec-levy-staton I reconstruct Paul Levy and Sam Staton's notion of
+- In @sec-levy-staton, I reconstruct Paul Levy and Sam Staton's notion of
   game and of coalgebraic transition system.
-- In @sec-itree I introduce _indexed interaction trees_, a novel generalization of
+- In @sec-itree, I introduce _indexed interaction trees_, a novel generalization of
   interaction trees adapted to the above notion of games. I introduce the
   definition of their bisimilarity and their general theory, lifted from the
   non-indexed setting.
-- In @sec-iter I develop upon the theory of iteration operators, providing a
+- In @sec-iter, I develop upon the theory of iteration operators, providing a
   novel _eventually guarded iteration_, applicable to the delay
   monad~#mcite(<Capretta05>), but also to indexed and non-indexed interaction
   trees.
