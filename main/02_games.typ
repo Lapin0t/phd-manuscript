@@ -298,19 +298,24 @@ $conway.ls$?]
 === Strategies as Transition Systems
 
 Following Levy & Staton~#num-cite(<LevyS14>), we now define client strategies as
-transition systems over a given game. We will only define _client_ strategies,
+ transition systems over a given game. We will only define _client_ strategies,
 since _server_ strategies can be simply derived from client strategies on the
 dual game---the prime benefit of our symmetric notion of game. We first need to
 define two interpretations of half-games as functors.
 
+
+#tom[Les espaces sont bizarres dans la def ci-dessous, non?]
 #definition[Half-Game Functors][
   Given a half-game $G cl game.hg th I th J$, we define the
-  _active interpretation_ and _passive interpretation of $G$_ as two functors
-  $base.Set^J -> base.Set^I$, written $G game.extA -$ and $G game.extP -$.
+  _active interpretation_ and _passive interpretation of $G$_ as the functors
+  $G game.extA -, G game.extP - cl base.Set^J -> base.Set^I$ defined as follows.
 
   $ (G game.extA X) th i := (m cl G.game.mv th i) times X th (G.game.nx th m) \
     (G game.extP X) th i := (m cl G.game.mv th i) -> X th (G.game.nx th m) $
 ] <def-hg-ext>
+
+#tom[Chuis pas super fan de la notation $game.extA$, parce qu'elle ressemble
+trop à $game.extP$, elle évoque aussi un adjoint à droite plus qu'à gauche.]
 
 /*
 #definition[Action Functor][
@@ -342,7 +347,7 @@ define two interpretations of half-games as functors.
     quad strat.coplay cl strat.stn => G.game.server game.extP strat.stp $
   #margin-note(dy: -8em)[
     In Levy & Staton~#num-cite(<LevyS14>), the output parameter $R$ is not present and this is
-    called a _small-step system over $G$_, and . We can recover their
+    called a _small-step system over $G$_. We can recover their
     definition by setting $R = emptyset$.
   ]
   Where $X => Y := forall th {i}, th X i -> Y i$ denotes a morphism of families.
@@ -356,30 +361,30 @@ consist of the information used to determine which moves are allowed to be
 played. The latter consist of the information used by a given strategy to
 determine how to play. Their relationship is similar to that of types to terms.
 
-The $strat.play$ function takes as inputs $i cl I^+$ an active position, $s cl strat.stp th i$ an active
-state over it and returns one of three things:
+The $strat.play$ function takes as inputs an active position $i cl I^+$, an
+active state  $s cl strat.stp th i$  over $i$ and returns one of three things:
 
-/ $R th i$: "return move" \
+/ a _return move_ in $R th i$:  \
   This case was not present in Levy & Staton~#num-cite(<LevyS14>), but
   it allows a strategy to end the game, provided it exhibits an output. As we
   will see in @sec-itree with interaction trees, this is crucial for
   compositional manipulation.
 
-/ $strat.stp th i$: "silent move" \
+/ a _silent move_ in $strat.stp th i$: \
   In this case, the strategy postpones progression in the game. This case
   allows for strategies to be _partial_ in the same sense as Venanzio Capretta's
   #delay.t monad~#mcite(<Capretta05>). _Total strategies_ without this case would
   make perfect sense, but we are interested in arbitrary, hence partial, computations.
 
-/ $G.game.client game.extA strat.stn$: "client move" \
+/ a _client move_ in $G.game.client game.extA strat.stn$:  \
   By @def-hg-ext, this data consists of a client move valid at the current
   position, together with a passive state over the next position. This case is
   the one which actually _chooses_ a move and sends it to a hypothetical
   opponent.
 
 The #strat.coplay function is simpler. By @def-hg-ext, it takes a passive
-position, a passive state over it and a currently valid server move and must
-return an active state over the next position.
+position, a passive state over it, and a currently valid server move, and must
+then return an active state over the next position.
 
 == Strategies as Indexed Interaction Trees <sec-itree>
 
@@ -387,22 +392,23 @@ In @def-tsys, I have defined strategies similarly to Levy &
 Staton~#mcite(<LevyS14>), that is, by a state-and-transition-function
 presentation of automata. This representation is theoretically satisfying,
 however most of the time it is painful to work with formally. As an example,
-lets assume I want to define a binary combinator, taking two systems as
+let's assume I want to define a binary combinator, taking two systems as
 arguments and returning a third one. Each of these is a dependent record with
 four fields, so that I have to work with eight input components to define two
-families of states, and then, depending on these new states, I have to
-write two suitable transition functions. This is a lot to manage! The heavyness
-of explicitely constructing automata is one of the reasons why widely used
+families of states, and then, depending on these new states, I have to write two
+suitable transition functions. This is a lot to manage! The heaviness of
+explicitly constructing automata is one of the reasons why widely used
 programming languages have introduced syntactic facilities like the "yield" and
 "await" keywords for writing state machines. #peio[ref?]
 
-The way out of this misery is to forget about states altogether. Notice that
-@def-tsys is exactly the definition of a coalgebra for some endofunctor on
-$(I^+ -> base.Set) times (I^- -> base.Set)$. Then, as by definition any
-coalgebra maps uniquely into the final coalgebra, it is sufficient to work with
-this final coalgebra, whose carrier---or states---intuitively consists of
-infinite trees, describing the traces of any possible transition system over
-$G$.
+#tom[Ça je connais pas du tout.]
+
+In order to rectify this, we forget about states altogether. Notice that @def-tsys is
+exactly the definition of a coalgebra for some endofunctor on $(I^+ -> base.Set)
+times (I^- -> base.Set)$. Then, as by definition any coalgebra maps uniquely
+into the final coalgebra, it is sufficient to work with this final coalgebra,
+whose states intuitively consist of infinite trees, describing
+the traces of any possible transition system over $G$.
 
 However, before constructing this final coalgebra, I will simplify the setting
 slightly. Notice that we can easily make passive states disappear, by
@@ -416,18 +422,25 @@ This exhibits strategies as coalgebras for the following functor.
   This category is less informative but equally expressive as
   transition systems over $G$, as it forms a coreflective subcategory.
   #peio[right Tom?]
+  #tom[Eeeeeh, je sais pas... C'est les strats où $strat.coplay$ est injective,
+  c'est ça? Si oui, je dirais plutôt réflexive: si je note $S^i$ la strat
+  "injective" en ce sens induite par $S$, on a plutôt un morphisme $S -> S^i$,
+  qui est universel vis-à-vis des strats injectives, si je me trompe pas. Non? ]
 ]
 
 $ X |-> R + X + G.game.client game.extA (G.game.server game.extP X)) $
 
+#tom[Le truc ci-dessous s'enfonce dans une voie un peu imprévisible, donc c'est
+dur à suivre. Il faudrait ptet baliser un peu mieux, dire où tu vas.]
 Since in this functor nothing really depends on the server positions $I^-$, we
-can play the same trick and eliminate the passive positions from the
+can play the same trick and eliminate passive positions from the
 description of games, obtaining back indexed polynomial functors, or more
-precisely their type theoretic incarnation as _indexed
+precisely their type-theoretic incarnation as _indexed
 containers_~#mcite(<AltenkirchGHMM15>). Remember that the reason for preferring
 games over indexed containers was to ease swapping client and server. But since
 strategies are inherently biased towards one side, we might as well use the
 simpler notion.
+
 
 #definition[Indexed Container][
   Given $I cl base.Set$, an _indexed container with positions $I$_ is given
@@ -440,7 +453,7 @@ simpler notion.
 ]
 
 #definition[Extension of a Container][
-  Given an indexed container $Sigma cl icont.t th I$, we define it's _extension_
+  Given an indexed container $Sigma cl icont.t th I$, we define its _extension_
   $[| Sigma |] cl base.Set^I -> base.Set^I$ as the following functor.
 
   $ [| Sigma |] th X th i :=
@@ -465,9 +478,9 @@ simpler notion.
   definitionally equal to $[| floor(A) |]$.
 ]
 
-#remark[Container to Game][
-  Remark that while games contain information about passive positions which
-  containers do not, we can make it up and inject them into games as follows.
+#remark[Container to Game][ Although games include information about passive
+  positions which containers do not, we can guess this information and inject
+  containters into games as follows.
 
   $ ceil(-) cl (Sigma cl icont.t th I) -> game.g th I th ((i cl I) times Sigma .icont.qry th i) \
     ceil(Sigma) .game.client"".game.mv th i := Sigma .icont.qry th i \
@@ -475,9 +488,8 @@ simpler notion.
     ceil(Sigma) .game.server"".game.mv th (i, m) := Sigma .icont.rsp th m \
     ceil(Sigma) .game.server"".game.nx th m := Sigma .icont.nxt th m $
 
-  Note that $floor(-) compose ceil(-)$ is definitionally equal to the
-  identity on containers.
-]
+  We observe in passing that $floor(-) compose ceil(-)$ is definitionally equal
+  to the identity on containers, but not the other way around. ]
 
 After this interlude on indexed containers, we are now ready to go back to
 strategies. Recall that we had turned strategies into coalgebras for the
@@ -501,16 +513,20 @@ the _action functor on $Sigma$_.
       th (k cl (r cl Sigma .icont.rsp th q) -> X th (Sigma .icont.nxt th r)) $
 ]
 
-Being itself an instance of indexed container, $itree.F_Sigma th R$ has a
+Being itself the extension of some indexed container, $itree.F_Sigma th R$ has a
 thorougly understood theory of fixpoints~#mcite(<AltenkirchGHMM15>) and we can
 form its final coalgebra as a coinductive family which is accepted by most type
 theory implementations such as Agda and Coq.
 
-#definition[Indexed Interaction Tree][
-  Given a signature $Sigma cl icont.t th I$ and an output $R cl I -> base.Set$,
-  the family of _indexed interaction trees on $Sigma$ with output $R$_,
-  $itree.t_Sigma th R cl base.Set^I$ is given by the following coinductive
-  record.
+#tom[Là je me rends compte que la rédaction est un poil trop linéaire à mon
+goût. La def des arbres d'interation indexés est perdue au milieu d'une longue
+histoire. Est-ce que tu devrais pas faire une sous-partie "coalgèbre finale /
+arbres d'interaction"?] 
+
+#definition[Indexed Interaction Tree][ Given a signature
+$Sigma cl icont.t th I$ and an output $R cl I -> base.Set$, the family of
+  _indexed interaction trees on $Sigma$ with output $R$_, $itree.t_Sigma th R cl
+  base.Set^I$ is given by the following coinductive record.
 
   $ kw.rec itree.t_Sigma th R th i cl base.Set kw.whr \
     quad itree.obs cl itree.F_Sigma th R th (itree.t_Sigma th R) th i $
@@ -522,14 +538,18 @@ theory implementations such as Agda and Coq.
     (itree.vis th q th k) .itree.obs := itree.visF th q th k $
 ] <def-itree>
 
+#tom[pas compris les shorthands. Est-ce que tu essaies de dire que 
+$itree.ret th x := { itree.obs = itree.retF t x}$, par exemple?]
+
 Notice that this definition is to interaction trees~#mcite(<XiaZHHMPZ20>)
 what inductive families are to inductive data types. As we will discover
 in the remainder of this chapter, all of the monadic theory of interaction
 trees lifts neatly to this newly indexed setting, an "outrageous fortune"
 described by Conor McBride in #mcite(dy: 1.2em, <McBride11>).
 
-Before moving on to define bisimilarity, let us first link this definition
-to the previous one of transition system over a game.
+#tom[Cette phrase devrait-elle être après la def qui suit?] Before moving on to
+define bisimilarity, let us first link this definition to transition systems
+over games.
 
 #definition[Strategies][
   Given a game $G cl game.g th I^+ th I^-$ and output $R cl I^+ -> base.Set$,
