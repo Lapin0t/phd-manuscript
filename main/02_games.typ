@@ -2,6 +2,8 @@
 
 = Coinductive Game Strategies
 
+$#context text.font$
+
 As we have seen, Operational Game Semantics, and more generally interactive
 semantics, rest upon a dialogue following particular rules, a so-called two
 player game. The main task in this chapter is be to properly define what is
@@ -32,8 +34,8 @@ meta-theory, when translated directly to type theory, both of these
 representations eschew the computational content of strategies.
 
 Our basis for an idiomatic type theoretical encoding of automata follows the
-notion of _interaction tree_ introduced by Li-yao Xia _et
-al._~#mcite(<XiaZHHMPZ20>), originally motivated by representing executable
+notion of _interaction tree_ introduced by Li-yao Xia et
+al.~#mcite(<XiaZHHMPZ20>), originally motivated by representing executable
 denotational semantics of programs with general recursion. Interaction trees
 are a coinductive data structure encoding possibly non-terminating
 computations, interacting with their environment by mean of uninterpreted
@@ -187,7 +189,7 @@ framed bicategories and two-sided fibrations.
   $game.hg$ extends to a strict functor $base.Set^"op" times base.Set -> base.Cat$ as witnessed
   by the following action on morphisms, which we write curried and in infix style.
 
-  $ - game.reixl - game.reixr - cl (I_2 -> I_1) -> game.hg th I_1 th J_1 -> (J_1 -> J_2) -> game.hg th I_2 th J_2 \
+  $ ar game.reixl ar game.reixr ar cl (I_2 -> I_1) -> game.hg th I_1 th J_1 -> (J_1 -> J_2) -> game.hg th I_2 th J_2 \
     (f game.reixl A game.reixr g) .game.mv th i := A .game.mv th (f th i) \
     (f game.reixl A game.reixr g) .game.nx th m := g th (A .game.nx th m) $
 
@@ -279,7 +281,7 @@ define two interpretations of half-games as functors.
 #definition[Half-Game Functors][
   Given a half-game $G cl game.hg th I th J$, we define the
   _active interpretation_ and _passive interpretation of $G$_ as two functors
-  $base.Set^J -> base.Set^I$, written $G game.extA -$ and $G game.extP -$.
+  $base.Set^J -> base.Set^I$, written $G game.extA ar$ and $G game.extP ar$.
 
   $ (G game.extA X) th i := (m cl G.game.mv th i) times X th (G.game.nx th m) \
     (G game.extP X) th i := (m cl G.game.mv th i) -> X th (G.game.nx th m) $
@@ -304,11 +306,10 @@ define two interpretations of half-games as functors.
 */
 
 #definition[Transition System][
-  Given a game $G cl game.g th I^+ th I^-$ and a family $R cl I^+ -> base.Set$,
+  Given a game $G cl game.g th I^+ th I^-$ and a family $R cl base.Set^(I^+)$,
   a _transition system over $G$ with output $R$_ is given by the following record.
 
-  $
-    kw.rec strat.t_G th R kw.whr \
+  $ kw.rec strat.t_G th R kw.whr \
     quad strat.stp cl I^+ -> base.Set \
     quad strat.stn cl I^- -> base.Set \
     quad strat.play cl strat.stp => R + strat.stp + G.game.client game.extA strat.stn \
@@ -371,7 +372,7 @@ programming languages have introduced syntactic facilities like the "yield" and
 
 The way out of this misery is to forget about states altogether. Notice that
 @def-tsys is exactly the definition of a coalgebra for some endofunctor on
-$(I^+ -> base.Set) times (I^- -> base.Set)$. Then, as by definition any
+$base.Set^(I^+) times base.Set^(I^-)$. Then, as by definition any
 coalgebra maps uniquely into the final coalgebra, it is sufficient to work with
 this final coalgebra, whose carrier---or states---intuitively consists of
 infinite trees, describing the traces of any possible transition system over
@@ -379,7 +380,7 @@ $G$.
 
 However, before constructing this final coalgebra, I will simplify the setting
 slightly. Notice that we can easily make passive states disappear, by
-describing systems as a family of active states $strat.stp cl I^+ -> base.Set$
+describing systems as a family of active states $strat.stp cl base.Set^(I^+)$
 and a single transition function:
 
 $ strat.stp => R + strat.stp + G.game.client game.extA (G.game.server game.extP strat.stp) $
@@ -423,7 +424,7 @@ simpler notion.
 
 
 #definition[Game to Container][
-  We give a functor $floor(-) cl game.g th I^+ th I^- -> icont.t th I^+$ defined
+  We give a functor $floor(ar) cl game.g th I^+ th I^- -> icont.t th I^+$ defined
   on objets as follows.
 
   /*$ (icont.g2c th A) .icont.qry th i := A .game.client"".game.mv th i \
@@ -434,7 +435,7 @@ simpler notion.
     floor(A) .icont.nxt th r := A .game.server"".game.nx th r $
 
   It preserves the extension strictly, in the sense that for all $A cl
-  game.g th I^+ th I^-$, the functor $A.game.client game.extA (A.game.server game.extP -))$ is
+  game.g th I^+ th I^-$, the functor $A.game.client game.extA (A.game.server game.extP ar))$ is
   definitionally equal to $[| floor(A) |]$.
 ]
 
@@ -442,13 +443,13 @@ simpler notion.
   Remark that while games contain information about passive positions which
   containers do not, we can make it up and inject them into games as follows.
 
-  $ ceil(-) cl (Sigma cl icont.t th I) -> game.g th I th ((i cl I) times Sigma .icont.qry th i) \
+  $ ceil(ar) cl (Sigma cl icont.t th I) -> game.g th I th ((i cl I) times Sigma .icont.qry th i) \
     ceil(Sigma) .game.client"".game.mv th i := Sigma .icont.qry th i \
     ceil(Sigma) .game.client"".game.nx th {i} th m := (i, m) \
     ceil(Sigma) .game.server"".game.mv th (i, m) := Sigma .icont.rsp th m \
     ceil(Sigma) .game.server"".game.nx th m := Sigma .icont.nxt th m $
 
-  Note that $floor(-) compose ceil(-)$ is definitionally equal to the
+  Note that $floor(ar) compose ceil(ar)$ is definitionally equal to the
   identity on containers.
 ]
 
@@ -462,7 +463,7 @@ the _action functor on $Sigma$_.
 
 #definition[Action Functor][
   Given a signature $Sigma cl icont.t th I$ and an output $R cl
-  I -> base.Set$, the _action functor on $Sigma$ with output $R$_,
+  base.Set^I$, the _action functor on $Sigma$ with output $R$_,
   $itree.F_Sigma th R cl base.Set^I -> base.Set^I$ is defined by the following
   data type.
 
@@ -480,7 +481,7 @@ form its final coalgebra as a coinductive family which is accepted by most type
 theory implementations such as Agda and Coq.
 
 #definition[Indexed Interaction Tree][
-  Given a signature $Sigma cl icont.t th I$ and an output $R cl I -> base.Set$,
+  Given a signature $Sigma cl icont.t th I$ and an output $R cl base.Set^I$,
   the family of _indexed interaction trees on $Sigma$ with output $R$_,
   $itree.t_Sigma th R cl base.Set^I$ is given by the following coinductive
   record.
@@ -505,10 +506,10 @@ Before moving on to define bisimilarity, let us first link this definition
 to the previous one of transition system over a game.
 
 #definition[Strategies][
-  Given a game $G cl game.g th I^+ th I^-$ and output $R cl I^+ -> base.Set$,
+  Given a game $G cl game.g th I^+ th I^-$ and output $R cl base.Set^(I^+)$,
   the _active strategies over $G$ with output $R$_, $game.stratA_G th R cl
-  I^+ -> base.Set$ and the _passive strategies over $G$ with output $R$_,
-  $game.stratP_G th R cl I^- -> base.Set$ are given as follows.
+  base.Set^(I^+)$ and the _passive strategies over $G$ with output $R$_,
+  $game.stratP_G th R cl base.Set^(I^-)$ are given as follows.
 
   $ game.stratA_G th R := itree.t_floor(G) th R \
     game.stratP_G th R := G.game.server game.extP game.stratA_G th R $
@@ -631,8 +632,8 @@ starting from $top$.
   _$f$-tower_ is an inductive predicate defined as follows.
 
   $ kw.dat th tower.t_f cl X -> base.Prop kw.whr \
-    quad tower.tb {x} cl tower.t_f th x -> tower.t_f th (f th x) \
-    quad tower.tinf {P} cl P subset.eq tower.t_f -> tower.t_f th (and.big P) $
+    quad tower.tb th {x} cl tower.t_f th x -> tower.t_f th (f th x) \
+    quad tower.tinf th {P} cl P subset.eq tower.t_f -> tower.t_f th (and.big P) $
 
   We will write $x in tower.t_f$ for $tower.t_f th x$.
 ] <def-tower>
@@ -661,21 +662,29 @@ starting from $top$.
   #v(-2em)
 ]
 
+#lemma[Tower Properties][
+  Given a complete lattice $X$ and a monotone endo-map $f cl X -> X$,
+  for all $x in tower.t_f$ the following statements are true.
+
+  1. $f th x lt.tilde x$
+  2. $forall th y -> y lt.tilde f th y -> y lt.tilde x$ 
+] <lem-tower-props>
+#proof[Both by direct tower induction on the statement.]
+
 #theorem[Tower Fixpoint][
   Given a complete lattice $X$ and a monotone endo-map $f cl X -> X$, pose
   $tower.nu f := and.big tower.t_f$.
   The following statements are true:
   1. $tower.nu f in tower.t_f$
-  2. $f th (tower.nu f) lt.tilde tower.nu f$,
-  3. $tower.nu f lt.tilde f th (tower.nu f)$,
-  4. for all $x$, if $x lt.tilde f th x$, then $x lt.tilde tower.nu f$.
+  2. $tower.nu f approx f th (tower.nu f)$,
+  3. for all $x$, if $x lt.tilde f th x$, then $x lt.tilde tower.nu f$.
 ] <lem-tower-fix>
 #proof[
   1. By $tower.tinf th (lambda t. th t)$.
-  2. Using 1., by tower induction on $P th x := f th x lt.tilde x$
-  3. Using 1., by $tower.tb$ we have $f th (tower.nu f) in tower.t_f$, the result
-     follows by definition of $tower.nu f$ as an infimum.
-  4. Using 1., by tower induction on $P th y := x lt.tilde y$.
+  2. By antisymmetry. First, $nu f$ is a pre-fixed point by 1. and @lem-tower-props.
+     Second, by $tower.tb$ and 1., we have $f th (tower.nu f) in tower.t_f$, hence by
+     infimum property, $nu f lt.tilde f th (nu f)$.
+  3. By 1. and @lem-tower-props.
   #v(-2em)
 ]
 
@@ -705,7 +714,7 @@ $ R^rel.r cl forall th {i} -> R^1 th i -> R^2 th i -> base.Prop, $
 
 to capture strong bisimilarity as
 
-$ - iteq(R^rel.r) - cl
+$ ar iteq(R^rel.r) ar cl
   forall th {i} -> itree.t_Sigma th R^1 th i
                 -> itree.t_Sigma th R^2 th i
                 -> base.Prop. $
@@ -713,7 +722,7 @@ $ - iteq(R^rel.r) - cl
 We start with some preliminary notations for our indexed relations.
 
 #definition[Family Relation][
-  Given $I cl base.Set$ and two families $X, Y cl I -> base.Set$, the set of
+  Given $I cl base.Set$ and two families $X, Y cl base.Set^I$, the set of
   _family relations between $X$ and $Y$_ is defined as follows.
 
   $ rel.irel th X th Y := forall th {i} -> X th i -> Y th i -> base.Prop $
@@ -724,9 +733,9 @@ We start with some preliminary notations for our indexed relations.
   #mathpar(spacing: 2em, block: false, inset: 0.5em,
     [$ & rel.diagS cl rel.irel th X th X \
        & rel.diagS th a th b := a = b $],
-    [$ & -^rel.revS cl rel.irel th X th Y -> rel.irel th Y th X \
+    [$ & ar^rel.revS cl rel.irel th X th Y -> rel.irel th Y th X \
        & R^rel.revS th a th b := R th b th a $],
-    [$ & - rel.seqS - cl rel.irel th X th Y -> rel.irel th Y th Z -> rel.irel th X th Z \
+    [$ & ar rel.seqS ar cl rel.irel th X th Y -> rel.irel th Y th Z -> rel.irel th X th Z \
        & (R rel.seqS S) th a th c := exists th b, R th a th b and S th b th c $]
   )
 ]
@@ -883,8 +892,8 @@ $ itree.tp_Sigma th R := itree.F_Sigma th R th (itree.t_Sigma th R) $
 
   We define the following shorthands:
   #let xx = $itree.eat_Sigma^R$
-  $ itree.eatlr := xx \
-    itree.eatrl := xx^rel.revS $
+  $ itree.eatlr th := xx \
+    itree.eatrl th := xx^rel.revS $
 ]
 
 #lemma[
@@ -901,7 +910,8 @@ $ itree.tp_Sigma th R := itree.F_Sigma th R th (itree.t_Sigma th R) $
 
   $ itree.wb_Sigma cl rel.lat_Sigma -> rel.lat_Sigma \
     itree.wb_Sigma th x th R^rel.r th t^1 th t^2 := \
-      quad (itree.eatlr rel.seqS itree.RS th R^rel.r th (x th R^rel.r) rel.seqS itree.eatrl) th (t^1 .itree.obs) th (t^2 .itree.obs) $
+      quad (cnorm(itree.eatlr) rel.seqS itree.RS th R^rel.r th (x th R^rel.r)
+            rel.seqS cnorm(itree.eatrl)) th (t^1 .itree.obs) th (t^2 .itree.obs) $
 
   We define heterogeneous and homogeneous _weak bisimilarity_ as follows.
 
@@ -944,8 +954,8 @@ bisimilarity transitive!
   #let eat = itree.eatlr
   #let eatr = itree.eatrl
 
-  $ "" sync "" & := itree.RS th R^rel.r th itweq(R^rel.r) \
-    "" weak "" & := "" eat rel.seqS sync rel.seqS eatr $
+  $ sync "" & := itree.RS th R^rel.r th itweq(R^rel.r) \
+    weak "" & := cnorm(eat) rel.seqS cnorm(sync) rel.seqS cnorm(eatr) $
 
   Prove the following statements by direct induction on the eating relation for all $a, b, c$.
 
@@ -957,7 +967,7 @@ bisimilarity transitive!
   3. $itree.tauF th a weak b -> a .itree.obs weak b$
   4. $a weak itree.tauF b -> a weak b .itree.obs$
 
-  Using 3. and 4., prove the following statements by induction.
+  Using 3. and 4. and transitivity of the eating relation, prove the following statements by induction.
 
   5. $a crel((weak rel.seqS eat)) itree.retF th r -> a crel((eat rel.seqS sync)) itree.retF r$
   6. $a crel((weak rel.seqS eat)) itree.visF th q th k -> a crel((eat rel.seqS sync)) itree.visF th q th k$
@@ -968,54 +978,7 @@ bisimilarity transitive!
 
   9. $a crel((eatr rel.seqS eat)) b -> a eat b or a eatr b$
 
-  Then, we prove the following statment.
-
-  10. $cnorm(weak) rel.seqS cnorm(weak) th th lt.tilde th th cnorm(eat) rel.seqS itree.RS th R^rel.r th (itweq(R^rel.r) rel.seqS itweq(R^rel.r)) rel.seqS eatr$
-
-  Introducing and decomposing the hypotheses, we obtain the following:
-
-  $ a eat x_1 sync x_2 eatr b eat y_1 sync y_2 eatr c $
-
-  By applying 9. in the middle, assume w.l.o.g. that the left case is true,
-  i.e., $x_2 eat y_1$ (for the right case, swap applications of 5. and 6. with
-  corresponding applications of 7. and 8.). By case on $y_1$.
-
-  - When $y_1 = itree.retF th r$,
-
-    $ & a & eat x_1 & sync x_2 &          & eat itree.retF th r & sync y_2 eatr c & \
-    & a & eat x_1 & sync x_2 & eatr x_2 & eat itree.retF th r & sync y_2 eatr c & quad "by refl." \
-    & a &         & weak     &      x_2 & eat itree.retF th r & sync y_2 eatr c & quad "by def." \
-    & a &         & eat      &      x_3 & sync itree.retF th r & sync y_2 eatr c & quad "by 5." \
-  $
-
-    By concatenation (@lem-actrel-props) between $x_3$ and $y_2$, we obtain 
-
-    $ itree.RS th (R^rel.r rel.seqS R^rel.r) th (itweq(R^rel.r) rel.seqS
-    itweq(R^rel.r)) th x_3 th y_2. $
-
-    By transitivity, $R^rel.r rel.seqS R^rel.r lt.tilde R^rel.r$. By
-    monotonicity (@lem-actrel-props) we obtain the following and conclude.
-
-    $ itree.RS th R^rel.r th (itweq(R^rel.r) rel.seqS
-    itweq(R^rel.r)) th x_3 th y_2. $
-
-  - When $y_1 = itree.visF th q th k$, the reasoning is the same, swapping
-    lemma 5. with lemma 6.
-  - When $y_1 = itree.tauF th t$,
-
-    $ & a & eat x_1 & sync x_2 & eat itree.tauF th t & sync y_2 eatr c & \
-      & a & eat x_1 & sync x_2 &                     & sync y_2 eatr c & quad "by 1." \
-    $
-
-    By @lem-actrel-props, using concatenation between $x_2$ and $y_2$, we obtain 
-
-    $ itree.RS th (R^rel.r rel.seqS R^rel.r) th (itweq(R^rel.r) rel.seqS
-    itweq(R^rel.r)) th x_3 th y_2, $
-
-    we then conclude as before by transitivity of $R^rel.r$.
-
-  This conclude the proof of 10. Finally, we prove transitivity of
-  $itweq(R^rel.r)$ by tower induction on
+  Finally, we prove transitivity of $itweq(R^rel.r)$ by tower induction on
 
   $ P th x := cnorm(itweq(R^rel.r)) rel.seqS cnorm(itweq(R^rel.r)) lt.tilde x th R^rel.r. $
 
@@ -1029,7 +992,48 @@ bisimilarity transitive!
     th th lt.tilde th th
     cnorm(eat) rel.seqS itree.RS th R^rel.r th (x th R^rel.r) rel.seqS cnorm(eatr) $
 
-  We apply 10. and conclude by monotonicity on $P th x$.
+  Introducing and decomposing the hypotheses, we obtain the following:
+
+  $ a eat x_1 sync x_2 eatr b eat y_1 sync y_2 eatr c $
+
+  Apply 9. between $x_2$ and $y_1$. Assume that the left case is true,
+  i.e., $x_2 eat y_1$ (for the right case, swap applications of 5. and 6. with
+  corresponding applications of 7. and 8.). By case on $y_1$.
+
+  - When $y_1 = itree.retF th r$,
+
+    $ & a & eat x_1 & sync x_2 &          & eat itree.retF th r & sync y_2 eatr c & \
+    & a & eat x_1 & sync x_2 & eatr x_2 & eat itree.retF th r & sync y_2 eatr c & quad "by refl." \
+    & a &         & weak     &      x_2 & eat itree.retF th r & sync y_2 eatr c & quad "by def." \
+    & a &         & eat      &      x_3 & sync itree.retF th r & sync y_2 eatr c & quad "by 5." \
+  $
+
+    By concatenation (@lem-actrel-props) between $x_3$ and $y_2$, we obtain 
+
+    $ itree.RS th (R^rel.r rel.seqS R^rel.r) th (cnorm(itweq(R^rel.r)) rel.seqS
+    cnorm(itweq(R^rel.r))) th x_3 th y_2. $
+
+    By transitivity, $R^rel.r rel.seqS R^rel.r lt.tilde R^rel.r$. Using this
+    and the coinduction hypothesis $P th x$, by monotonicity
+    (@lem-actrel-props) we obtain the following and conclude.
+
+    $ itree.RS th R^rel.r th (x th R^rel.r) th x_3 th y_2. $
+
+  - When $y_1 = itree.visF th q th k$, the reasoning is the same, swapping
+    lemma 5. by lemma 6.
+  - When $y_1 = itree.tauF th t$,
+
+    $ & a & eat x_1 & sync x_2 & eat itree.tauF th t & sync y_2 eatr c & \
+      & a & eat x_1 & sync x_2 &                     & sync y_2 eatr c & quad "by 1." \
+    $
+
+    By @lem-actrel-props, using concatenation between $x_2$ and $y_2$, we obtain 
+
+    $ itree.RS th (R^rel.r rel.seqS R^rel.r) th (cnorm(itweq(R^rel.r)) rel.seqS
+      cnorm(itweq(R^rel.r))) th x_3 th y_2, $
+
+    we then conclude as before by transitivity of $R^rel.r$ and coinduction hypothesis.
+    #v(-2em) // BUG?
 ]
 
 #lemma[Up-to strong bisimilarity][
@@ -1050,14 +1054,14 @@ bisimilarity transitive!
 
   $ "" strong "" & := itree.RS th R^rel.r th iteq(R^rel.r) \
     "" sync "" & := itree.RS th R^rel.r th (x th R^rel.r) \
-    "" weak "" & := cnorm(eat) rel.seqS sync rel.seqS eatr $
+    "" weak "" & := cnorm(eat) rel.seqS cnorm(sync) rel.seqS cnorm(eatr) $
 
   Prove the following statements by direct induction.
 
   1. $a crel((strong rel.seqS eat)) b -> a crel((eat rel.seqS strong)) b $
   2. $a crel((eatr rel.seqS strong)) b -> a crel((strong rel.seqS eatr)) b $
 
-  Then, prove the goal by tower induction on
+  Then, let us prove the goal by tower induction on
 
   $ P th x := cnorm(iteq(R^rel.r)) rel.seqS x th R^rel.r rel.seqS cnorm(iteq(R^rel.r))
     lt.tilde x th R^rel.r. $
@@ -1069,8 +1073,7 @@ bisimilarity transitive!
 
   By one-step unfolding it suffices to prove the following.
 
-  $ strong rel.seqS weak rel.seqS strong
-    th th lt.tilde th th weak $
+  $ cnorm(strong) rel.seqS cnorm(weak) rel.seqS cnorm(strong) lt.tilde cnorm(weak) $
 
   Introducing and destructing the hypotheses we proceed as follows.
 
@@ -1092,11 +1095,167 @@ we know that for well-behaved $R^rel.r$ it is an equivalence relation and that
 it supports coinductive proofs up-to reflexivity, up-to symmetry and up-to
 strong bisimilarity.
 
-== Core Operations
+== Monad Structure
 
-=== Monad Structure
+An important structure available on interaction trees is that they form a
+monad. Indeed as they are parametrized by an _output_ family $R$, a strategy
+with output $R$ can be considered as an impure computation returning some $R$.
+Its _effects_ will be to perform game moves and wait for an answer. While at
+first sight---considering only the goal of representing game strategies---such
+an output might seem unnecessary, the compositionality offered by monads, that
+is, sequential composition, is tremendously useful to construct and reason on
+strategies piecewise.
 
-=== Interpretation
+The monad structure on interaction trees takes place in the family category
+$base.Set^I$ and its laws will hold both w.r.t. strong bisimilarity and weak
+bisimilarity. One way to view this is to say that I will define _two_ monads.
+However, in line with my choice of using intensional type theory, I will first
+define a _pre-monad_ structure, containing only the computationally relevant
+operation and then provide two sets of laws.
+
+In fact in @def-itree, we have already defined the "return" operator, $itree.ret$,
+which can be typed as follows.
+
+$ itree.ret th {X} cl X => itree.t_Sigma th X $
+
+Let us define the "bind" operator, which works by tree grafting.
+
+#definition[Interaction Tree Bind][
+  #margin-note[
+    Note that defining $itree.subst_f$ _with $f$ fixed_ is not a
+    mere stylistic consideration. Indeed, what it achieves, is to pull the
+    binder for $f$ out
+    of the coinductive definition. This enables the syntactic guardedness
+    checker to more easily understand subsequent coinductive definition making
+    use of the bind operator. To the best of my knowledge, this trick was first
+    used in the InteractionTree library~#num-cite(<XiaZHHMPZ20>). In general, it
+    is always fruitful to take as many binders as possible out of the cofixpoint
+    definition.
+  ]
+  Let $Sigma cl icont.t th I$. Given $X, Y cl base.Set^I$ and $f cl X => itree.t_Sigma th Y$,
+  define _interaction tree substitution_ as follows.
+  $ itree.subst_f cl itree.t_Sigma th X => itree.t_Sigma th Y \
+    (itree.subst_f th t) .itree.obs kw.wit t .itree.obs \
+    quad | itree.retF th x := (k th x) .itree.obs \
+    quad | itree.tauF th t := itree.tauF th (itree.subst_f th t) \
+    quad | itree.visF th q th k := itree.visF th q th (lambda th r. th itree.subst_f th (k th r)) $
+
+  Then, define the _interaction tree bind_ operator as
+
+  $ ar itree.bind ar th {X th Y th i} cl itree.t_Sigma th X th i -> (X => itree.t_Sigma th Y) -> itree.t_Sigma th Y th i \
+    t itree.bind f := itree.subst_f th t $
+]
+
+Before proving the monad laws, we will first prove that our operators respect
+both strong and weak bisimilarity, in other words that they are _monotone_. For
+strong bisimilarity and $itree.ret$, the statement is the following.
+
+$ forall th {X^rel.r cl rel.irel th X^1 th X^2} th {i cl I} th {x_1 cl X^1 th i} th {x_2 cl X^1 th i} \
+  quad -> X^rel.r th x_1 th x_2 -> itree.ret th x_1 iteq(X^rel.r) itree.ret th x_2 $
+
+This is quite heavy, and many more complex monotonicity statements will appear
+in the thesis. As such from now on we will extensively use relational
+combinators. To simplify reading such complex relations we will write $a
+xrel(R) b$ for $R th a th b$. Our final goal is to write something such as follows.
+
+$ forall th {X^rel.r} -> itree.ret xrel(X^rel.r rel.iarr cnorm(iteq(X^rel.r))) itree.ret $
+
+To achieve this, define the following combinators.
+
+$ ar rel.arr ar cl rel.rel th X_1 th X_2 -> rel.rel th Y_1 th Y_2 -> rel.rel th (X_1 -> Y_1) th (X_2 -> Y_2) \
+  (R rel.arr S) th f th g := forall th {x_1 x_2} -> R th x_1 th x_2 -> S th (f th x_1) th (g th x_2) $
+
+$ ar rel.iarr ar cl rel.irel th X_1 th X_2 -> rel.irel th Y_1 th Y_2 -> rel.irel th (X_1 => Y_1) th (X_2 => Y_2) \
+  (R rel.iarr S) th f th g := forall th {x_1 x_2} -> R th x_1 th x_2 -> S th (f th x_1) th (g th x_2) $
+
+$ rel.forall cl (forall th {i} -> rel.rel th (X_1 th i) th (X_2 th i)) -> rel.rel th (forall th {i} -> X_1 th i) th (forall th {i} -> X_2 th i) \
+  (rel.forall th R) th f th g := forall th {i} -> R th (f th {i}) th (g th {i}) $
+
+Moreover we will write $rel.forall th A$ for $rel.forall th (lambda th {i}. th A)$.
+
+#lemma[ITree Monad Monotonicity][
+  Given $Sigma cl itree.t_Sigma$, for any $X^rel.r$ and $Y^rel.r$ and for any $x cl rel.lat_Sigma$
+  such that either $x in itree.sb_Sigma$ or $x in itree.wb_Sigma$, the following statements are true.
+
+  1. $itree.ret xrel(X^rel.r rel.arr x th X^rel.r) itree.ret$
+  2. $(ar itree.bind ar) xrel(rel.forall th x th X^rel.r rel.arr (X^rel.r rel.iarr x th Y^rel.r) rel.arr x th Y^rel.r) (ar itree.bind ar)$
+
+  As a consequence, return and bind respect both strong and weak bisimilarity:
+  3. $itree.ret xrel(X^rel.r rel.arr cnorm(iteq(X^rel.r))) itree.ret$
+  4. $itree.ret xrel(X^rel.r rel.arr cnorm(itweq(X^rel.r))) itree.ret$
+  5. $(ar itree.bind ar) xrel(rel.forall th cnorm(iteq(X^rel.r)) rel.arr (X^rel.r rel.iarr cnorm(iteq(Y^rel.r))) rel.arr cnorm(iteq(Y^rel.r))) (ar itree.bind ar)$
+  6. $(ar itree.bind ar) xrel(rel.forall th cnorm(itweq(X^rel.r)) rel.arr (X^rel.r rel.iarr cnorm(itweq(Y^rel.r))) rel.arr cnorm(itweq(Y^rel.r))) (ar itree.bind ar)$
+]
+#proof[
+  1. Assuming $X^rel.r th x_1 th x_2$, observe that $itree.sb_Sigma th x th
+     X^rel.r th (itree.ret th x_1) th (itree.ret th x_2)$, which by @lem-tower-props
+     implies $x th X^rel.r th (itree.ret th x_1) th (itree.ret th x_2)$. It is
+     similarly for $x in itree.wb_Sigma$, using reflexivity of $itree.eat_Sigma^(R^rel.r)$.
+  2. By tower induction on the statement. For $x in itree.sb_Sigma$ it is direct
+     by unfolding and dependent pattern matching.
+     For $x in itree.wb_Sigma$, use the following fact.
+     $ t_1 itree.eatlr t_2 -> (t_1 itree.bind f) itree.eatlr (t_2 itree.bind f) $
+  3--6. By direct application of 1--2, using @lem-tower-fix.
+]
+
+While perhaps not very impressive, the last lemma is very important. Points
+3--6 prove that return and bind are well-defined as operators on the setoids of
+strongly- and weakly-bisimilar strategies. But more importantly, point 2. it
+also proves that during a coinductive proof, to relate two sequential compositions
+one can first relate the prefixes and then, pointwise, the continuations. This
+fact is sometimes called "bisimulation up-to bind".
+
+#lemma[ITree Monad Laws][
+  Given $Sigma cl itree.t_Sigma$, for all $x cl X th i$, $t cl itree.t_Sigma th
+  X th i$, $f cl X => itree.t_Sigma th Y$ and $g cl Y => itree.t_Sigma th Z$
+  the following statements are true.
+
+  1. $(itree.ret th x itree.bind f) itree.eq f th x$
+  2. $(t itree.bind itree.ret) itree.eq t$
+  3. $(t itree.bind f) itree.bind g itree.eq t itree.bind (f itree.kbind g)$
+]
+#proof[
+  1. By one-step unfolding.
+  2. By direct tower induction.
+  3. By direct tower induction.
+  #v(-2em)
+]
+
+This concludes the monadic theory of interaction trees. We will make some use of the
+so-called "do notation", to write, e.g.,
+
+$ kw.do x <- t; th y <- f th x; th g th y $
+
+instead of
+
+$ t itree.bind (lambda th x. th f th x itree.bind (lambda th y. th g th y)) $
+
+To make the best out of this syntax, we define some "generic effects", i.e. helpers
+to perform a silent step or play a move.
+
+#definition[Generic Effects][
+  Given $Sigma cl icont.t th I$, we define the following generic effects.
+
+  $ itree.gtau th {i} cl itree.t_Sigma th (lambda th i . th base.unit) th i \
+    itree.gtau := itree.tau th (itree.ret th base.tt) $
+
+  $ itree.gvis th {i} th (q cl Sigma .icont.qry th i) cl itree.t_Sigma th (subs.fiber th (Sigma .icont.nxt th {q})) th i \
+    itree.gvis th q := itree.vis th q th (lambda th r. th itree.ret th (subs.fib th r)) $
+  #margin-note(dy: -4em)[
+    While slightly funky, the type of $itree.gvis$ is quite notable: it is
+    the type of what Xia et. al~#num-cite(<XiaZHHMPZ20>) call _event handlers_.
+    It encodes a natural transformation of $[| Sigma |]$ into $itree.t_Sigma$. This one
+    in particular is the identity handler, part of a larger
+    structure making $itree.t$ a relative monad~#num-cite(<AltenkirchCU10>)
+    on $icont.t th I -> (base.Set^I -> base.Set^I)$. Alas, its definition is
+    irrelevant to OGS correction and does not fit into this margin...
+  ]
+  $subs.fiber$ is defined by the following data type.
+
+  $ kw.dat th subs.fiber th (f cl A -> B) cl B -> base.Set kw.whr \
+    quad subs.fib th (x cl A) cl subs.fiber th f th (f th x) $
+]
+
 
 == Iteration Operators <sec-iter>
 

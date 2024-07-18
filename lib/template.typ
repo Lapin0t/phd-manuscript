@@ -154,7 +154,7 @@
     set align(left)
     pad(left: 1.5em, it)
   }
-  //show math.equation: set text(font: "Cambria Math")
+  show math.equation: set text(font: ("New Computer Modern Math",))
 
   // FIGURES
   set figure(numbering: n => {
