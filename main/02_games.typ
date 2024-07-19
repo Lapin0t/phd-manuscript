@@ -704,11 +704,14 @@ même mieux de dire "where we write ..., and accordingly $P subset.eq tower.t_f$
 for $forall x, P th x -> x in tower.t_f$" et d'utiliser ces notations dans toute
 la def. En fait, plus précisément, je crois que je préfèrerais que tu choisisses
 définitivement entre $x in P$ et $P th x$, resp. $M subset.eq P$ et $forall x, M
-th x -> P th x$. Y en a de partout plus bas et c'est tout mélangé.]
+th x -> P th x$. Y en a de partout plus bas et c'est tout mélangé.
 
-#tom[Mais de toute façon ça sera dur à lire, pcq le lien avec le compagnon ne
+Mais de toute façon ça sera dur à lire, pcq le lien avec le compagnon ne
 saute pas du tout aux yeux. L'intuition des constructeurs manque cruellement, je
-trouve.]
+trouve.
+
+Par ex, c'est plus ou moins clair que $tower.tb$ correspond au jeu de
+bisim, mais tu sais expliquer la présence de $tower.tinf$?]
 
 #theorem[Tower Induction][
   Given a complete lattice $X$, a monotone endo-map $f cl X -> X$ and an inf-closed
@@ -755,9 +758,14 @@ ailleurs, j'ai eu un peu l'impression de me faire arnaquer...]
   #v(-2em)
 ]
 
+#tom[Je comprends pas le (2), tu peux détailler un poil?
+
+  Sinon, typomaniac strikes back: j'ai jamais vu des items référencés par "1.",
+plutôt (1).]
+
 And this is it! I really want to stress the fact that this is the entirety of the
 mathematical content of this theory of coinduction, and yet it
-provides an exceedingly versatile and easy to use theorem. It is easily shown
+provides an exceedingly versatile and easy-to-use theorem. It is easily shown
 to subsume the tools provided by the companion construction and by parametrized
 coinduction~#mcite(<HurNDV13>). The coq-coinduction library follows-up with
 some helpers for deriving inf-closedness of predicates, the definition of the
@@ -768,25 +776,28 @@ the Calculus of Communicating Processes (CCS).
 
 === Strong Bisimilarity
 
-#peio[intro nulle, citer @Levy11]
-Equipped with this new construction of coinductive fixpoints we will apply them, in the
-complete lattice of relations. Bisimilarity (both strong and weak), are typically built
-on non-indexed automata, which moreover do not have _outputs_. As such they consist of
-a single relation, on such automata. As our automata (indexed interaction trees,
-@def-itree) are indexed and moreover have an output, our bisimilarity notions will
-instead take the form of family-relation transformers. More precisely, in this section
-our goal is, given a family-relation $R^rel.r$ on outputs $R^1, R^2$ of type
+#peio[intro nulle, citer @Levy11] Equipped with this new construction of
+coinductive fixpoints we will apply them, in the complete lattice of relations.
+Bisimilarity (both strong and weak), are typically built on non-indexed
+automata, which moreover do not have _outputs_. As such they consist of a single
+relation, on such automata. As our automata (indexed interaction trees,
+@def-itree) are indexed and moreover have an output, our notions of bisimilarity
+will instead take the form of indexed relation #tom[je remplace family-relation
+par indexed relation, vu que family relation est défini ci-dessous.]
+transformers. More precisely, in this section, we fix a signature $Sigma cl
+icont.t th I$, and then, given an indexed relation $R^rel.r$ on outputs $R^1,
+R^2$, i.e.,
 
 $ R^rel.r cl forall th {i} -> R^1 th i -> R^2 th i -> base.Prop, $
 
-to capture strong bisimilarity as
+we define strong bisimilarity as a family-relation
 
 $ - iteq(R^rel.r) - cl
   forall th {i} -> itree.t_Sigma th R^1 th i
                 -> itree.t_Sigma th R^2 th i
                 -> base.Prop. $
 
-We start with some preliminary notations for our indexed relations.
+We start with some preliminary notation for our indexed relations.
 
 #definition[Family Relation][
   Given $I cl base.Set$ and two families $X, Y cl I -> base.Set$, the set of
@@ -794,8 +805,15 @@ We start with some preliminary notations for our indexed relations.
 
   $ rel.irel th X th Y := forall th {i} -> X th i -> Y th i -> base.Prop $
 
-  We define the standard operators of diagonal, converse and sequential composition
-  on family relations.
+  We denote by $lt.tilde$ (in infix notation) the standard ordering on family
+  relations, defined by
+  
+  $ R lt.tilde S := forall th {i} th x th y, R th x th y -> S th x th y, $
+
+  for any $R,S : rel.irel th X th Y$.  
+
+  We define the standard operators of diagonal, converse, and sequential
+  composition on family relations, as follows.
 
   #mathpar(spacing: 2em, block: false, inset: 0.5em,
     [$ & rel.diagS cl rel.irel th X th X \
@@ -808,22 +826,25 @@ We start with some preliminary notations for our indexed relations.
 ]
 
 #definition[Family Equivalence][
-  Given $R cl rel.irel th X th X$ the following
-  statements are taken as definitions.
-  - _$R$ is reflexive_ whenever $rel.diagS lt.tilde R$.
-  - _$R$ is symmetric_ whenever $R^rel.revS lt.tilde R$.
-  - _$R$ is transitive_ whenever $R rel.seqS R lt.tilde R$.
-  - _$R$ is an equivalence_ whenever all the above is true.
+  Given $R cl rel.irel th X th X$, we say that
+  - _$R$ is reflexive_ whenever $rel.diagS lt.tilde R$;
+  - _$R$ is symmetric_ whenever $R^rel.revS lt.tilde R$;
+  - _$R$ is transitive_ whenever $R rel.seqS R lt.tilde R$; and
+  - _$R$ is an equivalence_ whenever it is reflexive, symmetric, and transitive.
 ]
 
-As these indexed relations are quite a mouthful, the following definition will
-be quite heavy in symbols. However, it is important to stress that it is
-entirely straightforward. Indeed, it follows more or less directly from
-a relational interpretation of type theory.
+As indexed relations are quite a mouthful, the following definition will be
+quite heavy notationally. However, it is important to stress that it is entirely
+straightforward. Indeed, it follows more or less directly from a relational
+interpretation of type theory. #tom[Comprends pas.]
+
+#tom[Dans la def ci-dessous, ça me met de la charge cognitive superflue d'avoir
+$R^1$ et $R^2$ qui ne sont pas des relations. Tu pourrais ptet les appeler
+$A^i$, comme "answer"?] 
 
 #definition[Action Relator][
-  Given $Sigma cl icont.t th I$, an output relation $R^rel.r cl rel.irel th R^1
-  th R^2$, and a parameter relation $X^rel.r cl rel.irel th X^1 th X^2$, the
+Given $Sigma cl icont.t th I$, an output relation $R^rel.r cl rel.irel th R^1 th
+  R^2$, and a parameter relation $X^rel.r cl rel.irel th X^1 th X^2$, the
   _action relator over $Sigma$_ of type
 
   $ itree.RS th R^rel.r th X^rel.r
@@ -843,7 +864,7 @@ a relational interpretation of type theory.
 
 #lemma[
   #peio[ref relator, also @Levy11]
-  All the following statements are true (understood as universally quantified).
+  The following statements hold (understood as universally quantified).
 
   #let xx = [$R^rel.r$]
   #let yy = [$X^rel.r$]
@@ -858,6 +879,10 @@ a relational interpretation of type theory.
   Moreover $itree.RS$ is monotone in both arguments.
 ] <lem-actrel-props>
 #proof[By direct case analysis.]
+
+#tom[Le premier point est presque trop efficace, ptet tu pourrais mettre une
+remarque pour expliquer les arguments implicites des $rel.diagS$? Les expliciter
+serait trop long?]
 
 #definition[Interaction Relation Lattice][
   Given $Sigma cl icont.t th I$, we define the _interaction relation lattice over $Sigma$_ as follows.
