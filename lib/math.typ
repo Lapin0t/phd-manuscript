@@ -130,13 +130,21 @@
   spin: de(cop("spin")),
   iter: de(cop("iter")),
   actguard: de(cop(sym.prime.double.rev + "guarded")),
+  actevguard: de(cop(sym.prime.double.rev + "ev-guarded")),
   guard: de(cop("guarded")),
+  evguard: de(cop("ev-guarded")),
   eqguard: de(cop("eqn-guarded")),
+  eqevguard: de(cop("eqn-ev-guarded")),
   gret: cs(cop("g-ret")),
   gtau: cs(cop("g-vis")),
   gvis: cs(cop("g-vis")),
+  evs: cs(cop("ev-step")),
+  evg: cs(cop("ev-guard")),
   giter: de(cop("g-iter")),
+  eviter: de(cop("ev-iter")),
   gstep: de(cop("g-step")),
+  evunroll: de(cop("unroll")),
+  equnroll: de(cop("eq-unroll")),
   copr: de(crel($⊞$))
 )
 
