@@ -1262,7 +1262,7 @@ effects", i.e. helpers to perform a silent step or play a move.
 
 == Iteration Operators <sec-iter>
 
-Interaction trees~#mcite(<XiaZHHMPZ20>) where originally introduced to encode
+Interaction trees~#mcite(<XiaZHHMPZ20>) were originally introduced to encode
 arbitrary---i.e., possibly non-terminating---computations. As such, apart from
 monadic operators, they support _iteration operators_, which intuitively allow
 one to write arbitrary "while" loops. Pioneered by Calvin
