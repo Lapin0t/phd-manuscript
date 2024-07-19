@@ -410,6 +410,8 @@ into the final coalgebra, it is sufficient to work with this final coalgebra,
 whose states intuitively consist of infinite trees, describing
 the traces of any possible transition system over $G$.
 
+#tom[Là-dessus ptet dire "modulo les questions de taille" quelque part?]
+
 However, before constructing this final coalgebra, I will simplify the setting
 slightly. Notice that we can easily make passive states disappear, by
 describing systems as a family of active states $strat.stp cl I^+ -> base.Set$
@@ -581,6 +583,14 @@ over games.
   strategies.
 ] <def-unroll>
 
+#tom[La systaxe $(itree.unrollA th s) .itree.obs th kw.wit S .strat.play th s$
+m'est inconnue, et est un peu obscure, alors que pourtant ce qu'il faut faire
+est clair. J'imagine laborieusement que ça veut dire $itree.unrollA th s :=
+"match" S .strat.play th s "with"...$? Ça sera ptet introduit kek part?]
+
+#tom[Et aussi, ça serait bien de rendre explicite que c'est une def
+coinductive.]
+
 == Bisimilarity
 
 The natural notion of equality on automata is the notion bisimilarity.
@@ -588,12 +598,12 @@ Intuitively, a bisimulation between two automata consists of a relation between
 their respective states, which is preserved by the transition functions. Two
 automata are then said to be _bisimilar_ when one can exhibit a bisimulation
 relation between them. Another way to phrase this is that two automata are
-bisimilar whenever they are related by the greatest bisimulation relation, the
-_bisimilarity_, yielding again a coinductive notion. As our strategies feature
-_silent moves_ (the #itree.tauF nodes of the action functor), we will need to
-consider two variants, _strong_ and _weak_ bisimilarity. Strong bisimilarity
-requires that both strategy trees match at each step, fully synchronized. Weak
-bisimilarity on the other hand, allows both strategies to differ by a finite
+bisimilar whenever they are related by the greatest bisimulation relation,
+_bisimilarity_, again a coinductive notion. As our strategies feature _silent
+moves_ (the #itree.tauF nodes of the action functor), we will need to consider
+two variants, _strong_ and _weak_ bisimilarity. Strong bisimilarity requires
+that both strategy trees match at each step, fully synchronized. Weak
+bisimilarity, on the other hand, allows both strategies to differ by a finite
 amount of #itree.tauF nodes in between any two synchronization points.
 
 Before translating these ideas into type theory, we will need a bit of
@@ -601,12 +611,14 @@ preliminary tools. Most implementations of type theory provide some form of
 support for coinductive records (such as @def-itree) and for cofixpoints, or
 coinductive definitions (such as @def-unroll). However, these features---in
 particular cofixpoints---are at times brittle, because the theory relies on a
-syntactic _guardedness_ criterion to decide whether a given definition should
-be accepted. For simple definitions---in fact more precisely for
-computationally relevant definitions---I will indulge the whims of syntactic
-guardedness. But for complex bisimilarity proofs such as which will appear
-later in this thesis, being at the mercy of a syntactic implementation detail
-is a recipy for failure.
+syntactic _guardedness_ #tom[(c'est syntaxique en Agda? Ah, je vois que tu en
+parles plus tard, mais en lisant ici on se demande ce qui se passe, vu que
+depuis le début on fait du Coq $|$ Agda sans distinction.)] criterion to decide
+whether a given definition should be accepted. For simple definitions---in fact
+more precisely for computationally relevant definitions---I will indulge the
+whims of syntactic guardedness. But for complex bisimilarity proofs such as
+those which will appear later in this thesis, being at the mercy of a syntactic
+implementation detail is a recipe for failure.
 
 To tackle this problem, Agda provides more robust capabilities in the form of
 _sized types_, for which the well-formedness criterion is based on typing.
@@ -615,15 +627,17 @@ been formalized. Moreover, in Agda's experimental tradition, while they do work
 when used in the intended programming patterns, their semantics are still not
 fully clear #peio[ref multi-clocked guarded TT]. We will take an entirely
 different route, building coinduction for ourselves, _inside_ type theory.
-Indeed, as demonstrated by Damien Pous' coq-coinduction
+Indeed, as demonstrated by Damien Pous's coq-coinduction
 library~#mcite(<Pous16>, supplement: [https://github.com/damien-pous/coinduction]),
 powerful coinductive constructions and reasoning principles for propositional
 types are derivable in the presence of impredicativity.
+#tom[Pourquoi la font de coq-coinduction est-elle si petite?]
+
 
 === Coinduction with Complete Lattices
 
 The basis of coq-coinduction is the observation that with impredicativity,
-#base.Prop forms a complete lattice. In fact not only propositions, but also
+#base.Prop forms a complete lattice. In fact, not only #base.Prop, but also
 predicates $X -> base.Prop$ or relations $X -> Y -> base.Prop$, our case of
 interest for bisimilarity. By the Knaster-Tarski theorem one can obtain the
 greatest fixpoint $nu f := or.big { x | x lt.tilde f th x }$ of any monotone
@@ -645,14 +659,15 @@ pattern-matching and recursive functions. Thankfully, in the context of
 bisimulations, a line of work has developped a theory of _enhanced_
 bisimulations, in which the premise is weakened to $x lt.tilde f th (g th x)$---
 bisimulation _up-to $g$_---for some _compatible_ $g$, which must verify $g
-compose f lt.tilde f compose g$. This eases bisimilarity proofs where, for
+compose f lt.tilde f compose g$. #tom[Attention, la compatibilité n'est pas
+nécessaire, si?] This eases bisimilarity proofs where, for
 example, the relation between states is only preserved by the transition
 functions up-to transitive closure, provided the transitive closure has been
 proven compatible.
 
-Satisfyingly, the least upper bound of all compatible function is still
+Satisfyingly, the least upper bound of all compatible functions is still
 compatible. It is called the _companion_ of $f$, written $t_f$, and moreover
-satisfies $t_f bot th approx nu f$. This enables to work with the following
+satisfies $t_f bot th approx nu f$. This enables working with the following
 generalized principle.
 
 #centering(inferrule(
@@ -662,16 +677,16 @@ generalized principle.
 
 In this way, one delays until actually required in the proof the choice and use
 of any particular enhancement $g lt.tilde t_f$. This theory based on the
-companion is the one at use in the Coq formalization of this thesis. However,
-since I started writing the formalization, an even more practical solution 
-emerged: Steven Schäfer and Gert Smolka's _tower induction_~#mcite(<SchaferS17>).
-Although it has been merged into coq-coinduction, I did not have the time to
+companion is the one used in the Coq formalization of this thesis. However,
+since I started writing the formalization, an even more practical solution,
+Steven Schäfer and Gert Smolka's _tower induction_~#mcite(<SchaferS17>), has
+been merged into coq-coinduction. However, I did not have the time to
 port my Coq development to the new version. I will nonetheless present it
 here and use it in the rest of the thesis.
 
 Tower induction rests upon the inductive definition of the tower predicate,
 whose elements can be understood as all the transfinite iterations of $f$,
-starting from $top$.
+starting from $top$. #tom[Formulation bizarre: le tower predicate, c'est $t_f$?]
 
 #definition[Tower][
   Given a complete lattice $X$ and a monotone endo-map $f cl X -> X$, the
@@ -681,8 +696,19 @@ starting from $top$.
     quad tower.tb {x} cl tower.t_f th x -> tower.t_f th (f th x) \
     quad tower.tinf {P} cl P subset.eq tower.t_f -> tower.t_f th (and.big P) $
 
-  We will write $x in tower.t_f$ for $tower.t_f th x$.
-] <def-tower>
+  We will write $x in tower.t_f$ for $tower.t_f th x$. ] <def-tower> 
+  
+#tom[Dur à lire! Je pense qu'a minima il faudrait expliquer que $P subset.eq
+tower.t_f$ signifie $forall x:X, P th x → tower.t_f th x$. Mais ça serait ptet
+même mieux de dire "where we write ..., and accordingly $P subset.eq tower.t_f$
+for $forall x, P th x -> x in tower.t_f$" et d'utiliser ces notations dans toute
+la def. En fait, plus précisément, je crois que je préfèrerais que tu choisisses
+définitivement entre $x in P$ et $P th x$, resp. $M subset.eq P$ et $forall x, M
+th x -> P th x$. Y en a de partout plus bas et c'est tout mélangé.]
+
+#tom[Mais de toute façon ça sera dur à lire, pcq le lien avec le compagnon ne
+saute pas du tout aux yeux. L'intuition des constructeurs manque cruellement, je
+trouve.]
 
 #theorem[Tower Induction][
   Given a complete lattice $X$, a monotone endo-map $f cl X -> X$ and an inf-closed
@@ -707,6 +733,9 @@ starting from $top$.
     tower.tind th (tower.tinf s) := K th (tower.tind compose s) $
   #v(-2em)
 ]
+
+#tom[Y a une "compo sous $forall$" ici, pas sûr d'avoir vu ça noté comme ça
+ailleurs, j'ai eu un peu l'impression de me faire arnaquer...]
 
 #theorem[Tower Fixpoint][
   Given a complete lattice $X$ and a monotone endo-map $f cl X -> X$, pose
