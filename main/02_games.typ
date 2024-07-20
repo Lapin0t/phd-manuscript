@@ -194,7 +194,7 @@ advanced concepts, such as framed bicategories and two-sided fibrations.
   $base.Set^"op" times base.Set -> base.Cat$ as witnessed by the following
   action on morphisms, presented in curried form and written in infix notation.
 
-  $ - game.reixl - game.reixr - cl (I_2 -> I_1) -> game.hg th I_1 th J_1 -> (J_1 -> J_2) -> game.hg th I_2 th J_2 \
+  $ ar game.reixl ar game.reixr ar cl (I_2 -> I_1) -> game.hg th I_1 th J_1 -> (J_1 -> J_2) -> game.hg th I_2 th J_2 \
     (f game.reixl A game.reixr g) .game.mv th i := A .game.mv th (f th i) \
     (f game.reixl A game.reixr g) .game.nx th m := g th (A .game.nx th m) $
 
@@ -308,7 +308,7 @@ define two interpretations of half-games as functors.
 #definition[Half-Game Functors][
   Given a half-game $G cl game.hg th I th J$, we define the
   _active interpretation_ and _passive interpretation of $G$_ as the functors
-  $G game.extA -, G game.extP - cl base.Set^J -> base.Set^I$ defined as follows.
+  $G game.extA -, G game.extP - cl base.Set^J -> base.Set^I$, written $G game.extA ar$ and $G game.extP ar$ and defined as follows.
 
   $ (G game.extA X) th i := (m cl G.game.mv th i) times X th (G.game.nx th m) \
     (G game.extP X) th i := (m cl G.game.mv th i) -> X th (G.game.nx th m) $
@@ -336,11 +336,10 @@ trop à $game.extP$, elle évoque aussi un adjoint à droite plus qu'à gauche.]
 */
 
 #definition[Transition System][
-  Given a game $G cl game.g th I^+ th I^-$ and a family $R cl I^+ -> base.Set$,
+  Given a game $G cl game.g th I^+ th I^-$ and a family $R cl base.Set^(I^+)$,
   a _transition system over $G$ with output $R$_ is given by the following record.
 
-  $
-    kw.rec strat.t_G th R kw.whr \
+  $ kw.rec strat.t_G th R kw.whr \
     quad strat.stp cl I^+ -> base.Set \
     quad strat.stn cl I^- -> base.Set \
     quad strat.play cl strat.stp => R + strat.stp + G.game.client game.extA strat.stn \
@@ -364,23 +363,26 @@ determine how to play. Their relationship is similar to that of types to terms.
 The $strat.play$ function takes as inputs an active position $i cl I^+$, an
 active state  $s cl strat.stp th i$  over $i$ and returns one of three things:
 
-/ a _return move_ in $R th i$:  \
+#par(hanging-indent: 2em)[$R th i$ ~~ _return move_ \
   This case was not present in Levy & Staton~#num-cite(<LevyS14>), but
   it allows a strategy to end the game, provided it exhibits an output. As we
   will see in @sec-itree with interaction trees, this is crucial for
   compositional manipulation.
+]
 
-/ a _silent move_ in $strat.stp th i$: \
+#par(hanging-indent: 2em)[$strat.stp th i$ ~~ _silent move_ \
   In this case, the strategy postpones progression in the game. This case
   allows for strategies to be _partial_ in the same sense as Venanzio Capretta's
   #delay.t monad~#mcite(<Capretta05>). _Total strategies_ without this case would
   make perfect sense, but we are interested in arbitrary, hence partial, computations.
+]
 
-/ a _client move_ in $G.game.client game.extA strat.stn$:  \
+#par(hanging-indent: 2em)[$G.game.client game.extA strat.stn$ ~~ _client move_ \
   By @def-hg-ext, this data consists of a client move valid at the current
   position, together with a passive state over the next position. This case is
   the one which actually _chooses_ a move and sends it to a hypothetical
   opponent.
+]
 
 The #strat.coplay function is simpler. By @def-hg-ext, it takes a passive
 position, a passive state over it, and a currently valid server move, and must
@@ -403,18 +405,19 @@ programming languages have introduced syntactic facilities like the "yield" and
 
 #tom[Ça je connais pas du tout.]
 
-In order to rectify this, we forget about states altogether. Notice that @def-tsys is
-exactly the definition of a coalgebra for some endofunctor on $(I^+ -> base.Set)
-times (I^- -> base.Set)$. Then, as by definition any coalgebra maps uniquely
-into the final coalgebra, it is sufficient to work with this final coalgebra,
-whose states intuitively consist of infinite trees, describing
-the traces of any possible transition system over $G$.
+In order to rectify this, we forget about states altogether. Notice
+that @def-tsys is exactly the definition of a coalgebra for some
+endofunctor on $base.Set^(I^+) times base.Set^(I^-)$. Then, as by
+definition any coalgebra maps uniquely into the final coalgebra, it is
+sufficient to work with this final coalgebra, whose states intuitively
+consist of infinite trees, describing the traces of any possible
+transition system over $G$.
 
 #tom[Là-dessus ptet dire "modulo les questions de taille" quelque part?]
 
 However, before constructing this final coalgebra, I will simplify the setting
 slightly. Notice that we can easily make passive states disappear, by
-describing systems as a family of active states $strat.stp cl I^+ -> base.Set$
+describing systems as a family of active states $strat.stp cl base.Set^(I^+)$
 and a single transition function:
 
 $ strat.stp => R + strat.stp + G.game.client game.extA (G.game.server game.extP strat.stp) $
@@ -465,7 +468,7 @@ simpler notion.
 
 
 #definition[Game to Container][
-  We give a functor $floor(-) cl game.g th I^+ th I^- -> icont.t th I^+$ defined
+  We give a functor $floor(ar) cl game.g th I^+ th I^- -> icont.t th I^+$ defined
   on objets as follows.
 
   /*$ (icont.g2c th A) .icont.qry th i := A .game.client"".game.mv th i \
@@ -476,7 +479,7 @@ simpler notion.
     floor(A) .icont.nxt th r := A .game.server"".game.nx th r $
 
   It preserves the extension strictly, in the sense that for all $A cl
-  game.g th I^+ th I^-$, the functor $A.game.client game.extA (A.game.server game.extP -))$ is
+  game.g th I^+ th I^-$, the functor $A.game.client game.extA (A.game.server game.extP ar))$ is
   definitionally equal to $[| floor(A) |]$.
 ]
 
@@ -484,13 +487,13 @@ simpler notion.
   positions which containers do not, we can guess this information and inject
   containters into games as follows.
 
-  $ ceil(-) cl (Sigma cl icont.t th I) -> game.g th I th ((i cl I) times Sigma .icont.qry th i) \
+  $ ceil(ar) cl (Sigma cl icont.t th I) -> game.g th I th ((i cl I) times Sigma .icont.qry th i) \
     ceil(Sigma) .game.client"".game.mv th i := Sigma .icont.qry th i \
     ceil(Sigma) .game.client"".game.nx th {i} th m := (i, m) \
     ceil(Sigma) .game.server"".game.mv th (i, m) := Sigma .icont.rsp th m \
     ceil(Sigma) .game.server"".game.nx th m := Sigma .icont.nxt th m $
 
-  We observe in passing that $floor(-) compose ceil(-)$ is definitionally equal
+  We observe in passing that $floor(ar) compose ceil(ar)$ is definitionally equal
   to the identity on containers, but not the other way around. ]
 
 After this interlude on indexed containers, we are now ready to go back to
@@ -499,11 +502,11 @@ functor $X |-> R + X + G.game.client game.extA (G.game.server game.extP X))$
 and that we wanted to construct its final coalgebra. Fully forgetting about
 passive information, we can now instead work with the functor
 $X |-> R + X + [| Sigma |] th X$ for some container $Sigma$, which I call
-the _action functor on $Sigma$_.
+the _action functor_ on $Sigma$.
 
 #definition[Action Functor][
   Given a signature $Sigma cl icont.t th I$ and an output $R cl
-  I -> base.Set$, the _action functor on $Sigma$ with output $R$_,
+  base.Set^I$, the _action functor on $Sigma$ with output $R$_,
   $itree.F_Sigma th R cl base.Set^I -> base.Set^I$ is defined by the following
   data type.
 
@@ -525,10 +528,11 @@ goût. La def des arbres d'interation indexés est perdue au milieu d'une longue
 histoire. Est-ce que tu devrais pas faire une sous-partie "coalgèbre finale /
 arbres d'interaction"?] 
 
-#definition[Indexed Interaction Tree][ Given a signature
-$Sigma cl icont.t th I$ and an output $R cl I -> base.Set$, the family of
-  _indexed interaction trees on $Sigma$ with output $R$_, $itree.t_Sigma th R cl
-  base.Set^I$ is given by the following coinductive record.
+#definition[Indexed Interaction Tree][ Given a signature $Sigma cl
+  icont.t th I$ and an output $R cl base.Set^I$, the family of
+  _indexed interaction trees on $Sigma$ with output $R$_, denoted by
+  $itree.t_Sigma th R cl base.Set^I$, is given by the following
+  coinductive record.
 
   $ kw.rec itree.t_Sigma th R th i cl base.Set kw.whr \
     quad itree.obs cl itree.F_Sigma th R th (itree.t_Sigma th R) th i $
@@ -554,10 +558,10 @@ define bisimilarity, let us first link this definition to transition systems
 over games.
 
 #definition[Strategies][
-  Given a game $G cl game.g th I^+ th I^-$ and output $R cl I^+ -> base.Set$,
+  Given a game $G cl game.g th I^+ th I^-$ and output $R cl base.Set^(I^+)$,
   the _active strategies over $G$ with output $R$_, $game.stratA_G th R cl
-  I^+ -> base.Set$ and the _passive strategies over $G$ with output $R$_,
-  $game.stratP_G th R cl I^- -> base.Set$ are given as follows.
+  base.Set^(I^+)$ and the _passive strategies over $G$ with output $R$_,
+  $game.stratP_G th R cl base.Set^(I^-)$ are given as follows.
 
   $ game.stratA_G th R := itree.t_floor(G) th R \
     game.stratP_G th R := G.game.server game.extP game.stratA_G th R $
@@ -693,8 +697,8 @@ starting from $top$. #tom[Formulation bizarre: le tower predicate, c'est $t_f$?]
   _$f$-tower_ is an inductive predicate defined as follows.
 
   $ kw.dat th tower.t_f cl X -> base.Prop kw.whr \
-    quad tower.tb {x} cl tower.t_f th x -> tower.t_f th (f th x) \
-    quad tower.tinf {P} cl P subset.eq tower.t_f -> tower.t_f th (and.big P) $
+    quad tower.tb th {x} cl tower.t_f th x -> tower.t_f th (f th x) \
+    quad tower.tinf th {P} cl P subset.eq tower.t_f -> tower.t_f th (and.big P) $
 
   We will write $x in tower.t_f$ for $tower.t_f th x$. ] <def-tower> 
   
@@ -754,22 +758,30 @@ Est-ce qu'une présentation par règles d'inférences aide à comprendre? Je ten
 
 #tom[Y a une "compo sous $forall$" ici, pas sûr d'avoir vu ça noté comme ça
 ailleurs, j'ai eu un peu l'impression de me faire arnaquer...]
+ 
+#lemma[Tower Properties][
+  Given a complete lattice $X$ and a monotone endo-map $f cl X -> X$,
+  for all $x in tower.t_f$ the following statements are true.
+
+  1. $f th x lt.tilde x$
+  2. $forall th y -> y lt.tilde f th y -> y lt.tilde x$ 
+] <lem-tower-props>
+#proof[Both by direct tower induction on the statement.]
 
 #theorem[Tower Fixpoint][
   Given a complete lattice $X$ and a monotone endo-map $f cl X -> X$, pose
   $tower.nu f := and.big tower.t_f$.
   The following statements are true:
   1. $tower.nu f in tower.t_f$
-  2. $f th (tower.nu f) lt.tilde tower.nu f$,
-  3. $tower.nu f lt.tilde f th (tower.nu f)$,
-  4. for all $x$, if $x lt.tilde f th x$, then $x lt.tilde tower.nu f$.
+  2. $tower.nu f approx f th (tower.nu f)$,
+  3. for all $x$, if $x lt.tilde f th x$, then $x lt.tilde tower.nu f$.
 ] <lem-tower-fix>
 #proof[
-  1. By $tower.tinf th (lambda t. th t)$.
-  2. Using 1., by tower induction on $P th x := f th x lt.tilde x$
-  3. Using 1., by $tower.tb$ we have $f th (tower.nu f) in tower.t_f$, the result
-     follows by definition of $tower.nu f$ as an infimum.
-  4. Using 1., by tower induction on $P th y := x lt.tilde y$.
+  1. By $tower.tinf th (kw.fun t. th t)$.
+  2. By antisymmetry. First, $nu f$ is a pre-fixed point by 1. and @lem-tower-props.
+     Second, by $tower.tb$ and 1., we have $f th (tower.nu f) in tower.t_f$, hence by
+     infimum property, $nu f lt.tilde f th (nu f)$.
+  3. By 1. and @lem-tower-props.
   #v(-2em)
 ]
 
@@ -807,7 +819,7 @@ $ R^rel.r cl forall th {i} -> R^1 th i -> R^2 th i -> base.Prop, $
 
 we define strong bisimilarity as a family-relation
 
-$ - iteq(R^rel.r) - cl
+$ ar iteq(R^rel.r) ar cl
   forall th {i} -> itree.t_Sigma th R^1 th i
                 -> itree.t_Sigma th R^2 th i
                 -> base.Prop. $
@@ -815,7 +827,7 @@ $ - iteq(R^rel.r) - cl
 We start with some preliminary notation for our indexed relations.
 
 #definition[Family Relation][
-  Given $I cl base.Set$ and two families $X, Y cl I -> base.Set$, the set of
+  Given $I cl base.Set$ and two families $X, Y cl base.Set^I$, the set of
   _family relations between $X$ and $Y$_ is defined as follows.
 
   $ rel.irel th X th Y := forall th {i} -> X th i -> Y th i -> base.Prop $
@@ -833,9 +845,9 @@ We start with some preliminary notation for our indexed relations.
   #mathpar(spacing: 2em, block: false, inset: 0.5em,
     [$ & rel.diagS cl rel.irel th X th X \
        & rel.diagS th a th b := a = b $],
-    [$ & -^rel.revS cl rel.irel th X th Y -> rel.irel th Y th X \
+    [$ & ar^rel.revS cl rel.irel th X th Y -> rel.irel th Y th X \
        & R^rel.revS th a th b := R th b th a $],
-    [$ & - rel.seqS - cl rel.irel th X th Y -> rel.irel th Y th Z -> rel.irel th X th Z \
+    [$ & ar rel.seqS ar cl rel.irel th X th Y -> rel.irel th Y th Z -> rel.irel th X th Z \
        & (R rel.seqS S) th a th c := exists th b, R th a th b and S th b th c $]
   )
 ]
@@ -1010,8 +1022,8 @@ $ itree.tp_Sigma th R := itree.F_Sigma th R th (itree.t_Sigma th R) $
 
   We define the following shorthands:
   #let xx = $itree.eat_Sigma^R$
-  $ itree.eatlr := xx \
-    itree.eatrl := xx^rel.revS $
+  $ itree.eatlr th := xx \
+    itree.eatrl th := xx^rel.revS $
 ]
 
 #lemma[
@@ -1028,7 +1040,8 @@ $ itree.tp_Sigma th R := itree.F_Sigma th R th (itree.t_Sigma th R) $
 
   $ itree.wb_Sigma cl rel.lat_Sigma -> rel.lat_Sigma \
     itree.wb_Sigma th x th R^rel.r th t^1 th t^2 := \
-      quad (itree.eatlr rel.seqS itree.RS th R^rel.r th (x th R^rel.r) rel.seqS itree.eatrl) th (t^1 .itree.obs) th (t^2 .itree.obs) $
+      quad (cnorm(itree.eatlr) rel.seqS itree.RS th R^rel.r th (x th R^rel.r)
+            rel.seqS cnorm(itree.eatrl)) th (t^1 .itree.obs) th (t^2 .itree.obs) $
 
   We define heterogeneous and homogeneous _weak bisimilarity_ as follows.
 
@@ -1066,13 +1079,14 @@ bisimilarity transitive!
   step sychnronization then weak bisimilarity" and for the one step unfolding of weak
   bisimilarity.
 
+  #peio[rework symbols]
   #let sync = de(crel(math.attach(sym.approx, tr: "s")))
   #let weak = de(crel(math.attach(sym.approx, tr: "w")))
   #let eat = itree.eatlr
   #let eatr = itree.eatrl
 
-  $ "" sync "" & := itree.RS th R^rel.r th itweq(R^rel.r) \
-    "" weak "" & := "" eat rel.seqS sync rel.seqS eatr $
+  $ sync "" & := itree.RS th R^rel.r th itweq(R^rel.r) \
+    weak "" & := cnorm(eat) rel.seqS cnorm(sync) rel.seqS cnorm(eatr) $
 
   Prove the following statements by direct induction on the eating relation for all $a, b, c$.
 
@@ -1084,7 +1098,7 @@ bisimilarity transitive!
   3. $itree.tauF th a weak b -> a .itree.obs weak b$
   4. $a weak itree.tauF b -> a weak b .itree.obs$
 
-  Using 3. and 4., prove the following statements by induction.
+  Using 3. and 4. and transitivity of the eating relation, prove the following statements by induction.
 
   5. $a crel((weak rel.seqS eat)) itree.retF th r -> a crel((eat rel.seqS sync)) itree.retF r$
   6. $a crel((weak rel.seqS eat)) itree.visF th q th k -> a crel((eat rel.seqS sync)) itree.visF th q th k$
@@ -1095,54 +1109,7 @@ bisimilarity transitive!
 
   9. $a crel((eatr rel.seqS eat)) b -> a eat b or a eatr b$
 
-  Then, we prove the following statment.
-
-  10. $cnorm(weak) rel.seqS cnorm(weak) th th lt.tilde th th cnorm(eat) rel.seqS itree.RS th R^rel.r th (itweq(R^rel.r) rel.seqS itweq(R^rel.r)) rel.seqS eatr$
-
-  Introducing and decomposing the hypotheses, we obtain the following:
-
-  $ a eat x_1 sync x_2 eatr b eat y_1 sync y_2 eatr c $
-
-  By applying 9. in the middle, assume w.l.o.g. that the left case is true,
-  i.e., $x_2 eat y_1$ (for the right case, swap applications of 5. and 6. with
-  corresponding applications of 7. and 8.). By case on $y_1$.
-
-  - When $y_1 = itree.retF th r$,
-
-    $ & a & eat x_1 & sync x_2 &          & eat itree.retF th r & sync y_2 eatr c & \
-    & a & eat x_1 & sync x_2 & eatr x_2 & eat itree.retF th r & sync y_2 eatr c & quad "by refl." \
-    & a &         & weak     &      x_2 & eat itree.retF th r & sync y_2 eatr c & quad "by def." \
-    & a &         & eat      &      x_3 & sync itree.retF th r & sync y_2 eatr c & quad "by 5." \
-  $
-
-    By concatenation (@lem-actrel-props) between $x_3$ and $y_2$, we obtain 
-
-    $ itree.RS th (R^rel.r rel.seqS R^rel.r) th (itweq(R^rel.r) rel.seqS
-    itweq(R^rel.r)) th x_3 th y_2. $
-
-    By transitivity, $R^rel.r rel.seqS R^rel.r lt.tilde R^rel.r$. By
-    monotonicity (@lem-actrel-props) we obtain the following and conclude.
-
-    $ itree.RS th R^rel.r th (itweq(R^rel.r) rel.seqS
-    itweq(R^rel.r)) th x_3 th y_2. $
-
-  - When $y_1 = itree.visF th q th k$, the reasoning is the same, swapping
-    lemma 5. with lemma 6.
-  - When $y_1 = itree.tauF th t$,
-
-    $ & a & eat x_1 & sync x_2 & eat itree.tauF th t & sync y_2 eatr c & \
-      & a & eat x_1 & sync x_2 &                     & sync y_2 eatr c & quad "by 1." \
-    $
-
-    By @lem-actrel-props, using concatenation between $x_2$ and $y_2$, we obtain 
-
-    $ itree.RS th (R^rel.r rel.seqS R^rel.r) th (itweq(R^rel.r) rel.seqS
-    itweq(R^rel.r)) th x_3 th y_2, $
-
-    we then conclude as before by transitivity of $R^rel.r$.
-
-  This conclude the proof of 10. Finally, we prove transitivity of
-  $itweq(R^rel.r)$ by tower induction on
+  Finally, we prove transitivity of $itweq(R^rel.r)$ by tower induction on
 
   $ P th x := cnorm(itweq(R^rel.r)) rel.seqS cnorm(itweq(R^rel.r)) lt.tilde x th R^rel.r. $
 
@@ -1156,10 +1123,51 @@ bisimilarity transitive!
     th th lt.tilde th th
     cnorm(eat) rel.seqS itree.RS th R^rel.r th (x th R^rel.r) rel.seqS cnorm(eatr) $
 
-  We apply 10. and conclude by monotonicity on $P th x$.
+  Introducing and decomposing the hypotheses, we obtain the following:
+
+  $ a eat x_1 sync x_2 eatr b eat y_1 sync y_2 eatr c $
+
+  Apply 9. between $x_2$ and $y_1$. Assume that the left case is true,
+  i.e., $x_2 eat y_1$ (for the right case, swap applications of 5. and 6. with
+  corresponding applications of 7. and 8.). By case on $y_1$.
+
+  - When $y_1 = itree.retF th r$,
+
+    $ & a & eat x_1 & sync x_2 &          & eat itree.retF th r & sync y_2 eatr c & \
+    & a & eat x_1 & sync x_2 & eatr x_2 & eat itree.retF th r & sync y_2 eatr c & quad "by refl." \
+    & a &         & weak     &      x_2 & eat itree.retF th r & sync y_2 eatr c & quad "by def." \
+    & a &         & eat      &      x_3 & sync itree.retF th r & sync y_2 eatr c & quad "by 5." \
+  $
+
+    By concatenation (@lem-actrel-props) between $x_3$ and $y_2$, we obtain 
+
+    $ itree.RS th (R^rel.r rel.seqS R^rel.r) th (cnorm(itweq(R^rel.r)) rel.seqS
+    cnorm(itweq(R^rel.r))) th x_3 th y_2. $
+
+    By transitivity, $R^rel.r rel.seqS R^rel.r lt.tilde R^rel.r$. Using this
+    and the coinduction hypothesis $P th x$, by monotonicity
+    (@lem-actrel-props) we obtain the following and conclude.
+
+    $ itree.RS th R^rel.r th (x th R^rel.r) th x_3 th y_2. $
+
+  - When $y_1 = itree.visF th q th k$, the reasoning is the same, swapping
+    lemma 5. by lemma 6.
+  - When $y_1 = itree.tauF th t$,
+
+    $ & a & eat x_1 & sync x_2 & eat itree.tauF th t & sync y_2 eatr c & \
+      & a & eat x_1 & sync x_2 &                     & sync y_2 eatr c & quad "by 1." \
+    $
+
+    By @lem-actrel-props, using concatenation between $x_2$ and $y_2$, we obtain 
+
+    $ itree.RS th (R^rel.r rel.seqS R^rel.r) th (cnorm(itweq(R^rel.r)) rel.seqS
+      cnorm(itweq(R^rel.r))) th x_3 th y_2, $
+
+    we then conclude as before by transitivity of $R^rel.r$ and coinduction hypothesis.
+    #v(-2em) // BUG?
 ]
 
-#lemma[Up-to strong bisimilarity][
+#lemma[Up-to Strong Bisimilarity][
   Given $Sigma cl icont.t th I$ and $R^rel.r cl rel.irel th R th R$, if $R$ is transitive,
   for all $x in tower.t_(itree.wb_Sigma)$,
 
@@ -1167,24 +1175,25 @@ bisimilarity transitive!
     lt.tilde x th R^rel.r $
 ]
 #proof[
+  Let us define the following shorthand.
+
+  #peio[rework symbols]
   #let strong = de(crel(math.attach(sym.approx.eq, tr: "s")))
   #let sync = crel(math.attach(de(sym.approx), tr: de("s"), br: "x"))
   #let weak = crel(math.attach(de(sym.approx), tr: de("w"), br: "x"))
   #let eat = itree.eatlr
   #let eatr = itree.eatrl
 
-  Let us define the following shorthand.
-
   $ "" strong "" & := itree.RS th R^rel.r th iteq(R^rel.r) \
     "" sync "" & := itree.RS th R^rel.r th (x th R^rel.r) \
-    "" weak "" & := cnorm(eat) rel.seqS sync rel.seqS eatr $
+    "" weak "" & := cnorm(eat) rel.seqS cnorm(sync) rel.seqS cnorm(eatr) $
 
   Prove the following statements by direct induction.
 
   1. $a crel((strong rel.seqS eat)) b -> a crel((eat rel.seqS strong)) b $
   2. $a crel((eatr rel.seqS strong)) b -> a crel((strong rel.seqS eatr)) b $
 
-  Then, prove the goal by tower induction on
+  Then, let us prove the goal by tower induction on
 
   $ P th x := cnorm(iteq(R^rel.r)) rel.seqS x th R^rel.r rel.seqS cnorm(iteq(R^rel.r))
     lt.tilde x th R^rel.r. $
@@ -1196,13 +1205,12 @@ bisimilarity transitive!
 
   By one-step unfolding it suffices to prove the following.
 
-  $ strong rel.seqS weak rel.seqS strong
-    th th lt.tilde th th weak $
+  $ cnorm(strong) rel.seqS cnorm(weak) rel.seqS cnorm(strong) lt.tilde cnorm(weak) $
 
   Introducing and destructing the hypotheses we proceed as follows.
 
-  $ a & strong b & eat x_1    & sync x_2 & eatr c     & strong d & \
-    a & eat y_1  & strong x_1 & sync x_2 & strong y_2 & eatr d   & quad "by 1. and 2." $
+  $ a & strong & b #h(0.6em) & eat    x_1 & sync x_2 & eatr  &  c #h(0.6em) & strong & d & \
+    a & eat    & y_1  & strong x_1 & sync x_2 & strong&  y_2 & eatr   & d & quad "by 1. and 2." $
 
   By concatenation (@lem-actrel-props) between $y_1$ and $y_2$, we obtain 
 
@@ -1219,12 +1227,582 @@ we know that for well-behaved $R^rel.r$ it is an equivalence relation and that
 it supports coinductive proofs up-to reflexivity, up-to symmetry and up-to
 strong bisimilarity.
 
-== Core Operations
+== Monad Structure
 
-=== Monad Structure
+An important structure available on interaction trees is that they form a
+monad. Indeed as they are parametrized by an _output_ family $R$, a strategy
+with output $R$ can be considered as an impure computation returning some $R$.
+Its _effects_ will be to perform game moves and wait for an answer. While at
+first sight---considering only the goal of representing game strategies---such
+an output might seem unnecessary, the compositionality offered by monads, that
+is, sequential composition, is tremendously useful to construct and reason on
+strategies piecewise.
 
-=== Interpretation
+The monad structure on interaction trees takes place in the family category
+$base.Set^I$ and its laws will hold both w.r.t. strong bisimilarity and weak
+bisimilarity. One way to view this is to say that I will define _two_ monads.
+However, in line with my choice of using intensional type theory, I will first
+define a _pre-monad_ structure, containing only the computationally relevant
+operation and then provide two sets of laws.
+
+In fact in @def-itree, we have already defined the "return" operator, $itree.ret$,
+which can be typed as follows.
+
+$ itree.ret th {X} cl X => itree.t_Sigma th X $
+
+Let us define the "bind" operator, which works by tree grafting.
+
+#definition[Interaction Tree Bind][
+  #margin-note[
+    Note that defining $itree.subst_f$ _with $f$ fixed_ is not a
+    mere stylistic consideration. Indeed, what it achieves, is to pull the
+    binder for $f$ out
+    of the coinductive definition. This enables the syntactic guardedness
+    checker to more easily understand subsequent coinductive definition making
+    use of the bind operator. To the best of my knowledge, this trick was first
+    used in the InteractionTree library~#num-cite(<XiaZHHMPZ20>). In general, it
+    is always fruitful to take as many binders as possible out of the cofixpoint
+    definition.
+  ]
+  Let $Sigma cl icont.t th I$. Given $X, Y cl base.Set^I$ and $f cl X => itree.t_Sigma th Y$,
+  define _interaction tree substitution_ as follows.
+  $ itree.subst_f cl itree.t_Sigma th X => itree.t_Sigma th Y \
+    (itree.subst_f th t) .itree.obs kw.wit t .itree.obs \
+    quad | itree.retF th x := (k th x) .itree.obs \
+    quad | itree.tauF th t := itree.tauF th (itree.subst_f th t) \
+    quad | itree.visF th q th k := itree.visF th q th (kw.fun th r. th itree.subst_f th (k th r)) $
+
+  Then, define the _interaction tree bind_ operator as
+
+  $ ar itree.bind ar th {X th Y th i} cl itree.t_Sigma th X th i -> (X => itree.t_Sigma th Y) -> itree.t_Sigma th Y th i \
+    t itree.bind f := itree.subst_f th t $
+]
+
+Before proving the monad laws, we will first prove that our operators respect
+both strong and weak bisimilarity, in other words that they are _monotone_. For
+strong bisimilarity and $itree.ret$, the statement is the following.
+
+$ forall th {X^rel.r cl rel.irel th X^1 th X^2} th {i cl I} th {x_1 cl X^1 th i} th {x_2 cl X^1 th i} \
+  quad -> X^rel.r th x_1 th x_2 -> itree.ret th x_1 iteq(X^rel.r) itree.ret th x_2 $
+
+This is quite heavy, and many more complex monotonicity statements will appear
+in the thesis. As such from now on we will extensively use relational
+combinators. To simplify reading such complex relations we will write $a
+xrel(R) b$ for $R th a th b$. Our final goal is to write something such as follows.
+
+$ forall th {X^rel.r} -> itree.ret xrel(X^rel.r rel.iarr cnorm(iteq(X^rel.r))) itree.ret $
+
+To achieve this, define the following combinators.
+
+$ ar rel.arr ar cl rel.rel th X_1 th X_2 -> rel.rel th Y_1 th Y_2 -> rel.rel th (X_1 -> Y_1) th (X_2 -> Y_2) \
+  (R rel.arr S) th f th g := forall th {x_1 x_2} -> R th x_1 th x_2 -> S th (f th x_1) th (g th x_2) $
+
+$ ar rel.iarr ar cl rel.irel th X_1 th X_2 -> rel.irel th Y_1 th Y_2 -> rel.irel th (X_1 => Y_1) th (X_2 => Y_2) \
+  (R rel.iarr S) th f th g := forall th {x_1 x_2} -> R th x_1 th x_2 -> S th (f th x_1) th (g th x_2) $
+
+$ rel.forall cl (forall th {i} -> rel.rel th (X_1 th i) th (X_2 th i)) -> rel.rel th (forall th {i} -> X_1 th i) th (forall th {i} -> X_2 th i) \
+  (rel.forall th R) th f th g := forall th {i} -> R th (f th {i}) th (g th {i}) $
+
+Moreover we will write $rel.forall th A$ for $rel.forall th (kw.fun th {i}. th A)$.
+
+#lemma[ITree Monad Monotonicity][
+  Given $Sigma cl itree.t_Sigma$, for any $X^rel.r$ and $Y^rel.r$ and for any $x cl rel.lat_Sigma$
+  such that either $x in itree.sb_Sigma$ or $x in itree.wb_Sigma$, the following statements are true.
+
+  1. $itree.ret xrel(X^rel.r rel.arr x th X^rel.r) itree.ret$
+  2. $(ar itree.bind ar) xrel(rel.forall th x th X^rel.r rel.arr (X^rel.r rel.iarr x th Y^rel.r) rel.arr x th Y^rel.r) (ar itree.bind ar)$
+
+  As a consequence, return and bind respect both strong and weak bisimilarity:
+  3. $itree.ret xrel(X^rel.r rel.arr cnorm(iteq(X^rel.r))) itree.ret$
+  4. $itree.ret xrel(X^rel.r rel.arr cnorm(itweq(X^rel.r))) itree.ret$
+  5. $(ar itree.bind ar) xrel(rel.forall th cnorm(iteq(X^rel.r)) rel.arr (X^rel.r rel.iarr cnorm(iteq(Y^rel.r))) rel.arr cnorm(iteq(Y^rel.r))) (ar itree.bind ar)$
+  6. $(ar itree.bind ar) xrel(rel.forall th cnorm(itweq(X^rel.r)) rel.arr (X^rel.r rel.iarr cnorm(itweq(Y^rel.r))) rel.arr cnorm(itweq(Y^rel.r))) (ar itree.bind ar)$
+] <lem-up2bind>
+#proof[
+  1. Assuming $X^rel.r th x_1 th x_2$, observe that $itree.sb_Sigma th x th
+     X^rel.r th (itree.ret th x_1) th (itree.ret th x_2)$, which by @lem-tower-props
+     implies $x th X^rel.r th (itree.ret th x_1) th (itree.ret th x_2)$. It is
+     similarly for $x in itree.wb_Sigma$, using reflexivity of $itree.eat_Sigma^(R^rel.r)$.
+  2. By tower induction on the statement. For $x in itree.sb_Sigma$ it is direct
+     by unfolding and dependent pattern matching.
+     For $x in itree.wb_Sigma$, use the following fact.
+     $ t_1 itree.eatlr t_2 -> (t_1 itree.bind f) itree.eatlr (t_2 itree.bind f) $
+  3--6. By direct application of 1--2, using @lem-tower-fix.
+]
+
+While perhaps not very impressive, the last lemma is very important. Points
+3--6 prove that return and bind are well-defined as operators on the setoids of
+strongly- and weakly-bisimilar strategies. But more importantly, point 2. it
+also proves that during a coinductive proof, to relate two sequential compositions
+one can first relate the prefixes and then, pointwise, the continuations. This
+fact is sometimes called "bisimulation up-to bind".
+
+#lemma[ITree Monad Laws][
+  Given $Sigma cl itree.t_Sigma$, for all $x cl X th i$, $t cl itree.t_Sigma th
+  X th i$, $f cl X => itree.t_Sigma th Y$ and $g cl Y => itree.t_Sigma th Z$
+  the following statements are true.
+
+  1. $(itree.ret th x itree.bind f) itree.eq f th x$
+  2. $(t itree.bind itree.ret) itree.eq t$
+  3. $(t itree.bind f) itree.bind g itree.eq t itree.bind (f itree.kbind g)$
+]
+#proof[
+  1. By one-step unfolding.
+  2. By direct tower induction.
+  3. By direct tower induction.
+  #v(-2em)
+]
+
+This concludes the monadic theory of interaction trees. We will make some use of the
+so-called "do notation", to write, e.g.,
+
+$ kw.do x <- t; th y <- f th x; th g th y $
+
+instead of
+
+$ t itree.bind (kw.fun th x. th f th x itree.bind (kw.fun th y. th g th y)) $
+
+To make the best out of this syntax, we finish up by defining some "generic
+effects", i.e. helpers to perform a silent step or play a move.
+
+#definition[Generic Effects][
+  Given $Sigma cl icont.t th I$, we define the following generic effects.
+
+  $ itree.xtau th {i} cl itree.t_Sigma th (kw.fun th i . th base.unit) th i \
+    itree.xtau := itree.tau th (itree.ret th base.tt) $
+
+  $ itree.xvis th {i} th (q cl Sigma .icont.qry th i) cl itree.t_Sigma th (subs.fiber th (Sigma .icont.nxt th {q})) th i \
+    itree.xvis th q := itree.vis th q th (kw.fun th r. th itree.ret th (subs.fib th r)) $
+  #margin-note(dy: -4em)[
+    While slightly funky, the type of $itree.xvis$ is quite notable: it is
+    the type of what Xia et. al~#num-cite(<XiaZHHMPZ20>) call _event handlers_.
+    It encodes a natural transformation of $[| Sigma |]$ into $itree.t_Sigma$. This one
+    in particular is the identity handler, part of a larger
+    structure making $itree.t$ a relative monad~#num-cite(<AltenkirchCU10>)
+    on $icont.t th I -> (base.Set^I -> base.Set^I)$. Alas, its definition is
+    irrelevant to OGS correction and does not fit into this margin...
+  ]
+  $subs.fiber$ is defined by the following data type.
+
+  $ kw.dat th subs.fiber th (f cl A -> B) cl B -> base.Set kw.whr \
+    quad subs.fib th (x cl A) cl subs.fiber th f th (f th x) $
+]
+
 
 == Iteration Operators <sec-iter>
 
-=== Fixed points of Equations
+Interaction trees~#mcite(<XiaZHHMPZ20>) were originally introduced to encode
+arbitrary---i.e., possibly non-terminating---computations. As such, apart from
+monadic operators, they support _iteration operators_, which intuitively allow
+one to write arbitrary "while" loops. Pioneered by Calvin
+Elgot in the setting of fixed points in algebraic theories~#mcite(<Elgot75>),
+iteration in monadic computations enjoys a vast literatture. Recalling that a
+monadic term $a cl M th X$ can be understood as an "$M$-term" with variables in
+$X$, the idea is to represent a system of recursive equations as a morphism
+
+$ f cl X -> M th (X + Y), $
+
+intuitively representing the system
+
+$ x_1 & itree.weq f th x_1 \
+  x_2 & itree.weq f th x_2 \
+      & th dots.v \
+  x_n & itree.weq f th x_n, $
+
+where each $f th x_i$ is an $M$-term mentioning either recursive variables $x_i
+cl X$ or fixed parameters $y_i cl Y$. A _solution_ is then a mapping $s cl X ->
+M th Y$ assigning to each "unknown" in $X$ an $M$-term mentioning only
+parameters in $Y$. A solution must obviously verify the original equation
+system, which in categorical language can be stated as follows.
+
+#let bk(it) = text(fill: black, it)
+$ s th x
+  itree.weq
+  f th x itree.bind
+      kw.fun text(colors.kw, cases(gap: #0.2em,
+      bk(base.inj1 th x. th s th x),
+      bk(base.inj2 th y. th itree.ret th y),
+  )) $
+
+While the basic idea is simple, a number of subtle question arise quite quickly
+during axiomatization. Should all equation systems have solutions? Should the
+solution be unique? If not, a canonical solution can be selected by an
+iteration operator, what coherence properties should this operator verify? In
+fact almost all of the design points one can imagine have been explored, in an
+explosion of competing definitions. The concepts have historically been
+organized roughly as follows.
+
+#block(stroke: 1pt, inset: 0.8em, radius: 5pt)[
+*Iterative Things* ~~ Every _guarded_ equation
+system has a _unique_ solution, i.e., eliminating problematic equations where
+some $x_i approx x_j$. The following variants have been defined:
+
+- _iterative theories_, for terms in finitary algebraic theories~#mcite(dy:
+  -4em, <Elgot75>),
+- _iterative algebras_, for algebras associated to a such theories~#mcite(dy: -2em, <Nelson83>),
+- _completely iterative monads_, for _ideal_ monads, where there is a way to
+    make sense of guardedness~#mcite(dy: -2.5em, <AczelAMV03>).
+- _completely iterative algebras_, for functor algebras, with an adapted notion of _flat_
+  equation system~#mcite(dy: -1em, <AdamekMV04>),
+
+Absence of the prefix "completely" denotes the fact that only finitary equations are solved.
+]
+
+#block(stroke: 1pt, inset: 0.8em, radius: 5pt)[
+*Iteration Things and Elgot Things* ~~ Every equation system has a
+_canonical choice_ of solution, subject to coherence conditions. This following has been
+defined:
+
+- _iteration theories_, for terms in finitary algebraic theories~#mcite(dy: -4em, <BloomE93>),
+- _Elgot algebras_, for finitary functor algebras~#mcite(dy: -2em, <AdamekMV06>),
+- _Elgot monads_, for finitary monad~#mcite(dy: -1em, <AdamekMV10>),
+- _complete Elgot monads_, for any monad~#mcite(dy: 1em, <GoncharovRS15>).
+
+The older "iteration" prefix requires only the four so-called Conway axioms on
+the iteration operator, while the more recent "Elgot" prefix denotes the addition
+of the "uniformity" axiom. The prefix "complete" has the same meaning as before.
+]
+
+More recently, several works have tried to unify the two above families, by
+axiomatizing abstract _guardedness criteria_, for which guarded equations have
+a canonical choice of solution~#mcite(<GoncharovRP17>)~#mcite(dy: 4em, <MiliusL17a>)).
+This criteria can be syntactic as in the first family, or
+trivial as in the second family. The iteration operator can then be axiomatized
+to be coherent in the style of iteration or Elgot monads, and unicity of
+solutions can be framed as the most restrictive of these coherence conditions.
+For the type theory practicioner seeking a modern account, I recommand in
+particular Goncharov et al.~#num-cite(<GoncharovRP17>), which also features
+much appreciated graphical depictions of the coherence laws.
+
+=== Unguarded Iteration
+
+In the original interaction tree library~#num-cite(<XiaZHHMPZ20>), an iteration
+_operator_ has been devised, which constructs a fixpoint w.r.t. weak
+bisimilarity of an arbitrary equation system. This makes the interaction tree
+monad quotiented by weak bisimilarity into a complete Elgot monad. For readability
+let us introduce a helper which we will use several times. Given $f cl X =>
+itree.tp_Sigma th A$ and $f cl X => itree.tp_Sigma th A$ #margin-note[
+  Note the one-step unfolding in the codomain! Moreover, note that this
+  definition pattern-matches on its argument lazily, i.e. only _after_
+  being observed. Indeed, a general trick to help satisfy guardedness is to
+  copattern-match on $.itree.obs$ as early as possible.
+], define the following copairing of arrows $f
+itree.copr g cl (X + Y) => itree.t_Sigma th A$ by
+
+$ ((f itree.copr g) th r) .itree.obs th kw.wit r \
+  quad | base.inj1 th x := f th x \
+  quad | base.inj2 th y := g th y. $
+
+
+#definition[Interaction Tree Iteration][
+  Let $Sigma cl icont.t th I$. Given an equation $f cl X => itree.t_Sigma th (X
+  + Y)$, define its _iteration_ coinductively as follows.
+
+  $ itree.iter_f cl X => itree.t_Sigma th Y \
+    itree.iter_f th x := f th x itree.bind ((itree.tauF compose itree.iter_f) itree.copr itree.retF) $
+]
+
+#lemma[Iter Fixed Point][
+  Given $Sigma cl icont.t th I$, for all $f cl X => itree.t_Sigma th (X + Y)$,
+  $itree.iter_f$ is a weak fixed point of $f$, i.e. the following is
+  statement is true.
+
+  #let bk(it) = text(fill: black, it)
+  $ itree.iter_f th x
+    itree.weq
+    f th x itree.bind
+        kw.fun text(colors.kw, cases(gap: #0.2em,
+        bk(base.inj1 th x. th itree.iter_f th x),
+        bk(base.inj2 th y. th itree.ret th y),
+    )) $
+]
+#proof[
+  By straightforward tower induction, using the up-to bind principle (@lem-up2bind).
+]
+
+We will not prove here that this iteration operator satisfies the requirements
+of complete Elgot monads. These properties could provide us with reasoning
+possibilities on interaction trees constructed by iteration, however in
+contrast to something such as unicity of solution, they are quite limited. The
+prime shortcoming of these coherence properties, is that they are limited to
+rearranging equation systems. As such they are of very little use to prove
+bisimilar the iteration of an equation system with an interaction tree
+constructed entirely differently. Because such a bisimilarity proof will be at
+the cornerstone of our OGS correction proof, we need to look further into
+guardedness, the key for unicity of solutions.
+
+=== Guarded Iteration
+
+A general trend in the research on iteration operators, is the observation that
+very often, the unguarded iteration operator of e.g., an Elgot monad, can be
+shown to somehow derive from an underlying guarded iteration operator enjoying
+unique fixed points, with the former typically
+being a quotient of the latter. With interaction trees, we find ourselves exactly in
+this situation. In fact as we will see, in interaction trees every equation
+system is weakly bisimilar to a guarded equation. Our previous unguarded
+iteration operator can then be seen as constructing the strong, unique, fixed
+point of this new guarded equation.#margin-note[A posteriori this is rather
+unsurprising since we work in a total programming language: tautologically,
+only uniquely defined objects can every be defined.] Without further ado
+let's define this guarded iteration operator.
+
+#definition[Guardedness][
+  Let $Sigma cl icont.t th I$. An action is _guarded in $X$_ if it verifies the
+  following predicate.
+
+  $ kw.dat itree.actguard th {X th Y th A th i} cl itree.F_Sigma th (X + Y) th A th i -> base.Set kw.whr \
+    quad itree.gret th {y} cl itree.actguard th (itree.retF th (base.inj2 th y)) \
+    quad itree.gtau th {t} cl itree.actguard th (itree.tauF th t) \
+    quad itree.gvis th {q th k} cl itree.actguard th (itree.visF th q th k) $
+
+  An itree is _guarded in $X$_ if its observation is guarded.
+
+  $ itree.guard th {X th Y th i} cl itree.t_Sigma th (X + Y) th i -> base.Set \
+    itree.guard th t := itree.actguard th t .itree.obs $
+
+  And finally an equation is _guarded_ if it is pointwise guarded in its argument.
+
+  $ itree.eqguard th {X th Y th i} cl (X => itree.t_Sigma th (X + Y)) -> base.Set \
+    itree.eqguard th f := forall th {i} th {x cl X th i} -> itree.guard th (f th x) $
+] <def-guarded>
+
+#lemma[Unique Guarded Fixed Points][
+  Given $Sigma cl icont.t th I$ and a guarded equation $f cl X =>
+  itree.t_Sigma th (X + Y)$, for any two fixed points $s_1, s_2$ of
+  $f$ w.r.t. strong bisimilarity, i.e. such that for all $x$
+
+  #let bk(it) = text(fill: black, it)
+  $ s_i th x
+    itree.eq
+    f th x itree.bind
+        kw.fun text(colors.kw, cases(gap: #0.2em,
+        bk(base.inj1 th x. th s_i th x),
+        bk(base.inj2 th y. th itree.ret th y),
+    )) quad , $
+
+   then for all $x$, $s_1 th x itree.eq s_2 th x$.
+] <lem-gfix-uniq>
+#proof[
+  By tower induction. Apply both fixed point hypotheses. The goal is now to prove
+  $ (f th x itree.bind
+        kw.fun text(colors.kw, cases(gap: #0.2em,
+        bk(base.inj1 th x. th s_1 th x),
+        bk(base.inj2 th y. th itree.ret th y))))
+    xrel(itree.sb_Sigma th c th rel.diagS)
+    (f th x itree.bind
+        kw.fun text(colors.kw, cases(gap: #0.2em,
+        bk(base.inj1 th x. th s_2 th x),
+        bk(base.inj2 th y. th itree.ret th y))))
+  $
+
+  for some $c$ the chain. By inspecting the first step of $f th x$, by
+  guardedness we obtain a synchronization and it suffices to prove
+
+  $ (t itree.bind
+        kw.fun text(colors.kw, cases(gap: #0.2em,
+        bk(base.inj1 th x. th s_1 th x),
+        bk(base.inj2 th y. th itree.ret th y))))
+    xrel(c th rel.diagS)
+    (t itree.bind
+        kw.fun text(colors.kw, cases(gap: #0.2em,
+        bk(base.inj1 th x. th s_2 th x),
+        bk(base.inj2 th y. th itree.ret th y))))
+  $
+
+  for some interaction tree $t$. The coinduction hypothesis states
+  $ forall th x -> s_1 th x xrel(c th rel.diagS) s_2 th x, $
+
+  we can conclude using up-to bind (@lem-up2bind). 
+]
+
+#definition[Guarded Iteration][
+  Let $Sigma cl icont.t th I$. Given an equation $f cl X =>
+  itree.t_Sigma th (X + Y)$ with guardedness witness $H cl itree.eqguard th f$,
+  define the following _guarded iteration step_.
+
+  $ itree.gstep_(f,H) cl (itree.t_Sigma (X + Y) => itree.t_Sigma th Y) -> (X => itree.tp_Sigma th Y) \
+    itree.gstep_(f,H) th g th x kw.wit (f th x) .itree.obs | H th x \
+    quad | th itree.retF th (base.inj1 x) | () \
+    quad | th itree.retF th (base.inj2 y) | p := itree.retF th y \
+    quad | th itree.tauF th t #h(2.7em) | p := itree.tauF th (g th t) \
+    quad | th itree.visF th q th k #h(2em) | p := itree.visF th q th (kw.fun th r. th g th (k th r)) \
+  $
+
+  Then define the following coinductive auxiliary function.
+  #margin-note[
+    In fact the two definitions $itree.giter^de("aux")$ and $itree.giter$ can be seen as
+    two mutually defined coinductive functions. However, I have refrained
+    from using mutual coinduction, for the simple reason that Coq does not
+    support them. As such, I presented a version where the definition of $itree.giter$
+    it inlined in $itree.giter^de("aux")$. Doing the reverse, and
+    skipping $itree.giter^de("aux")$ altogether, is not possible because Coq
+    does not recognize it as syntactically guarded! I am curious to see what Agda's
+    guardedness checker thinks of this...
+  ]
+
+  $ itree.giter^de("aux")_(f,H) cl itree.t_Sigma th (X + Y) => itree.t_Sigma th Y \
+    itree.giter^de("aux")_(f,H) th t := t itree.bind (itree.gstep_(f,H) th itree.giter^de("aux")_(f,H) itree.copr itree.retF)
+  $
+
+  And finally define the _guarded iteration_ as follows.
+
+  $ itree.giter_(f,H) cl X => itree.t_Sigma th Y \
+    itree.giter_(f,H) := itree.gstep_(f,H) th itree.giter^de("aux")_(f,H) $
+
+  We will omit the guardedness witness $H$ when clear from context.
+] <def-giter>
+
+While a bit scary, the above definition of $itree.gstep$ is simply mimicking the first
+step of a "bind" on $f th x$, and thanks to the added information from guardedness,
+it is able to only trigger subsequent computation in a guarded fashion. Recall that
+for unguarded iteration, this guardedness was achieved artificially, by wrapping the
+whole call in a silent step.
+
+#theorem[Guarded Fixed Point][
+  Let $Sigma cl icont.t th I$. For all guarded equation $f cl X =>
+  itree.t_Sigma th (X + Y)$, $itree.giter_f$ is the unique fixed point of
+  $f$ w.r.t. strong bisimilarity.
+] <lem-giter-fix>
+#proof[
+  Since by @lem-gfix-uniq guarded fixed point are unique w.r.t. strong
+  bisimilarity, it suffices to show that it is indeed a fixed point.
+  We generalize to the following statement.
+
+  $ itree.giter^de("aux")_f th t
+    itree.eq t itree.bind
+        kw.fun text(colors.kw, cases(gap: #0.2em,
+        bk(base.inj1 th x. th itree.giter_f th x),
+        bk(base.inj2 th y. th itree.ret th y))) $
+
+  It is proven by direct tower induction, using up-to bind.
+]
+
+We have thus exhibited interaction trees as a completely iterative monad. We
+now link it to our previous unguarded iteration.
+
+#lemma[
+  Given $Sigma cl icont.t th I$ and an equation $f cl X =>
+  itree.t_Sigma th (X + Y)$
+
+  1. If $s$ is a fixed point of $f$ w.r.t. strong bisimilarity, then $s
+     itree.weq itree.iter_f$.
+  2. Pose $f' th x := f itree.bind (itree.tauF itree.copr itree.retF)$. $f'$ is guarded
+     and $itree.giter_f' th x itree.eq itree.iter_f th x$.
+] <lem-iter-giter>
+#proof[Both by straightforward tower induction.]
+
+=== Eventually Guarded Iteration
+
+Equipped with this new guarded iteration, we finally obtain our powerful uniqueness of
+fixed points. This principle will provide us with a big hammer, very useful for hitting
+nails looking like $itree.giter_f th x itree.eq t th x$. However, being guarded is
+quite a strong requirement! In our equation of interest, composition of OGS strategies,
+has no hope of being guarded. However, observe that if there is a finite chain
+$x_1 approx x_2 approx ... approx x_n approx t$, such that $t$ is guarded, then
+after $n$ iteration step, $x_1$ will be mapped to a guarded $t$. The iteration
+starting from $x_1$ is then still uniquely defined. This was already noted by
+Jiří Adámek, Stefan Milius and Jiří Velebil~#mcite(<AdamekMV10>) with their
+notion of _grounded_ variables. However, a clear definition and study of equations
+containing only grounded variables, or _eventually guarded equations_ as I call
+them, is still novel to the best of my knowledge. In fact, in future work it
+might be fruitful to consider this in the setting of~#mcite(<GoncharovRP17>) as
+a generic relaxation of any abstract guardedness criterion.
+
+#definition[Eventual Guardedness][
+  Let $Sigma cl icont.t th I$ and $f cl X => itree.t_Sigma th (X + Y)$. An
+  interaction tree is _eventually guarded w.r.t. $f$_ if it verifies the
+  following mutually defined inductive predicate.
+
+  $ kw.dat itree.actevguard_f th {i} cl itree.tp_Sigma th (X + Y) th i -> base.Set kw.whr \
+    quad itree.evg th {t} cl itree.actguard th t -> itree.actevguard_f th t \
+    quad itree.evs th {x} cl itree.evguard_f th (f th x) -> itree.actevguard_f th (itree.retF th (base.inj1 th x)) $
+
+  $ itree.evguard_f th {i} cl itree.t_Sigma th (X + Y) th i -> base.Set \
+    itree.evguard_f th t := itree.actevguard_f th t .itree.obs $
+
+  An equation is _eventually guarded_ if it is pointwise eventually guarded.
+
+  $ itree.eqevguard th {X th Y th i} cl (X => itree.t_Sigma th (X + Y)) -> base.Set \
+    itree.eqevguard th f := forall th {i} th (x cl X th i) -> itree.evguard_f th (f th x) $
+] <def-guarded>
+
+#lemma[Unique Eventually Guarded Fixed Points][
+  Given $Sigma cl icont.t th I$ and $f cl X => itree.t_Sigma th (X + Y)$ such that
+  $f$ is eventually guarded, for any fixed point $g$ of $f$ w.r.t.
+  strong bisimilarity, for all $x$, $g th x itree.eq itree.eviter_f th x$.
+] <lem-evfix-uniq>
+#proof[
+  By tower induction, then by induction on the eventual guardedness proof.
+]
+
+To construct eventually guarded fixed points, we will reduce them to the problem of
+computing a guarded fixed point. Indeed by definition, any eventually guarded equation
+can be pointwise unrolled into a guarded one.
+
+#definition[Unrolling][
+  Let $Sigma cl icont.t th I$. Given $f cl X => itree.t_Sigma th (X + Y)$ and
+  $t$ such that $t$ is eventually guarded w.r.t. $f$, define the _unrolling of $t$_ as the
+  following inductive definition.
+
+  $ itree.evunroll_f th {i} th (t cl itree.tp_Sigma th (X + Y) th i) cl itree.actevguard_f th t -> itree.tp_Sigma th (X + Y) th i $
+  #v(-0.4em)
+  $ & itree.evunroll_f th (itree.retF th (base.inj1 th x)) th && (itree.evs th p) & := & itree.evunroll_f th (f th x).itree.obs th p \
+    & itree.evunroll_f th (itree.retF th (base.inj2 th y)) th && p & := & itree.retF th (base.inj2 th y) \
+    & itree.evunroll_f th (itree.tauF th t) th && p & := & itree.tauF th t \
+    & itree.evunroll_f th (itree.visF th q th k) th && p & := & itree.visF th q th k $
+
+  Moreover, define the following _pointwise unrolling_ of $f$.
+
+  $ itree.equnroll_f cl itree.eqevguard th f -> (X => itree.t_Sigma th (X + Y)) \
+    (itree.equnroll_f th H th x) .itree.obs := itree.evunroll_f th (f th x).itree.obs th (H th x) $
+]
+
+#lemma[Unroll Guarded][
+  Given $Sigma cl icont.t th I$ and $f cl X => itree.t_Sigma th (X + Y)$ such that
+  $H cl itree.eqevguard th f$, then $itree.equnroll_f th H$ is guarded.
+]
+#proof[By direct induction]
+
+#definition[Eventually Guarded Iteration][
+  Given $Sigma cl icont.t th I$ and $f cl X => itree.t_Sigma th (X + Y)$ such that
+  $H cl itree.eqevguard th f$, define the _eventually guarded iteration of $f$_ as follows.
+
+  $ itree.eviter_(f,H) cl X => itree.t_Sigma th Y \
+    itree.eviter_(f,H) := itree.giter_(itree.equnroll th f th H)$
+]
+
+It is left for us to verify that this construction is indeed a fixed point
+of $f$ (in addition to being a fixed point of the unrolled equation).
+
+#theorem[Eventually Guarded Fixed Point][
+  Given $Sigma cl icont.t th I$ and $f cl X => itree.t_Sigma th (X + Y)$ such that
+  $f$ is eventually guarded, then $itree.eviter_f$ is the unique fixed point of $f$ w.r.t.
+  strong bisimilarity.
+] <thm-eviter-fix>
+#proof[
+  By @lem-evfix-uniq eventually guarded fixed points are unique w.r.t. strong bisimilarity.
+  It suffices to prove that $itree.eviter_f$ is a fixed point of $f$.
+  First observe that eventual guardedness is provably irrelevant:
+
+  $ forall th (p, q cl itree.evguard_f th t) -> p = q. $
+
+  This observation will help us to change the eventual guardedness witness, on which
+  computation of the unrolling depends. Next, observe by one step unfolding, and
+  using the previous observation, that whenever
+
+  $ (f th x_1) .itree.obs = itree.retF th (base.inj1 th x_2), $
+
+  then
+
+  $ itree.eviter_f th x_1 itree.eq itree.eviter_f th x_2. $
+
+  Then, prove the goal by one-step unfolding and case analysis.
+]
+
+Since @lem-iter-giter links any strong fixed point of $f$ with the usual unguarded
+iteration $itree.iter_f$, we already know that for an eventually guarded equation $f$,
+$itree.eviter_f itree.weq itree.iter_f$. As such this concludes our study of eventually
+guarded iteration. In fact, @thm-eviter-fix is the crucial building block that our
+correctness proof of OGS will rest upon, and it concludes this chapter.
+
+#peio[Et delay alors?]

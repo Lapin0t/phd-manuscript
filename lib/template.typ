@@ -154,7 +154,7 @@
     set align(left)
     pad(left: 1.5em, it)
   }
-  //show math.equation: set text(font: "Cambria Math")
+  show math.equation: set text(font: ("EB Garamond", "New Computer Modern Math",))
 
   // FIGURES
   set figure(numbering: n => {
@@ -178,7 +178,7 @@
   set table(stroke: none)
 
   // RAW BLOCKS
-  show raw: set text(font: ("Iosevka", "Fira Mono"), size: 9pt)
+  show raw: set text(font: ("FiraCode Nerd Font",), size: 9pt)
   show raw.where(block: true): block.with(inset: (x: 5pt))
 
   // REPLACEMENTS
