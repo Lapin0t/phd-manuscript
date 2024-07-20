@@ -711,7 +711,22 @@ saute pas du tout aux yeux. L'intuition des constructeurs manque cruellement, je
 trouve.
 
 Par ex, c'est plus ou moins clair que $tower.tb$ correspond au jeu de
-bisim, mais tu sais expliquer la présence de $tower.tinf$?]
+bisim, mais tu sais expliquer la présence de $tower.tinf$?
+
+Est-ce qu'une présentation par règles d'inférences aide à comprendre? Je tente:
+
+  #inferrule(
+    [$x in tower.t_f$],
+    [$f th x in tower.t_f$],
+  )
+  #inferrule(
+    ([$... $],
+    [$x_i in tower.t_f $],
+    [$... $]),
+        [$ and.big_i x_i in tower.t_f$],
+  )
+  
+]
 
 #theorem[Tower Induction][
   Given a complete lattice $X$, a monotone endo-map $f cl X -> X$ and an inf-closed
@@ -882,7 +897,9 @@ Given $Sigma cl icont.t th I$, an output relation $R^rel.r cl rel.irel th R^1 th
 
 #tom[Le premier point est presque trop efficace, ptet tu pourrais mettre une
 remarque pour expliquer les arguments implicites des $rel.diagS$? Les expliciter
-serait trop long?]
+serait trop long?
+
+Et ptet pour les catégoriciennes dire que c'est le relèvement canonique aux relations?]
 
 #definition[Interaction Relation Lattice][
   Given $Sigma cl icont.t th I$, we define the _interaction relation lattice over $Sigma$_ as follows.
@@ -902,15 +919,25 @@ serait trop long?]
     itree.sb_Sigma th x th R^rel.r th t^1 th t^2 := \
       quad itree.RS th R^rel.r th (x th R^rel.r) th (t^1 .itree.obs) th (t^2 .itree.obs) $
 
-  We define heterogeneous and homogeneous _strong bisimilarity_ as follows.
+  For any given family relation $R^r : rel.irel th R^1 th R^2$, we define
+  heterogeneous and homogeneous _strong bisimilarity_ over $R^r$, denoted by
+  $iteq(R^rel.r)$, as follows.
 
   $ a iteq(R^rel.r) b := tower.nu th itree.sb_Sigma th R^rel.r th a th b \
     a de(approx.eq) b := a iteq(rel.diagS) b $
 ]
 
+#tom[Ptet faire la remarque qu'ici on prend le point fixe avant d'appliquer à
+$R^r$, mais que ça revient au même que de fixer $R^r$ puis prendre le point fixe
+puisque tout est point à point.]
+
 #lemma[
   Given $Sigma cl icont.t th I$, for all $x in tower.t_(itree.sb_Sigma)$, the
   following statements are true.
+
+#tom[Ah, arrivé ici, je sais pointer une raison qui fait que ta présentation de
+la tower induction est un peu rude: c'est qu'on n'a aucune intuition de ce
+qu'est un élément de $tower.t_f$. Ici, tu quantifies dessus et ça m'évoque rien.]
 
   #let xx = [$R^rel.r$]
 
@@ -919,13 +946,12 @@ serait trop long?]
     (x th R^rel.r)^rel.revS & lt.tilde x th xx^rel.revS \
     x th R^rel.r_1 rel.seqS x th R^rel.r_2 & lt.tilde x th (R^rel.r_1 rel.seqS R^rel.r_2) $
 
-  As a consequence, when $R^rel.r cl rel.irel th X th X$ is an equivalence relation,
-  $x th R^rel.r$ is an equivalence relation. In particular the strong
-  bisimilarity $de(approx.eq)$ is an equivalence relation.
-] <lem-sbisim-props>
-#proof[
-  All the statements are proven by direct tower induction, applying the corresponding
-  statement from @lem-actrel-props.
+  As a consequence, when $R^rel.r cl rel.irel th X th X$ is an equivalence
+  relation, $x th R^rel.r$ is an equivalence relation. In particular, strong
+  bisimilarity $de(approx.eq)$ is an equivalence relation. ] <lem-sbisim-props>
+
+#proof[ All statements are proven by direct tower induction, applying the
+corresponding statement from @lem-actrel-props.
 
   For example for the first one, pose $P th x$ to be the goal, i.e.,
 
