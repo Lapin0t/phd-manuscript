@@ -921,7 +921,7 @@ Et ptet pour les catégoriciennes dire que c'est le relèvement canonique aux re
   It is ultimately a set of dependent functions into $base.Prop$, as such it
   forms a complete lattice by pointwise lifting of the structure on
   $base.Prop$.
-]
+] <def-interaction-lattice>
 
 #definition[Strong Bisimilarity][
   Given $Sigma cl icont.t th I$, we define the _strong bisimulation map over
@@ -991,17 +991,21 @@ corresponding statement from @lem-actrel-props.
   both arguments (@lem-actrel-props).
 ]
 
-This completes the basic theory of strong bisimilarity: we have defined it and
-proved by @lem-sbisim-props the most important properties, namely that when
+This completes the basic theory of strong bisimulation: we have defined it and
+proved its most important properties in @lem-sbisim-props, namely that when
 $R^rel.r$ is well-behaved, not only it is an equivalence relation, but
 bisimulation proofs can work up-to reflexivity, symmetry and transitivity.
 
+#tom[Le @lem-sbisim-props ne parle pas directement des bisims, il parle de
+$tower.t$. Est-ce que tu saurais rendre le lien plus clair à ce stade? ]
+
 === Weak Bisimilarity
 
-As hinted previously, we wish to characterize a second notion of bisimilarity, which
-would gloss over the precise number of silent #itree.tauF moves of the two interaction trees. While
-strong bisimilarity will play the role of (extensional) equality between trees, that is,
-a technical tool, weak bisimilarity will play the role of a semantic equivalence.
+As  previously hinted at, we wish to characterize a second notion of
+bisimilarity, which would gloss over the precise number of silent #itree.tauF
+moves of the two considered interaction trees. While strong bisimilarity will
+play the role of (extensional) equality between trees, that is, a technical
+tool, weak bisimilarity will play the role of a semantic equivalence.
 
 To define weak bisimilarity, we will follow a similar route to strong bisimilarity, 
 reusing the action relator, but when defining the monotone endo-map, we will insert
@@ -1009,6 +1013,7 @@ a gagdet, allowing to skip over a finite number of silent moves. Let us define t
 gadget. For readability, we will define a shorthand for trees where the top layer of
 actions has been exposed:
 
+#tom[Environnement notation?]
 $ itree.tp_Sigma th R := itree.F_Sigma th R th (itree.t_Sigma th R) $
 
 #definition[Eating Relation][
@@ -1026,15 +1031,29 @@ $ itree.tp_Sigma th R := itree.F_Sigma th R th (itree.t_Sigma th R) $
     itree.eatrl th := xx^rel.revS $
 ]
 
+#tom[A nouveau je suis gêné par les conventions de nommage. Est-ce qu'on ne
+pourrait pas appeler $A$ (par exemple...) les elements des $itree.F_Sigma th R
+th X$? Comme ça, par ex, pour $itree.eatS$ on aurait $itree.eat_Sigma^R th (t
+         .itree.obs) th A -> itree.eat_Sigma^R th (itree.tauF th t) th A$]
+
+#tom[Il manque ici aussi une description intuitive de $itree.eat$.]
+
 #lemma[
   For all $Sigma$ and $R$, the eating relation $itree.eat_Sigma^R$ is reflexive and
   transitive.
 ]
 #proof[By direct induction.]
 
-#definition[Weak Bisimilarity][
-  Given $Sigma cl icont.t th I$, we define the _weak bisimulation map over
-  $Sigma$_ as the following monotone endo-map on the interaction lattice over $Sigma$.
+#definition[Weak Bisimilarity][ Given $Sigma cl icont.t th I$, we define the
+  _weak bisimulation map over $Sigma$_ as the following monotone endo-map on the
+  interaction relation lattice over $Sigma$ (@def-interaction-lattice). 
+  
+  #tom[Je me rends compte ici que le nom "interaction relation lattice" n'est
+  pas ouf, pcq il ne m'évoque plus rien. Que pourrait être un bon nom? C'est
+  quoi ce $rel.lat_Sigma$, au fond? C'est le treillis (paramétrique en le type
+  des réponses) des relèvements de relations des réponses aux arbres
+  d'interaction, c'est bien ça? Proposition: lattice of parametric relation
+  liftings. ]
 
   #let xx = [$itree.eat_Sigma^R$]
 
@@ -1042,6 +1061,8 @@ $ itree.tp_Sigma th R := itree.F_Sigma th R th (itree.t_Sigma th R) $
     itree.wb_Sigma th x th R^rel.r th t^1 th t^2 := \
       quad (cnorm(itree.eatlr) rel.seqS itree.RS th R^rel.r th (x th R^rel.r)
             rel.seqS cnorm(itree.eatrl)) th (t^1 .itree.obs) th (t^2 .itree.obs) $
+
+#tom[Pareil, il manque une description intuitive.]
 
   We define heterogeneous and homogeneous _weak bisimilarity_ as follows.
 
@@ -1051,7 +1072,7 @@ $ itree.tp_Sigma th R := itree.F_Sigma th R th (itree.t_Sigma th R) $
 
 #lemma[
   Given $Sigma cl icont.t th I$, for all $x in tower.t_(itree.wb_Sigma)$, the
-  following statements are true.
+  following statements hold.
 
   #let xx = [$R^rel.r$]
 
@@ -1065,19 +1086,22 @@ $ itree.tp_Sigma th R := itree.F_Sigma th R th (itree.t_Sigma th R) $
   By direct tower induction, as for @lem-sbisim-props.
 ]
 
-Notice that in the previous lemma we have left out the statement regarding
-sequential composition of relations. Indeed it is well-known that weak bisimulation
-proofs up-to transitivity is not valid. However we would still like to prove weak
-bisimilarity transitive!
+#tom[Bon, ok, mais on sait pas quel est le statut de ces propriétés... J'imagine
+qu'intuitivement ces des propriétés de la bisim faible, surtout vue la phrase
+ci-dessous, mais c'est pas clair pour moi en quel sens. ]
 
-#lemma[
-  Given $Sigma cl icont.t th I$ and $R^rel.r cl rel.irel th R th R$, if $R$ is transitive,
-  then so is $itweq(R^rel.r)$.
-]
-#proof[
-  Pose the following shorthands, respectively for the "one
-  step sychnronization then weak bisimilarity" and for the one step unfolding of weak
-  bisimilarity.
+Notice that in the previous lemma, comparing with @lem-sbisim-props, we have
+left out the statement regarding sequential composition of relations. Indeed it
+is well-known that weak bisimulation up-to transitivity is not valid proof
+technique~#num-cite(<Damodulo>). However, we would still like to prove that weak
+bisimilarity is transitive!
+
+#lemma[ Given $Sigma cl icont.t th I$ and $R^rel.r cl rel.irel th R th R$, if
+  $R^rel.r$ is transitive, then so is $itweq(R^rel.r)$. ] #proof[ Pose the
+  following shorthands, respectively for "one step sychnronization then weak
+  bisimilarity" and for one-step unfolding of weak bisimilarity.
+
+  #tom[Environnement notation?]
 
   #peio[rework symbols]
   #let sync = de(crel(math.attach(sym.approx, tr: "s")))
@@ -1088,7 +1112,8 @@ bisimilarity transitive!
   $ sync "" & := itree.RS th R^rel.r th itweq(R^rel.r) \
     weak "" & := cnorm(eat) rel.seqS cnorm(sync) rel.seqS cnorm(eatr) $
 
-  Prove the following statements by direct induction on the eating relation for all $a, b, c$.
+  We prove the following statements by direct induction on the eating relation
+  for all $a, b, c$.
 
   1. $a eat itree.tauF th b sync c -> a sync c$
   2. $ a sync itree.tauF th b eatr c -> a sync c$
@@ -1260,7 +1285,9 @@ Let us define the "bind" operator, which works by tree grafting.
     of the coinductive definition. This enables the syntactic guardedness
     checker to more easily understand subsequent coinductive definition making
     use of the bind operator. To the best of my knowledge, this trick was first
-    used in the InteractionTree library~#num-cite(<XiaZHHMPZ20>). In general, it
+    used in the InteractionTree library~#num-cite(<XiaZHHMPZ20>)
+    
+    . In general, it
     is always fruitful to take as many binders as possible out of the cofixpoint
     definition.
   ]
