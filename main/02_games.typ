@@ -133,6 +133,8 @@ played. This can be encoded by two maps $"next"^+ cl forall i^+, th M^+ th i^+ -
 I^-$ and $"next"^- cl forall i^-, th M^- th i^- -> I^+$. This leads us to the
 following definitions.
 
+#guil[Should you say that $i^+$ is taken in $I^+$ and $i^-$ in $I^-$ ?]
+
 #definition[Half-Game][
   Given $I, J cl base.Set$ a _half-game with input positions $I$
   and output positions $J$_ is given by the following record.
@@ -185,6 +187,9 @@ framed bicategories and two-sided fibrations.
     quad game.ssrv cl game.hsim th B .game.server th A .game.server $
 ]
 
+#guil[You could introduce the notion of composition of simulations,
+and the identity simulation.]
+
 #remark[Half-Game is Functorial][
   $game.hg$ extends to a strict functor $base.Set^"op" times base.Set -> base.Cat$ as witnessed
   by the following action on morphisms, which we write curried and in infix style.
@@ -217,6 +222,10 @@ conway.t$ is given by two subsets of Conway games $G_L, G_R subset.eq
 conway.t$. This self-referential definition should be interpreted as a
 coinductive one. The left subset $G_L$ is to be thought of as the set of games
 reachable by the left player in one move, and symmetrically for $G_R$.
+
+#guil[I think Joyal was the first to introduce a categorical
+structure on Conway games. See also the presentation by
+Méllies of Conway games in connection with Game Semantics.]
 
 #margin-note[For a more in-depth discussion of the two notions of subsets in
     type theory, see #text-cite(<HancockH06>, supplement: [pp. 194--198])]
@@ -355,6 +364,8 @@ The #strat.coplay function is simpler. By @def-hg-ext, it takes a passive
 position, a passive state over it and a currently valid server move and must
 return an active state over the next position.
 
+#guil[You could explain why there is no return move for Opponent.]
+
 == Strategies as Indexed Interaction Trees <sec-itree>
 
 In @def-tsys, I have defined strategies similarly to Levy &
@@ -399,7 +410,8 @@ can play the same trick and eliminate the passive positions from the
 description of games, obtaining back indexed polynomial functors, or more
 precisely their type theoretic incarnation as _indexed
 containers_~#mcite(<AltenkirchGHMM15>). Remember that the reason for preferring
-games over indexed containers was to ease swapping client and server. But since
+games over indexed containers was to ease swapping client and server.
+#guil[This was not explained before.] But since
 strategies are inherently biased towards one side, we might as well use the
 simpler notion.
 
@@ -452,6 +464,7 @@ simpler notion.
   Note that $floor(ar) compose ceil(ar)$ is definitionally equal to the
   identity on containers.
 ]
+#guil[What is the identity on containers?]
 
 After this interlude on indexed containers, we are now ready to go back to
 strategies. Recall that we had turned strategies into coalgebras for the
@@ -478,7 +491,7 @@ the _action functor on $Sigma$_.
 Being itself an instance of indexed container, $itree.F_Sigma th R$ has a
 thorougly understood theory of fixpoints~#mcite(<AltenkirchGHMM15>) and we can
 form its final coalgebra as a coinductive family which is accepted by most type
-theory implementations such as Agda and Coq.
+theory implementations#guil[proof assistants] such as Agda and Coq.
 
 #definition[Indexed Interaction Tree][
   Given a signature $Sigma cl icont.t th I$ and an output $R cl base.Set^I$,
@@ -496,11 +509,18 @@ theory implementations such as Agda and Coq.
     (itree.vis th q th k) .itree.obs := itree.visF th q th k $
 ] <def-itree>
 
+#guil[I don't understand these shorthands. In which sense can $itree.ret th x$ be seen
+as of type $itree.t_Sigma$ ?]
+
 Notice that this definition is to interaction trees~#mcite(<XiaZHHMPZ20>)
 what inductive families are to inductive data types. As we will discover
 in the remainder of this chapter, all of the monadic theory of interaction
 trees lifts neatly to this newly indexed setting, an "outrageous fortune"
 described by Conor McBride in #mcite(dy: 1.2em, <McBride11>).
+
+#guil[Do you mean that this structure of
+indexed interaction tree was already present in
+#mcite(dy: 1.2em, <McBride11>)?]
 
 Before moving on to define bisimilarity, let us first link this definition
 to the previous one of transition system over a game.
@@ -514,6 +534,9 @@ to the previous one of transition system over a game.
   $ game.stratA_G th R := itree.t_floor(G) th R \
     game.stratP_G th R := G.game.server game.extP game.stratA_G th R $
 ] <def-strat>
+
+#guil[Can you relate this definition of strategies to the one
+given in #num-cite(<LevyS14>) (Definition 2)?]
 
 #lemma[System Unrolling][
   Together, $game.stratA_G th R$ and $game.stratP_G th R$ form the state families
@@ -534,6 +557,9 @@ to the previous one of transition system over a game.
   computational part of the unique coalgebra morphism between $S$ and
   strategies.
 ] <def-unroll>
+
+#guil[I am struggling to understand this lemma,
+what is a state family of the final transition system ?]
 
 == Bisimilarity
 
@@ -567,7 +593,9 @@ _sized types_, for which the well-formedness criterion is based on typing.
 However they are not available in Coq, the language in which this thesis has
 been formalized. Moreover, in Agda's experimental tradition, while they do work
 when used in the intended programming patterns, their semantics are still not
-fully clear #peio[ref multi-clocked guarded TT]. We will take an entirely
+fully clear #peio[ref multi-clocked guarded TT] 
+
+#guil[I don't think the connection between sized types and guarded recursive types has been worked out]. We will take an entirely
 different route, building coinduction for ourselves, _inside_ type theory.
 Indeed, as demonstrated by Damien Pous' coq-coinduction
 library~#mcite(<Pous16>, supplement: [https://github.com/damien-pous/coinduction]),
