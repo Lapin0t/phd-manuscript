@@ -991,10 +991,10 @@ corresponding statement from @lem-actrel-props.
   both arguments (@lem-actrel-props).
 ]
 
-This concludes for strong bisimilarity: we have defined it and proved by
-@lem-sbisim-props the most important properties, namely that when $R^rel.r$ is
-well-behaved, not only it is an equivalence relation, but bisimulation proofs
-can work up-to reflexivity, symmetry and transitivity.
+This completes the basic theory of strong bisimilarity: we have defined it and
+proved by @lem-sbisim-props the most important properties, namely that when
+$R^rel.r$ is well-behaved, not only it is an equivalence relation, but
+bisimulation proofs can work up-to reflexivity, symmetry and transitivity.
 
 === Weak Bisimilarity
 
