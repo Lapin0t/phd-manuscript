@@ -1394,7 +1394,7 @@ continuations. This fact is sometimes called "bisimulation up-to bind".
   3. By direct tower induction.
   #v(-2em)
 ]
-#tom[Bon, j'ai pas assez de tower-fu pour savoir déplier ces instructions. Pour le 3, par exemple, il faut prendre quel prédicat?]
+#tom[Bon, j'ai pas assez de tower-fu pour savoir déplier ces instructions. Pour le 3, par exemple, il faut prendre quel prédicat? Faire un ou deux cas faciles ici aiderait ptet à suivre plus loin.]
 
 This concludes the monadic theory of interaction trees. We will make some use of the
 so-called "do notation", to write, e.g.,
@@ -1593,43 +1593,45 @@ uniqueness of solutions.
 
 === Guarded Iteration
 
-A general trend in the research on iteration operators, is the observation that
-very often, the unguarded iteration operator of e.g., an Elgot monad, can be
+A general trend in the research on iteration operators is the observation that,
+very often, the unguarded iteration operator of, e.g., an Elgot monad, may be
 shown to somehow derive from an underlying guarded iteration operator enjoying
-unique fixed points, with the former typically
-being a quotient of the latter. With interaction trees, we find ourselves exactly in
-this situation. In fact as we will see, in interaction trees every equation
-system is weakly bisimilar to a guarded equation. Our previous unguarded
-iteration operator can then be seen as constructing the strong, unique, fixed
-point of this new guarded equation.#margin-note[A posteriori this is rather
-unsurprising since we work in a total programming language: tautologically,
-only uniquely defined objects can every be defined.] Without further ado
-let's define this guarded iteration operator.
+unique fixed points, with the former monad typically being a quotient of the
+latter.  With interaction trees, we find ourselves exactly in this situation.
+Indeed, as we will see, every equation system is weakly bisimilar to a guarded
+equation. Our previous unguarded iteration operator can then be seen as
+constructing the unique fixed point of this new guarded equation, up to strong
+bisimilarity.#margin-note[In hindsight, this is rather unsurprising since we
+work in a total programming language: tautologically, only uniquely defined
+objects can ever be defined. #tom[Mmm... what?!]] Without further ado, let us
+define this guarded iteration operator.
 
-#definition[Guardedness][
-  Let $Sigma cl icont.t th I$. An action is _guarded in $X$_ if it verifies the
-  following predicate.
+#definition[Guardedness][ Let $Sigma cl icont.t th I$. An action is _guarded in
+  $X$_ if it satisfies the following (proof-relevant) predicate.
 
   $ kw.dat itree.actguard th {X th Y th A th i} cl itree.F_Sigma th (X + Y) th A th i -> base.Set kw.whr \
     quad itree.gret th {y} cl itree.actguard th (itree.retF th (base.inj2 th y)) \
     quad itree.gtau th {t} cl itree.actguard th (itree.tauF th t) \
     quad itree.gvis th {q th k} cl itree.actguard th (itree.visF th q th k) $
 
-  An itree is _guarded in $X$_ if its observation is guarded.
+  Furthermore, an itree is _guarded in $X$_ if its observation is:
+  
+  #tom[Je crois pas que t'aies parlé d'itree dans le texte jusqu'ici. Tu devrais
+ptet dire "strategy"?]
 
   $ itree.guard th {X th Y th i} cl itree.t_Sigma th (X + Y) th i -> base.Set \
-    itree.guard th t := itree.actguard th t .itree.obs $
+    itree.guard th t := itree.actguard th t .itree.obs . $
 
-  And finally an equation is _guarded_ if it is pointwise guarded in its argument.
+  And, finally, guardedness of equations is defined pointwise:
 
   $ itree.eqguard th {X th Y th i} cl (X => itree.t_Sigma th (X + Y)) -> base.Set \
-    itree.eqguard th f := forall th {i} th {x cl X th i} -> itree.guard th (f th x) $
+    itree.eqguard th f := forall th {i} th {x cl X th i} -> itree.guard th (f th x) . $
 ] <def-guarded>
 
 #lemma[Unique Guarded Fixed Points][
   Given $Sigma cl icont.t th I$ and a guarded equation $f cl X =>
   itree.t_Sigma th (X + Y)$, for any two fixed points $s_1, s_2$ of
-  $f$ w.r.t. strong bisimilarity, i.e. such that for all $x$
+  $f$ w.r.t. strong bisimilarity, i.e., such that for all $x$ we have
 
   #let bk(it) = text(fill: black, it)
   $ s_i th x
@@ -1638,9 +1640,7 @@ let's define this guarded iteration operator.
         kw.fun text(colors.kw, cases(gap: #0.2em,
         bk(base.inj1 th x. th s_i th x),
         bk(base.inj2 th y. th itree.ret th y),
-    )) quad , $
-
-   then for all $x$, $s_1 th x itree.eq s_2 th x$.
+    )) quad , $ for all $i = 1,2$, then for all $x$, $s_1 th x itree.eq s_2 th x$.
 ] <lem-gfix-uniq>
 #proof[
   By tower induction. Apply both fixed point hypotheses. The goal is now to prove
@@ -1655,8 +1655,10 @@ let's define this guarded iteration operator.
         bk(base.inj2 th y. th itree.ret th y))))
   $
 
-  for some $c$ the chain. By inspecting the first step of $f th x$, by
-  guardedness we obtain a synchronization and it suffices to prove
+  for some $c$ the chain #tom[quantifier sur $c$ plus explicitement, ou mieux,
+  l'introduire juste après le "by tower induction"]. By inspecting the first
+  step of $f th x$, by guardedness we obtain a synchronization and it suffices
+  to prove
 
   $ (t itree.bind
         kw.fun text(colors.kw, cases(gap: #0.2em,
@@ -1678,7 +1680,7 @@ let's define this guarded iteration operator.
 #definition[Guarded Iteration][
   Let $Sigma cl icont.t th I$. Given an equation $f cl X =>
   itree.t_Sigma th (X + Y)$ with guardedness witness $H cl itree.eqguard th f$,
-  define the following _guarded iteration step_.
+  we define the following _guarded iteration step_.
 
   $ itree.gstep_(f,H) cl (itree.t_Sigma (X + Y) => itree.t_Sigma th Y) -> (X => itree.tp_Sigma th Y) \
     itree.gstep_(f,H) th g th x kw.wit (f th x) .itree.obs | H th x \
@@ -1688,23 +1690,23 @@ let's define this guarded iteration operator.
     quad | th itree.visF th q th k #h(2em) | p := itree.visF th q th (kw.fun th r. th g th (k th r)) \
   $
 
-  Then define the following coinductive auxiliary function.
+  We then define the following coinductive auxiliary function.
   #margin-note[
     In fact the two definitions $itree.giter^de("aux")$ and $itree.giter$ can be seen as
     two mutually defined coinductive functions. However, I have refrained
     from using mutual coinduction, for the simple reason that Coq does not
-    support them. As such, I presented a version where the definition of $itree.giter$
+    support them. Instead, I presented a version where the definition of $itree.giter$
     it inlined in $itree.giter^de("aux")$. Doing the reverse, and
     skipping $itree.giter^de("aux")$ altogether, is not possible because Coq
     does not recognize it as syntactically guarded! I am curious to see what Agda's
-    guardedness checker thinks of this...
+    guardedness checker thinks of this... #tom[Incompréhensible pour moi, et je pense que je devrais comprendre. Comment Coq reconnait-il que  $itree.giter^de("aux")$? Il fait une étape de $beta$?]
   ]
 
   $ itree.giter^de("aux")_(f,H) cl itree.t_Sigma th (X + Y) => itree.t_Sigma th Y \
     itree.giter^de("aux")_(f,H) th t := t itree.bind (itree.gstep_(f,H) th itree.giter^de("aux")_(f,H) itree.copr itree.retF)
   $
 
-  And finally define the _guarded iteration_ as follows.
+  Finally, we define the _guarded iteration_ as follows.
 
   $ itree.giter_(f,H) cl X => itree.t_Sigma th Y \
     itree.giter_(f,H) := itree.gstep_(f,H) th itree.giter^de("aux")_(f,H) $
@@ -1712,6 +1714,7 @@ let's define this guarded iteration operator.
   We will omit the guardedness witness $H$ when clear from context.
 ] <def-giter>
 
+#tom[Environnement remarque?]
 While a bit scary, the above definition of $itree.gstep$ is simply mimicking the first
 step of a "bind" on $f th x$, and thanks to the added information from guardedness,
 it is able to only trigger subsequent computation in a guarded fashion. Recall that
@@ -1719,12 +1722,12 @@ for unguarded iteration, this guardedness was achieved artificially, by wrapping
 whole call in a silent step.
 
 #theorem[Guarded Fixed Point][
-  Let $Sigma cl icont.t th I$. For all guarded equation $f cl X =>
+  Let $Sigma cl icont.t th I$. For any guarded equation $f cl X =>
   itree.t_Sigma th (X + Y)$, $itree.giter_f$ is the unique fixed point of
   $f$ w.r.t. strong bisimilarity.
 ] <lem-giter-fix>
 #proof[
-  Since by @lem-gfix-uniq guarded fixed point are unique w.r.t. strong
+  Since by @lem-gfix-uniq guarded fixed points are unique w.r.t. strong
   bisimilarity, it suffices to show that it is indeed a fixed point.
   We generalize to the following statement.
 
@@ -1737,8 +1740,12 @@ whole call in a silent step.
   It is proven by direct tower induction, using up-to bind.
 ]
 
-We have thus exhibited interaction trees as a completely iterative monad. We
-now link it to our previous unguarded iteration.
+We have thus exhibited interaction trees (considered up to strong bisimilarity)
+as a completely iterative monad. Let us now link this to unguarded iteration.
+
+#tom[Le point 1 du lemme suivant me semble louche. Si je prends $X = 1$, $Y = 2$
+et pour $f$ le contre-exemple du papier, alors toute map $1 -> itree.t_Sigma 2$
+est solution, donc je vois pas trop comment ça peut marcher. Je rate un truc?]
 
 #lemma[
   Given $Sigma cl icont.t th I$ and an equation $f cl X =>
@@ -1746,32 +1753,32 @@ now link it to our previous unguarded iteration.
 
   1. If $s$ is a fixed point of $f$ w.r.t. strong bisimilarity, then $s
      itree.weq itree.iter_f$.
-  2. Pose $f' th x := f itree.bind (itree.tauF itree.copr itree.retF)$. $f'$ is guarded
-     and $itree.giter_f' th x itree.eq itree.iter_f th x$.
-] <lem-iter-giter>
-#proof[Both by straightforward tower induction.]
+  2. Let $f' th x := f itree.bind (itree.tauF itree.copr itree.retF)$. Then,
+     $f'$ is guarded and $itree.giter_f' th x itree.eq itree.iter_f th x$.  ]
+<lem-iter-giter> #proof[Both by straightforward tower induction.]
 
 === Eventually Guarded Iteration
 
-Equipped with this new guarded iteration, we finally obtain our powerful uniqueness of
-fixed points. This principle will provide us with a big hammer, very useful for hitting
-nails looking like $itree.giter_f th x itree.eq t th x$. However, being guarded is
-quite a strong requirement! In our equation of interest, composition of OGS strategies,
-has no hope of being guarded. However, observe that if there is a finite chain
-$x_1 approx x_2 approx ... approx x_n approx t$, such that $t$ is guarded, then
-after $n$ iteration step, $x_1$ will be mapped to a guarded $t$. The iteration
-starting from $x_1$ is then still uniquely defined. This was already noted by
-Jiří Adámek, Stefan Milius and Jiří Velebil~#mcite(<AdamekMV10>) with their
-notion of _grounded_ variables. However, a clear definition and study of equations
-containing only grounded variables, or _eventually guarded equations_ as I call
-them, is still novel to the best of my knowledge. In fact, in future work it
-might be fruitful to consider this in the setting of~#mcite(<GoncharovRP17>) as
-a generic relaxation of any abstract guardedness criterion.
+Equipped with this new guarded iteration, we finally obtain our powerful
+uniqueness of fixed points. This principle will provide us with a big hammer,
+very useful for hitting nails looking like $itree.giter_f th x itree.eq t th x$.
+However, being guarded is quite a strong requirement! Notably, our equation of
+interest, the one defining composition of OGS strategies, has no hope of being
+guarded. However, observe that if there is a finite chain $x_1 ↦ x_2 ↦
+... ↦ x_n ↦ t$, such that $t$ is guarded, then after $n$ iteration
+step, $x_1$ will be mapped to a guarded $t$. The iteration starting from $x_1$
+is then still uniquely defined. This was already noted by Jiří Adámek, Stefan
+Milius and Jiří Velebil~#mcite(<AdamekMV10>) with their notion of _grounded_
+variables. However, a clear definition and study of equations containing only
+grounded variables, or _eventually guarded equations_ as I call them, is still
+novel to the best of my knowledge. In fact, in future work it might be fruitful
+to consider this in the setting of~#mcite(<GoncharovRP17>) as a generic
+relaxation of any abstract guardedness criterion. #tom[Hyphen moisis dans la marge ci-contre!]
 
-#definition[Eventual Guardedness][
-  Let $Sigma cl icont.t th I$ and $f cl X => itree.t_Sigma th (X + Y)$. An
-  interaction tree is _eventually guarded w.r.t. $f$_ if it verifies the
-  following mutually defined inductive predicate.
+#definition[Eventual Guardedness][ Let $Sigma cl icont.t th I$ and $f cl X =>
+  itree.t_Sigma th (X + Y)$. An interaction tree is _eventually guarded w.r.t.
+  $f$_ if it verifies the following inductive predicate $itree.evguard_f$,
+  defined by mutual induction as follows.
 
   $ kw.dat itree.actevguard_f th {i} cl itree.tp_Sigma th (X + Y) th i -> base.Set kw.whr \
     quad itree.evg th {t} cl itree.actguard th t -> itree.actevguard_f th t \
@@ -1786,23 +1793,23 @@ a generic relaxation of any abstract guardedness criterion.
     itree.eqevguard th f := forall th {i} th (x cl X th i) -> itree.evguard_f th (f th x) $
 ] <def-guarded>
 
-#lemma[Unique Eventually Guarded Fixed Points][
+#tom[Le lemme ci-dessous doit être raté, on n'a pas encore défini $itree.eviter$. J'essaie de corriger mais tu vérifies, Peio, ok?]
+#lemma[Uniqueness of Eventually Guarded Fixed Points][
   Given $Sigma cl icont.t th I$ and $f cl X => itree.t_Sigma th (X + Y)$ such that
-  $f$ is eventually guarded, for any fixed point $g$ of $f$ w.r.t.
-  strong bisimilarity, for all $x$, $g th x itree.eq itree.eviter_f th x$.
+  $f$ is eventually guarded, for any fixed points $g$ and $h$ of $f$ w.r.t.
+  strong bisimilarity, for all $x$, we have $g th x itree.eq h th x$.
 ] <lem-evfix-uniq>
 #proof[
   By tower induction, then by induction on the eventual guardedness proof.
 ]
 
-To construct eventually guarded fixed points, we will reduce them to the problem of
-computing a guarded fixed point. Indeed by definition, any eventually guarded equation
-can be pointwise unrolled into a guarded one.
+To construct eventually guarded fixed points, we will reduce them to the problem
+of computing a guarded fixed point. Indeed by definition, any eventually guarded
+equation can be pointwise unrolled into a guarded one.
 
-#definition[Unrolling][
-  Let $Sigma cl icont.t th I$. Given $f cl X => itree.t_Sigma th (X + Y)$ and
-  $t$ such that $t$ is eventually guarded w.r.t. $f$, define the _unrolling of $t$_ as the
-  following inductive definition.
+#definition[Unrolling][ Let $Sigma cl icont.t th I$. Given $f cl X =>
+  itree.t_Sigma th (X + Y)$ and eventually guarded $t$ w.r.t. $f$, define the
+  _unrolling of $t$_ as the following inductive definition.
 
   $ itree.evunroll_f th {i} th (t cl itree.tp_Sigma th (X + Y) th i) cl itree.actevguard_f th t -> itree.tp_Sigma th (X + Y) th i $
   #v(-0.4em)
@@ -1821,7 +1828,7 @@ can be pointwise unrolled into a guarded one.
   Given $Sigma cl icont.t th I$ and $f cl X => itree.t_Sigma th (X + Y)$ such that
   $H cl itree.eqevguard th f$, then $itree.equnroll_f th H$ is guarded.
 ]
-#proof[By direct induction]
+#proof[By direct induction.]
 
 #definition[Eventually Guarded Iteration][
   Given $Sigma cl icont.t th I$ and $f cl X => itree.t_Sigma th (X + Y)$ such that
@@ -1831,7 +1838,7 @@ can be pointwise unrolled into a guarded one.
     itree.eviter_(f,H) := itree.giter_(itree.equnroll th f th H)$
 ]
 
-It is left for us to verify that this construction is indeed a fixed point
+It now remains to verify that this construction is indeed a fixed point
 of $f$ (in addition to being a fixed point of the unrolled equation).
 
 #theorem[Eventually Guarded Fixed Point][
@@ -1839,20 +1846,23 @@ of $f$ (in addition to being a fixed point of the unrolled equation).
   $f$ is eventually guarded, then $itree.eviter_f$ is the unique fixed point of $f$ w.r.t.
   strong bisimilarity.
 ] <thm-eviter-fix>
-#proof[
-  By @lem-evfix-uniq eventually guarded fixed points are unique w.r.t. strong bisimilarity.
-  It suffices to prove that $itree.eviter_f$ is a fixed point of $f$.
-  First observe that eventual guardedness is provably irrelevant:
+
+#proof[ By @lem-evfix-uniq, eventually guarded fixed points are unique w.r.t.
+  strong bisimilarity, so it suffices to prove that $itree.eviter_f$ is a fixed
+  point of $f$. We first observe that eventual guardedness is provably
+  irrelevant:
 
   $ forall th (p, q cl itree.evguard_f th t) -> p = q. $
 
   This observation will help us to change the eventual guardedness witness, on which
-  computation of the unrolling depends. Next, observe by one step unfolding, and
-  using the previous observation, that whenever
+  computation of the unrolling depends. 
+  
+  Next, we observe by one step unfolding, and using the previous observation,
+  that whenever we have
 
   $ (f th x_1) .itree.obs = itree.retF th (base.inj1 th x_2), $
 
-  then
+  then the following also holds:
 
   $ itree.eviter_f th x_1 itree.eq itree.eviter_f th x_2. $
 
@@ -1861,7 +1871,7 @@ of $f$ (in addition to being a fixed point of the unrolled equation).
 
 Since @lem-iter-giter links any strong fixed point of $f$ with the usual unguarded
 iteration $itree.iter_f$, we already know that for an eventually guarded equation $f$,
-$itree.eviter_f itree.weq itree.iter_f$. As such this concludes our study of eventually
+$itree.eviter_f itree.weq itree.iter_f$. This concludes our study of eventually
 guarded iteration. In fact, @thm-eviter-fix is the crucial building block that our
 correctness proof of OGS will rest upon, and it concludes this chapter.
 
