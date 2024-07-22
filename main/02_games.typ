@@ -1092,16 +1092,19 @@ ci-dessous, mais c'est pas clair pour moi en quel sens. ]
 
 Notice that in the previous lemma, comparing with @lem-sbisim-props, we have
 left out the statement regarding sequential composition of relations. Indeed it
-is well-known that weak bisimulation up-to transitivity is not valid proof
+is well-known that weak bisimulation up-to transitivity is not a valid proof
 technique~#num-cite(<Damodulo>). However, we would still like to prove that weak
 bisimilarity is transitive!
+#tom[Une ref vers une preuve qu'on sait déjà que ça l'est?]
 
 #lemma[ Given $Sigma cl icont.t th I$ and $R^rel.r cl rel.irel th R th R$, if
-  $R^rel.r$ is transitive, then so is $itweq(R^rel.r)$. ] #proof[ Pose the
-  following shorthands, respectively for "one step sychnronization then weak
-  bisimilarity" and for one-step unfolding of weak bisimilarity.
+  $R^rel.r$ is transitive, then so is $itweq(R^rel.r)$. ] 
+  
+#proof[ Pose the following shorthands, respectively for "one step
+  sychnronization then weak bisimilarity" and for one-step unfolding of weak
+  bisimilarity.
 
-  #tom[Environnement notation?]
+  #tom[Environnement notation ?]
 
   #peio[rework symbols]
   #let sync = de(crel(math.attach(sym.approx, tr: "s")))
@@ -1114,9 +1117,11 @@ bisimilarity is transitive!
 
   We prove the following statements by direct induction on the eating relation
   for all $a, b, c$.
-
+  
   1. $a eat itree.tauF th b sync c -> a sync c$
   2. $ a sync itree.tauF th b eatr c -> a sync c$
+
+  #tom[On sait pas si tu vas prouver 1 et 2 ou passer à la suite. Ptet dire "we then observe..."? Bon, la preuve est un peu trop imbitable, je saute.]
 
   Observe that the following statements are true by case analysis.
 
@@ -1254,48 +1259,45 @@ strong bisimilarity.
 
 == Monad Structure
 
-An important structure available on interaction trees is that they form a
-monad. Indeed as they are parametrized by an _output_ family $R$, a strategy
-with output $R$ can be considered as an impure computation returning some $R$.
-Its _effects_ will be to perform game moves and wait for an answer. While at
-first sight---considering only the goal of representing game strategies---such
-an output might seem unnecessary, the compositionality offered by monads, that
-is, sequential composition, is tremendously useful to construct and reason on
+An important structure available on interaction trees is that they form a monad.
+Indeed, as they are parametrized by an _output_ family $R$, a strategy with
+output $R$ can be considered as an impure computation returning some $R$.  Its
+_effects_ will be to perform game moves and wait for an answer. While at first
+sight---considering only the goal of representing game strategies---such an
+output might seem unnecessary, the compositionality offered by monads, that is,
+sequential composition, is tremendously useful to construct and reason on
 strategies piecewise.
 
 The monad structure on interaction trees takes place in the family category
-$base.Set^I$ and its laws will hold both w.r.t. strong bisimilarity and weak
+$base.Set^I$ and its laws hold both w.r.t. strong bisimilarity and weak
 bisimilarity. One way to view this is to say that I will define _two_ monads.
 However, in line with my choice of using intensional type theory, I will first
 define a _pre-monad_ structure, containing only the computationally relevant
 operation and then provide two sets of laws.
 
-In fact in @def-itree, we have already defined the "return" operator, $itree.ret$,
-which can be typed as follows.
+In fact, in @def-itree, we have already defined the "return" operator,
+$itree.ret$, which can be typed as follows.
 
 $ itree.ret th {X} cl X => itree.t_Sigma th X $
 
 Let us define the "bind" operator, which works by tree grafting.
 
 #definition[Interaction Tree Bind][
-  #margin-note[
-    Note that defining $itree.subst_f$ _with $f$ fixed_ is not a
-    mere stylistic consideration. Indeed, what it achieves, is to pull the
-    binder for $f$ out
-    of the coinductive definition. This enables the syntactic guardedness
-    checker to more easily understand subsequent coinductive definition making
-    use of the bind operator. To the best of my knowledge, this trick was first
-    used in the InteractionTree library~#num-cite(<XiaZHHMPZ20>)
-    
-    . In general, it
-    is always fruitful to take as many binders as possible out of the cofixpoint
-    definition.
-  ]
-  Let $Sigma cl icont.t th I$. Given $X, Y cl base.Set^I$ and $f cl X => itree.t_Sigma th Y$,
-  define _interaction tree substitution_ as follows.
+  
+  #margin-note[ Note that defining $itree.subst_f$ _with $f$ fixed_ is not a
+    mere stylistic consideration.  Indeed, what it achieves, is to pull the
+    binder for $f$ out of the coinductive definition. This enables the syntactic
+    guardedness checker to more easily understand subsequent coinductive
+    definitions making use of the bind operator. To the best of my knowledge,
+    this trick was first used in the InteractionTree
+    library~#num-cite(<XiaZHHMPZ20>). In general, it is always fruitful to take
+    as many binders as possible out of a cofixpoint definition.  ]
+
+  Let $Sigma cl icont.t th I$. Given $X, Y cl base.Set^I$ and $f cl X =>
+  itree.t_Sigma th Y$, define _interaction tree substitution_ as follows.
   $ itree.subst_f cl itree.t_Sigma th X => itree.t_Sigma th Y \
     (itree.subst_f th t) .itree.obs kw.wit t .itree.obs \
-    quad | itree.retF th x := (k th x) .itree.obs \
+    quad | itree.retF th x := (f th x) .itree.obs \
     quad | itree.tauF th t := itree.tauF th (itree.subst_f th t) \
     quad | itree.visF th q th k := itree.visF th q th (kw.fun th r. th itree.subst_f th (k th r)) $
 
@@ -1306,35 +1308,43 @@ Let us define the "bind" operator, which works by tree grafting.
 ]
 
 Before proving the monad laws, we will first prove that our operators respect
-both strong and weak bisimilarity, in other words that they are _monotone_. For
+both strong and weak bisimilarity, in other words that they are monotone. For
 strong bisimilarity and $itree.ret$, the statement is the following.
 
 $ forall th {X^rel.r cl rel.irel th X^1 th X^2} th {i cl I} th {x_1 cl X^1 th i} th {x_2 cl X^1 th i} \
   quad -> X^rel.r th x_1 th x_2 -> itree.ret th x_1 iteq(X^rel.r) itree.ret th x_2 $
 
 This is quite heavy, and many more complex monotonicity statements will appear
-in the thesis. As such from now on we will extensively use relational
-combinators. To simplify reading such complex relations we will write $a
-xrel(R) b$ for $R th a th b$. Our final goal is to write something such as follows.
+in the thesis. Thus, from now on, we will extensively use relational
+combinators. To simplify reading such complex relations, we will write $a
+xrel(R) b$ for $R th a th b$. Our final goal is to replace the above verbose
+statement with the following.
 
 $ forall th {X^rel.r} -> itree.ret xrel(X^rel.r rel.iarr cnorm(iteq(X^rel.r))) itree.ret $
 
-To achieve this, define the following combinators.
+To achieve this, we define the following combinators.
 
 $ ar rel.arr ar cl rel.rel th X_1 th X_2 -> rel.rel th Y_1 th Y_2 -> rel.rel th (X_1 -> Y_1) th (X_2 -> Y_2) \
   (R rel.arr S) th f th g := forall th {x_1 x_2} -> R th x_1 th x_2 -> S th (f th x_1) th (g th x_2) $
 
 $ ar rel.iarr ar cl rel.irel th X_1 th X_2 -> rel.irel th Y_1 th Y_2 -> rel.irel th (X_1 => Y_1) th (X_2 => Y_2) \
   (R rel.iarr S) th f th g := forall th {x_1 x_2} -> R th x_1 th x_2 -> S th (f th x_1) th (g th x_2) $
+#tom[C'est texto le même que le précédent, il manque sans doute des $i$...]
 
 $ rel.forall cl (forall th {i} -> rel.rel th (X_1 th i) th (X_2 th i)) -> rel.rel th (forall th {i} -> X_1 th i) th (forall th {i} -> X_2 th i) \
   (rel.forall th R) th f th g := forall th {i} -> R th (f th {i}) th (g th {i}) $
 
+#tom[J'aurais dû me poser cette question avant, mais la notation $forall$ est-elle utilisée partout? Est-ce qu'il n'y a pas des endroits où tu utilises la syntaxe Agda? De plus, ici tu utilises un mix de la notation Agda et de la notation traditionnelle. D'après une brève inspection, ça ne semble pas très consistent. Mon classement perso pour le $forall$: 1. tradi, 2. Agda, 3. le mix ci-dessus.]
+
+#tom[Et aussi, les énoncés avec $rel.forall$ sont un peu durs à lire, pcq on ne quantifie sur rien. Est-ce que ptet $integral^r$ marcherait mieux?]
+
 Moreover we will write $rel.forall th A$ for $rel.forall th (kw.fun th {i}. th A)$.
 
-#lemma[ITree Monad Monotonicity][
-  Given $Sigma cl itree.t_Sigma$, for any $X^rel.r$ and $Y^rel.r$ and for any $x cl rel.lat_Sigma$
-  such that either $x in itree.sb_Sigma$ or $x in itree.wb_Sigma$, the following statements are true.
+#tom[Ci-dessous, c'est pas bon, j'essaie de corriger mais chuis pas sûr.] 
+
+#lemma[ITree Monad Monotonicity][  Given $Sigma cl icont.t th I$, for any
+  $X^rel.r$ and $Y^rel.r$ and for any $x cl rel.lat_Sigma$ such that either $x =
+itree.sb_Sigma$ or $x = itree.wb_Sigma$, the following holds.
 
   1. $itree.ret xrel(X^rel.r rel.arr x th X^rel.r) itree.ret$
   2. $(ar itree.bind ar) xrel(rel.forall th x th X^rel.r rel.arr (X^rel.r rel.iarr x th Y^rel.r) rel.arr x th Y^rel.r) (ar itree.bind ar)$
@@ -1345,11 +1355,15 @@ Moreover we will write $rel.forall th A$ for $rel.forall th (kw.fun th {i}. th A
   5. $(ar itree.bind ar) xrel(rel.forall th cnorm(iteq(X^rel.r)) rel.arr (X^rel.r rel.iarr cnorm(iteq(Y^rel.r))) rel.arr cnorm(iteq(Y^rel.r))) (ar itree.bind ar)$
   6. $(ar itree.bind ar) xrel(rel.forall th cnorm(itweq(X^rel.r)) rel.arr (X^rel.r rel.iarr cnorm(itweq(Y^rel.r))) rel.arr cnorm(itweq(Y^rel.r))) (ar itree.bind ar)$
 ] <lem-up2bind>
+
+#tom[C'est marrant, 1 et 2 ressemblent à des lois de monades pour $x$, c'est connu?]
 #proof[
-  1. Assuming $X^rel.r th x_1 th x_2$, observe that $itree.sb_Sigma th x th
-     X^rel.r th (itree.ret th x_1) th (itree.ret th x_2)$, which by @lem-tower-props
-     implies $x th X^rel.r th (itree.ret th x_1) th (itree.ret th x_2)$. It is
-     similarly for $x in itree.wb_Sigma$, using reflexivity of $itree.eat_Sigma^(R^rel.r)$.
+
+  1. Assuming $X^rel.r th x_1 th x_2$, we have $itree.sb_Sigma th x th X^rel.r
+    th (itree.ret th x_1) th (itree.ret th x_2)$, which by @lem-tower-props
+    entails $x th X^rel.r th (itree.ret th x_1) th (itree.ret th x_2)$. The
+    proof for $x in itree.wb_Sigma$ is similar, using reflexivity of
+    $itree.eat_Sigma^(R^rel.r)$.
   2. By tower induction on the statement. For $x in itree.sb_Sigma$ it is direct
      by unfolding and dependent pattern matching.
      For $x in itree.wb_Sigma$, use the following fact.
@@ -1357,12 +1371,12 @@ Moreover we will write $rel.forall th A$ for $rel.forall th (kw.fun th {i}. th A
   3--6. By direct application of 1--2, using @lem-tower-fix.
 ]
 
-While perhaps not very impressive, the last lemma is very important. Points
-3--6 prove that return and bind are well-defined as operators on the setoids of
-strongly- and weakly-bisimilar strategies. But more importantly, point 2. it
-also proves that during a coinductive proof, to relate two sequential compositions
-one can first relate the prefixes and then, pointwise, the continuations. This
-fact is sometimes called "bisimulation up-to bind".
+While perhaps not very impressive, the last lemma is very important. Points 3--6
+prove that return and bind are well-defined as operators on the setoids of
+strongly- and weakly-bisimilar strategies. But more importantly, Point 2 proves
+that, during a coinductive proof, in order to relate two sequential
+compositions, it suffices to first relate the prefixes and then, pointwise, the
+continuations. This fact is sometimes called "bisimulation up-to bind".
 
 #lemma[ITree Monad Laws][
   Given $Sigma cl itree.t_Sigma$, for all $x cl X th i$, $t cl itree.t_Sigma th
@@ -1373,12 +1387,14 @@ fact is sometimes called "bisimulation up-to bind".
   2. $(t itree.bind itree.ret) itree.eq t$
   3. $(t itree.bind f) itree.bind g itree.eq t itree.bind (f itree.kbind g)$
 ]
+#tom[Attention, $itree.kbind$ undef!]
 #proof[
   1. By one-step unfolding.
   2. By direct tower induction.
   3. By direct tower induction.
   #v(-2em)
 ]
+#tom[Bon, j'ai pas assez de tower-fu pour savoir déplier ces instructions. Pour le 3, par exemple, il faut prendre quel prédicat?]
 
 This concludes the monadic theory of interaction trees. We will make some use of the
 so-called "do notation", to write, e.g.,
@@ -1390,26 +1406,30 @@ instead of
 $ t itree.bind (kw.fun th x. th f th x itree.bind (kw.fun th y. th g th y)) $
 
 To make the best out of this syntax, we finish up by defining some "generic
-effects", i.e. helpers to perform a silent step or play a move.
+effects", i.e., helpers to perform a silent step or play a move.
+
+#tom[C'est quoi un "generic effect"? Pourquoi on appelle ça comme ça? La def de $itree.xvis$ est très bizarre, pas fastoche à lire, et pas utilisée pour l'instant dans la suite...]
 
 #definition[Generic Effects][
-  Given $Sigma cl icont.t th I$, we define the following generic effects.
+  Given $Sigma cl icont.t th I$, we define the following generic effects,
 
   $ itree.xtau th {i} cl itree.t_Sigma th (kw.fun th i . th base.unit) th i \
     itree.xtau := itree.tau th (itree.ret th base.tt) $
 
   $ itree.xvis th {i} th (q cl Sigma .icont.qry th i) cl itree.t_Sigma th (subs.fiber th (Sigma .icont.nxt th {q})) th i \
     itree.xvis th q := itree.vis th q th (kw.fun th r. th itree.ret th (subs.fib th r)) $
-  #margin-note(dy: -4em)[
-    While slightly funky, the type of $itree.xvis$ is quite notable: it is
-    the type of what Xia et. al~#num-cite(<XiaZHHMPZ20>) call _event handlers_.
-    It encodes a natural transformation of $[| Sigma |]$ into $itree.t_Sigma$. This one
-    in particular is the identity handler, part of a larger
-    structure making $itree.t$ a relative monad~#num-cite(<AltenkirchCU10>)
-    on $icont.t th I -> (base.Set^I -> base.Set^I)$. Alas, its definition is
-    irrelevant to OGS correction and does not fit into this margin...
+
+  #margin-note(dy: -4em)[ While slightly funky, the type of $itree.xvis$ is
+    quite notable: it is the type of what Xia et. al~#num-cite(<XiaZHHMPZ20>)
+    call _event handlers_.  It encodes a natural transformation of $[| Sigma |]$
+    into $itree.t_Sigma$. This one in particular is the identity handler, part
+    of a larger structure making $itree.t$ a _relative
+    monad_~#num-cite(<AltenkirchCU10>) on $icont.t th I -> (base.Set^I ->
+    base.Set^I)$. Alas, its definition is irrelevant to OGS correction and does
+    not fit into this margin...
+
   ]
-  $subs.fiber$ is defined by the following data type.
+  where $subs.fiber$ is defined by the following data type.
 
   $ kw.dat th subs.fiber th (f cl A -> B) cl B -> base.Set kw.whr \
     quad subs.fib th (x cl A) cl subs.fiber th f th (f th x) $
@@ -1419,13 +1439,14 @@ effects", i.e. helpers to perform a silent step or play a move.
 == Iteration Operators <sec-iter>
 
 Interaction trees~#mcite(<XiaZHHMPZ20>) were originally introduced to encode
-arbitrary---i.e., possibly non-terminating---computations. As such, apart from
+arbitrary---i.e., possibly non-terminating---computation. As such, apart from
 monadic operators, they support _iteration operators_, which intuitively allow
-one to write arbitrary "while" loops. Pioneered by Calvin
-Elgot in the setting of fixed points in algebraic theories~#mcite(<Elgot75>),
-iteration in monadic computations enjoys a vast literatture. Recalling that a
-monadic term $a cl M th X$ can be understood as an "$M$-term" with variables in
-$X$, the idea is to represent a system of recursive equations as a morphism
+one to write arbitrary "while" loops. Pioneered by Calvin Elgot in the setting
+of fixed points #tom[Homog: fixed points vs fixpoints] in algebraic
+theories~#mcite(<Elgot75>), iteration in monadic computations enjoys a vast
+literatture. Recalling that a monadic term $a cl M th X$ can be understood as an
+"$M$-term" with variables in $X$, the idea is to define systems of recursive
+equations as morphisms
 
 $ f cl X -> M th (X + Y), $
 
@@ -1439,8 +1460,8 @@ $ x_1 & itree.weq f th x_1 \
 where each $f th x_i$ is an $M$-term mentioning either recursive variables $x_i
 cl X$ or fixed parameters $y_i cl Y$. A _solution_ is then a mapping $s cl X ->
 M th Y$ assigning to each "unknown" in $X$ an $M$-term mentioning only
-parameters in $Y$. A solution must obviously verify the original equation
-system, which in categorical language can be stated as follows.
+parameters in $Y$. A solution must obviously satisfy the original equation
+system, which in categorical language may be stated as follows.
 
 #let bk(it) = text(fill: black, it)
 $ s th x
@@ -1451,7 +1472,7 @@ $ s th x
       bk(base.inj2 th y. th itree.ret th y),
   )) $
 
-While the basic idea is simple, a number of subtle question arise quite quickly
+While the basic idea is simple, a number of subtle questions arise quite quickly
 during axiomatization. Should all equation systems have solutions? Should the
 solution be unique? If not, a canonical solution can be selected by an
 iteration operator, what coherence properties should this operator verify? In
