@@ -1425,7 +1425,7 @@ effects", i.e., helpers to perform a silent step or play a move.
     into $itree.t_Sigma$. This one in particular is the identity handler, part
     of a larger structure making $itree.t$ a _relative
     monad_~#num-cite(<AltenkirchCU10>) on $icont.t th I -> (base.Set^I ->
-    base.Set^I)$. Alas, its definition is irrelevant to OGS correction and does
+    base.Set^I)$. Alas, its definition is irrelevant to OGS correctness and does
     not fit into this margin...
 
   ]
@@ -1474,11 +1474,13 @@ $ s th x
 
 While the basic idea is simple, a number of subtle questions arise quite quickly
 during axiomatization. Should all equation systems have solutions? Should the
-solution be unique? If not, a canonical solution can be selected by an
-iteration operator, what coherence properties should this operator verify? In
-fact almost all of the design points one can imagine have been explored, in an
+solution be unique? If not, when a canonical solution can be selected by an
+iteration operator, what coherence properties should this operator satisfy? In
+fact, almost all imaginable points in the design space have been explored, in an
 explosion of competing definitions. The concepts have historically been
 organized roughly as follows.
+
+#tom[J'ai tendance à entendre "canonique" dans un sens un peu différent de toi, on dirait. Quand on a un opérateur d'itération qui fait un choix, pour moi c'est pas canonique. Canonique évoque une propriété genre unicité ou approchant. ]
 
 #block(stroke: 1pt, inset: 0.8em, radius: 5pt)[
 *Iterative Things* ~~ Every _guarded_ equation
@@ -1487,7 +1489,7 @@ some $x_i approx x_j$. The following variants have been defined:
 
 - _iterative theories_, for terms in finitary algebraic theories~#mcite(dy:
   -4em, <Elgot75>),
-- _iterative algebras_, for algebras associated to a such theories~#mcite(dy: -2em, <Nelson83>),
+- _iterative algebras_, for algebras associated to such theories~#mcite(dy: -2em, <Nelson83>),
 - _completely iterative monads_, for _ideal_ monads, where there is a way to
     make sense of guardedness~#mcite(dy: -2.5em, <AczelAMV03>).
 - _completely iterative algebras_, for functor algebras, with an adapted notion of _flat_
@@ -1496,6 +1498,9 @@ some $x_i approx x_j$. The following variants have been defined:
 Absence of the prefix "completely" denotes the fact that only finitary equations are solved.
 ]
 
+#tom[L'ordre choisi ici n'est pas clair, est-ce de plus général?]
+
+
 #block(stroke: 1pt, inset: 0.8em, radius: 5pt)[
 *Iteration Things and Elgot Things* ~~ Every equation system has a
 _canonical choice_ of solution, subject to coherence conditions. This following has been
@@ -1503,7 +1508,7 @@ defined:
 
 - _iteration theories_, for terms in finitary algebraic theories~#mcite(dy: -4em, <BloomE93>),
 - _Elgot algebras_, for finitary functor algebras~#mcite(dy: -2em, <AdamekMV06>),
-- _Elgot monads_, for finitary monad~#mcite(dy: -1em, <AdamekMV10>),
+- _Elgot monads_, for finitary monads~#mcite(dy: -1em, <AdamekMV10>),
 - _complete Elgot monads_, for any monad~#mcite(dy: 1em, <GoncharovRS15>).
 
 The older "iteration" prefix requires only the four so-called Conway axioms on
@@ -1511,31 +1516,38 @@ the iteration operator, while the more recent "Elgot" prefix denotes the additio
 of the "uniformity" axiom. The prefix "complete" has the same meaning as before.
 ]
 
-More recently, several works have tried to unify the two above families, by
-axiomatizing abstract _guardedness criteria_, for which guarded equations have
-a canonical choice of solution~#mcite(<GoncharovRP17>)~#mcite(dy: 4em, <MiliusL17a>)).
-This criteria can be syntactic as in the first family, or
-trivial as in the second family. The iteration operator can then be axiomatized
-to be coherent in the style of iteration or Elgot monads, and unicity of
-solutions can be framed as the most restrictive of these coherence conditions.
-For the type theory practicioner seeking a modern account, I recommand in
-particular Goncharov et al.~#num-cite(<GoncharovRP17>), which also features
-much appreciated graphical depictions of the coherence laws.
+More recently, several works have tried to unify the above two families, by
+axiomatizing abstract _guardedness criteria_, for which guarded equations have a
+canonical choice of solution~#mcite(<GoncharovRP17>)~#mcite(dy: 4em,
+<MiliusL17a>)).  This criteria may be syntactic as in the first family, or
+trivial #tom[(ça sonne un peu péjoratif... ça veut dire quoi?)] as in the second
+family. The iteration operator may then be axiomatized to be coherent in the
+style of iteration or Elgot monads, and uniqueness of solutions may be framed as
+the most restrictive of these coherence conditions. #tom[La phrase précédente
+n'est pas claire, je pense. ] For the type theory practicioner seeking a modern
+account, I recommend in particular Goncharov et al.~#num-cite(<GoncharovRP17>),
+which also features much appreciated graphical depictions of the coherence laws.
+
+#tom[Ouf! On se retrouve à la fin d'un paragraphe d'into fleuve, sans du tout savoir ce qui nous attend pour cette partie...]
 
 === Unguarded Iteration
 
 In the original interaction tree library~#num-cite(<XiaZHHMPZ20>), an iteration
-_operator_ has been devised, which constructs a fixpoint w.r.t. weak
-bisimilarity of an arbitrary equation system. This makes the interaction tree
-monad quotiented by weak bisimilarity into a complete Elgot monad. For readability
-let us introduce a helper which we will use several times. Given $f cl X =>
-itree.tp_Sigma th A$ and $f cl X => itree.tp_Sigma th A$ #margin-note[
-  Note the one-step unfolding in the codomain! Moreover, note that this
-  definition pattern-matches on its argument lazily, i.e. only _after_
-  being observed. Indeed, a general trick to help satisfy guardedness is to
-  copattern-match on $.itree.obs$ as early as possible.
-], define the following copairing of arrows $f
-itree.copr g cl (X + Y) => itree.t_Sigma th A$ by
+_operator_ has been devised, which constructs fixpoints of arbitrary equation
+systems up to weak bisimilarity. This makes the interaction tree monad
+quotiented by weak bisimilarity into a complete Elgot monad. For readability,
+let us introduce a useful helper. Given $f cl X => itree.tp_Sigma th A$ and $g
+  cl Y => itree.tp_Sigma th A$ #margin-note[ Please note the one-step unfolding
+  in the codomain!#tom[codomain?! y a une typo ici ou dans le codomaine?]
+  Moreover, let us emphasise that this definition pattern-matches on its
+  argument lazily, i.e. only _after_ being observed.  Indeed, a general trick to
+help satisfy guardedness is to copattern-match on $.itree.obs$ as early as
+possible.  ], define the following copairing of arrows $f itree.copr g cl (X +
+Y) => itree.t_Sigma th A$ by
+
+#tom[J'aime pas la notation pour le copairing, pcq traditionnellement on utilise
+les symboles d'opérateurs sur les flèches comme agissant à la fois côté domaine
+et codomaine, genre $f+g cl A + B -> C + D$.]
 
 $ ((f itree.copr g) th r) .itree.obs th kw.wit r \
   quad | base.inj1 th x := f th x \
@@ -1550,10 +1562,9 @@ $ ((f itree.copr g) th r) .itree.obs th kw.wit r \
     itree.iter_f th x := f th x itree.bind ((itree.tauF compose itree.iter_f) itree.copr itree.retF) $
 ]
 
-#lemma[Iter Fixed Point][
-  Given $Sigma cl icont.t th I$, for all $f cl X => itree.t_Sigma th (X + Y)$,
-  $itree.iter_f$ is a weak fixed point of $f$, i.e. the following is
-  statement is true.
+#lemma[Iter Fixed Point][ Given $Sigma cl icont.t th I$, for all $f cl X =>
+  itree.t_Sigma th (X + Y)$, $itree.iter_f$ is a weak fixed point of $f$, i.e.,
+  the following holds.
 
   #let bk(it) = text(fill: black, it)
   $ itree.iter_f th x
@@ -1569,15 +1580,16 @@ $ ((f itree.copr g) th r) .itree.obs th kw.wit r \
 ]
 
 We will not prove here that this iteration operator satisfies the requirements
-of complete Elgot monads. These properties could provide us with reasoning
-possibilities on interaction trees constructed by iteration, however in
-contrast to something such as unicity of solution, they are quite limited. The
-prime shortcoming of these coherence properties, is that they are limited to
-rearranging equation systems. As such they are of very little use to prove
-bisimilar the iteration of an equation system with an interaction tree
-constructed entirely differently. Because such a bisimilarity proof will be at
-the cornerstone of our OGS correction proof, we need to look further into
-guardedness, the key for unicity of solutions.
+of complete Elgot monads. These properties could be useful for reasoning about
+interaction trees constructed by iteration, but they are quite limited compared
+to something such as uniqueness of solutions. The prime shortcoming of these
+coherence properties, is that they are limited to rearranging equation systems.
+As such, they are hardly useful to establish bisimilarity between an interaction
+tree constructed by iteration and another one, constructed entirely differently.
+Because such a bisimilarity proof will be at the cornerstone of our OGS
+correctness proof, we need to look further into guardedness, the key to
+uniqueness of solutions.
+#tom[C'est aussi le passage à la bisim forte qui gagne, non?]
 
 === Guarded Iteration
 
