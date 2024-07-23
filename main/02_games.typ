@@ -133,7 +133,12 @@ played. This can be encoded by two maps $"next"^+ cl forall i^+, th M^+ th i^+ -
 I^-$ and $"next"^- cl forall i^-, th M^- th i^- -> I^+$. This leads us to the
 following definitions.
 
-#guil[Should you say that $i^+$ is taken in $I^+$ and $i^-$ in $I^-$ ?]
+#guil[Should you say that $i^+$ is taken in $I^+$ and $i^-$ in $I^-$ ?] 
+
+#tom[Coq devine tout seul le type de $i^+$ dans ce cas, non? Il faudrait ptet
+l'expliquer kek part dans une section dédiée à la méta théorie ambiante au début
+du manuscrit, qui expliquerait aussi les aspects un peu inhabituels de la
+syntaxe genre le "match".]
 
 #definition[Half-Game][
   Given $I, J cl base.Set$ a _half-game with input positions $I$
@@ -365,6 +370,7 @@ position, a passive state over it and a currently valid server move and must
 return an active state over the next position.
 
 #guil[You could explain why there is no return move for Opponent.]
+#tom[+1! Et "compositional manipulation" survend un peu le truc, non?]
 
 == Strategies as Indexed Interaction Trees <sec-itree>
 
@@ -465,6 +471,8 @@ simpler notion.
   identity on containers.
 ]
 #guil[What is the identity on containers?]
+#tom[Je comprends pas la question: c'est juste la fonction identité sur $icont.t
+th I$, non? Qu'est-ce qui ne va pas?]
 
 After this interlude on indexed containers, we are now ready to go back to
 strategies. Recall that we had turned strategies into coalgebras for the
@@ -521,6 +529,7 @@ described by Conor McBride in #mcite(dy: 1.2em, <McBride11>).
 #guil[Do you mean that this structure of
 indexed interaction tree was already present in
 #mcite(dy: 1.2em, <McBride11>)?]
+#tom[+1, ça serait bien d'expliquer le lien avec le papier de Conor.]
 
 Before moving on to define bisimilarity, let us first link this definition
 to the previous one of transition system over a game.
@@ -537,6 +546,17 @@ to the previous one of transition system over a game.
 
 #guil[Can you relate this definition of strategies to the one
 given in #num-cite(<LevyS14>) (Definition 2)?]
+
+#tom[Ah bien vu! Mais ça va être pénible, pcq leur def ne me semble pas
+trivialement équivalente. C'est une def de stratégie à la papa, comme ensemble
+de parties déterministes clos par préfixe. Mais pour ce que j'en vois, ils ne
+s'en servent que pour caractériser la bisimilarité des états dans les systèmes
+de transitions. Notamment ils ne cherchent pas à démontrer l'équivalence, ou le
+fait que c'est une coalgèbre finale. Et pire: ils n'ont pas de coup silencieux.
+*Donc*: ptet on pourrait dire que la def ici est une reformulation constructive
+de la leur, où (1) on modélise les ensembles de branches clos par préfixes comme
+des arbres, ok, banal, et (2) on introduit une notion de coup silencieux pour
+modéliser l'absence de réponse à un coup comme une divergence?]
 
 #lemma[System Unrolling][
   Together, $game.stratA_G th R$ and $game.stratP_G th R$ form the state families
@@ -560,6 +580,9 @@ given in #num-cite(<LevyS14>) (Definition 2)?]
 
 #guil[I am struggling to understand this lemma,
 what is a state family of the final transition system ?]
+
+#tom[Attention! On n'a même pas défini les morphismes entre systèmes de
+transitions...]
 
 == Bisimilarity
 
@@ -595,12 +618,14 @@ been formalized. Moreover, in Agda's experimental tradition, while they do work
 when used in the intended programming patterns, their semantics are still not
 fully clear #peio[ref multi-clocked guarded TT] 
 
-#guil[I don't think the connection between sized types and guarded recursive types has been worked out]. We will take an entirely
-different route, building coinduction for ourselves, _inside_ type theory.
-Indeed, as demonstrated by Damien Pous' coq-coinduction
-library~#mcite(<Pous16>, supplement: [https://github.com/damien-pous/coinduction]),
-powerful coinductive constructions and reasoning principles for propositional
-types are derivable in the presence of impredicativity.
+#guil[I don't think the connection between sized types and guarded recursive
+types has been worked out.] #tom[Mais donc c'est quoi le pb? Et ta
+recommandation ici?] We will take an entirely different route, building
+coinduction for ourselves, _inside_ type theory. Indeed, as demonstrated by
+Damien Pous' coq-coinduction library~#mcite(<Pous16>, supplement:
+[https://github.com/damien-pous/coinduction]), powerful coinductive
+constructions and reasoning principles for propositional types are derivable in
+the presence of impredicativity.
 
 === Coinduction with Complete Lattices
 
