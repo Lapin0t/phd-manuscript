@@ -58,16 +58,18 @@ usecase.
   allowed at certain points of the game but not at others, dependending on what
   has been played before.
 
-Happily, both of these points can be resolved by swapping interaction tree's
+Luckily, both of these points can be resolved by swapping interaction tree's
 notion of event with the notion of game introduced by Paul Levy and Sam
 Staton~#mcite(<LevyS14>). The rest of the chapter is organized as follows.
 
 - In @sec-levy-staton I reconstruct Paul Levy and Sam Staton's notion of
   game and of coalgebraic transition system.
 - In @sec-itree I introduce _indexed interaction trees_, a novel generalization of
-  interaction trees adapted to the above notion of games. I introduce the
-  definition of their bisimilarity and their general theory, lifted from the
-  non-indexed setting.
+  interaction trees adapted to the above notion of games.
+- In @sec-bisim I define their bisimilarity together with powerful reasoning
+  principles based on a lattice-theoretic fixed point construction.
+- In @sec-itree-monad I give a little bit of structure to indexed interaction
+  tree, lifted from the non-indexed setting.
 - In @sec-iter I develop upon the theory of iteration operators, providing a
   novel _eventually guarded iteration_, applicable to the delay
   monad~#mcite(<Capretta05>), but also to indexed and non-indexed interaction
@@ -536,7 +538,7 @@ to the previous one of transition system over a game.
   strategies.
 ] <def-unroll>
 
-== Bisimilarity
+== Bisimilarity <sec-bisim>
 
 The natural notion of equality on automata is the notion bisimilarity.
 Intuitively, a bisimulation between two automata consists of a relation between
@@ -1098,8 +1100,9 @@ we know that for well-behaved $R^rel.r$ it is an equivalence relation and that
 it supports coinductive proofs up-to reflexivity, up-to symmetry and up-to
 strong bisimilarity.
 
-== Monad Structure
+== Monad Structure <sec-itree-monad>
 
+#peio[manque fmap]
 An important structure available on interaction trees is that they form a
 monad. Indeed as they are parametrized by an _output_ family $R$, a strategy
 with output $R$ can be considered as an impure computation returning some $R$.

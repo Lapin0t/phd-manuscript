@@ -186,6 +186,8 @@
   coplay: pr("coplay"),
 )
 
+#let asgn(x) = crel($- #h(-0.2em) [ #x ] #h(-0.2em) ->$)
+
 #let ctx = (
   ctxc: de(cop("Ctx")),
   nilc: cs(cop($epsilon$)),
@@ -193,6 +195,10 @@
   varc: de(crel($in.rev$)),
   topc: cs(cop("top")),
   popc: cs(cop("pop")),
+  emp: pr(cop(sym.emptyset)),
+  cat: pr(crel($triangle.r.filled.small #h(-0.3em) triangle.r.filled.small$)),
+  var: pr(cop(math.bold("V"))),
+  //cat: pr(crel($+ #h(-0.3em) triangle.r.filled.small$)),
 )
 
 //#let icont_x (i: none, j: none) = if (i and j) [$"ICont" th #i th #j $] else [ICont]
