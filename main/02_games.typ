@@ -140,6 +140,8 @@ l'expliquer kek part dans une section dédiée à la méta théorie ambiante au 
 du manuscrit, qui expliquerait aussi les aspects un peu inhabituels de la
 syntaxe genre le "match".]
 
+#guil[Effectivement, je suis d'accord.]
+
 #definition[Half-Game][
   Given $I, J cl base.Set$ a _half-game with input positions $I$
   and output positions $J$_ is given by the following record.
@@ -473,6 +475,7 @@ simpler notion.
 #guil[What is the identity on containers?]
 #tom[Je comprends pas la question: c'est juste la fonction identité sur $icont.t
 th I$, non? Qu'est-ce qui ne va pas?]
+#guil[Oops effectivement, je me suis embrouillé les pinceaux.]
 
 After this interlude on indexed containers, we are now ready to go back to
 strategies. Recall that we had turned strategies into coalgebras for the
@@ -558,6 +561,9 @@ de la leur, où (1) on modélise les ensembles de branches clos par préfixes co
 des arbres, ok, banal, et (2) on introduit une notion de coup silencieux pour
 modéliser l'absence de réponse à un coup comme une divergence?]
 
+#guil[Ça serait chouette de pouvoir prouver ça! Ça permettrait d'expliciter
+le lien avec la présentation standard des straégies en sémantique des jeux.]
+
 #lemma[System Unrolling][
   Together, $game.stratA_G th R$ and $game.stratP_G th R$ form the state families
   of the final transition system over $G$ with output $R$, as witnessed by
@@ -620,7 +626,10 @@ fully clear #peio[ref multi-clocked guarded TT]
 
 #guil[I don't think the connection between sized types and guarded recursive
 types has been worked out.] #tom[Mais donc c'est quoi le pb? Et ta
-recommandation ici?] We will take an entirely different route, building
+recommandation ici?]
+#guil[De citer un article sur les sized types plutot que sur les multi-clocked 
+guarded type theory.]
+ We will take an entirely different route, building
 coinduction for ourselves, _inside_ type theory. Indeed, as demonstrated by
 Damien Pous' coq-coinduction library~#mcite(<Pous16>, supplement:
 [https://github.com/damien-pous/coinduction]), powerful coinductive
