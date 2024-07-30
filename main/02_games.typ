@@ -720,15 +720,24 @@ pattern-matching and recursive functions. Thankfully, in the context of
 bisimulations, a line of work has developped a theory of _enhanced_
 bisimulations, in which the premise is weakened to $x lt.tilde f th (g th x)$---
 bisimulation _up-to $g$_---for some _compatible_ $g$, which must verify $g
-compose f lt.tilde f compose g$. #tom[Attention, la compatibilité n'est pas
-nécessaire, si?] This eases bisimilarity proofs where, for
+compose f lt.tilde f compose g$. 
+#guil[Ça vaudrait le coup d'indiquer que tu utilise le pointwise order sur les 
+fonctions.]
+#tom[Attention, la compatibilité n'est pas
+nécessaire, si?] #guil[+1, je pense qu'il vaudrait mieux introduire la notion
+de enhanced bisimulation sans parler de compatibilité, puis d'indiquer
+qu'il existe des cadres génériques pour montrer que ces techniques up-to sont
+sound: compatibility, respectfulness. Un des points importants de ces notions
+est qu'elles sont stables par composition.]
+ This eases bisimilarity proofs where, for
 example, the relation between states is only preserved by the transition
 functions up-to transitive closure, provided the transitive closure has been
 proven compatible.
 
 Satisfyingly, the least upper bound of all compatible functions is still
 compatible. It is called the _companion_ of $f$, written $t_f$, and moreover
-satisfies $t_f bot th approx nu f$. This enables working with the following
+satisfies $t_f bot th approx nu f$ #guil[Il me semble que $approx$ n'a pas été introduit]. 
+This enables working with the following
 generalized principle.
 
 #centering(inferrule(
@@ -788,6 +797,8 @@ Est-ce qu'une présentation par règles d'inférences aide à comprendre? Je ten
   )
   
 ]
+
+#guil[Je trouve que la présentation par règles d'inférences est beaucoup plus lisible.]
 
 #theorem[Tower Induction][
   Given a complete lattice $X$, a monotone endo-map $f cl X -> X$ and an inf-closed
