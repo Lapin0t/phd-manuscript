@@ -136,7 +136,7 @@
   eqguard: de(cop("eqn-guarded")),
   eqevguard: de(cop("eqn-ev-guarded")),
   gret: cs(cop("g-ret")),
-  gtau: cs(cop("g-vis")),
+  gtau: cs(cop("g-tau")),
   gvis: cs(cop("g-vis")),
   evs: cs(cop("ev-step")),
   evg: cs(cop("ev-guard")),
