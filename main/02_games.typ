@@ -19,7 +19,7 @@ in the loose sense that it has some internal states tracking information
 required to choose moves, and alternates between two kinds of transitions.
 Whenever it is their turn, i.e., in an active state, a strategy must choose a
 move to play and transition to a passive state. And in a passive state, the
-strategy must accept any possible move made by a hypothetic opponent and
+strategy must accept any possible move made by a hypothetical opponent and
 transition to an active state.
 
 In the classical literature on automata, these transitions would typically be
@@ -40,7 +40,7 @@ computation, interacting with its environment by means of uninterpreted
 events. Recognizing "programs" as Player strategies, "environments" as yet
 unknown Opponent strategies and "uninterpreted events" as move exchanges, we
 are quite close to our setting of alternating two player games. However, there
-are two remaining obstactles in order to apply interaction trees to our
+are two remaining obstacles in order to apply interaction trees to our
 use case.
 
 - *Duality.* We would like strategies and counter-strategies to have similar
@@ -51,15 +51,15 @@ use case.
   _responses_ $R cl Q -> base.Set$. As such one cannot just swap queries and
   responses as they are not of the same sort.
 - *Indexing.* In an interaction tree, while the set of allowed responses
-  depends on the previous query, queries themselves do not dependend on anything.
+  depends on the previous query, queries themselves do not depend on anything.
   As such, all queries are allowed at any point where it is Player's turn to
   play. In the context of two player games, this is a strong restriction on
   expressivity, which forbids us to represent games where some Player moves are
-  allowed at certain points of the game but not at others, dependending on what
+  allowed at certain points of the game but not at others, depending on what
   has been played before.
 
 Happily, both of these points can be resolved by swapping the notion
-of event from interaction trees, with the notion of game introduced by
+of event from interaction trees for the notion of game introduced by
 Paul Levy and Sam Staton~#mcite(<LevyS14>). The rest of the chapter is
 organized as follows.
 
@@ -372,8 +372,8 @@ There is a lot to unpack here. First the states: instead of a mere set, as is
 usual in a classical transition system, they here consist of two families
 #strat.stp, #strat.stn _over_ respectively the active and passive game
 positions. It is important not to confuse _positions_ and _states_. The former
-consist of the information used to determine which moves are allowed to be
-played. The latter consist of the information used by a given strategy to
+consists of the information used to determine which moves are allowed to be
+played. The latter consists of the information used by a given strategy to
 determine how to play. Their relationship is similar to that of types to terms.
 
 The $strat.play$ function takes as inputs an active position $i cl I^+$, an
@@ -423,6 +423,7 @@ programming languages have introduced syntactic facilities like the "yield" and
 "await" keywords for writing state machines. #peio[ref?]
 
 #tom[Ça je connais pas du tout.]
+#yann[Euuuh je ne comprends pas bien le lien avec cooperative multithreading]
 
 In order to rectify this, we forget about states altogether. Notice
 that @def-tsys is exactly the definition of a coalgebra for some
@@ -693,7 +694,7 @@ library~#mcite(<Pous16>, supplement: [https://github.com/damien-pous/coinduction
 powerful coinductive constructions and reasoning principles for propositional
 types are derivable in the presence of impredicativity.
 #tom[Pourquoi la font de coq-coinduction est-elle si petite?]
-
+#yann[J'ai l'impression que cette fin de paragraphe suggère que tu réimplémentes une librairie de coind plutôt que tu utilises celle de Damien]
 
 === Coinduction with Complete Lattices
 
@@ -703,6 +704,7 @@ predicates $X -> base.Prop$ or relations $X -> Y -> base.Prop$, our case of
 interest for bisimilarity. By the Knaster-Tarski theorem one can obtain the
 greatest fixpoint $nu f := or.big { x | x lt.tilde f th x }$ of any monotone
 endo-map $f$ on the complete lattice.
+#yann[Ref de KT]
 
 This is only the first part of the story. Indeed this will provide us with the
 greatest fixpoint $nu f$, in our case, bisimilarity, but the reasoning
@@ -729,13 +731,16 @@ de enhanced bisimulation sans parler de compatibilité, puis d'indiquer
 qu'il existe des cadres génériques pour montrer que ces techniques up-to sont
 sound: compatibility, respectfulness. Un des points importants de ces notions
 est qu'elles sont stables par composition.]
+#yann[Je suis d'accord oui, autant définir tranquillement un up-to sound et parler des bonnes propriétés de clôture des fonctions compatibles en citant la littérature. J'ai écrit une version de ça qui vaut ce qu'elle vaut en Section 4.1 de ce papier si tu veux : https://perso.ens-lyon.fr/yannick.zakowski/papers/ctrees-jfp.pdf]
+#yann[A forciori vis à vis du companion on exploite que toute fonction sous le companion est sound, ce qui contient par définition toutes les fonctions compatibles, mais pas que !]
  This eases bisimilarity proofs where, for
 example, the relation between states is only preserved by the transition
 functions up-to transitive closure, provided the transitive closure has been
 proven compatible.
+#yann[Pas complètement clair pour moi quelle clôture précise tu veux dire par là. Tu veux dire une bisimulation up-to bisimilarity?]
 
 Satisfyingly, the least upper bound of all compatible functions is still
-compatible. It is called the _companion_ of $f$, written $t_f$, and moreover
+compatible. It is called the _companion_ of $f$,#yann[(citation Coinduction all the way up)] written $t_f$, and moreover
 satisfies $t_f bot th approx nu f$ #guil[Il me semble que $approx$ n'a pas été introduit]. 
 This enables working with the following
 generalized principle.
@@ -746,7 +751,7 @@ generalized principle.
 ))
 
 In this way, one delays until actually required in the proof the choice and use
-of any particular enhancement $g lt.tilde t_f$. This theory based on the
+of any particular enhancement $g lt.tilde t_f$.#yann[Techniquement ça se passe aussi bien que cela aussi parce que le companion contient l'identité, f lui-même, et son carré notamment, pour vraiment pouvoir sortir des up-to unitaires à la volée pendant la preuve.] This theory based on the
 companion is the one used in the Coq formalization of this thesis. However,
 since I started writing the formalization, an even more practical solution,
 Steven Schäfer and Gert Smolka's _tower induction_~#mcite(<SchaferS17>), has
@@ -757,6 +762,7 @@ here and use it in the rest of the thesis.
 Tower induction rests upon the inductive definition of the tower predicate,
 whose elements can be understood as all the transfinite iterations of $f$,
 starting from $top$. #tom[Formulation bizarre: le tower predicate, c'est $t_f$?]
+#yann[Je ne crois pas non, $t_f$ est le companion. Le companion peut être caractérisé en terme de la chaine, mais cette caractérisation n'est pas mentionnée ici. On passe plutôt à une autre construction donnant des principes de raisonnements très similaires mais présentés différemment.]
 
 #definition[Tower][
   Given a complete lattice $X$ and a monotone endo-map $f cl X -> X$, the
@@ -799,6 +805,17 @@ Est-ce qu'une présentation par règles d'inférences aide à comprendre? Je ten
 ]
 
 #guil[Je trouve que la présentation par règles d'inférences est beaucoup plus lisible.]
+
+#yann[Je pense qu'il faut surtout clarifier que c'est un apparté sans conséquence, et le positionner comme c'est fait en fin de section peut-être plus en amont. Le lien avec le companion n'est pas fait ici, et n'est pas nécessaire: le point essentiel de la tower est d'avoir (yet another après knaster-tarski, parameterized coinduction, companion, ...) une construction alternative du gfp, avec un support pour de bon principes de raisonnement. En particulier, là où le companion amenait avec sa construction :
+1. un up-to companion lui-même valid et permettant d'accéder à toute fonction sous le companion durant une preuve par coinduction.
+2. deux méthodes de preuve de up-to : par compatibilité, ou via le companion d'ordre supérieur;
+Et bien la tower amène avec sa propre construction (gfp f = inf (tower f)):
+1. un up-to lui-même permettant d'accéder à toute fonction qui respecte tous les éléments de la chaine;
+2. une méthode de preuve de up-to simple et uniforme : la tower induction, i.e., prouve moi que ton prédicat est clôt par f et par infimum (i.e., les deux constructeurs/règles d'inférence de la tour)
+Globalement la théorie est plus simple, et l'usage relativement plus simple puisque tout s'exprime directement en terme de jolies instances proper, sans jongler entre les deux niveaux de companion.
+
+Et certes le companion peut être charactérisé en ces termes, mais en pratique cet aspect importe peu il me semble, sauf pour récupérer certaines preuves existantes.
+]
 
 #theorem[Tower Induction][
   Given a complete lattice $X$, a monotone endo-map $f cl X -> X$ and an inf-closed
@@ -872,7 +889,7 @@ the Calculus of Communicating Processes (CCS).
 === Strong Bisimilarity
 
 #peio[intro nulle, citer @Levy11] Equipped with this new construction of
-coinductive fixpoints we will apply them, in the complete lattice of relations.
+coinductive fixpoints we will apply them, in the complete lattice of relations.#yann[Peut-être sans importance, mais le lattice en question est plus précisément celui des relations indexées sur une paire de type family fixées (comme tu le définies ci-dessous)]
 Bisimilarity (both strong and weak), are typically built on non-indexed
 automata, which moreover do not have _outputs_. As such they consist of a single
 relation, on such automata. As our automata (indexed interaction trees,
