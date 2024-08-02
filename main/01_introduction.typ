@@ -9,7 +9,14 @@
 - coder les maths: important pour l'accessibilité
 - coder les maths: important pour juger l'abstraction
 - cette thèse: manuel du code (idealisé), guide de réimplementation
+
+explications technique:
 - def-eq vs prop-eq vs ext-eq
+- with abstraction
+- copattern matching
+- implicit arguments
+- set vs prop vs strict-prop
+- typical ambiguity
 
 == Running Example: Simply-Typed λ-Calculus
 
