@@ -135,6 +135,13 @@ played. This can be encoded by two maps $"next"^+ cl forall i^+, th M^+ th i^+ -
 I^-$ and $"next"^- cl forall i^-, th M^- th i^- -> I^+$. This leads us to the
 following definitions.
 
+#guil[Should you say that $i^+$ is taken in $I^+$ and $i^-$ in $I^-$ ?] 
+
+#tom[Coq devine tout seul le type de $i^+$ dans ce cas, non? Il faudrait ptet
+l'expliquer kek part dans une section dédiée à la méta théorie ambiante au début
+du manuscrit, qui expliquerait aussi les aspects un peu inhabituels de la
+syntaxe genre le "match".]
+
 #definition[Half-Game][
   Given $I, J cl base.Set$ a _half-game with input positions $I$
   and output positions $J$_ is given by the following record.
@@ -192,9 +199,11 @@ advanced concepts, such as framed bicategories and two-sided fibrations.
     quad game.ssrv cl game.hsim th B .game.server th A .game.server $
 ]
 
-#remark[Half-Game is Functorial][ $game.hg$ extends to a strict functor
-  $base.Set^"op" times base.Set -> base.Cat$ as witnessed by the following
-  action on morphisms, presented in curried form and written in infix notation.
+#remark[Half-Game is Functorial][
+  $game.hg$ extends to a strict functor $base.Set^"op" times base.Set -> base.Cat$ as witnessed
+  by the following action on morphisms, which we write curried and in infix style.
+  #guil[You could introduce the notion of composition of simulations,
+  and the identity simulation.]
 
   $ ar game.reixl ar game.reixr ar cl (I_2 -> I_1) -> game.hg th I_1 th J_1 -> (J_1 -> J_2) -> game.hg th I_2 th J_2 \
     (f game.reixl A game.reixr g) .game.mv th i := A .game.mv th (f th i) \
@@ -224,6 +233,10 @@ definition: a Conway game $G cl conway.t$ is given by two subsets of Conway
 games $G_L, G_R subset.eq conway.t$. The left subset $G_L$ is to be thought of
 as the set of games reachable by the left player in one move, and symmetrically
 for $G_R$.
+
+#guil[I think Joyal was the first to introduce a categorical
+structure on Conway games. See also the presentation by
+Méllies of Conway games in connection with Game Semantics.]
 
 #margin-note[For a more in-depth discussion of the two notions of subsets in
     type theory, see #text-cite(<HancockH06>, supplement: [pp. 194--198])]
@@ -390,6 +403,9 @@ The #strat.coplay function is simpler. By @def-hg-ext, it takes a passive
 position, a passive state over it, and a currently valid server move, and must
 then return an active state over the next position.
 
+#guil[You could explain why there is no return move for Opponent.]
+#tom[+1! Et "compositional manipulation" survend un peu le truc, non?]
+
 == Strategies as Indexed Interaction Trees <sec-itree>
 
 In @def-tsys, I have defined strategies similarly to Levy &
@@ -444,7 +460,8 @@ can play the same trick and eliminate passive positions from the
 description of games, obtaining back indexed polynomial functors, or more
 precisely their type-theoretic incarnation as _indexed
 containers_~#mcite(<AltenkirchGHMM15>). Remember that the reason for preferring
-games over indexed containers was to ease swapping client and server. But since
+games over indexed containers was to ease swapping client and server.
+#guil[This was not explained before.] But since
 strategies are inherently biased towards one side, we might as well use the
 simpler notion.
 
@@ -496,7 +513,11 @@ simpler notion.
     ceil(Sigma) .game.server"".game.nx th m := Sigma .icont.nxt th m $
 
   We observe in passing that $floor(ar) compose ceil(ar)$ is definitionally equal
-  to the identity on containers, but not the other way around. ]
+  to the identity on containers, but not the other way around.
+]
+#guil[What is the identity on containers?]
+#tom[Je comprends pas la question: c'est juste la fonction identité sur $icont.t
+th I$, non? Qu'est-ce qui ne va pas?]
 
 After this interlude on indexed containers, we are now ready to go back to
 strategies. Recall that we had turned strategies into coalgebras for the
@@ -523,7 +544,7 @@ the _action functor_ on $Sigma$.
 Being itself the extension of some indexed container, $itree.F_Sigma th R$ has a
 thorougly understood theory of fixpoints~#mcite(<AltenkirchGHMM15>) and we can
 form its final coalgebra as a coinductive family which is accepted by most type
-theory implementations such as Agda and Coq.
+theory implementations#guil[proof assistants] such as Agda and Coq.
 
 #tom[Là je me rends compte que la rédaction est un poil trop linéaire à mon
 goût. La def des arbres d'interation indexés est perdue au milieu d'une longue
@@ -548,12 +569,19 @@ arbres d'interaction"?]
 
 #tom[pas compris les shorthands. Est-ce que tu essaies de dire que 
 $itree.ret th x := { itree.obs = itree.retF t x}$, par exemple?]
+#guil[I don't understand these shorthands. In which sense can $itree.ret th x$ be seen
+as of type $itree.t_Sigma$ ?]
 
 Notice that this definition is to interaction trees~#mcite(<XiaZHHMPZ20>)
 what inductive families are to inductive data types. As we will discover
 in the remainder of this chapter, all of the monadic theory of interaction
 trees lifts neatly to this newly indexed setting, an "outrageous fortune"
 described by Conor McBride in #mcite(dy: 1.2em, <McBride11>).
+
+#guil[Do you mean that this structure of
+indexed interaction tree was already present in
+#mcite(dy: 1.2em, <McBride11>)?]
+#tom[+1, ça serait bien d'expliquer le lien avec le papier de Conor.]
 
 #tom[Cette phrase devrait-elle être après la def qui suit?] Before moving on to
 define bisimilarity, let us first link this definition to transition systems
@@ -568,6 +596,20 @@ over games.
   $ game.stratA_G th R := itree.t_floor(G) th R \
     game.stratP_G th R := G.game.server game.extP game.stratA_G th R $
 ] <def-strat>
+
+#guil[Can you relate this definition of strategies to the one
+given in #num-cite(<LevyS14>) (Definition 2)?]
+
+#tom[Ah bien vu! Mais ça va être pénible, pcq leur def ne me semble pas
+trivialement équivalente. C'est une def de stratégie à la papa, comme ensemble
+de parties déterministes clos par préfixe. Mais pour ce que j'en vois, ils ne
+s'en servent que pour caractériser la bisimilarité des états dans les systèmes
+de transitions. Notamment ils ne cherchent pas à démontrer l'équivalence, ou le
+fait que c'est une coalgèbre finale. Et pire: ils n'ont pas de coup silencieux.
+*Donc*: ptet on pourrait dire que la def ici est une reformulation constructive
+de la leur, où (1) on modélise les ensembles de branches clos par préfixes comme
+des arbres, ok, banal, et (2) on introduit une notion de coup silencieux pour
+modéliser l'absence de réponse à un coup comme une divergence?]
 
 #lemma[System Unrolling][
   Together, $game.stratA_G th R$ and $game.stratP_G th R$ form the state families
@@ -596,6 +638,12 @@ est clair. J'imagine laborieusement que ça veut dire $itree.unrollA th s :=
 
 #tom[Et aussi, ça serait bien de rendre explicite que c'est une def
 coinductive.]
+
+#guil[I am struggling to understand this lemma,
+what is a state family of the final transition system ?]
+
+#tom[Attention! On n'a même pas défini les morphismes entre systèmes de
+transitions...]
 
 == Bisimilarity <sec-bisim>
 
@@ -631,14 +679,19 @@ _sized types_, for which the well-formedness criterion is based on typing.
 However they are not available in Coq, the language in which this thesis has
 been formalized. Moreover, in Agda's experimental tradition, while they do work
 when used in the intended programming patterns, their semantics are still not
-fully clear #peio[ref multi-clocked guarded TT]. We will take an entirely
+fully clear #peio[ref multi-clocked guarded TT].
+
+#guil[I don't think the connection between sized types and guarded recursive
+types has been worked out.] #tom[Mais donc c'est quoi le pb? Et ta
+recommandation ici?]
+
+We will take an entirely
 different route, building coinduction for ourselves, _inside_ type theory.
 Indeed, as demonstrated by Damien Pous's coq-coinduction
 library~#mcite(<Pous16>, supplement: [https://github.com/damien-pous/coinduction]),
 powerful coinductive constructions and reasoning principles for propositional
 types are derivable in the presence of impredicativity.
 #tom[Pourquoi la font de coq-coinduction est-elle si petite?]
-
 
 === Coinduction with Complete Lattices
 
