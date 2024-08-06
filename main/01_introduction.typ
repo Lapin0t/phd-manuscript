@@ -12,11 +12,13 @@
 
 explications technique:
 - def-eq vs prop-eq vs ext-eq
+- setoid rewriting, proper?
 - with abstraction
 - copattern matching
 - implicit arguments
 - set vs prop vs strict-prop
 - typical ambiguity
+- typeclasses
 
 == Running Example: Simply-Typed λ-Calculus
 

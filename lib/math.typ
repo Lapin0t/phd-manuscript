@@ -1,29 +1,9 @@
-// typing colon
-#let cl = [#h(0.2em) : #h(0.3em)]
-// thin space (function application)
-#let th = [#h(0.25em)]
-// binding argument
-#let ar = move(sym.bracket.b, dy: -0.3em)
-
 #let colors = (
   kw: color.rgb("#ff9900"),  // keyword
   //kw: color.rgb("#e0af68"),  // keyword
   pr: color.rgb("#ff0099"),  // projection
   cs: color.rgb("#33bb33"),  // constructor
   de: color.rgb("#4488ff"),  // definition
-)
-
-#let kw = (
-  rec: text(colors.kw, "record"),
-  dat: text(colors.kw, "data"),
-  codat: text(colors.kw, "codata"),
-  cls: text(colors.kw, "class"),
-  ins: text(colors.kw, "instance"),
-  wit: text(colors.kw, "with"),
-  where: text(colors.kw, "where"),
-  whr: $:=$,
-  do: text(colors.kw, "do"),
-  fun: text(colors.kw, $lambda$),
 )
 
 #let pr = x => text(colors.pr, x)
@@ -35,6 +15,29 @@
 #let cnorm(it) = math.class("normal", it)
 #let cop(it) = math.op(it)
 
+
+// typing colon
+#let cl = [#h(0.2em) : #h(0.3em)]
+// thin space (function application)
+#let th = [#h(0.25em)]
+// binding argument
+#let ar = cop(move(sym.bracket.b, dy: -0.4em))
+//#let ar = cop("-")
+
+#let kw = (
+  rec: text(colors.kw, "record"),
+  dat: text(colors.kw, "data"),
+  codat: text(colors.kw, "codata"),
+  cls: text(colors.kw, "class"),
+  ext: text(colors.kw, "extends"),
+  ins: text(colors.kw, "instance"),
+  wit: text(colors.kw, "with"),
+  where: text(colors.kw, "where"),
+  whr: $:=$,
+  do: text(colors.kw, "do"),
+  fun: text(colors.kw, $lambda$),
+)
+
 #let base = (
   Prop: de(cop("Prop")),
   Set: de(cop("Set")),
@@ -43,8 +46,11 @@
   endo: de(cop("endo")),
   unit: de(math.bold("1")),
   tt: cs(sym.star),
+  sum: de(crel($+$)),
   inj1: cs(cop($"inj"_1$)),
   inj2: cs(cop($"inj"_2$)),
+  bot: de(cop(sym.bot)),
+  exfalso: de(cop("ex-falso")),
 )
 
 #let subs = (
@@ -172,7 +178,10 @@
   reixl: de(crel(sym.angle.double.r)),
   reixr: de(crel(sym.angle.double.l)),
   //extA: de(sym.times.circle),
-  extA: de(crel(h(0.1em) + move(text($▶$, size: 0.61em), dy: -0.055em) + h(-0.723em) + sym.dot.circle + h(-0.1em))),
+  //extA: de(crel(h(0.1em) + move(text($▶$, size: 0.61em), dy: -0.055em) + h(-0.723em) + sym.dot.circle + h(-0.1em))),
+  //extA: de(crel(h(0.1em) + move($*$, dy: -0.093em) + h(-0.64em) + sym.dot.circle + h(-0.1em))),
+  //extA: de(crel(sym.dot.circle + h(-0.645em) + move($*$, dy: -0.09em))),
+  extA: de(crel(sym.ast.circle)),
   extP: de(crel(sym.arrow.r.triple)),
   stratA: de(cop($"Strat"^+$)),
   stratP: de(cop($"Strat"^-$)),
@@ -187,17 +196,38 @@
 )
 
 #let asgn(x) = crel($- #h(-0.2em) [ #x ] #h(-0.2em) ->$)
+#let ctxhom(a, b) = [#de(sym.bracket.double.l) #a #de(",") #b #de(sym.bracket.double.r)]
 
 #let ctx = (
+  ctxcat: de(cop(math.cal("C"))),
   ctxc: de(cop("Ctx")),
   nilc: cs(cop($epsilon$)),
   conc: cs(crel($triangle.r.filled.small$)),
   varc: de(crel($in.rev$)),
   topc: cs(cop("top")),
   popc: cs(cop("pop")),
+  ope: de(cop("OPE")),
+  end: cs(cop("end")),
+  keep: cs(cop("keep")),
+  skip: cs(cop("skip")),
+  prescope: de(cop("PreScope")),
   emp: pr(cop(sym.emptyset)),
-  cat: pr(crel($triangle.r.filled.small #h(-0.3em) triangle.r.filled.small$)),
-  var: pr(cop(math.bold("V"))),
+  cat: pr(crel($triangle.r.filled.small #h(-0.35em) triangle.r.filled.small$)),
+  vvar: pr(cop(math.bold("V"))),
+  var: pr(crel($in.rev$)),
+  rcatl: pr(cop($"r-cat"_l$)),
+  rcatr: pr(cop($"r-cat"_r$)),
+  //ren: de(crel($arrow.squiggly$)),
+  ren: de(crel($subset.eq$)),
+  catV: de(cop("CatView")),
+  vcatl: cs(cop($"v-cat"_l$)),
+  vcatr: cs(cop($"v-cat"_r$)), 
+  scope: de(cop("Scope")),
+  vemp: pr(cop("view-emp")),
+  vcat: pr(cop("view-cat")),
+  vcatirr: pr(cop("view-cat-irr")),
+  arr: crel("⇾"),
+  tens: de($dot.circle$),
   //cat: pr(crel($+ #h(-0.3em) triangle.r.filled.small$)),
 )
 

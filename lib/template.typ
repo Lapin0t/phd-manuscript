@@ -97,7 +97,7 @@
   // HEADINGS
   set heading(numbering: "1.1")
   show heading: set text(hyphenate: false)
-  show heading: it => v(1.5em) + it + v(1em)
+  show heading: it => v(2.5em, weak: true) + it + v(2em, weak: true)
 
   show heading.where(level: 1): it => context {
     pagebreak(to: "odd")
@@ -181,11 +181,17 @@
   show raw: set text(font: ("FiraCode Nerd Font",), size: 9pt)
   show raw.where(block: true): block.with(inset: (x: 5pt))
 
+  // LINKS
+  show link: it => underline(offset: 1.5pt, stroke: (dash: "densely-dotted"), it)
+
+  // NUMBERED LISTS
+  show enum: set enum(numbering: "(1)")
+
   // REPLACEMENTS
-  show "Agda": smallcaps("Agda")
-  show "Coq": smallcaps("Coq")
-  show "OGS": smallcaps("Ogs")
-  show "coq-coinduction": text-tt("coq-coinduction")
+  show "Agda": txsc("Agda")
+  show "Coq": txsc("Coq")
+  show "OGS": txsc("Ogs")
+  show "coq-coinduction": txtt("coq-coinduction")
 
   body
 }

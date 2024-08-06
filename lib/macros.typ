@@ -18,7 +18,11 @@
 #let remark = my_thm("Remark")
 
 #let centering(it) = align(center, box(it))
-#let text-tt(it) = text(size: 8pt, font: "Fira Mono", it)
+#let txtt(it) = text(size: 8pt, font: "Fira Mono", it)
+#let txsc(it) = smallcaps(it)
+
+// surnames
+#let nm(it) = txsc(it)
 
 // NOTES
 #let peio(it) = box(inset: 0em, fill: color.rgb("#ff700080"))[P: #it]
