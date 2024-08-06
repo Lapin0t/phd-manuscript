@@ -32,7 +32,7 @@ meta-theory, when translated directly to type theory, both of these
 representations eschew the computational content of strategies.
 
 Our basis for an idiomatic type theoretical encoding of automata follows the
-notion of _interaction tree_ introduced by Li-yao Xia et
+notion of _interaction tree_ introduced by #nm[Xia] et
 al.~#mcite(<XiaZHHMPZ20>), originally motivated by representing executable
 denotational semantics of programs with general recursion. Interaction trees
 are a coinductive data structure encoding possibly non-terminating
@@ -60,7 +60,7 @@ use case.
 
 Luckily, both of these points can be resolved by swapping the notion
 of event from interaction trees, with the notion of game introduced by
-Paul Levy and Sam Staton~#mcite(<LevyS14>). The rest of the chapter is
+#nm[Levy] and #nm[Staton]~#mcite(<LevyS14>). The rest of the chapter is
 organized as follows.
 
 - In @sec-levy-staton, I reconstruct Paul Levy and Sam Staton's notion of
@@ -76,11 +76,11 @@ organized as follows.
   monad~#mcite(<Capretta05>), but also to indexed and non-indexed interaction
   trees.
 
-== Levy & Staton Games <sec-levy-staton>
+== #nm[Levy] & #nm[Staton] Games <sec-levy-staton>
 
 === An Intuitive Reconstruction
 
-The definition of game obtained by Levy & Staton in
+The definition of game obtained by #nm[Levy] and #nm[Staton] in
 #mcite(<LevyS14>) arises quite naturally from what is intuitively understood by
 a "game". Let's build it up first hand.
 
@@ -135,15 +135,6 @@ played. This can be encoded by two maps $"next"^+ cl forall i^+, th M^+ th i^+ -
 I^-$ and $"next"^- cl forall i^-, th M^- th i^- -> I^+$. This leads us to the
 following definitions.
 
-#guil[Should you say that $i^+$ is taken in $I^+$ and $i^-$ in $I^-$ ?] 
-
-#tom[Coq devine tout seul le type de $i^+$ dans ce cas, non? Il faudrait ptet
-l'expliquer kek part dans une section dédiée à la méta théorie ambiante au début
-du manuscrit, qui expliquerait aussi les aspects un peu inhabituels de la
-syntaxe genre le "match".]
-
-#guil[Effectivement, je suis d'accord.]
-
 #definition[Half-Game][
   Given $I, J cl base.Set$ a _half-game with input positions $I$
   and output positions $J$_ is given by the following record.
@@ -153,7 +144,7 @@ syntaxe genre le "match".]
 ] <def-hg>
 
 #definition[Game][
-  #margin-note[This is called _discrete game_ by Levy & Staton~#num-cite(<LevyS14>).]
+  #margin-note[This is called _discrete game_ by #nm[Levy] and #nm[Staton]~#num-cite(<LevyS14>).]
   Given $I^+, I^- cl base.Set$ a _game with active positions $I^+$
   and passive positions $I^-$_ is given by the following record.
   $ & kw.rec th game.g th I^+ th I^- th kw.whr \
@@ -166,13 +157,12 @@ syntaxe genre le "match".]
 In order to make (half-)games into a proper category, we will define their
 morphisms. As games are parametrized over sets of positions, game morphisms
 could be naturally defined as parametrized over position morphisms, in the
-displayed style of Benedikt Ahrens and Peter Lumsdaine~#mcite(<AhrensL19>),
-#tom[Normalement ça se fait pas trop de donner les prénoms, et chuis un peu
-d'accord que ça devient vite lourd.] but I will resist the urge to dive too
+displayed style of #nm[Ahrens] and #nm[Lumsdaine]~#mcite(<AhrensL19>),
+but I will resist the urge to dive too
 deeply into the structure of games and leave most of it for further work to
 expose. Indeed, we will require none of it for our main goal of proving
-correctness of OGS. Moreover, as already noted by Pierre-Évariste Dagand and
-Conor McBride~#mcite(<DagandM13>, supplement: "Sec. 1.3") in the similar setting
+correctness of OGS. Moreover, as already noted by #nm[Dagand] and
+#nm[McBride]~#mcite(<DagandM13>, supplement: "Sec. 1.3") in the similar setting
 of indexed containers, describing the extremely rich structures at play requires
 advanced concepts, such as framed bicategories and two-sided fibrations.
 
@@ -227,11 +217,11 @@ Let us introduce a couple example games, to get a feel for their expressivity.
   ls: de("G-Conway"),
 )
 
-*Conway Games* #sym.space Conway games are an important tool in the study of
-_combinatorial games_~#mcite(<Conway76>)#peio[check def there] and may in fact
+*#nm[Conway] Games* #sym.space #nm[Conway] games are an important tool in the study of
+_combinatorial games_~#mcite(<Conway76>) #peio[check def there] and may in fact
 be considered their prime definition. I will explain how they are an instance of
 our notion. We will use the following coinductive, exceedingly simple
-definition: a Conway game $G cl conway.t$ is given by two subsets of Conway
+definition: a #nm[Conway] game $G cl conway.t$ is given by two subsets of #nm[Conway]
 games $G_L, G_R subset.eq conway.t$. The left subset $G_L$ is to be thought of
 as the set of games reachable by the left player in one move, and symmetrically
 for $G_R$.
@@ -253,35 +243,34 @@ $ subs.Pow cl base.Set -> base.Set \
 However there is another, more intensional one, viewing subsets as families:
 
 #tom[Proof-relevant plus que intentional, non?] 
-
 #tom[Euh... et en fait je comprends pas la def... Ah si, c'est la version
 fibrée! Qui l'eut cru venant de toi... Bon, bref, ça coule pas de source à cet
 endroit.]
-
 #tom[De plus, les deux defs n'étant pas équivalentes, est-ce qu'il ne vaudrait
 pas mieux assumer la différence et appeler ça des proof-relevant Conway games?]
 
-$ kw.rec subs.Fam (X cl base.Set) cl base.Set kw.whr \
+$ kw.rec subs.Fam th (X cl base.Set) cl base.Set kw.whr \
   quad subs.dom cl base.Set \
   quad subs.idx cl subs.dom -> X $
 
-Because we want to easily manipulate the support of the two subsets $G_L$ and $G_R$,
-i.e., the set of left moves and right moves, we adopt the second representation.
+Because we want to easily manipulate the support of the two subsets $G_L$ and
+$G_R$, i.e., in this context the set of left moves and right moves, we adopt
+the second representation.
 
-#definition[Conway Game][
-    The set of _Conway games_ is given by the following coinductive record.
+#definition[#nm[Conway] Game][
+    The set of _#nm[Conway] games_ is given by the following coinductive record.
 
     $ kw.rec conway.t cl base.Set kw.whr \
       quad conway.lft cl subs.Fam th conway.t \
       quad conway.rgt cl subs.Fam th conway.t $
 ]
 
-We can now give the Levy & Staton game of Conway games. As in a Conway game one
-does not known whose turn it is to play, the sets of active and passive positions
-will be the same. Moreover, the current position is in fact given by the current
-Conway game.
+We can now give the #nm[Levy] & #nm[Staton] game of #nm[Conway] games. As in a
+#nm[Conway] game one does not known whose turn it is to play, the sets of
+active and passive positions will be the same. Moreover, the current position
+is in fact given by the current Conway game.
 
-#example[Game of Conway Games][ We start by noticing that $I -> subs.Fam th J$
+#example[Game of #nm[Conway] Games][ We start by noticing that $I -> subs.Fam th J$
   is just a shuffling of $game.hg th I th J$:
 
   $ de("fam-to-hg") cl (I -> subs.Fam th J) -> game.hg th I th J \
@@ -295,7 +284,7 @@ following type,
 
 so that applying $de("fam-to-hg")$ yields half-games.
 
-Then, the _game of Conway games_ can be given as follows.
+Then, the _game of #nm[Conway] games_ can be given as follows.
 
   $ conway.ls cl game.g th conway.t th conway.t \
     conway.ls .game.client := de("fam-to-hg") th conway.lft \
@@ -314,18 +303,18 @@ $conway.ls$?]
 
 === Strategies as Transition Systems
 
-Following Levy & Staton~#num-cite(<LevyS14>), we now define client strategies as
- transition systems over a given game. We will only define _client_ strategies,
-since _server_ strategies can be simply derived from client strategies on the
-dual game---the prime benefit of our symmetric notion of game. We first need to
-define two interpretations of half-games as functors.
+Following #nm[Levy] and #nm[Staton]~#num-cite(<LevyS14>), we now define client
+strategies as transition systems over a given game. We will only define
+_client_ strategies, since _server_ strategies can be simply derived from
+client strategies on the dual game---the prime benefit of our symmetric notion
+of game. We first need to define two interpretations of half-games as functors.
 
 
 #tom[Les espaces sont bizarres dans la def ci-dessous, non?]
 #definition[Half-Game Functors][
   Given a half-game $G cl game.hg th I th J$, we define the
-  _active interpretation_ and _passive interpretation of $G$_ as the functors
-  $G game.extA -, G game.extP - cl base.Set^J -> base.Set^I$, written $G game.extA ar$ and $G game.extP ar$ and defined as follows.
+  _active interpretation_ and _passive interpretation of $G$_ as functors
+  $base.Set^J -> base.Set^I$, written $G game.extA ar$ and $G game.extP ar$ and defined as follows.
 
   $ (G game.extA X) th i := (m cl G.game.mv th i) times X th (G.game.nx th m) \
     (G game.extP X) th i := (m cl G.game.mv th i) -> X th (G.game.nx th m) $
@@ -333,39 +322,22 @@ define two interpretations of half-games as functors.
 
 #tom[Chuis pas super fan de la notation $game.extA$, parce qu'elle ressemble
 trop à $game.extP$, elle évoque aussi un adjoint à droite plus qu'à gauche.]
-
-/*
-#definition[Action Functor][
-  Given a half-game $G cl game.hg th I th J$, and a family $R cl base.Set^I$,
-  we define $game.actF_G^R cl base.Set^J -> base.Set^I$ the _action functor
-  of $G$ with output $R$_ by the following data type.
-
-  $ kw.dat game.actF_G^R th X th i cl base.Set kw.whr \
-    quad game.retF cl R th i -> game.actF_G^R th X th i \
-    quad game.tauF cl X th i -> game.actF_G^R th X th i \
-    quad game.visF (m cl G.game.mv th i) cl X th (G.game.nx th m) -> game.actF_G^R th X th i $
-
-#margin-note(dy: -7em)[
-  Note that $game.actF_G^R th X$ is a notational shorthand for the coproduct in families $R
-  + X + (G game.extA X)$.
-]
-]
-*/
+#peio[Mieux?]
 
 #definition[Transition System][
   Given a game $G cl game.g th I^+ th I^-$ and a family $R cl base.Set^(I^+)$,
   a _transition system over $G$ with output $R$_ is given by the following record.
+  #margin-note(dy: -2.7em)[
+    In #nm[Levy] & #nm[Staton]~#num-cite(<LevyS14>), the output parameter $R$ is not present and this is
+    called a _small-step system over $G$_. We can recover their
+    definition by setting $R = emptyset$.
+  ]
 
   $ kw.rec strat.t_G th R kw.whr \
     quad strat.stp cl I^+ -> base.Set \
     quad strat.stn cl I^- -> base.Set \
     quad strat.play cl strat.stp => R + strat.stp + G.game.client game.extA strat.stn \
     quad strat.coplay cl strat.stn => G.game.server game.extP strat.stp $
-  #margin-note(dy: -8em)[
-    In Levy & Staton~#num-cite(<LevyS14>), the output parameter $R$ is not present and this is
-    called a _small-step system over $G$_. We can recover their
-    definition by setting $R = emptyset$.
-  ]
   Where $X => Y := forall th {i}, th X i -> Y i$ denotes a morphism of families.
 ] <def-tsys>
 
@@ -380,61 +352,95 @@ determine how to play. Their relationship is similar to that of types to terms.
 The $strat.play$ function takes as inputs an active position $i cl I^+$, an
 active state  $s cl strat.stp th i$  over $i$ and returns one of three things:
 
-#par(hanging-indent: 2em)[$R th i$ ~~ _return move_ \
-  This case was not present in Levy & Staton~#num-cite(<LevyS14>), but
+#par(hanging-indent: 2em)[$R th i$ ~~ _"return move"_ \
+  This case was not present in #nm[Levy] & #nm[Staton]~#num-cite(<LevyS14>), but
   it allows a strategy to end the game, provided it exhibits an output. As we
-  will see in @sec-itree with interaction trees, this is crucial for
-  compositional manipulation.
+  will see with interaction trees in @sec-itree, this allows to equip transition
+  systems with a monad structure, an important tool for compositional manipulation.
 ]
 
-#par(hanging-indent: 2em)[$strat.stp th i$ ~~ _silent move_ \
+#par(hanging-indent: 2em)[$strat.stp th i$ ~~ _"silent move"_ \
   In this case, the strategy postpones progression in the game. This case
-  allows for strategies to be _partial_ in the same sense as Venanzio Capretta's
+  allows for strategies to be _partial_ in the same sense as #nm[Capretta]'s
   #delay.t monad~#mcite(<Capretta05>). _Total strategies_ without this case would
   make perfect sense, but we are interested in arbitrary, hence partial, computations.
 ]
 
-#par(hanging-indent: 2em)[$G.game.client game.extA strat.stn$ ~~ _client move_ \
+#par(hanging-indent: 2em)[$(G.game.client game.extA strat.stn) th i$ ~~ _"client move"_ \
   By @def-hg-ext, this data consists of a client move valid at the current
-  position, together with a passive state over the next position. This case is
+  position $i$, together with a passive state over the next position. This case is
   the one which actually _chooses_ a move and sends it to a hypothetical
   opponent.
 ]
 
 The #strat.coplay function is simpler. By @def-hg-ext, it takes a passive
-position, a passive state over it, and a currently valid server move, and must
+position, a passive state over it, and a currently valid _"server move"_, and must
 then return an active state over the next position.
 
 #guil[You could explain why there is no return move for Opponent.]
 #tom[+1! Et "compositional manipulation" survend un peu le truc, non?]
+#peio[C'est mieux?]
+
+#remark[
+  It might seem as if the hypothetical opponent must be pure, as return and
+  silent moves appear in #strat.play but not in #strat.coplay, but this is not the case.
+  Recall that we are working
+  with an alternating game. The intent is that the transition system specifies
+  the behavior of a strategy when the client is in control of the game. When a
+  hypothetical opponent plays a return move or silent move, they do not give the
+  control back to the client. As such the client does not have anything to do in
+  these cases, and is in fact unaware of these kinds of moves played by the server.
+]
 
 == Strategies as Indexed Interaction Trees <sec-itree>
 
-In @def-tsys, I have defined strategies similarly to Levy &
-Staton~#mcite(<LevyS14>), that is, by a state-and-transition-function
+In @def-tsys, I have defined strategies similarly to #nm[Levy] and
+#nm[Staton]~#mcite(<LevyS14>), that is, by a state-and-transition-function
 presentation of automata. This representation is theoretically satisfying,
 however most of the time it is painful to work with formally. As an example,
-let's assume I want to define a binary combinator, taking two systems as
-arguments and returning a third one. Each of these is a dependent record with
-four fields, so that I have to work with eight input components to define two
-families of states, and then, depending on these new states, I have to write two
-suitable transition functions. This is a lot to manage! The heaviness of
-explicitly constructing automata is one of the reasons why widely used
-programming languages have introduced syntactic facilities like the "yield" and
-"await" keywords for writing state machines. #peio[ref?]
+let's assume I want to define a binary combinator, taking two transition systems as
+arguments and returning a third one. Each of the two inputs is a dependent record with
+four fields, so that I have to work with eight input components to define the
+resulting transition systems, itself consisting of two families of states, and
+then, depending on these new states, two suitable transition functions. This is
+a lot to manage!
+
+This unwieldiness is well-known: while useful, writing state-machine-like code
+is closely linked to the dreaded _spaghetti code_ and _callback hell_. It is
+perhaps the prime reason why widely used programming languages have started
+organizing it using syntactic facilities like the #txtt("yield") keyword of python's
+_generators_#margin-note[
+  For enlighting background on Python's generator syntax, see for example the Motivation
+  section of the #link("https://peps.python.org/pep-0255/")[PEP 255].
+] or the #txtt("await") keyword for sequencing asynchronous _promises_ (or _awaitables_),
+now common in event-driven programming. Both of these concepts are automata in
+disguise. Their associated syntactic constructs allow one to write automata
+featuring bespoke state transitions (producing a sequence element,
+sleeping in wait of a network response) as if they were normal code. As the precise
+definition of the state space is left implicit and for the language implementation to
+work out, it can no longer be manipulated by the programmer. What is left is an
+opaque notion of automata (e.g., generators, awaitables), for which the only possible
+operation is _stepping_, i.e., running until the next transition.
+In this section I will apply this methodology to the definition of transitions
+systems over games and this will take us to my first contribution: _indexed
+interaction trees_.
 
 #tom[Ça je connais pas du tout.]
 #yann[Euuuh je ne comprends pas bien le lien avec cooperative multithreading]
+#peio[Better?]
 
-In order to rectify this, we forget about states altogether. Notice
-that @def-tsys is exactly the definition of a coalgebra for some
-endofunctor on $base.Set^(I^+) times base.Set^(I^-)$. Then, as by
-definition any coalgebra maps uniquely into the final coalgebra, it is
-sufficient to work with this final coalgebra, whose states intuitively
-consist of infinite trees, describing the traces of any possible
-transition system over $G$.
+Notice that @def-tsys is exactly the definition of a coalgebra for some
+endofunctor on $base.Set^(I^+) times base.Set^(I^-)$. Then, as by definition
+any coalgebra maps uniquely into the final coalgebra, it is sufficient to work
+with this final coalgebra, whose states intuitively consist of infinite trees,
+describing the traces of any possible transition system over $G$. This
+"universal" state space---the state space of the final coalgebra---will be our
+core notion of automata.
 
 #tom[Là-dessus ptet dire "modulo les questions de taille" quelque part?]
+#peio[Je comprend pas où ça poserait pb, la coinduction coq nous donne bien
+une coalgèbre terminale des t-sys de taille $alpha$ (les itree), elle-mème un
+t-sys de taille $alpha$, il n'y a pas de bump de taille.]
 
 However, before constructing this final coalgebra, I will simplify the setting
 slightly. Notice that we can easily make passive states disappear, by
@@ -452,6 +458,10 @@ This exhibits strategies as coalgebras for the following functor.
   c'est ça? Si oui, je dirais plutôt réflexive: si je note $S^i$ la strat
   "injective" en ce sens induite par $S$, on a plutôt un morphisme $S -> S^i$,
   qui est universel vis-à-vis des strats injectives, si je me trompe pas. Non? ]
+  #peio[Ah oui ok, j'ai posé le calcul. C'est plutot celles où $strat.coplay$ est l'identité (ou un iso).
+    Du coup la strat $S^i$ induite elle a les même états actifs, et comme états passifs
+    $G.game.server game.extP S^+$. Donc oui $S -> ceil(S^i)$ c'est l'unité de l'adjonction.
+    Et la counité est un iso: $ceil(T)^i approx T$.]
 ]
 
 $ X |-> R + X + G.game.client game.extA (G.game.server game.extP X)) $
@@ -462,7 +472,7 @@ Since in this functor nothing really depends on the server positions $I^-$, we
 can play the same trick and eliminate passive positions from the
 description of games, obtaining back indexed polynomial functors, or more
 precisely their type-theoretic incarnation as _indexed
-containers_~#mcite(<AltenkirchGHMM15>). Remember that the reason for preferring
+containers_~#mcite(dy: 10em, <AltenkirchGHMM15>). Remember that the reason for preferring
 games over indexed containers was to ease swapping client and server.
 #guil[This was not explained before.] But since
 strategies are inherently biased towards one side, we might as well use the
@@ -1182,7 +1192,7 @@ ci-dessous, mais c'est pas clair pour moi en quel sens. ]
 Notice that in the previous lemma, comparing with @lem-sbisim-props, we have
 left out the statement regarding sequential composition of relations. Indeed it
 is well-known that weak bisimulation up-to transitivity is not a valid proof
-technique~#num-cite(<Damodulo>). However, we would still like to prove that weak
+technique~#mcite(<PousS11>). However, we would still like to prove that weak
 bisimilarity is transitive!
 #tom[Une ref vers une preuve qu'on sait déjà que ça l'est?]
 
@@ -1372,8 +1382,7 @@ $ itree.ret th {X} cl X => itree.t_Sigma th X $
 
 Let us define the "bind" operator, which works by tree grafting.
 
-#definition[Interaction Tree Bind][
-  
+#definition[Interaction Tree Bind][ 
   #margin-note[ Note that defining $itree.subst_f$ _with $f$ fixed_ is not a
     mere stylistic consideration.  Indeed, what it achieves, is to pull the
     binder for $f$ out of the coinductive definition. This enables the syntactic
@@ -1381,9 +1390,8 @@ Let us define the "bind" operator, which works by tree grafting.
     definitions making use of the bind operator. To the best of my knowledge,
     this trick was first used in the InteractionTree
     library~#num-cite(<XiaZHHMPZ20>). In general, it is always fruitful to take
-    as many binders as possible out of a cofixpoint definition.  ]
-
-  Let $Sigma cl icont.t th I$. Given $X, Y cl base.Set^I$ and $f cl X =>
+    as many binders as possible out of a cofixpoint definition.
+  ] Let $Sigma cl icont.t th I$. For any given $X, Y cl base.Set^I$ and $f cl X =>
   itree.t_Sigma th Y$, define _interaction tree substitution_ as follows.
   $ itree.subst_f cl itree.t_Sigma th X => itree.t_Sigma th Y \
     (itree.subst_f th t) .itree.obs kw.wit t .itree.obs \
@@ -1498,13 +1506,25 @@ $ t itree.bind (kw.fun th x. th f th x itree.bind (kw.fun th y. th g th y)) $
 To make the best out of this syntax, we finish up by defining some "generic
 effects", i.e., helpers to perform a silent step or play a move.
 
-#tom[C'est quoi un "generic effect"? Pourquoi on appelle ça comme ça? La def de $itree.xvis$ est très bizarre, pas fastoche à lire, et pas utilisée pour l'instant dans la suite...]
+#tom[
+  C'est quoi un "generic effect"? Pourquoi on appelle ça comme ça? La def de
+  $itree.xvis$ est très bizarre, pas fastoche à lire, et pas utilisée pour
+  l'instant dans la suite...
+]
+#peio[
+  Effectivement c'est tricky en indexés, avec l'apparition de #subs.fiber pour
+  passer d'une famille fibrée à une famille indexée. Le
+  generic effect d'une theorie algébrique c'est la transfo $Sigma => T_Sigma$,
+  qui est plus pratique à utiliser en do-notation que la structure d'algèbre
+  $Sigma T_Sigma => T_Sigma$. Je garde en suspend: si c'est nécessaire plus tard
+  je détaille plus, sinon j'enlèverai.
+]
 
 #definition[Generic Effects][
   Given $Sigma cl icont.t th I$, we define the following generic effects,
 
-  $ itree.xtau th {i} cl itree.t_Sigma th (kw.fun th i . th base.unit) th i \
-    itree.xtau := itree.tau th (itree.ret th base.tt) $
+  $ itree.xtau th {i} cl itree.t_Sigma th (subs.fiber th (kw.fun th x cl base.unit. th i) th i \
+    itree.xtau := itree.tau th (itree.ret th (subs.fib th base.tt)) $
 
   $ itree.xvis th {i} th (q cl Sigma .icont.qry th i) cl itree.t_Sigma th (subs.fiber th (Sigma .icont.nxt th {q})) th i \
     itree.xvis th q := itree.vis th q th (kw.fun th r. th itree.ret th (subs.fib th r)) $
@@ -1564,13 +1584,11 @@ $ s th x
 
 While the basic idea is simple, a number of subtle questions arise quite quickly
 during axiomatization. Should all equation systems have solutions? Should the
-solution be unique? If not, when a canonical solution can be selected by an
+solution be unique? If not, when some solution can be selected by an
 iteration operator, what coherence properties should this operator satisfy? In
 fact, almost all imaginable points in the design space have been explored, in an
 explosion of competing definitions. The concepts have historically been
 organized roughly as follows.
-
-#tom[J'ai tendance à entendre "canonique" dans un sens un peu différent de toi, on dirait. Quand on a un opérateur d'itération qui fait un choix, pour moi c'est pas canonique. Canonique évoque une propriété genre unicité ou approchant. ]
 
 #block(stroke: 1pt, inset: 0.8em, radius: 5pt)[
 *Iterative Things* ~~ Every _guarded_ equation
@@ -1593,7 +1611,7 @@ Absence of the prefix "completely" denotes the fact that only finitary equations
 
 #block(stroke: 1pt, inset: 0.8em, radius: 5pt)[
 *Iteration Things and Elgot Things* ~~ Every equation system has a
-_canonical choice_ of solution, subject to coherence conditions. This following has been
+_choice_ of solution, subject to coherence conditions. This following has been
 defined:
 
 - _iteration theories_, for terms in finitary algebraic theories~#mcite(dy: -4em, <BloomE93>),
@@ -1608,9 +1626,9 @@ of the "uniformity" axiom. The prefix "complete" has the same meaning as before.
 
 More recently, several works have tried to unify the above two families, by
 axiomatizing abstract _guardedness criteria_, for which guarded equations have a
-canonical choice of solution~#mcite(<GoncharovRP17>)~#mcite(dy: 4em,
-<MiliusL17a>)).  This criteria may be syntactic as in the first family, or
-trivial #tom[(ça sonne un peu péjoratif... ça veut dire quoi?)] as in the second
+coherent choice of solution~#mcite(<GoncharovRP17>)~#mcite(dy: 4em,
+<MiliusL17a>)). This criteria may be syntactic as in the first family, or
+vacuous (every equation is considered guarded) as in the second
 family. The iteration operator may then be axiomatized to be coherent in the
 style of iteration or Elgot monads, and uniqueness of solutions may be framed as
 the most restrictive of these coherence conditions. #tom[La phrase précédente
@@ -1622,7 +1640,7 @@ which also features much appreciated graphical depictions of the coherence laws.
 
 === Unguarded Iteration
 
-In the original interaction tree library~#num-cite(<XiaZHHMPZ20>), an iteration
+In the original interaction tree library~#mcite(<XiaZHHMPZ20>), an iteration
 _operator_ has been devised, which constructs fixpoints of arbitrary equation
 systems up to weak bisimilarity. This makes the interaction tree monad
 quotiented by weak bisimilarity into a complete Elgot monad. For readability,
