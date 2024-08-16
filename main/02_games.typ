@@ -405,7 +405,7 @@ resulting transition systems, itself consisting of two families of states, and
 then, depending on these new states, two suitable transition functions. This is
 a lot to manage!
 
-This unwieldiness is well-known: while useful, writing state-machine-like code
+This unwieldiness is well known: while useful, writing state-machine-like code
 is closely linked to the dreaded _spaghetti code_ and _callback hell_. It is
 perhaps the prime reason why widely used programming languages have started
 organizing it using syntactic facilities like the #txtt("yield") keyword of python's
@@ -419,10 +419,10 @@ featuring bespoke state transitions (producing a sequence element,
 sleeping in wait of a network response) as if they were normal code. As the precise
 definition of the state space is left implicit and for the language implementation to
 work out, it can no longer be manipulated by the programmer. What is left is an
-opaque notion of automata (e.g., generators, awaitables), for which the only possible
+opaque notion of automaton (e.g., generators, awaitables), for which the only possible
 operation is _stepping_, i.e., running until the next transition.
-In this section I will apply this methodology to the definition of transitions
-systems over games and this will take us to my first contribution: _indexed
+In this section I will apply this methodology to the definition of transition
+systems over games and this will bring us to my first contribution: _indexed
 interaction trees_.
 
 #tom[Ça je connais pas du tout.]
