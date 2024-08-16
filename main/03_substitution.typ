@@ -146,10 +146,10 @@ left adjoint $ar ctx.tens X$, the _substitution tensor product_, given by
 
 $ (X ctx.tens Y) th Gamma th alpha := (Delta cl ctx.ctxc th T) times X th Delta th alpha times Delta asgn(Y) Gamma. $
 
-This substitution tensor exhibits scoped-and-typed
-families as a _skew monoidal category_ with unit $ctx.varc$ #peio[ref]. By adjointness, the
-substitution map could be alternatively be written with the isomorphic type
-$ pr("sub") cl X ctx.tens X ctx.arr X. $
+This substitution tensor exhibits scoped-and-typed families as a _skew monoidal
+category_~#mcite(<AltenkirchCU10>) with unit $ctx.varc$. By adjointness, the
+substitution map could be alternatively be written with the isomorphic type $
+pr("sub") cl X ctx.tens X ctx.arr X. $
 
 As such, although we prefer using the internal substitution hom presentation
 which gives a much more easily manipulated _curried_ function type to
@@ -180,7 +180,7 @@ $ square X th Gamma th alpha := forall {Delta} -> Gamma ctx.ren Delta -> X th De
 
 In other words, families supporting renamings, i.e., functors $ctx.ctxcat th T -> T ->
 base.Set$ can be equivalently seen as families with a coalgebras structure on
-the $square$ comonad #peio[ref]. This means that we can express the operation of
+the $square$ comonad~#mcite(dy: -3em, <AllaisACMM21>)#mcite(dy: 2em, <FioreS22>). This means that we can express the operation of
 renaming as a map
 
 $ pr("ren") cl X ctx.arr square X. $
@@ -189,9 +189,9 @@ Every substitution monoid induces such a comonad structure since renamings can
 be implemented by substitution with variables. However the typical
 implementation of substitution on a syntax with binders require readily
 available $pr("ren")$ and $pr("var")$ operations to go through. This package of
-renamings and variables can be formalized as a _pointed coalgebra_ structure
-and its compatibily conditions with a substitution monoid structure is
-straightforward.
+renamings and variables can be formalized as a _pointed coalgebra
+structure_~#mcite(<FioreS22>) and its compatibily conditions with a substitution
+monoid structure is straightforward.
 
 
 == What is a Variable? Abstracting #nm[De Bruijn] Indices <sec-scope>
@@ -257,8 +257,8 @@ Assuming the bare syntax supports variables with the operator
 
 $ sub.var cl Gamma ctx.varc alpha -> tm th Gamma th alpha, $
 
-we can lift this to the nice syntax as follows using a suitable downgrade on variables
-$Gamma ctx.varc alpha -> downg Gamma ctx.varc downg alpha$.
+we can lift this to the nice syntax as follows using a suitable downgrade on variables,
+of type $Gamma ctx.varc alpha -> downg Gamma ctx.varc downg alpha$.
 
 $ sub.var^snice cl Gamma ctx.varc alpha -> tm^snice th Gamma th alpha \
   sub.var^snice th i := sub.var th downg i $
@@ -381,9 +381,9 @@ that by initiality of $base.bot$, it suffices to have the forward direction
 $ctx.emp ctx.var t -> base.bot$ to obtain the first isomorphism (4) in full.
 
 For the second isomorphism (5), taking hints both from Homotopy Type
-Theory~#mcite(<hottbook>, dy: -1.2em, supplement: [§4.4, pp.~136--137]) and
-from the _view_ methodology~#mcite(<McBrideM04>, dy: 2.8em, supplement: [§6,
-pp.~98--102])~#mcite(<Allais23>, dy: 5.8em), I will axiomatise only the
+Theory~#mcite(<hottbook>, dy: -6.2em, supplement: [§4.4, pp.~136--137]) and
+from the _view_ methodology~#mcite(<McBrideM04>, dy: -2em, supplement: [§6,
+pp.~98--102])#mcite(<Allais23>, dy: 1em), I will axiomatise only the
 backward map and ask that its fibers are _contractible_, i.e., inhabited by
 exactly one element. This will make the isomorphism far easier to use, enabling
 inversions by a simple dependent pattern matching instead of tedious equational
@@ -444,7 +444,7 @@ $ kw.dat base.vsum th (f cl A -> C) th (g cl B -> C) cl C -> base.Type kw.whr \
   A scope structure $ctx.scope_T th S$ defines a _category of
   scopes_ $ctx.ctxcat_S$ whose objects are given by $S$ and whose morphisms are
   given by renamings $Gamma ctx.ren Delta$.
-  #margin-note[In other words, $ctx.ctxcat_S$ is the _full image_ of $ar ctx.var$.]
+  #margin-note[In other words, $ctx.ctxcat_S$ is the _full image_ of $""ctx.var$.]
 ]
 
 This axiomatization of scopes is enough to derive the two isomorphisms describing the
