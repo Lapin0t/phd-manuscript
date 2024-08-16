@@ -182,7 +182,7 @@ advanced concepts, such as framed bicategories and two-sided fibrations.
 
 
 #definition[Simulation][
-  Given two half-games $A, B cl game.g th I^+ th I^-$, a
+  Given two games $A, B cl game.g th I^+ th I^-$, a
   _game simulation from $A$ to $B$_ is given by the following
   record.
 
@@ -191,8 +191,10 @@ advanced concepts, such as framed bicategories and two-sided fibrations.
     quad game.ssrv cl game.hsim th B .game.server th A .game.server $
 ]
 
-#guil[You could introduce the notion of composition of simulations,
-and the identity simulation.]
+#guil[Tu pourrais expliquer à ce moment là la structure catégorique sur HGame et sur Game,
+en explicitant notamment la composition de simulations et la simulation identité.
+Sinon on a du mal à comprendre d'où sort le $base.Cat$ en dessous.]
+
 #remark[Half-Game is Functorial][
   $game.hg$ extends to a strict functor $base.Set^"op" times base.Set -> base.Cat$ as witnessed
   by the following action on morphisms, which we write curried and in infix style.
@@ -328,6 +330,7 @@ of game. We first need to define two interpretations of half-games as functors.
 #tom[Chuis pas super fan de la notation $game.extA$, parce qu'elle ressemble
 trop à $game.extP$, elle évoque aussi un adjoint à droite plus qu'à gauche.]
 #peio[Mieux?]
+#guil[Je trouve ça mieux.]
 
 #definition[Transition System][
   Given a game $G cl game.g th I^+ th I^-$ and a family $R cl base.Set^(I^+)$,
@@ -385,6 +388,7 @@ then return an active state over the next position.
 #guil[You could explain why there is no return move for Opponent.]
 #tom[+1! Et "compositional manipulation" survend un peu le truc, non?]
 #peio[C'est mieux?]
+#guil[oui!]
 
 #remark[
   It might seem as if the hypothetical opponent must be pure, as return and
@@ -433,11 +437,16 @@ interaction trees_.
 #tom[Ça je connais pas du tout.]
 #yann[Euuuh je ne comprends pas bien le lien avec cooperative multithreading]
 #peio[Better?]
+#guil[Je suis encore un peu perplexe par le paragraphe du dessus,
+mais c'est surement car je ne m'y connais pas du tout en event-driven programming.]
 
 === From Games to Containers
 
 Notice that @def-tsys is exactly the definition of a coalgebra for some
-endofunctor on $base.Set^(I^+) times base.Set^(I^-)$. Then, as by definition
+endofunctor on $base.Set^(I^+) times base.Set^(I^-)$.
+#guil[Est-ce-que tu peux détailler ? Vu que G et R dépendent aussi de 
+$I^+$ et $I^-$, ce n'est pas complètement évident je trouve.]
+ Then, as by definition
 any coalgebra maps uniquely into the final coalgebra, it is sufficient to work
 with this final coalgebra, whose states intuitively consist of infinite trees,
 describing the traces of any possible transition system over $G$. This
@@ -481,7 +490,7 @@ description of games, obtaining back indexed polynomial functors, or more
 precisely their type-theoretic incarnation as _indexed
 containers_~#mcite(dy: 10em, <AltenkirchGHMM15>). Remember that the reason for preferring
 games over indexed containers was to ease swapping client and server.
-#guil[This was not explained before.] But since
+#guil[Tu ne l'as pas expliqué avant, du coup tu pourrais enlever le "Remember that".] But since
 strategies are inherently biased towards one side, we might as well use the
 simpler notion.
 
@@ -542,9 +551,6 @@ simpler notion.
   We observe in passing that $floor(ar) compose ceil(ar)$ is definitionally equal
   to the identity on containers, but not the other way around.
 ]
-#guil[What is the identity on containers?]
-#tom[Je comprends pas la question: c'est juste la fonction identité sur $icont.t
-th I$, non? Qu'est-ce qui ne va pas?]
 
 === Indexed Interaction Trees
 
@@ -585,6 +591,11 @@ theory implementations#guil[proof assistants] such as Agda and Coq.
 goût. La def des arbres d'interation indexés est perdue au milieu d'une longue
 histoire. Est-ce que tu devrais pas faire une sous-partie "coalgèbre finale /
 arbres d'interaction"?] 
+#guil[On a notamment une définition indirecte des Indexed Interaction Tree,
+vu que tu souhaites faire apparaitre explicitement le foncteur 
+$itree.F_Sigma$ dont ils sont la coalgèbre finale, plutôt que donner une 
+définition directe. Ça serait bien d'avertir les lecteurices de tes objectifs à ce sujet 
+en début de section 2.3.]
 
 #definition[Indexed Interaction Tree][ Given a signature $Sigma cl
   icont.t th I$ and an output $R cl base.Set^I$, the family of
@@ -968,6 +979,9 @@ $ ar iteq(R^rel.r) ar cl
                 -> itree.t_Sigma th R^2 th i
                 -> base.Prop. $
 
+#guil[Ça serait plus clair d'utiliser $X$ et $Y$ plutôt que 
+$R^1$ et $R^2$ au dessus, pour être consistant avec la suite.]
+
 We start with some preliminary notation for our indexed relations.
 
 #definition[Family Relation][
@@ -1008,6 +1022,13 @@ As indexed relations are quite a mouthful, the following definition will be
 quite heavy notationally. However, it is important to stress that it is entirely
 straightforward. Indeed, it follows more or less directly from a relational
 interpretation of type theory. #tom[Comprends pas.]
+
+#guil[Tu pourrais expliquer ici que pour définir la bisimulation forte 
+sur les ITrees indexés, tu utilise le fait qu'ils sont définis comme
+la colagèbre finale du foncteur $itree.F_Sigma$, et que tu vas donc
+d'abord définir le lifting de ce foncteur aux relations.
+Et pourquoi pas mettre une petite ref sur la définition de bisimulation
+dans la théorie des coalgèbres.]
 
 #tom[Dans la def ci-dessous, ça me met de la charge cognitive superflue d'avoir
 $R^1$ et $R^2$ qui ne sont pas des relations. Tu pourrais ptet les appeler
@@ -1143,6 +1164,7 @@ bisimulation proofs can work up-to reflexivity, symmetry and transitivity.
 
 #tom[Le @lem-sbisim-props ne parle pas directement des bisims, il parle de
 $tower.t$. Est-ce que tu saurais rendre le lien plus clair à ce stade? ]
+#guil[+1]
 
 === Weak Bisimilarity
 
@@ -1182,6 +1204,8 @@ th X$? Comme ça, par ex, pour $itree.eatS$ on aurait $itree.eat_Sigma^R th (t
          .itree.obs) th A -> itree.eat_Sigma^R th (itree.tauF th t) th A$]
 
 #tom[Il manque ici aussi une description intuitive de $itree.eat$.]
+
+#guil[On est d'accord qu'un des point clé de $itree.eat$ c'est d'être défini par induction ?]
 
 #lemma[
   For all $Sigma$ and $R$, the eating relation $itree.eat_Sigma^R$ is reflexive and
@@ -1241,6 +1265,9 @@ is well-known that weak bisimulation up-to transitivity is not a valid proof
 technique~#mcite(<PousS11>). However, we would still like to prove that weak
 bisimilarity is transitive!
 #tom[Une ref vers une preuve qu'on sait déjà que ça l'est?]
+#guil[Je n'arrive pas à comprendre le lien
+entre le "statement regarding sequential composition of relations" du 
+@lem-sbisim-props, et la strong bisimulation up-to transitivity.]
 
 #lemma[ Given $Sigma cl icont.t th I$ and $R^rel.r cl rel.irel th R th R$, if
   $R^rel.r$ is transitive, then so is $itweq(R^rel.r)$. ] 
@@ -1518,7 +1545,7 @@ itree.sb_Sigma$ or $x = itree.wb_Sigma$, the following holds.
 
 While perhaps not very impressive, the last lemma is very important. Points 3--6
 prove that return and bind are well-defined as operators on the setoids of
-strongly- and weakly-bisimilar strategies. But more importantly, Point 2 proves
+strongly- and weakly-bisimilar strategies#guil[Tu n'as jamais parlé de setoid avant]. But more importantly, Point 2 proves
 that, during a coinductive proof, in order to relate two sequential
 compositions, it suffices to first relate the prefixes and then, pointwise, the
 continuations. This fact is sometimes called "bisimulation up-to bind".
