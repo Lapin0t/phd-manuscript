@@ -1,9 +1,11 @@
+#import "/lib/all.typ": *
+
 = OGS Instances
 
-== Pure, Untyped, Call-by-Value $lambda$ calculus
+== Pure, Untyped, Call-by-Value #short.llc
 
-== Simply Typed, Call-by-Value $lambda$ calculus
+== Simply Typed, Call-by-Value #short.llc
 
-== Polarized $mu accent(mu, tilde.basic)$ calculus
+== Polarized #short.uuc
 
 #lorem(100)

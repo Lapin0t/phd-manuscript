@@ -79,7 +79,7 @@
     author: author,
     date: if date != none { date } else { auto },
   )
-  set text(font: "EB Garamond", size: 9.5pt, weight: "regular")
+  set text(font: ("EB Garamond"), size: 9.5pt, weight: "regular", number-width: "proportional")
   set page(
     width: 189mm,
     height: 246mm,
@@ -95,7 +95,7 @@
   )
 
   // HEADINGS
-  set heading(numbering: "1.1")
+  set heading(numbering: "1.1", supplement: "§" + h(-0.2em))
   show heading: set text(hyphenate: false)
   show heading: it => v(2.5em, weak: true) + it + v(2em, weak: true)
 
@@ -190,7 +190,7 @@
   // REPLACEMENTS
   show "Agda": txsc("Agda")
   show "Coq": txsc("Coq")
-  show "OGS": txsc("Ogs")
+  show "OGS": txsc("ogs")
   show "coq-coinduction": txtt("coq-coinduction")
 
   body

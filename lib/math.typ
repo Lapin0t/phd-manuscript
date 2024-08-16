@@ -6,6 +6,9 @@
   de: color.rgb("#4488ff"),  // definition
 )
 
+
+#let bk = x => text(black, x)
+#let ckw = x => text(colors.kw, x)
 #let pr = x => text(colors.pr, x)
 #let cs = x => text(colors.cs, x)
 #let de = x => text(colors.de, x)
@@ -21,22 +24,50 @@
 // thin space (function application)
 #let th = [#h(0.25em)]
 // binding argument
-#let ar = cop(move(sym.bracket.b, dy: -0.4em))
+#let ar = cop(move(sym.bracket.b, dy: -0.24em))
 //#let ar = cop("-")
 
-#let kw = (
-  rec: text(colors.kw, "record"),
-  dat: text(colors.kw, "data"),
-  codat: text(colors.kw, "codata"),
-  cls: text(colors.kw, "class"),
-  ext: text(colors.kw, "extends"),
-  ins: text(colors.kw, "instance"),
-  wit: text(colors.kw, "with"),
-  where: text(colors.kw, "where"),
-  whr: $:=$,
-  do: text(colors.kw, "do"),
-  fun: text(colors.kw, $lambda$),
+#let mu-tilde = "µ" + box(move(dx: -0.25em, "\u{0303}"))
+
+#let short = (
+  llc: sym.lambda + "-calculus",
+  uuc: "µ" + mu-tilde + "-calculus",
 )
+
+#let kw = (
+  rec: ckw("record"),
+  dat: ckw("data"),
+  codat: ckw("codata"),
+  cls: ckw("class"),
+  ext: ckw("extends"),
+  ins: ckw("instance"),
+  wit: ckw("with"),
+  case: ckw("case"),
+  where: ckw("where"),
+  whr: $:=$,
+  do: ckw("do"),
+  fun: ckw($lambda$),
+)
+
+#let pat(short: false, ..xs) = context {
+  let paren = [()] //$(and.big)$
+  let paren-len = measure(paren).width
+  let gadget = hide(paren) + h(0.2em - paren-len)
+  let arg = xs.pos().map(x => gadget + x)
+  if short [
+    #h(0.2em) [ #arg.at(0) #th ]
+  ] else [
+    #h(0.2em)
+    #math.display(math.cases(delim: "[", ..arg, ..xs.named()))
+  ]
+}
+#let pat1(x) = pat(short: true, x)
+#let pat0 = pat(short: true, h(-0.3em))
+
+#let funpat(..xs) = {
+  let pos = xs.pos().map(x => bk(x))
+  kw.fun + h(-0.2em) +  pat(..pos, ..xs.named())
+}
 
 #let base = (
   Prop: de(cop("Prop")),
@@ -47,10 +78,18 @@
   unit: de(math.bold("1")),
   tt: cs(sym.star),
   sum: de(crel($+$)),
-  inj1: cs(cop($"inj"_1$)),
-  inj2: cs(cop($"inj"_2$)),
+  inj1: cs(cop("inl")),
+  inj2: cs(cop("inr")),
+  prod: de(cop(sym.times)),
+  fst: pr("fst"),
+  snd: pr("snd"),
   bot: de(cop(sym.bot)),
   exfalso: de(cop("ex-falso")),
+  int: de(cnorm("∫")),
+  vsum: de(cop("SumView")),
+  vlft: cs(cop($"v-left"$)),
+  vrgt: cs(cop($"v-right"$)), 
+  ext: de(cop("Extensional")),
 )
 
 #let subs = (
@@ -104,7 +143,7 @@
 #let itree = (
   t: de(cop("ITree")),
   tp: de(sym.prime.double.rev + "ITree"),
-  obs: pr("observe"),
+  obs: pr("obs"),
   F: de(cop("Action")),
   RS: [$de("Action")^de(rel.r)_Sigma$],
   retF: cs(cop("\u{2035}ret")),
@@ -195,7 +234,7 @@
   coplay: pr("coplay"),
 )
 
-#let asgn(x) = crel($- #h(-0.2em) [ #x ] #h(-0.2em) ->$)
+#let asgn(x) = de(crel($- #h(-0.2em) [bk(#x)] #h(-0.2em) ->$))
 #let ctxhom(a, b) = [#de(sym.bracket.double.l) #a #de(",") #b #de(sym.bracket.double.r)]
 
 #let ctx = (
@@ -211,24 +250,41 @@
   keep: cs(cop("keep")),
   skip: cs(cop("skip")),
   prescope: de(cop("PreScope")),
-  emp: pr(cop(sym.emptyset)),
-  cat: pr(crel($triangle.r.filled.small #h(-0.35em) triangle.r.filled.small$)),
-  vvar: pr(cop(math.bold("V"))),
+  emp: pr(sym.emptyset),
+  catc: de(crel($triangle.r.filled.small #h(-0.35em) triangle.r.filled.small$)),
+  cat: pr(crel($+ #h(-0.55em) +$)),
+  vvar: pr(math.bold("V")),
   var: pr(crel($in.rev$)),
-  rcatl: pr(cop($"r-cat"_l$)),
-  rcatr: pr(cop($"r-cat"_r$)),
+  rcatl: pr($"r-cat"_l$),
+  rcatr: pr($"r-cat"_r$),
   //ren: de(crel($arrow.squiggly$)),
   ren: de(crel($subset.eq$)),
-  catV: de(cop("CatView")),
+  catV: de(cop("ViewCat")),
   vcatl: cs(cop($"v-cat"_l$)),
   vcatr: cs(cop($"v-cat"_r$)), 
   scope: de(cop("Scope")),
-  vemp: pr(cop("view-emp")),
-  vcat: pr(cop("view-cat")),
-  vcatirr: pr(cop("view-cat-irr")),
+  vemp: pr("view-emp"),
+  vcat: pr("view-cat"),
+  vcatirr: pr("view-cat-eq"),
   arr: crel("⇾"),
   tens: de($dot.circle$),
-  //cat: pr(crel($+ #h(-0.3em) triangle.r.filled.small$)),
+  all: de(cop("All")),
+  fam0: de(cop($"SFam"_1$)),
+  fam1: de(cop($"SFam"$)),
+  fam2: de(cop($"SFam"_2$)),
 )
 
-//#let icont_x (i: none, j: none) = if (i and j) [$"ICont" th #i th #j $] else [ICont]
+#let sub = (
+  mon: de(cop("SubstMonoid")),
+  mod: de(cop("SubstModule")),
+  var: pr("var"),
+  sub: pr("sub"),
+  sext: pr("sub-ext"), 
+  idl: pr($"sub-id"_l$),
+  idr: pr($"sub-id"_r$),
+  assoc: pr("sub-assoc"),
+  act: pr("act"),
+  aext: pr("act-ext"), 
+  aid: pr("act-id"),
+  acomp: pr("act-comp"),
+)

@@ -1,16 +1,16 @@
-#import "@preview/ctheorems:1.1.2": thmplain, thmproof
+#import "/lib/theorems.typ": thmplain, thmproof
 
 #let my_thm(head) = return thmplain(
   "theorem",
   head,
   radius: 0em,
   stroke: (left: stroke(thickness: 1pt, dash: "loosely-dotted"), rest: 0pt),
-  inset: (left: 1em, rest: 0.5em),
+  inset: (left: 1em, rest: 0em),
   base: "heading",
   base_level: 1,
 )
 
-#let proof = thmproof("proof", "Proof")
+#let proof = thmproof("proof", inset: (left: 1em, rest: 0em), "Proof")
 #let theorem = my_thm("Theorem")
 #let lemma = my_thm("Lemma")
 #let definition = my_thm("Definition")
@@ -25,10 +25,12 @@
 #let nm(it) = txsc(it)
 
 // NOTES
-#let peio(it) = box(inset: 0em, fill: color.rgb("#ff700080"))[P: #it]
-#let tom(it)  = box(inset: 0em, fill: color.rgb("#ff700080"))[T: #it]
-#let guil(it) = box(inset: 0em, fill: color.rgb("#ff700080"))[G: #it]
-#let yann(it) = box(inset: 0em, fill: color.rgb("#ff700080"))[Y: #it]
+#let note(it) = box(inset: 0em, outset: (top: 0.3em, bottom: 0.3em, rest: 0.1em),
+                    fill: color.rgb("#ff700080"), it)
+#let peio(it) = note[P: #it]
+#let tom(it)  = note[T: #it]
+#let guil(it) = note[G: #it]
+#let yann(it) = note[Y: #it]
 
 #let mathpar(spacing: 1em, block: false, inset: 0em, ..it) = {
   it.pos()

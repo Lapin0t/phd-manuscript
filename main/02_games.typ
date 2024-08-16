@@ -100,7 +100,7 @@ typically arises in the field of computer networks.]
 Starting from the idea that a game is described by the moves allowed for each
 player, arguably the simplest formalization is to say that a game consists
 of a pair $(M^+, M^-)$ of sets, encoding the set of moves allowed for each
-player. For example, taking $M^+$ and $M^-$ to be both equal to the set of UTF-8
+player. For example, taking $M^+$ and $M^-$ to be both equal to the set of #txsc[utf-8]
 character strings, we can think of this as the "game of chatting" where the two
 players are to alternatively exchange text messages. This definition readily
 encodes simple kinds of interactions: at a coarse level we could argue that a
@@ -198,11 +198,14 @@ and the identity simulation.]
   by the following action on morphisms, which we write curried and in infix style.
 
   $ ar game.reixl ar game.reixr ar cl (I_2 -> I_1) -> game.hg th I_1 th J_1 -> (J_1 -> J_2) -> game.hg th I_2 th J_2 \
-    (f game.reixl A game.reixr g) .game.mv th i := A .game.mv th (f th i) \
-    (f game.reixl A game.reixr g) .game.nx th m := g th (A .game.nx th m) $
+    f game.reixl A game.reixr g :=
+    pat(game.mv th i & := A .game.mv th (f th i),
+        game.nx th m & := g th (A .game.nx th m))
+    /*(f game.reixl A game.reixr g) .game.mv th i := A .game.mv th (f th i) \
+    (f game.reixl A game.reixr g) .game.nx th m := g th (A .game.nx th m)*/ $
 
   The identity and composition laws of this functor hold _definitionally_
-  (assuming $eta$-laws on records and functions).
+  (assuming #{sym.eta}-laws on records and functions).
 ]
 
 
@@ -274,8 +277,9 @@ is in fact given by the current Conway game.
   is just a shuffling of $game.hg th I th J$:
 
   $ de("fam-to-hg") cl (I -> subs.Fam th J) -> game.hg th I th J \
-    (de("fam-to-hg") th F) .game.mv th i := (F th i) .subs.dom \
-    (de("fam-to-hg") th F) .game.nx th {i} th m := (F th i).subs.idx th m $
+    de("fam-to-hg") th F :=
+      pat(game.mv th i & := (F th i) .subs.dom,
+          game.nx th {i} th m & := (F th i).subs.idx th m) $
 
 Furthermore, the projection maps $conway.lft$ and $conway.rgt$ have the
 following type,
@@ -287,8 +291,9 @@ so that applying $de("fam-to-hg")$ yields half-games.
 Then, the _game of #nm[Conway] games_ can be given as follows.
 
   $ conway.ls cl game.g th conway.t th conway.t \
-    conway.ls .game.client := de("fam-to-hg") th conway.lft \
-    conway.ls .game.server := de("fam-to-hg") th conway.rgt $
+    conway.ls :=
+      pat(game.client := de("fam-to-hg") th conway.lft,
+          game.server := de("fam-to-hg") th conway.rgt) $
 ]
 
 #peio[inj LS $=>$ Conway]
@@ -429,6 +434,8 @@ interaction trees_.
 #yann[Euuuh je ne comprends pas bien le lien avec cooperative multithreading]
 #peio[Better?]
 
+=== From Games to Containers
+
 Notice that @def-tsys is exactly the definition of a coalgebra for some
 endofunctor on $base.Set^(I^+) times base.Set^(I^-)$. Then, as by definition
 any coalgebra maps uniquely into the final coalgebra, it is sufficient to work
@@ -484,9 +491,12 @@ simpler notion.
   by the following record.
 
   $ kw.rec icont.t I cl base.Set kw.whr \
-    quad icont.qry cl I -> base.Set \
+    pat(icont.qry cl I -> base.Set,
+        icont.rsp th {i} cl icont.qry th i -> base.Set,
+        icont.nxt th {i} th {q cl icont.qry th i} cl icont.rsp th q -> I) $
+    /*quad icont.qry cl I -> base.Set \
     quad icont.rsp th {i} cl icont.qry th i -> base.Set \
-    quad icont.nxt th {i} th {q cl icont.qry th i} cl icont.rsp th q -> I $
+    quad icont.nxt th {i} th {q cl icont.qry th i} cl icont.rsp th q -> I $*/
 ]
 
 #definition[Extension of a Container][
@@ -500,15 +510,18 @@ simpler notion.
 
 
 #definition[Game to Container][
-  We give a functor $floor(ar) cl game.g th I^+ th I^- -> icont.t th I^+$ defined
+  There is a functor from games to containers defined on object as follows.
+    $game.g th I^+ th I^- -> icont.t th I^+$ defined
   on objets as follows.
 
   /*$ (icont.g2c th A) .icont.qry th i := A .game.client"".game.mv th i \
     (icont.g2c th A) .icont.rsp th q := A .game.server"".game.mv th (A .game.client"".game.nx th q) \
     (icont.g2c th A) .icont.nxt th r := A .game.server"".game.nx th r $*/
-  $ floor(A) .icont.qry th i := A .game.client"".game.mv th i \
-    floor(A) .icont.rsp th q := A .game.server"".game.mv th (A .game.client"".game.nx th q) \
-    floor(A) .icont.nxt th r := A .game.server"".game.nx th r $
+  $ floor(ar) cl game.g th I^+ th I^- -> icont.t th I^+ \
+    floor(A) :=
+      pat(icont.qry th i & := A .game.client"".game.mv th i,
+          icont.rsp th q & := A .game.server"".game.mv th (A .game.client"".game.nx th q),
+          icont.nxt th r & := A .game.server"".game.nx th r) $
 
   It preserves the extension strictly, in the sense that for all $A cl
   game.g th I^+ th I^-$, the functor $A.game.client game.extA (A.game.server game.extP ar))$ is
@@ -520,10 +533,11 @@ simpler notion.
   containters into games as follows.
 
   $ ceil(ar) cl (Sigma cl icont.t th I) -> game.g th I th ((i cl I) times Sigma .icont.qry th i) \
-    ceil(Sigma) .game.client"".game.mv th i := Sigma .icont.qry th i \
-    ceil(Sigma) .game.client"".game.nx th {i} th m := (i, m) \
-    ceil(Sigma) .game.server"".game.mv th (i, m) := Sigma .icont.rsp th m \
-    ceil(Sigma) .game.server"".game.nx th m := Sigma .icont.nxt th m $
+    ceil(Sigma) :=
+      pat(game.client & := pat(game.mv th i & := Sigma .icont.qry th i,
+                               game.nx th {i} th m & := (i , m)),
+          game.server & := pat(game.mv th "(" i "," m ")" & := Sigma .icont.rsp th m,
+                               game.nx th m & := Sigma .icont.nxt th m)) $
 
   We observe in passing that $floor(ar) compose ceil(ar)$ is definitionally equal
   to the identity on containers, but not the other way around.
@@ -531,6 +545,8 @@ simpler notion.
 #guil[What is the identity on containers?]
 #tom[Je comprends pas la question: c'est juste la fonction identité sur $icont.t
 th I$, non? Qu'est-ce qui ne va pas?]
+
+=== Indexed Interaction Trees
 
 After this interlude on indexed containers, we are now ready to go back to
 strategies. Recall that we had turned strategies into coalgebras for the
@@ -547,11 +563,17 @@ the _action functor_ on $Sigma$.
   data type.
 
   $ kw.dat itree.F_Sigma th R th X th i cl base.Set kw.whr \
-    quad itree.retF th (r cl R th i) \
+    pat(
+      itree.retF th (r cl R th i),
+      itree.tauF th (t cl X th i),
+      itree.visF
+        th (q cl Sigma .icont.qry th i)
+        th (k cl (r cl Sigma .icont.rsp th q) -> X th (Sigma .icont.nxt th r))) $
+    /*quad itree.retF th (r cl R th i) \
     quad itree.tauF th (t cl X th i) \
     quad itree.visF
       th (q cl Sigma .icont.qry th i)
-      th (k cl (r cl Sigma .icont.rsp th q) -> X th (Sigma .icont.nxt th r)) $
+      th (k cl (r cl Sigma .icont.rsp th q) -> X th (Sigma .icont.nxt th r)) $*/
 ]
 
 Being itself the extension of some indexed container, $itree.F_Sigma th R$ has a
@@ -567,17 +589,17 @@ arbres d'interaction"?]
 #definition[Indexed Interaction Tree][ Given a signature $Sigma cl
   icont.t th I$ and an output $R cl base.Set^I$, the family of
   _indexed interaction trees on $Sigma$ with output $R$_, denoted by
-  $itree.t_Sigma th R cl base.Set^I$, is given by the following
-  coinductive record.
+  $itree.t_Sigma th R cl base.Set^I$, is given by coinductive records of the following
+  type.
 
   $ kw.rec itree.t_Sigma th R th i cl base.Set kw.whr \
-    quad itree.obs cl itree.F_Sigma th R th (itree.t_Sigma th R) th i $
+    pat1(itree.obs cl itree.F_Sigma th R th (itree.t_Sigma th R) th i) $
 
   Furthermore, define the following shorthands:
 
-  $ (itree.ret th x) .itree.obs := itree.retF th x \
-    (itree.tau th t) .itree.obs := itree.tauF th t \
-    (itree.vis th q th k) .itree.obs := itree.visF th q th k $
+  $ & itree.ret th x      & := & pat1(itree.obs := itree.retF th x) \
+    & itree.tau th t      & := & pat1(itree.obs := itree.tauF th t) \
+    & itree.vis th q th k & := & pat1(itree.obs := itree.visF th q th k) $
 ] <def-itree>
 
 #guil[I don't understand these shorthands. In which sense can $itree.ret th x$ be seen
@@ -635,11 +657,23 @@ le lien avec la présentation standard des straégies en sémantique des jeux.]
   $ itree.unrollA cl S .strat.stp => game.stratA_G th R \
     itree.unrollP cl S .strat.stn => game.stratP_G th R \
     \
+    itree.unrollA th s := \
+    pat(itree.obs := kw.case th S .strat.play th s \
+    pat(
+            cs("inj"_1) th r      & := itree.retF th r,
+            cs("inj"_2) th s      & := itree.tauF th (itree.unrollA th s),
+            cs("inj"_3) th (m, s) & := itree.visF th m th (itree.unrollP th s))) \
+    /*itree.unrollA th s :=
+      pat(itree.obs := kw.case th S .strat.play th s
+        pat(cs("inj"_1) th r := itree.retF th r,
+            cs("inj"_2) th s := itree.tauF th (itree.unrollA th s),
+            cs("inj"_3) th (m, s) := itree.visF th m th (itree.unrollP th s))) \
     (itree.unrollA th s) .itree.obs th kw.wit S .strat.play th s \
     quad | cs("inj"_1) th r := itree.retF th r \
     quad | cs("inj"_2) th s' := itree.tauF th (itree.unrollA th s') \
-    quad | cs("inj"_3) th (m , s') := itree.visF th m th (itree.unrollP th s') \
-    itree.unrollP th s th m := itree.unrollA th (S .strat.coplay th s th m) $
+    quad | cs("inj"_3) th (m , s') := itree.visF th m th (itree.unrollP th s') \ */
+    itree.unrollP th s th m := itree.unrollA th (S .strat.coplay th s th m)
+    $
 
   $cs("inj"_1)$, $cs("inj"_2)$ and $cs("inj"_3)$ denote the obvious injections
   into the ternary coproduct. These functions can be shown to be the
@@ -773,20 +807,26 @@ been merged into coq-coinduction. However, I did not have the time to
 port my Coq development to the new version. I will nonetheless present it
 here and use it in the rest of the thesis.
 
-Tower induction rests upon the inductive definition of the tower predicate,
+Tower induction rests upon the inductive definition of the tower predicate $tower.t_f$,
 whose elements can be understood as all the transfinite iterations of $f$,
-starting from $top$. #tom[Formulation bizarre: le tower predicate, c'est $t_f$?]
+starting from $top$. In other words, $tower.t_f$ characterizes the transfinite approximants
+of the greatest fixpoint of $f$.
+
+For more easily working with predicates, we will use some notations. For any
+predicate $P$ we will write $x in P$ instead of $P th x$ and $forall th x in P
+-> ...$ instead of $forall th {x} -> P th x -> ...$
+
+#tom[Formulation bizarre: le tower predicate, c'est $t_f$?]
 #yann[Je ne crois pas non, $t_f$ est le companion. Le companion peut être caractérisé en terme de la chaine, mais cette caractérisation n'est pas mentionnée ici. On passe plutôt à une autre construction donnant des principes de raisonnements très similaires mais présentés différemment.]
 
 #definition[Tower][
   Given a complete lattice $X$ and a monotone endo-map $f cl X -> X$, the
-  _$f$-tower_ is an inductive predicate defined as follows.
+  _$f$-Tower_ is an inductive predicate defined as follows.
 
   $ kw.dat th tower.t_f cl X -> base.Prop kw.whr \
-    quad tower.tb th {x} cl tower.t_f th x -> tower.t_f th (f th x) \
-    quad tower.tinf th {P} cl P subset.eq tower.t_f -> tower.t_f th (and.big P) $
-
-  We will write $x in tower.t_f$ for $tower.t_f th x$. ] <def-tower> 
+    pat(tower.tb th {x} cl x in tower.t_f -> f th x in tower.t_f,
+        tower.tinf th {T} cl (forall th x in T -> x in tower.t_f) -> (and.big T) in tower.t_f) $
+] <def-tower> 
   
 #tom[Dur à lire! Je pense qu'a minima il faudrait expliquer que $P subset.eq
 tower.t_f$ signifie $forall x:X, P th x → tower.t_f th x$. Mais ça serait ptet
@@ -815,7 +855,6 @@ Est-ce qu'une présentation par règles d'inférences aide à comprendre? Je ten
     [$... $]),
         [$ and.big_i x_i in tower.t_f$],
   )
-  
 ]
 
 #guil[Je trouve que la présentation par règles d'inférences est beaucoup plus lisible.]
@@ -833,31 +872,29 @@ Et certes le companion peut être charactérisé en ces termes, mais en pratique
 
 #theorem[Tower Induction][
   Given a complete lattice $X$, a monotone endo-map $f cl X -> X$ and an inf-closed
-  predicate $P cl X -> base.Prop$, the following principle is true.
+  predicate $P cl X -> base.Prop$, the following _tower induction principle_ is true.
 
   #inferrule(
-    [$forall x in tower.t_f, P th x -> P th (f th x)$],
-    [$forall x in tower.t_f, P th x$],
+    [$forall th x in tower.t_f -> P th x -> P th (f th x)$],
+    [$forall th x in tower.t_f -> P th x$],
     suppl: tower.tind
   )
 ] <thm-tower-ind>
 #proof[
   Assuming that $P$ is inf-closed and that the premise is valid, i.e.,
 
-  $ K cl forall th {M} -> M subset.eq P -> P th (and.big M) \
+  $ K cl forall th {T} -> T subset.eq P -> P th (and.big T) \
     H cl forall th {x} -> x in tower.t_f -> P th x -> P th (f th x), $
 
   define the following by induction.
 
-  $ tower.tind cl forall th {x} -> x in tower.t_f -> P th x \
-    tower.tind th (tower.tb t) := H th t th (tower.tind th t) \
-    tower.tind th (tower.tinf s) := K th (tower.tind compose s) $
+  $ tower.tind cl forall th {x} -> x in tower.t_f -> P th x $
+  #v(-0.5em)
+  $ & tower.tind th (tower.tb t)   && := H th t th (tower.tind th t) \
+    & tower.tind th (tower.tinf s) && := K th (kw.fun th p |-> tower.tind th (s th p)) $
   #v(-2em)
 ]
 
-#tom[Y a une "compo sous $forall$" ici, pas sûr d'avoir vu ça noté comme ça
-ailleurs, j'ai eu un peu l'impression de me faire arnaquer...]
- 
 #lemma[Tower Properties][
   Given a complete lattice $X$ and a monotone endo-map $f cl X -> X$,
   for all $x in tower.t_f$ the following statements are true.
@@ -867,27 +904,35 @@ ailleurs, j'ai eu un peu l'impression de me faire arnaquer...]
 ] <lem-tower-props>
 #proof[Both by direct tower induction on the statement.]
 
-#theorem[Tower Fixpoint][
+#theorem[Greatest Fixed Point][
   Given a complete lattice $X$ and a monotone endo-map $f cl X -> X$, pose
-  $tower.nu f := and.big tower.t_f$.
-  The following statements are true:
+  $ tower.nu f := and.big tower.t_f. $
+  The following statements are true.
   1. $tower.nu f in tower.t_f$
-  2. $tower.nu f approx f th (tower.nu f)$,
-  3. for all $x$, if $x lt.tilde f th x$, then $x lt.tilde tower.nu f$.
+  2. $tower.nu f approx f th (tower.nu f)$
+  3. $forall th x -> x lt.tilde f th x -> x lt.tilde tower.nu f$
 ] <lem-tower-fix>
 #proof[
-  1. By $tower.tinf th (kw.fun t. th t)$.
-  2. By antisymmetry. First, $nu f$ is a pre-fixed point by 1. and @lem-tower-props.
-     Second, by $tower.tb$ and 1., we have $f th (tower.nu f) in tower.t_f$, hence by
-     infimum property, $nu f lt.tilde f th (nu f)$.
-  3. By 1. and @lem-tower-props.
+  1. By $tower.tinf th (kw.fun th t |-> th t)$.
+  2.
+     - $tower.nu f lt.tilde f th (tower.nu f)$ #sym.space.quad By $tower.tb$ and (1), we
+       have $f th (tower.nu f) in tower.t_f$. Conclude by definition of $tower.nu$ as
+       an infimum.
+     - $f th (tower.nu f) lt.tilde tower.nu f$ #sym.space.quad By (1) we and @lem-tower-props (1).
+  3. By (1) and @lem-tower-props (2).
   #v(-2em)
 ]
 
-#tom[Je comprends pas le (2), tu peux détailler un poil?
+In @lem-tower-fix, (2) and (3) are pretty clear: they prove that $tower.nu f$
+is indeed the greatest fixed point of $f$. On the other hand, (1) might seem
+like a technical lemma, however it is just as important, if not more. Indeed,
+knowing that $tower.nu f$ is part of the tower---i.e., that it is itself a
+transfinite approximation of the greatest fixed point---enables to directly
+apply tower induction (@thm-tower-ind) to prove properties about $tower.nu f$.
 
-  Sinon, typomaniac strikes back: j'ai jamais vu des items référencés par "1.",
-plutôt (1).]
+#tom[Je comprends pas le (2), tu peux détailler un poil?]
+
+#peio[Better?]
 
 And this is it! I really want to stress the fact that this is the entirety of the
 mathematical content of this theory of coinduction, and yet it
@@ -979,13 +1024,14 @@ Given $Sigma cl icont.t th I$, an output relation $R^rel.r cl rel.irel th R^1 th
   is defined by the following data type.
 
   $ kw.dat itree.RS th R^rel.r th X^rel.r th {i} kw.whr \
-    quad itree.retR {r^1 th r^2} th (r^rel.r cl R^rel.r th r^1 th r^2)
-      cl itree.RS th R^rel.r th X^rel.r th (itree.retF th r^1) (itree.retF th r^2) \
-    quad itree.tauR {t^1 th t^2} th (t^rel.r cl X^rel.r th t^1 th t^2)
-      cl itree.RS th R^rel.r th X^rel.r th (itree.tauF th t^1) (itree.tauF th t^2) \
-    quad itree.visR
-      th {q th k^1 th k^2} th (k^rel.r cl (r cl Sigma .icont.rsp th q) -> X^rel.r th (k^1 th r) (k^2 th r)) \
-      quad quad cl itree.RS th R^rel.r th X^rel.r th (itree.visF th q th k^1) (itree.visF th q th k^2) $
+    pat(itree.retR th {r^1 th r^2} th (r^rel.r cl R^rel.r th r^1 th r^2)
+          cl itree.RS th R^rel.r th X^rel.r th (itree.retF th r^1) (itree.retF th r^2),
+        itree.tauR th {t^1 th t^2} th (t^rel.r cl X^rel.r th t^1 th t^2)
+          cl itree.RS th R^rel.r th X^rel.r th (itree.tauF th t^1) (itree.tauF th t^2),
+        itree.visR
+          th {q th k^1 th k^2}
+          th (k^rel.r cl (r cl Sigma .icont.rsp th q) -> X^rel.r th (k^1 th r) (k^2 th r)) \
+          quad cl itree.RS th R^rel.r th X^rel.r th (itree.visF th q th k^1) (itree.visF th q th k^2)) $
 ]
 
 #lemma[
@@ -1120,9 +1166,9 @@ $ itree.tp_Sigma th R := itree.F_Sigma th R th (itree.t_Sigma th R) $
   $itree.eat_Sigma^R cl rel.irel th (itree.tp_Sigma th R) th (itree.tp_Sigma th R)$ as follows.
 
   $ kw.dat th itree.eat_Sigma^R th {i} := \
-    quad itree.eatR th {t} cl itree.eat_Sigma^R th t th t \
-    quad itree.eatS th {t_1 th t_2} cl itree.eat_Sigma^R th (t_1 .itree.obs) th t_2
-         -> itree.eat_Sigma^R th (itree.tauF th t_1) th t_2 $
+    pat(itree.eatR th {t} cl itree.eat_Sigma^R th t th t,
+        itree.eatS th {t_1 th t_2} cl itree.eat_Sigma^R th (t_1 .itree.obs) th t_2
+         -> itree.eat_Sigma^R th (itree.tauF th t_1) th t_2) $
 
   We define the following shorthands:
   #let xx = $itree.eat_Sigma^R$
@@ -1394,10 +1440,11 @@ Let us define the "bind" operator, which works by tree grafting.
   ] Let $Sigma cl icont.t th I$. For any given $X, Y cl base.Set^I$ and $f cl X =>
   itree.t_Sigma th Y$, define _interaction tree substitution_ as follows.
   $ itree.subst_f cl itree.t_Sigma th X => itree.t_Sigma th Y \
-    (itree.subst_f th t) .itree.obs kw.wit t .itree.obs \
-    quad | itree.retF th x := (f th x) .itree.obs \
-    quad | itree.tauF th t := itree.tauF th (itree.subst_f th t) \
-    quad | itree.visF th q th k := itree.visF th q th (kw.fun th r. th itree.subst_f th (k th r)) $
+    itree.subst_f th t :=
+    pat(itree.obs := kw.case t .itree.obs \
+      pat(itree.retF th x := (f th x) .itree.obs,
+          itree.tauF th t := itree.tauF th (itree.subst_f th t),
+          itree.visF th q th k := itree.visF th q th (kw.fun th r. th itree.subst_f th (k th r)))) $
 
   Then, define the _interaction tree bind_ operator as
 
@@ -1503,6 +1550,8 @@ instead of
 
 $ t itree.bind (kw.fun th x. th f th x itree.bind (kw.fun th y. th g th y)) $
 
+$ t itree.bind funpat(short: #true, x |-> th f th x itree.bind funpat(short: #true, y |-> th g th y)) $
+
 To make the best out of this syntax, we finish up by defining some "generic
 effects", i.e., helpers to perform a silent step or play a move.
 
@@ -1542,7 +1591,7 @@ effects", i.e., helpers to perform a silent step or play a move.
   where $subs.fiber$ is defined by the following data type.
 
   $ kw.dat th subs.fiber th (f cl A -> B) cl B -> base.Set kw.whr \
-    quad subs.fib th (x cl A) cl subs.fiber th f th (f th x) $
+    pat1(subs.fib th (x cl A) cl subs.fiber th f th (f th x)) $
 ]
 
 
@@ -1573,14 +1622,12 @@ M th Y$ assigning to each "unknown" in $X$ an $M$-term mentioning only
 parameters in $Y$. A solution must obviously satisfy the original equation
 system, which in categorical language may be stated as follows.
 
-#let bk(it) = text(fill: black, it)
 $ s th x
-  itree.weq
+  #h(1.4em) itree.weq #h(1.4em)
   f th x itree.bind
-      kw.fun text(colors.kw, cases(gap: #0.2em,
-      bk(base.inj1 th x. th s th x),
-      bk(base.inj2 th y. th itree.ret th y),
-  )) $
+      funpat(gap: #0em,
+          base.inj1 th x & |-> th s th x,
+          base.inj2 th y     & |-> th itree.ret th y) $
 
 While the basic idea is simple, a number of subtle questions arise quite quickly
 during axiomatization. Should all equation systems have solutions? Should the
@@ -1657,9 +1704,10 @@ Y) => itree.t_Sigma th A$ by
 les symboles d'opérateurs sur les flèches comme agissant à la fois côté domaine
 et codomaine, genre $f+g cl A + B -> C + D$.]
 
-$ ((f itree.copr g) th r) .itree.obs th kw.wit r \
-  quad | base.inj1 th x := f th x \
-  quad | base.inj2 th y := g th y. $
+$ (f itree.copr g) th r :=
+    pat(itree.obs := kw.case r \
+      pat(base.inj1 th x & := f th x,
+          base.inj2 th y & := g th y)) $
 
 
 #definition[Interaction Tree Iteration][
@@ -1739,23 +1787,22 @@ ptet dire "strategy"?]
 #lemma[Unique Guarded Fixed Points][
   Given $Sigma cl icont.t th I$ and a guarded equation $f cl X =>
   itree.t_Sigma th (X + Y)$, for any two fixed points $s_1, s_2$ of
-  $f$ w.r.t. strong bisimilarity, i.e., such that for all $x$ we have
+  $f$ w.r.t. strong bisimilarity, i.e., such that for all $x$ and $i = 1, 2$ we have
 
-  #let bk(it) = text(fill: black, it)
   $ s_i th x
     itree.eq
     f th x itree.bind
-        kw.fun text(colors.kw, cases(gap: #0.2em,
-        bk(base.inj1 th x. th s_i th x),
-        bk(base.inj2 th y. th itree.ret th y),
-    )) quad , $ for all $i = 1,2$, then for all $x$, $s_1 th x itree.eq s_2 th x$.
+        funpat(gap: #0.2em,
+        base.inj1 th x & |-> th s_i th x,
+        base.inj2 th y & |-> th itree.ret th y) quad , $
+  then for all $x$, $s_1 th x itree.eq s_2 th x$.
 ] <lem-gfix-uniq>
 #proof[
   By tower induction. Apply both fixed point hypotheses. The goal is now to prove
   $ (f th x itree.bind
-        kw.fun text(colors.kw, cases(gap: #0.2em,
-        bk(base.inj1 th x. th s_1 th x),
-        bk(base.inj2 th y. th itree.ret th y))))
+        funpat(gap: #0.2em,
+        base.inj1 th x. th s_1 th x,
+        base.inj2 th y. th itree.ret th y))
     xrel(itree.sb_Sigma th c th rel.diagS)
     (f th x itree.bind
         kw.fun text(colors.kw, cases(gap: #0.2em,
