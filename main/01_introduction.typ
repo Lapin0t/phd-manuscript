@@ -1,10 +1,12 @@
+#import "/lib/all.typ": *
+
 = Introduction
 
 - expliquer "we" vs "I"
 
 == Interactive Semantics: Context and Motivations
 
-== Mechanizing Mathematics (in Coq)
+== Mechanizing Mathematics with Coq
 
 - coder les maths: important pour l'accessibilité
 - coder les maths: important pour juger l'abstraction
@@ -20,7 +22,7 @@ explications technique:
 - typical ambiguity
 - typeclasses
 
-== Running Example: Simply-Typed λ-Calculus
+== Running Example: Simply-Typed #short.llc
 
 == A Primer to Operational Game Semantics
 
