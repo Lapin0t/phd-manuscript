@@ -240,10 +240,10 @@ Méllies of Conway games in connection with Game Semantics.]
 In order to translate this definition into type theory, the only
 question is how to represent subsets.
 The most familiar one is the powerset construction, adopting the point-of-view
-of subsets as predicates:
+of subsets as (proof-relevant) predicates:
 
 $ subs.Pow cl base.Set -> base.Set \
-  subs.Pow th X kw.whr X -> base.Prop $
+  subs.Pow th X kw.whr X -> base.Set $
 
 However there is another, more intensional one, viewing subsets as families:
 

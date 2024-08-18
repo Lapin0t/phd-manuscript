@@ -20,18 +20,19 @@
 
 
 // typing colon
-#let cl = [#h(0.2em) : #h(0.3em)]
+#let cl = h(0.2em) + ":" + h(0.3em)
 // thin space (function application)
-#let th = [#h(0.25em)]
+#let th = h(0.25em)
 // binding argument
 #let ar = cop(move(sym.bracket.b, dy: -0.24em))
 //#let ar = cop("-")
 
-#let mu-tilde = "µ" + box(move(dx: -0.25em, "\u{0303}"))
+#let mutl = "µ" + box(move(dx: -0.25em, "\u{0303}"))
+#let mumutl = "µ" + mutl
 
 #let short = (
   llc: sym.lambda + "-calculus",
-  uuc: "µ" + mu-tilde + "-calculus",
+  uuc: mumutl + "-calculus",
 )
 
 #let kw = (
@@ -143,7 +144,7 @@
 #let itree = (
   t: de(cop("ITree")),
   tp: de(sym.prime.double.rev + "ITree"),
-  obs: pr("obs"),
+  obs: pr("out"),
   F: de(cop("Action")),
   RS: [$de("Action")^de(rel.r)_Sigma$],
   retF: cs(cop("\u{2035}ret")),
@@ -234,6 +235,7 @@
   coplay: pr("coplay"),
 )
 
+//#let asgn(x) = de(crel($- #h(-0.2em) [bk(#x)] #h(-0.2em) ->$))
 #let asgn(x) = de(crel($- #h(-0.2em) [bk(#x)] #h(-0.2em) ->$))
 #let ctxhom(a, b) = [#de(sym.bracket.double.l) #a #de(",") #b #de(sym.bracket.double.r)]
 
@@ -251,8 +253,9 @@
   skip: cs(cop("skip")),
   prescope: de(cop("PreScope")),
   emp: pr(sym.emptyset),
-  catc: de(crel($triangle.r.filled.small #h(-0.35em) triangle.r.filled.small$)),
-  cat: pr(crel($+ #h(-0.55em) +$)),
+  //emp: pr("⍉"),
+  catc: de(crel($triangle.r.filled.small #h(-0.25em) triangle.r.filled.small$)),
+  cat: pr(crel("⧺")),
   vvar: pr(math.bold("V")),
   var: pr(crel($in.rev$)),
   rcatl: pr($"r-cat"_l$),
@@ -270,8 +273,15 @@
   tens: de($dot.circle$),
   all: de(cop("All")),
   fam0: de(cop($"SFam"_1$)),
-  fam1: de(cop($"SFam"$)),
+  fam: de(cop($"SFam"$)),
   fam2: de(cop($"SFam"_2$)),
+  bfam: de(cop("BFam")),
+  Oper: pr("Op"),
+  dom: pr("holes"),
+  fill: de(crel("@")), 
+  oper: pr("op"),
+  args: pr("args"),
+  cut: de(crel(sym.join)),
 )
 
 #let sub = (
