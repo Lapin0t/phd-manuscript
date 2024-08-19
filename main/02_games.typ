@@ -707,7 +707,7 @@ coinductive.]
 
 == Bisimilarity <sec-bisim>
 
-The natural notion of equality on automata is the notion bisimilarity.
+The natural notion of equality on automata is the notion of bisimilarity.
 Intuitively, a bisimulation between two automata consists of a relation between
 their respective states, which is preserved by the transition functions. Two
 automata are then said to be _bisimilar_ when one can exhibit a bisimulation
@@ -1630,7 +1630,7 @@ monadic operators, they support _iteration operators_, which intuitively allow
 one to write arbitrary "while" loops. Pioneered by Calvin Elgot in the setting
 of fixed points #tom[Homog: fixed points vs fixpoints] in algebraic
 theories~#mcite(<Elgot75>), iteration in monadic computations enjoys a vast
-literatture. Recalling that a monadic term $a cl M th X$ can be understood as an
+literature. Recalling that a monadic term $a cl M th X$ can be understood as an
 "$M$-term" with variables in $X$, the idea is to define systems of recursive
 equations as morphisms
 
@@ -1666,8 +1666,8 @@ organized roughly as follows.
 
 #block(stroke: 1pt, inset: 0.8em, radius: 5pt)[
 *Iterative Things* ~~ Every _guarded_ equation
-system has a _unique_ solution, i.e., eliminating problematic equations where
-some $x_i approx x_j$. The following variants have been defined:
+system, i.e., eliminating problematic equations where
+some $x_i approx x_j$, has a _unique_ solution. The following variants have been defined:
 
 - _iterative theories_, for terms in finitary algebraic theories~#mcite(dy:
   -4em, <Elgot75>),
@@ -1685,7 +1685,7 @@ Absence of the prefix "completely" denotes the fact that only finitary equations
 
 #block(stroke: 1pt, inset: 0.8em, radius: 5pt)[
 *Iteration Things and Elgot Things* ~~ Every equation system has a
-_choice_ of solution, subject to coherence conditions. This following has been
+_choice_ of solution, subject to coherence conditions. The following has been
 defined:
 
 - _iteration theories_, for terms in finitary algebraic theories~#mcite(dy: -4em, <BloomE93>),
@@ -1701,7 +1701,7 @@ of the "uniformity" axiom. The prefix "complete" has the same meaning as before.
 More recently, several works have tried to unify the above two families, by
 axiomatizing abstract _guardedness criteria_, for which guarded equations have a
 coherent choice of solution~#mcite(<GoncharovRP17>)~#mcite(dy: 4em,
-<MiliusL17a>)). This criteria may be syntactic as in the first family, or
+<MiliusL17a>). This criterion may be syntactic as in the first family, or
 vacuous (every equation is considered guarded) as in the second
 family. The iteration operator may then be axiomatized to be coherent in the
 style of iteration or Elgot monads, and uniqueness of solutions may be framed as
@@ -1786,7 +1786,7 @@ equation. Our previous unguarded iteration operator can then be seen as
 constructing the unique fixed point of this new guarded equation, up to strong
 bisimilarity.#margin-note[In hindsight, this is rather unsurprising since we
 work in a total programming language: tautologically, only uniquely defined
-objects can ever be defined. #tom[Mmm... what?!]] Without further ado, let us
+objects can ever be defined. #tom[Mmm... what?!] #yann[Pas mieux que Tom.]] Without further ado, let us
 define this guarded iteration operator.
 
 #definition[Guardedness][ Let $Sigma cl icont.t th I$. An action is _guarded in
@@ -1825,6 +1825,7 @@ ptet dire "strategy"?]
   then for all $x$, $s_1 th x itree.eq s_2 th x$.
 ] <lem-gfix-uniq>
 #proof[
+  #yann[Tu as des fois des curly, des fois des squares brackets pour tes match.]
   By tower induction. Apply both fixed point hypotheses. The goal is now to prove
   $ (f th x itree.bind
         funpat(gap: #0.2em,
@@ -1872,13 +1873,15 @@ ptet dire "strategy"?]
     quad | th itree.visF th q th k #h(2em) | p := itree.visF th q th (kw.fun th r. th g th (k th r)) \
   $
 
+  #yann[Je crois que tu as enlevé l'instance précédente où Tom avait mentionné ne pas connaitre la notation Agda de raffinement des matchs dépendents, mais du coup le problème doit être décalé à ici. Il faudrait peut-être introduire la notation à un moment, ou juste ajouter une phrase ici pour aider au déchiffrement.]
+
   We then define the following coinductive auxiliary function.
   #margin-note[
     In fact the two definitions $itree.giter^de("aux")$ and $itree.giter$ can be seen as
     two mutually defined coinductive functions. However, I have refrained
     from using mutual coinduction, for the simple reason that Coq does not
-    support them. Instead, I presented a version where the definition of $itree.giter$
-    it inlined in $itree.giter^de("aux")$. Doing the reverse, and
+    support it. Instead, I have presented a version where the definition of $itree.giter$
+    is inlined in $itree.giter^de("aux")$. Doing the reverse, and
     skipping $itree.giter^de("aux")$ altogether, is not possible because Coq
     does not recognize it as syntactically guarded! I am curious to see what Agda's
     guardedness checker thinks of this... #tom[Incompréhensible pour moi, et je pense que je devrais comprendre. Comment Coq reconnait-il que  $itree.giter^de("aux")$? Il fait une étape de $beta$?]
@@ -1928,6 +1931,7 @@ as a completely iterative monad. Let us now link this to unguarded iteration.
 #tom[Le point 1 du lemme suivant me semble louche. Si je prends $X = 1$, $Y = 2$
 et pour $f$ le contre-exemple du papier, alors toute map $1 -> itree.t_Sigma 2$
 est solution, donc je vois pas trop comment ça peut marcher. Je rate un truc?]
+#yann[Je suis d'accord, ça m'a l'air faux.]
 
 #lemma[
   Given $Sigma cl icont.t th I$ and an equation $f cl X =>
