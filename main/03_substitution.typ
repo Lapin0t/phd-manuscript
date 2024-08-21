@@ -15,8 +15,8 @@ has been widely researched, for example in the various submissions to the first
 #txsc[PoplMark] challenge~#mcite(<poplmark>). There are two main design points:
 how to represent variables and bindings, and how to enforce typing. My
 inclination towards correct-by-construction programming, that is, enforcing as
-much invariants as possible inside data structures using dependent typing makes
-it a natural choice is to use the _type- and scope-safe_, or _intrinsically
+much invariants as possible inside data structures using dependent typing, makes
+it a natural choice to use the _type- and scope-safe_, or _intrinsically
 typed and scoped_ representation of syntax. Quoting #nm[Fiore] and
 #nm[Szamozvancev]~#mcite(<FioreS22>),
 
@@ -32,7 +32,7 @@ de("Ty") -> base.Set$. This indexation can then be used to enforce that only
 well-typed terms are represented and that only variables in scope are used.
 
 An important specificity of the point of view we will adopt in this
-chapter, is to be completely silent on the actual construction of the syntax.
+chapter is to be completely silent on the actual construction of the syntax.
 Indeed, as our goal is to formalize a (reasonably) language-generic OGS
 construction, we will only be interested in _specifying_ what operations a
 syntax should support and leave open the choice for actual _instanciation_.
@@ -91,8 +91,10 @@ mapping from variables over $Gamma$ to $X$-terms over $Delta$.
 $ Gamma asgn(X) Delta := forall th {alpha} -> Gamma ctx.varc alpha -> X th Delta th alpha \
   Gamma ctx.ren Delta := Gamma asgn(ctx.varc) Delta $
 
+#yann[Ci-dessus faire explicitement apparaitre que ce sont les définitions respectives de assignment et de renaming, probablement dans un environnement definition tant qu'à faire.]
+
 #remark[
-  As contexts are finite, assignements are maps with finite domain, and can
+  As contexts are finite, assignments are maps with finite domain, and can
   thus be tabulated and represented as tuples. The tuple representation makes
   intensional equality of assignments better behaved. However as other parts
   of my Coq development already depend on setoids, I will not shy away from
@@ -100,7 +102,7 @@ $ Gamma asgn(X) Delta := forall th {alpha} -> Gamma ctx.varc alpha -> X th Delta
 
   Although it does have this issue, the representation of assignments as functions
   has other benefits: thanks to #{sym.eta}-equality,
-  renamings as defined above construct _strict_ category, where all the laws
+  renamings as defined above construct a _strict_ category, where all the laws
   hold w.r.t. _definitional_ equality.
 ]
 
@@ -109,7 +111,7 @@ $ Gamma asgn(X) Delta := forall th {alpha} -> Gamma ctx.varc alpha -> X th Delta
   define a more economic subcategory of contexts, whose renamings consist
   only of order-preserving embeddings (#txsc[ope]~#peio[ref?]). An #txsc[ope] can
   be computationally modelled by a bitvector, where a 0 at position $i$ means
-  that $i$-th variable is dropped while 1 means that it is kept. However as
+  that the $i$-th variable is dropped while 1 means that it is kept. However as
   computational efficiency is not our prime concern, we will not go down this
   route. Still, we keep this idea around, borrowing and slightly abusing the
   notation $ctx.ren$ for renamings, which is traditionally associated with
@@ -127,7 +129,7 @@ $ pr("var") th {Gamma th alpha} cl Gamma ctx.varc alpha -> X th Gamma th alpha \
 
 This structure is dubbed a _substitution monoid_~#mcite(<FioreS22>) and is
 further subject to the usual associativity and left and right identity laws of
-monoids. To see more clearly how these two maps can be seen as the unit and
+monoids. #yann[Tu as la place, spell them out?] To see more clearly how these two maps can be seen as the unit and
 multiplication maps of a monoid, notice that the types of these two maps can be
 refactored as
 
@@ -145,7 +147,7 @@ $ (X ctx.tens Y) th Gamma th alpha := (Delta cl ctx.ctxc th T) times X th Delta 
 
 This substitution tensor exhibits scoped-and-typed families as a _skew monoidal
 category_~#mcite(<AltenkirchCU10>) with unit $ctx.varc$. By adjointness, the
-substitution map could be alternatively be written with the isomorphic type $
+substitution map could be alternatively written with the isomorphic type $
 pr("sub") cl X ctx.tens X ctx.arr X. $
 
 As such, although we prefer using the internal substitution hom presentation
@@ -170,7 +172,7 @@ folklore practice in the dependently-typed community, and stressed by
 functor category is problematic as it crucially requires to work with quotients.
 
 The trick to provide a theoretical account to the renaming operation while
-avoiding functors is to notice that the faithfull functor $ (ctx.ctxcat th T ->
+avoiding functors is to notice that the faithful functor $ (ctx.ctxcat th T ->
 T -> base.Set) -> (ctx.ctxc th T -> T -> base.Set) $ is comonadic, and its
 associated comonad is $square X := ctxhom(ctx.varc, X)$, i.e.,
 
@@ -196,6 +198,7 @@ renamings and variables can be formalized as a _pointed coalgebra
 structure_~#mcite(<FioreS22>) and its compatibily conditions with a
 substitution monoid structure is straightforward.
 
+#yann[Ce serait pas mal de faire bien ressortir les remarques vs. les défs explicitement utiles pour la suite. Du coup je pense au moins utiliser un environnement de définition pour chaque définition qui sera réutilisée.]
 
 == What is a Variable? Abstracting #nm[De Bruijn] Indices <sec-sub-scope>
 
@@ -204,7 +207,7 @@ variables as #nm[De Bruijn] indices is practically unsatisfactory. Perhaps the
 most convincing reason is that storing sequences as singly-linked lists and
 membership proofs as unary numbers is not computationally efficient. When
 efficient execution is a concern, one typically chooses an off-the-shelf finite
-map datastructure as e.g. binary trees, which enjoy logarithmic time lookup and
+map datastructure such as binary trees, which enjoy logarithmic time lookup and
 logarithmic size membership proofs.
 
 Although I like to imagine that my Coq development makes sound computational
@@ -396,7 +399,7 @@ pp.~98--102])#mcite(<Allais23>, dy: 7em), I will axiomatise only the
 backward map and ask that its fibers are _contractible_, i.e., inhabited by
 exactly one element. This will make the isomorphism far easier to use, enabling
 inversions by a simple dependent pattern matching instead of tedious equational
-rewriting.
+rewriting. #yann[Ça mérite plus d'explication : qu'est-ce qu'une fibre; en quoi la rendre contractible rend l'iso plus facile à utiliser; en quoi d'ailleurs ça permet de récupérer la map forwards; inversion de quoi ? Et plus loin, faire le lien explicitemetn avec view-cat-eq, dis toi bien que ton lecteur est lent, faut êter agile pour le lire et y reconnaitre immédiatement que c'est la contractibilité de la fibre mentionnée avant que ça exprime.]
 
 As the domain of the backward map of the second isomorphism has as domain a
 sum type, I will axiomatize it implicitely as the copairing of two simpler maps:
@@ -562,7 +565,7 @@ outlined in @sec-sub-ovw. We will however introduce one novel contribution:
 substitution modules. Let us start with scoped families and assignments.
 
 #definition[Scoped-and-Typed Family][
-  Given a abstract scope structure $ctx.scope_T th S$, the set of
+  Given an abstract scope structure $ctx.scope_T th S$, the set of
   _scoped-and-typed families_ is given by the following sort.
 
   $ ctx.fam_T th S := S -> T -> base.Set $
@@ -580,7 +583,7 @@ substitution modules. Let us start with scoped families and assignments.
     Gamma asgn(X) Delta := forall {alpha} -> Gamma ctx.var alpha -> X th Delta th alpha $
 ]
 
-As seen in @sec-sub-ovw, because assignments are represented as functions, will
+As seen in @sec-sub-ovw, because assignments are represented as functions, we will
 make explicit use of extensional equality on assignments. Given $gamma, delta
 cl Gamma asgn(X) Delta$, it is expressed as follows.
 
@@ -638,7 +641,7 @@ $x[gamma][delta] = x[gamma[delta]]$.
   $X$, the _$X$-assignment category_ $de(cal("A"))_X$ whose objects are
   contexts in $S$ and morphisms are given by $X$-assignments. It is then
   unsurprising that $sub.var$---the unit of the relative monad $X$---is the
-  identity morphism of it's Kleisli category.
+  identity morphism of its Kleisli category.
 ]
 
 #remark[
@@ -650,8 +653,8 @@ $x[gamma][delta] = x[gamma[delta]]$.
   by the superscript $ar^rel.r$. Explicitely, the type of $sub.sext$ unfolds as
   follows.
 
-  $ forall th & {Gamma th alpha} th {x^1 th x^2 cl X th Gamma th alpha} (x^rel.r cl x^1 = x^2) \
-              & {Delta} th {gamma^1 th gamma^2 cl Gamma asgn(X) Delta} (gamma^rel.r cl forall th {beta} th (i cl Gamma ctx.var beta) -> gamma_1 th i = gamma_2 th i) \
+  $ forall th & {Gamma th alpha} th {x_1 th x_2 cl X th Gamma th alpha} (x^rel.r cl x_1 = x_2) \
+              & {Delta} th {gamma_1 th gamma_2 cl Gamma asgn(X) Delta} (gamma^rel.r cl forall th {beta} th (i cl Gamma ctx.var beta) -> gamma_1 th i = gamma_2 th i) \
               & -> x_1 [gamma_1] = x_2[gamma_2] $
 ]
 
@@ -663,10 +666,10 @@ $x[gamma][delta] = x[gamma[delta]]$.
 #let cfg = de(cop("Conf"))
 #let ecx = de(cop("ECtx"))
 
-Substitution monoids have neatly been generalized to abstract scopes, but for
-modelling OGS a part of the theory of substitution is still missing. As
+Substitution monoids have neatly been generalized to abstract scopes, but for the purpose of
+modelling OGS, a part of the theory of substitution is still missing. As
 explained in the introductory chapter #peio[ref précise?], in OGS we will
-typically see other syntactic constructs such as _values_, _evaluation
+typically see#yann[refer to? Manipulate?] other syntactic constructs such as _values_, _evaluation
 contexts_ and evaluator _configurations_. Values can be readily represented as a
 scoped-and-typed family $ val cl S -> T -> base.Set. $ In contrast, evaluation
 contexts are better represented as a family $ ecx cl S -> T -> T -> base.Set, $
@@ -694,11 +697,11 @@ categories.
 
 #definition[Family Categories][
   A _family category_ is given by a sequence of types $T_i cl base.Set$ and
-  consist of maps $T_i -> ... -> T_n -> base.Set$.
+  consist of maps $T_1 -> ... -> T_n -> base.Set$.
 ]
 
 as
-a category of maps $T_1 -> ... -> T_n -> base.Set$ where all $T_ cl base.Set$, with arrows
+a category of maps $T_1 -> ... -> T_n -> base.Set$ where all $T_i cl base.Set$, with arrows
 lifted pointwise from #base.Set.
 
 #definition[Generalized Substitution Hom][
