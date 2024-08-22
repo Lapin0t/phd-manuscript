@@ -1,6 +1,6 @@
 #import "/lib/all.typ": *
 
-= Introduction
+= Introduction <ch-intro>
 
 - expliquer "we" vs "I"
 

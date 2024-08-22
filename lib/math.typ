@@ -143,7 +143,7 @@
 
 #let itree = (
   t: de(cop("ITree")),
-  tp: de(sym.prime.double.rev + "ITree"),
+  tp: de(sym.prime.rev + "ITree"),
   obs: pr("out"),
   F: de(cop("Action")),
   RS: [$de("Action")^de(rel.r)_Sigma$],
@@ -175,8 +175,8 @@
   xvis: de(cop("vis!")),
   spin: de(cop("spin")),
   iter: de(cop("iter")),
-  actguard: de(cop(sym.prime.double.rev + "guarded")),
-  actevguard: de(cop(sym.prime.double.rev + "ev-guarded")),
+  actguard: de(cop(sym.prime.rev + "guarded")),
+  actevguard: de(cop(sym.prime.rev + "ev-guarded")),
   guard: de(cop("guarded")),
   evguard: de(cop("ev-guarded")),
   eqguard: de(cop("eqn-guarded")),

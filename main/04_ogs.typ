@@ -1,6 +1,11 @@
 #import "/lib/all.typ": *
 
-= Generic Operational Game Semantics
+= Generic Operational Game Semantics <ch-ogs>
+
+In @ch-game we have seen a general definition of games and the structure of
+their strategies and in @ch-subst we have seen an axiomatic framework for
+intrinsically typed and scoped substitution. Everything is now in place to
+define the generic operational game semantics construction. 
 
 == The OGS Game
 

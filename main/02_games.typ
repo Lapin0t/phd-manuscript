@@ -1,6 +1,6 @@
 #import "/lib/all.typ": *
 
-= Coinductive Game Strategies
+= Coinductive Game Strategies <ch-game>
 
 As we have seen, Operational Game Semantics, and more generally interactive
 semantics, rest upon a dialogue following particular rules, a so-called two
@@ -47,8 +47,8 @@ use case.
   representations, intuitively simply by swapping the sets of moves allowed for
   each player. This is not directly possible with interaction trees, as the two
   kinds of moves do not have the same status. In interaction trees, the events are
-  organized into a set of _queries_ $Q cl base.Set$, and for each query a set of
-  _responses_ $R cl Q -> base.Set$. As such one cannot just swap queries and
+  organized into a set of _queries_ $Q cl base.Type$, and for each query a set of
+  _responses_ $R cl Q -> base.Type$. As such one cannot just swap queries and
   responses as they are not of the same sort.
 - *Indexing.* In an interaction tree, while the set of allowed responses
   depends on the previous query, queries themselves do not depend on anything.
@@ -128,28 +128,30 @@ we were missing game _positions_, on which moves could then depend, it is but
 natural to assume a set of such positions. More precisely, we will assume two
 sets of game positions $I^+$ and $I^-$, where it is respectively the first
 player and the second player's turn to play. Then, instead of describing moves
-by mere sets, we can describe them by two families $M^+ cl I^+ -> base.Set$ and
-$M^- cl I^- -> base.Set$, mapping to each position the set of currently allowed
+by mere sets, we can describe them by two families $M^+ cl I^+ -> base.Type$ and
+$M^- cl I^- -> base.Type$, mapping to each position the set of currently allowed
 moves. Finally, we must describe how the position evolves after a move has been
 played. This can be encoded by two maps $"next"^+ cl forall i^+, th M^+ th i^+ ->
 I^-$ and $"next"^- cl forall i^-, th M^- th i^- -> I^+$. This leads us to the
 following definitions.
 
 #definition[Half-Game][
-  Given $I, J cl base.Set$ a _half-game with input positions $I$
-  and output positions $J$_ is given by the following record.
-  $ & kw.rec th game.hg th I th J th kw.whr \
-    & quad game.mv cl I -> base.Set \
-    & quad game.nx th {i} cl game.mv th i -> J $
+  Given $I, J cl base.Type$ a _half-game with input positions $I$
+  and output positions $J$_ is given by a record of the following type.
+
+  $ kw.rec th game.hg th I th J th kw.whr \
+    pat(game.mv cl I -> base.Type,
+        game.nx th {i} cl game.mv th i -> J) $
 ] <def-hg>
 
 #definition[Game][
   #margin-note[This is called _discrete game_ by #nm[Levy] and #nm[Staton]~#num-cite(<LevyS14>).]
-  Given $I^+, I^- cl base.Set$ a _game with active positions $I^+$
-  and passive positions $I^-$_ is given by the following record.
-  $ & kw.rec th game.g th I^+ th I^- th kw.whr \
-    & quad game.client cl game.hg th I^+ th I^- \
-    & quad game.server cl game.hg th I^- th I^+ $
+  Given $I^+, I^- cl base.Type$ a _game with active positions $I^+$
+  and passive positions $I^-$_ is given by a record of the following type.
+
+  $ kw.rec th game.g th I^+ th I^- th kw.whr \
+    pat(game.client cl game.hg th I^+ th I^-,
+        game.server cl game.hg th I^- th I^+) $
 ] <def-g>
 
 === Categorical Structure
@@ -176,19 +178,18 @@ advanced concepts, such as framed bicategories and two-sided fibrations.
   
 
   $ kw.rec game.hsim th A th B kw.whr \
-    quad game.hstr {i} cl A .game.mv th i -> B .game.mv th i \
-    quad game.hscoh {i} th (m cl A .game.mv th i) cl B .game.nx th (game.hstr th m) = A .game.nx th m$
+    pat(game.hstr {i} cl A .game.mv th i -> B .game.mv th i,
+        game.hscoh {i} th (m cl A .game.mv th i) cl B .game.nx th (game.hstr th m) = A .game.nx th m) $
 ]
 
 
 #definition[Simulation][
-  Given two games $A, B cl game.g th I^+ th I^-$, a
-  _game simulation from $A$ to $B$_ is given by the following
-  record.
+  Given two games $A, B cl game.g th I^+ th I^-$, a _game simulation from $A$
+  to $B$_ is given by a record of the following type.
 
   $ kw.rec game.sim th A th B kw.whr \
-    quad game.scli cl game.hsim th A .game.client th B .game.client \
-    quad game.ssrv cl game.hsim th B .game.server th A .game.server $
+    pat(game.scli cl game.hsim th A .game.client th B .game.client,
+        game.ssrv cl game.hsim th B .game.server th A .game.server) $
 ]
 
 #guil[Tu pourrais expliquer à ce moment là la structure catégorique sur HGame et sur Game,
@@ -196,15 +197,13 @@ en explicitant notamment la composition de simulations et la simulation identit�
 Sinon on a du mal à comprendre d'où sort le $base.Cat$ en dessous.]
 
 #remark[Half-Game is Functorial][
-  $game.hg$ extends to a strict functor $base.Set^"op" times base.Set -> base.Cat$ as witnessed
+  $game.hg$ extends to a strict functor $base.Type^"op" times base.Type -> base.Cat$ as witnessed
   by the following action on morphisms, which we write curried and in infix style.
 
   $ ar game.reixl ar game.reixr ar cl (I_2 -> I_1) -> game.hg th I_1 th J_1 -> (J_1 -> J_2) -> game.hg th I_2 th J_2 \
     f game.reixl A game.reixr g :=
     pat(game.mv th i & := A .game.mv th (f th i),
-        game.nx th m & := g th (A .game.nx th m))
-    /*(f game.reixl A game.reixr g) .game.mv th i := A .game.mv th (f th i) \
-    (f game.reixl A game.reixr g) .game.nx th m := g th (A .game.nx th m)*/ $
+        game.nx th m & := g th (A .game.nx th m)) $
 
   The identity and composition laws of this functor hold _definitionally_
   (assuming #{sym.eta}-laws on records and functions).
@@ -242,8 +241,8 @@ question is how to represent subsets.
 The most familiar one is the powerset construction, adopting the point-of-view
 of subsets as (proof-relevant) predicates:
 
-$ subs.Pow cl base.Set -> base.Set \
-  subs.Pow th X kw.whr X -> base.Set $
+$ subs.Pow cl base.Type -> base.Type \
+  subs.Pow th X kw.whr X -> base.Type $
 
 However there is another, more intensional one, viewing subsets as families:
 
@@ -254,9 +253,9 @@ endroit.]
 #tom[De plus, les deux defs n'étant pas équivalentes, est-ce qu'il ne vaudrait
 pas mieux assumer la différence et appeler ça des proof-relevant Conway games?]
 
-$ kw.rec subs.Fam th (X cl base.Set) cl base.Set kw.whr \
-  quad subs.dom cl base.Set \
-  quad subs.idx cl subs.dom -> X $
+$ kw.rec subs.Fam th (X cl base.Type) cl base.Type kw.whr \
+  pat(subs.dom cl base.Type,
+      subs.idx cl subs.dom -> X) $
 
 Because we want to easily manipulate the support of the two subsets $G_L$ and
 $G_R$, i.e., in this context the set of left moves and right moves, we adopt
@@ -265,9 +264,9 @@ the second representation.
 #definition[#nm[Conway] Game][
     The set of _#nm[Conway] games_ is given by the following coinductive record.
 
-    $ kw.rec conway.t cl base.Set kw.whr \
-      quad conway.lft cl subs.Fam th conway.t \
-      quad conway.rgt cl subs.Fam th conway.t $
+    $ kw.rec conway.t cl base.Type kw.whr \
+      pat(conway.lft cl subs.Fam th conway.t,
+          conway.rgt cl subs.Fam th conway.t) $
 ]
 
 We can now give the #nm[Levy] & #nm[Staton] game of #nm[Conway] games. As in a
@@ -282,13 +281,6 @@ is in fact given by the current Conway game.
     de("fam-to-hg") th F :=
       pat(game.mv th i & := (F th i) .subs.dom,
           game.nx th {i} th m & := (F th i).subs.idx th m) $
-
-Furthermore, the projection maps $conway.lft$ and $conway.rgt$ have the
-following type,
-
-  $ conway.lft,conway.rgt cl conway.t -> subs.Fam th conway.t$
-
-so that applying $de("fam-to-hg")$ yields half-games.
 
 Then, the _game of #nm[Conway] games_ can be given as follows.
 
@@ -318,10 +310,11 @@ of game. We first need to define two interpretations of half-games as functors.
 
 
 #tom[Les espaces sont bizarres dans la def ci-dessous, non?]
+#peio[Fixed? Je vois pas trop lesquels]
 #definition[Half-Game Functors][
   Given a half-game $G cl game.hg th I th J$, we define the
   _active interpretation_ and _passive interpretation of $G$_ as functors
-  $base.Set^J -> base.Set^I$, written $G game.extA ar$ and $G game.extP ar$ and defined as follows.
+  $base.Type^J -> base.Type^I$, written $G game.extA ar$ and $G game.extP ar$ and defined as follows.
 
   $ (G game.extA X) th i := (m cl G.game.mv th i) times X th (G.game.nx th m) \
     (G game.extP X) th i := (m cl G.game.mv th i) -> X th (G.game.nx th m) $
@@ -333,7 +326,7 @@ trop à $game.extP$, elle évoque aussi un adjoint à droite plus qu'à gauche.]
 #guil[Je trouve ça mieux.]
 
 #definition[Transition System][
-  Given a game $G cl game.g th I^+ th I^-$ and a family $R cl base.Set^(I^+)$,
+  Given a game $G cl game.g th I^+ th I^-$ and a family $R cl base.Type^(I^+)$,
   a _transition system over $G$ with output $R$_ is given by the following record.
   #margin-note(dy: -2.7em)[
     In #nm[Levy] & #nm[Staton]~#num-cite(<LevyS14>), the output parameter $R$ is not present and this is
@@ -342,10 +335,10 @@ trop à $game.extP$, elle évoque aussi un adjoint à droite plus qu'à gauche.]
   ]
 
   $ kw.rec strat.t_G th R kw.whr \
-    quad strat.stp cl I^+ -> base.Set \
-    quad strat.stn cl I^- -> base.Set \
-    quad strat.play cl strat.stp => R + strat.stp + G.game.client game.extA strat.stn \
-    quad strat.coplay cl strat.stn => G.game.server game.extP strat.stp $
+    pat(strat.stp cl I^+ -> base.Type,
+        strat.stn cl I^- -> base.Type,
+        strat.play cl strat.stp => R + strat.stp + G.game.client game.extA strat.stn,
+        strat.coplay cl strat.stn => G.game.server game.extP strat.stp) $
   Where $X => Y := forall th {i}, th X i -> Y i$ denotes a morphism of families.
 ] <def-tsys>
 
@@ -443,7 +436,7 @@ mais c'est surement car je ne m'y connais pas du tout en event-driven programmin
 === From Games to Containers
 
 Notice that @def-tsys is exactly the definition of a coalgebra for some
-endofunctor on $base.Set^(I^+) times base.Set^(I^-)$.
+endofunctor on $base.Type^(I^+) times base.Type^(I^-)$.
 #guil[Est-ce-que tu peux détailler ? Vu que G et R dépendent aussi de 
 $I^+$ et $I^-$, ce n'est pas complètement évident je trouve.]
  Then, as by definition
@@ -460,7 +453,7 @@ t-sys de taille $alpha$, il n'y a pas de bump de taille.]
 
 However, before constructing this final coalgebra, I will simplify the setting
 slightly. Notice that we can easily make passive states disappear, by
-describing systems as a family of active states $strat.stp cl base.Set^(I^+)$
+describing systems as a family of active states $strat.stp cl base.Type^(I^+)$
 and a single transition function:
 
 $ strat.stp => R + strat.stp + G.game.client game.extA (G.game.server game.extP strat.stp) $
@@ -496,21 +489,18 @@ simpler notion.
 
 
 #definition[Indexed Container][
-  Given $I cl base.Set$, an _indexed container with positions $I$_ is given
+  Given $I cl base.Type$, an _indexed container with positions $I$_ is given
   by the following record.
 
-  $ kw.rec icont.t I cl base.Set kw.whr \
-    pat(icont.qry cl I -> base.Set,
-        icont.rsp th {i} cl icont.qry th i -> base.Set,
+  $ kw.rec icont.t I cl base.Type kw.whr \
+    pat(icont.qry cl I -> base.Type,
+        icont.rsp th {i} cl icont.qry th i -> base.Type,
         icont.nxt th {i} th {q cl icont.qry th i} cl icont.rsp th q -> I) $
-    /*quad icont.qry cl I -> base.Set \
-    quad icont.rsp th {i} cl icont.qry th i -> base.Set \
-    quad icont.nxt th {i} th {q cl icont.qry th i} cl icont.rsp th q -> I $*/
 ]
 
 #definition[Extension of a Container][
   Given an indexed container $Sigma cl icont.t th I$, we define its _extension_
-  $[| Sigma |] cl base.Set^I -> base.Set^I$ as the following functor.
+  $[| Sigma |] cl base.Type^I -> base.Type^I$ as the following functor.
 
   $ [| Sigma |] th X th i :=
       (q cl Sigma .icont.qry th i)
@@ -523,9 +513,6 @@ simpler notion.
     $game.g th I^+ th I^- -> icont.t th I^+$ defined
   on objets as follows.
 
-  /*$ (icont.g2c th A) .icont.qry th i := A .game.client"".game.mv th i \
-    (icont.g2c th A) .icont.rsp th q := A .game.server"".game.mv th (A .game.client"".game.nx th q) \
-    (icont.g2c th A) .icont.nxt th r := A .game.server"".game.nx th r $*/
   $ floor(ar) cl game.g th I^+ th I^- -> icont.t th I^+ \
     floor(A) :=
       pat(icont.qry th i & := A .game.client"".game.mv th i,
@@ -564,22 +551,17 @@ the _action functor_ on $Sigma$.
 
 #definition[Action Functor][
   Given a signature $Sigma cl icont.t th I$ and an output $R cl
-  base.Set^I$, the _action functor on $Sigma$ with output $R$_,
-  $itree.F_Sigma th R cl base.Set^I -> base.Set^I$ is defined by the following
+  base.Type^I$, the _action functor on $Sigma$ with output $R$_,
+  $itree.F_Sigma th R cl base.Type^I -> base.Type^I$ is defined by the following
   data type.
 
-  $ kw.dat itree.F_Sigma th R th X th i cl base.Set kw.whr \
+  $ kw.dat itree.F_Sigma th R th X th i cl base.Type kw.whr \
     pat(
       itree.retF th (r cl R th i),
       itree.tauF th (t cl X th i),
       itree.visF
         th (q cl Sigma .icont.qry th i)
         th (k cl (r cl Sigma .icont.rsp th q) -> X th (Sigma .icont.nxt th r))) $
-    /*quad itree.retF th (r cl R th i) \
-    quad itree.tauF th (t cl X th i) \
-    quad itree.visF
-      th (q cl Sigma .icont.qry th i)
-      th (k cl (r cl Sigma .icont.rsp th q) -> X th (Sigma .icont.nxt th r)) $*/
 ]
 
 Being itself the extension of some indexed container, $itree.F_Sigma th R$ has a
@@ -598,12 +580,12 @@ définition directe. Ça serait bien d'avertir les lecteurices de tes objectifs 
 en début de section 2.3.]
 
 #definition[Indexed Interaction Tree][ Given a signature $Sigma cl
-  icont.t th I$ and an output $R cl base.Set^I$, the family of
+  icont.t th I$ and an output $R cl base.Type^I$, the family of
   _indexed interaction trees on $Sigma$ with output $R$_, denoted by
-  $itree.t_Sigma th R cl base.Set^I$, is given by coinductive records of the following
+  $itree.t_Sigma th R cl base.Type^I$, is given by coinductive records of the following
   type.
 
-  $ kw.rec itree.t_Sigma th R th i cl base.Set kw.whr \
+  $ kw.rec itree.t_Sigma th R th i cl base.Type kw.whr \
     pat1(itree.obs cl itree.F_Sigma th R th (itree.t_Sigma th R) th i) $
 
   Furthermore, define the following shorthands:
@@ -617,6 +599,7 @@ en début de section 2.3.]
 as of type $itree.t_Sigma$ ?]
 #tom[pas compris les shorthands. Est-ce que tu essaies de dire que 
 $itree.ret th x := { itree.obs = itree.retF t x}$, par exemple?]
+#peio[Yes, c'est mieux comme ça non?]
 
 Notice that this definition is to interaction trees~#mcite(<XiaZHHMPZ20>)
 what inductive families are to inductive data types. As we will discover
@@ -634,10 +617,10 @@ define bisimilarity, let us first link this definition to transition systems
 over games.
 
 #definition[Strategies][
-  Given a game $G cl game.g th I^+ th I^-$ and output $R cl base.Set^(I^+)$,
+  Given a game $G cl game.g th I^+ th I^-$ and output $R cl base.Type^(I^+)$,
   the _active strategies over $G$ with output $R$_, $game.stratA_G th R cl
-  base.Set^(I^+)$ and the _passive strategies over $G$ with output $R$_,
-  $game.stratP_G th R cl base.Set^(I^-)$ are given as follows.
+  base.Type^(I^+)$ and the _passive strategies over $G$ with output $R$_,
+  $game.stratP_G th R cl base.Type^(I^-)$ are given as follows.
 
   $ game.stratA_G th R := itree.t_floor(G) th R \
     game.stratP_G th R := G.game.server game.extP game.stratA_G th R $
@@ -724,7 +707,7 @@ Before translating these ideas into type theory, we will need a bit of
 preliminary tools. Most implementations of type theory provide some form of
 support for coinductive records (such as @def-itree) and for cofixpoints, or
 coinductive definitions (such as @def-unroll). However, these features---in
-particular cofixpoints---are at times brittle, because the theory relies on a
+particular cofixpoints---are at times brittle, because type theory typically relies on a
 syntactic _guardedness_ #tom[(c'est syntaxique en Agda? Ah, je vois que tu en
 parles plus tard, mais en lisant ici on se demande ce qui se passe, vu que
 depuis le début on fait du Coq $|$ Agda sans distinction.)] criterion to decide
@@ -985,7 +968,7 @@ $R^1$ et $R^2$ au dessus, pour être consistant avec la suite.]
 We start with some preliminary notation for our indexed relations.
 
 #definition[Family Relation][
-  Given $I cl base.Set$ and two families $X, Y cl base.Set^I$, the set of
+  Given $I cl base.Type$ and two families $X, Y cl base.Type^I$, the set of
   _family relations between $X$ and $Y$_ is defined as follows.
 
   $ rel.irel th X th Y := forall th {i} -> X th i -> Y th i -> base.Prop $
@@ -1033,6 +1016,8 @@ dans la théorie des coalgèbres.]
 #tom[Dans la def ci-dessous, ça me met de la charge cognitive superflue d'avoir
 $R^1$ et $R^2$ qui ne sont pas des relations. Tu pourrais ptet les appeler
 $A^i$, comme "answer"?] 
+#peio[Le pb c'est que j'utilise $R$ partout comme paramètre des itree (dès @sec-itree).
+C'est pour "return type".. ]
 
 #definition[Action Relator][
 Given $Sigma cl icont.t th I$, an output relation $R^rel.r cl rel.irel th R^1 th
@@ -1184,7 +1169,7 @@ actions has been exposed:
 $ itree.tp_Sigma th R := itree.F_Sigma th R th (itree.t_Sigma th R) $
 
 #definition[Eating Relation][
-  Given $Sigma cl icont.t th I$ and $R cl base.Set^I$, define the _eating relation_
+  Given $Sigma cl icont.t th I$ and $R cl base.Type^I$, define the _eating relation_
   $itree.eat_Sigma^R cl rel.irel th (itree.tp_Sigma th R) th (itree.tp_Sigma th R)$ as follows.
 
   $ kw.dat th itree.eat_Sigma^R th {i} := \
@@ -1353,7 +1338,7 @@ entre le "statement regarding sequential composition of relations" du
     $ itree.RS th R^rel.r th (x th R^rel.r) th x_3 th y_2. $
 
   - When $y_1 = itree.visF th q th k$, the reasoning is the same, swapping
-    lemma 5. by lemma 6.
+    lemma 5. with lemma 6.
   - When $y_1 = itree.tauF th t$,
 
     $ & a & eat x_1 & sync x_2 & eat itree.tauF th t & sync y_2 eatr c & \
@@ -1442,7 +1427,7 @@ sequential composition, is tremendously useful to construct and reason on
 strategies piecewise.
 
 The monad structure on interaction trees takes place in the family category
-$base.Set^I$ and its laws hold both w.r.t. strong bisimilarity and weak
+$base.Type^I$ and its laws hold both w.r.t. strong bisimilarity and weak
 bisimilarity. One way to view this is to say that I will define _two_ monads.
 However, in line with my choice of using intensional type theory, I will first
 define a _pre-monad_ structure, containing only the computationally relevant
@@ -1464,7 +1449,7 @@ Let us define the "bind" operator, which works by tree grafting.
     this trick was first used in the InteractionTree
     library~#num-cite(<XiaZHHMPZ20>). In general, it is always fruitful to take
     as many binders as possible out of a cofixpoint definition.
-  ] Let $Sigma cl icont.t th I$. For any given $X, Y cl base.Set^I$ and $f cl X =>
+  ] Let $Sigma cl icont.t th I$. For any given $X, Y cl base.Type^I$ and $f cl X =>
   itree.t_Sigma th Y$, define _interaction tree substitution_ as follows.
   $ itree.subst_f cl itree.t_Sigma th X => itree.t_Sigma th Y \
     itree.subst_f th t :=
@@ -1499,8 +1484,10 @@ To achieve this, we define the following combinators.
 $ ar rel.arr ar cl rel.rel th X_1 th X_2 -> rel.rel th Y_1 th Y_2 -> rel.rel th (X_1 -> Y_1) th (X_2 -> Y_2) \
   (R rel.arr S) th f th g := forall th {x_1 x_2} -> R th x_1 th x_2 -> S th (f th x_1) th (g th x_2) $
 
-$ ar rel.iarr ar cl rel.irel th X_1 th X_2 -> rel.irel th Y_1 th Y_2 -> rel.irel th (X_1 => Y_1) th (X_2 => Y_2) \
-  (R rel.iarr S) th f th g := forall th {x_1 x_2} -> R th x_1 th x_2 -> S th (f th x_1) th (g th x_2) $
+$ ar rel.iarr ar cl rel.irel th X_1 th X_2 -> rel.irel th Y_1 th Y_2 -> rel.irel th (X_1 => Y_1) th (X_2 => Y_2) $
+#v(-0.5em)
+$ (R rel.iarr S) th f th g := forall th {i th x_1 th x_2}
+ -> R th {i} th x_1 th x_2 -> S th {i} th (f th x_1) th (g th x_2) $
 #tom[C'est texto le même que le précédent, il manque sans doute des $i$...]
 
 $ rel.forall cl (forall th {i} -> rel.rel th (X_1 th i) th (X_2 th i)) -> rel.rel th (forall th {i} -> X_1 th i) th (forall th {i} -> X_2 th i) \
@@ -1515,8 +1502,8 @@ Moreover we will write $rel.forall th A$ for $rel.forall th (kw.fun th {i}. th A
 #tom[Ci-dessous, c'est pas bon, j'essaie de corriger mais chuis pas sûr.] 
 
 #lemma[ITree Monad Monotonicity][  Given $Sigma cl icont.t th I$, for any
-  $X^rel.r$ and $Y^rel.r$ and for any $x cl rel.lat_Sigma$ such that either $x =
-itree.sb_Sigma$ or $x = itree.wb_Sigma$, the following holds.
+  $X^rel.r$ and $Y^rel.r$ and for any $x cl rel.lat_Sigma$ such that either $x in
+itree.sb_Sigma$ or $x in itree.wb_Sigma$, the following holds.
 
   1. $itree.ret xrel(X^rel.r rel.arr x th X^rel.r) itree.ret$
   2. $(ar itree.bind ar) xrel(rel.forall th x th X^rel.r rel.arr (X^rel.r rel.iarr x th Y^rel.r) rel.arr x th Y^rel.r) (ar itree.bind ar)$
@@ -1529,6 +1516,9 @@ itree.sb_Sigma$ or $x = itree.wb_Sigma$, the following holds.
 ] <lem-up2bind>
 
 #tom[C'est marrant, 1 et 2 ressemblent à des lois de monades pour $x$, c'est connu?]
+#peio[C'est que c'est de la parametricité, du coup c'est normal (on a un ret relationel
+  au dessus des 2 ret et un bind relationel au dessus des 2 bind). En vrai
+  c'est les lois de compat du relator $x$ avec la monade, il faut que j'en parle plus. ]
 #proof[
 
   1. Assuming $X^rel.r th x_1 th x_2$, we have $itree.sb_Sigma th x th X^rel.r
@@ -1610,14 +1600,14 @@ effects", i.e., helpers to perform a silent step or play a move.
     call _event handlers_.  It encodes a natural transformation of $[| Sigma |]$
     into $itree.t_Sigma$. This one in particular is the identity handler, part
     of a larger structure making $itree.t$ a _relative
-    monad_~#num-cite(<AltenkirchCU10>) on $icont.t th I -> (base.Set^I ->
-    base.Set^I)$. Alas, its definition is irrelevant to OGS correctness and does
+    monad_~#num-cite(<AltenkirchCU10>) on $icont.t th I -> (base.Type^I ->
+    base.Type^I)$. Alas, its definition is irrelevant to OGS correctness and does
     not fit into this margin...
 
   ]
   where $subs.fiber$ is defined by the following data type.
 
-  $ kw.dat th subs.fiber th (f cl A -> B) cl B -> base.Set kw.whr \
+  $ kw.dat th subs.fiber th (f cl A -> B) cl B -> base.Type kw.whr \
     pat1(subs.fib th (x cl A) cl subs.fiber th f th (f th x)) $
 ]
 
@@ -1684,17 +1674,17 @@ Absence of the prefix "completely" denotes the fact that only finitary equations
 
 
 #block(stroke: 1pt, inset: 0.8em, radius: 5pt)[
-*Iteration Things and Elgot Things* ~~ Every equation system has a
-_choice_ of solution, subject to coherence conditions. The following has been
+*Iteration Things and #nm[Elgot] Things* ~~ Every equation system has a _choice_ of
+solution, subject to coherence conditions. The following notions have been
 defined:
 
 - _iteration theories_, for terms in finitary algebraic theories~#mcite(dy: -4em, <BloomE93>),
-- _Elgot algebras_, for finitary functor algebras~#mcite(dy: -2em, <AdamekMV06>),
-- _Elgot monads_, for finitary monads~#mcite(dy: -1em, <AdamekMV10>),
-- _complete Elgot monads_, for any monad~#mcite(dy: 1em, <GoncharovRS15>).
+- _#nm[Elgot] algebras_, for finitary functor algebras~#mcite(dy: -2em, <AdamekMV06>),
+- _#nm[Elgot] monads_, for finitary monads~#mcite(dy: -1em, <AdamekMV10>),
+- _complete #nm[Elgot] monads_, for any monad~#mcite(dy: 1em, <GoncharovRS15>).
 
-The older "iteration" prefix requires only the four so-called Conway axioms on
-the iteration operator, while the more recent "Elgot" prefix denotes the addition
+The older "iteration" prefix requires only the four so-called #nm[Conway] axioms on
+the iteration operator, while the more recent "#nm[Elgot]" prefix denotes the addition
 of the "uniformity" axiom. The prefix "complete" has the same meaning as before.
 ]
 
@@ -1717,8 +1707,20 @@ which also features much appreciated graphical depictions of the coherence laws.
 In the original interaction tree library~#mcite(<XiaZHHMPZ20>), an iteration
 _operator_ has been devised, which constructs fixpoints of arbitrary equation
 systems up to weak bisimilarity. This makes the interaction tree monad
-quotiented by weak bisimilarity into a complete Elgot monad. For readability,
-let us introduce a useful helper. Given $f cl X => itree.tp_Sigma th A$ and $g
+quotiented by weak bisimilarity into a complete Elgot monad.
+
+For readability, let us introduce two helpers for copairing. First the usual one:
+given $f cl X => itree.t_Sigma th A$ and $g cl Y => itree.t_Sigma th A$, define
+$[f,g] cl (X + Y) => itree.t_Sigma th A$ by
+
+
+$ de([bk(f), bk(g)]) := funpat(base.inj1 th x & |-> f th x,
+                  base.inj2 th y & |-> g th x) $
+
+$ de([bk(f), bk(g)]) th (base.inj1 th x) & := f th x \
+  [f, g] th (base.inj2 th y) & := g th x $
+
+given $f cl X => itree.tp_Sigma th A$ and $g
   cl Y => itree.tp_Sigma th A$ #margin-note[ Please note the one-step unfolding
   in the codomain!#tom[codomain?! y a une typo ici ou dans le codomaine?]
   Moreover, let us emphasise that this definition pattern-matches on its
@@ -1742,7 +1744,7 @@ $ (f itree.copr g) th r :=
   + Y)$, define its _iteration_ coinductively as follows.
 
   $ itree.iter_f cl X => itree.t_Sigma th Y \
-    itree.iter_f th x := f th x itree.bind ((itree.tauF compose itree.iter_f) itree.copr itree.retF) $
+    itree.iter_f th x := f th x itree.bind ((kw.fun th t |-> itree.tauF (itree.iter_f th t)) itree.copr itree.retF) $
 ]
 
 #lemma[Iter Fixed Point][ Given $Sigma cl icont.t th I$, for all $f cl X =>
@@ -1753,10 +1755,9 @@ $ (f itree.copr g) th r :=
   $ itree.iter_f th x
     itree.weq
     f th x itree.bind
-        kw.fun text(colors.kw, cases(gap: #0.2em,
-        bk(base.inj1 th x. th itree.iter_f th x),
-        bk(base.inj2 th y. th itree.ret th y),
-    )) $
+        funpat(gap: #0em,
+               base.inj1 th x & |-> th itree.iter_f th x,
+               base.inj2 th y & |-> th itree.ret th y) $
 ]
 #proof[
   By straightforward tower induction, using the up-to bind principle (@lem-up2bind).
@@ -1792,22 +1793,22 @@ define this guarded iteration operator.
 #definition[Guardedness][ Let $Sigma cl icont.t th I$. An action is _guarded in
   $X$_ if it satisfies the following (proof-relevant) predicate.
 
-  $ kw.dat itree.actguard th {X th Y th A th i} cl itree.F_Sigma th (X + Y) th A th i -> base.Set kw.whr \
-    quad itree.gret th {y} cl itree.actguard th (itree.retF th (base.inj2 th y)) \
-    quad itree.gtau th {t} cl itree.actguard th (itree.tauF th t) \
-    quad itree.gvis th {q th k} cl itree.actguard th (itree.visF th q th k) $
+  $ kw.dat itree.actguard th {X th Y th A th i} cl itree.F_Sigma th (X + Y) th A th i -> base.Type kw.whr \
+    pat(itree.gret th {y} & cl itree.actguard th (itree.retF th (base.inj2 th y)),
+        itree.gtau th {t} & cl itree.actguard th (itree.tauF th t),
+        itree.gvis th {q th k} & cl itree.actguard th (itree.visF th q th k)) $
 
   Furthermore, an itree is _guarded in $X$_ if its observation is:
   
   #tom[Je crois pas que t'aies parlé d'itree dans le texte jusqu'ici. Tu devrais
 ptet dire "strategy"?]
 
-  $ itree.guard th {X th Y th i} cl itree.t_Sigma th (X + Y) th i -> base.Set \
+  $ itree.guard th {X th Y th i} cl itree.t_Sigma th (X + Y) th i -> base.Type \
     itree.guard th t := itree.actguard th t .itree.obs . $
 
   And, finally, guardedness of equations is defined pointwise:
 
-  $ itree.eqguard th {X th Y th i} cl (X => itree.t_Sigma th (X + Y)) -> base.Set \
+  $ itree.eqguard th {X th Y th i} cl (X => itree.t_Sigma th (X + Y)) -> base.Type \
     itree.eqguard th f := forall th {i} th {x cl X th i} -> itree.guard th (f th x) . $
 ] <def-guarded>
 
@@ -1827,15 +1828,15 @@ ptet dire "strategy"?]
 #proof[
   #yann[Tu as des fois des curly, des fois des squares brackets pour tes match.]
   By tower induction. Apply both fixed point hypotheses. The goal is now to prove
-  $ (f th x itree.bind
-        funpat(gap: #0.2em,
-        base.inj1 th x. th s_1 th x,
-        base.inj2 th y. th itree.ret th y))
-    xrel(itree.sb_Sigma th c th rel.diagS)
+    $ (f th x itree.bind
+        funpat(gap: #0em,
+        base.inj1 th x & |-> th s_1 th x,
+        base.inj2 th y & |-> th itree.ret th y)) \
+    quad quad xrel(itree.sb_Sigma th c th rel.diagS) \
     (f th x itree.bind
-        kw.fun text(colors.kw, cases(gap: #0.2em,
-        bk(base.inj1 th x. th s_2 th x),
-        bk(base.inj2 th y. th itree.ret th y))))
+        funpat(gap: #0em,
+        base.inj1 th x & |-> th s_2 th x,
+        base.inj2 th y & |-> th itree.ret th y))
   $
 
   for some $c$ the chain #tom[quantifier sur $c$ plus explicitement, ou mieux,
@@ -1844,14 +1845,14 @@ ptet dire "strategy"?]
   to prove
 
   $ (t itree.bind
-        kw.fun text(colors.kw, cases(gap: #0.2em,
-        bk(base.inj1 th x. th s_1 th x),
-        bk(base.inj2 th y. th itree.ret th y))))
+        funpat(gap: #0em,
+        base.inj1 th x & |-> th s_1 th x,
+        base.inj2 th y & |-> th itree.ret th y))
     xrel(c th rel.diagS)
     (t itree.bind
-        kw.fun text(colors.kw, cases(gap: #0.2em,
-        bk(base.inj1 th x. th s_2 th x),
-        bk(base.inj2 th y. th itree.ret th y))))
+        funpat(gap: #0em,
+        base.inj1 th x & |-> th s_2 th x,
+        base.inj2 th y & |-> th itree.ret th y))
   $
 
   for some interaction tree $t$. The coinduction hypothesis states
@@ -1863,15 +1864,23 @@ ptet dire "strategy"?]
 #definition[Guarded Iteration][
   Let $Sigma cl icont.t th I$. Given an equation $f cl X =>
   itree.t_Sigma th (X + Y)$ with guardedness witness $H cl itree.eqguard th f$,
-  we define the following _guarded iteration step_.
+  we define _guarded iteration_ by the following mutually defined coinductive
+  functions.
+
+  $ itree.giter cl X => itree.t_Sigma th Y \
+    itree.giter x := \
+    pat(itree.obs := kw.case (f th x) .itree.obs | H th x \
+    pat((itree.retF th (base.inj1 x)) & th (!) & #hide($:=$),
+        (itree.retF th (base.inj2 y)) & th p  & := itree.retF th y,
+        (itree.tauF th t)             & th p  & := itree.tauF th (t itree.bind ()),
+        (itree.visF th q th k)        & th p  & := itree.visF th q th (kw.fun th r |-> th g th (k th r)))) $
 
   $ itree.gstep_(f,H) cl (itree.t_Sigma (X + Y) => itree.t_Sigma th Y) -> (X => itree.tp_Sigma th Y) \
-    itree.gstep_(f,H) th g th x kw.wit (f th x) .itree.obs | H th x \
-    quad | th itree.retF th (base.inj1 x) | () \
-    quad | th itree.retF th (base.inj2 y) | p := itree.retF th y \
-    quad | th itree.tauF th t #h(2.7em) | p := itree.tauF th (g th t) \
-    quad | th itree.visF th q th k #h(2em) | p := itree.visF th q th (kw.fun th r. th g th (k th r)) \
-  $
+    itree.gstep_(f,H) th g th x := kw.case (f th x) .itree.obs | H th x \
+    pat((itree.retF th (base.inj1 x)) & th (!) & #hide($:=$),
+        (itree.retF th (base.inj2 y)) & th p  & := itree.retF th y,
+        (itree.tauF th t)             & th p  & := itree.tauF th (g th t),
+        (itree.visF th q th k)        & th p  & := itree.visF th q th (kw.fun th r |-> th g th (k th r))) $
 
   #yann[Je crois que tu as enlevé l'instance précédente où Tom avait mentionné ne pas connaitre la notation Agda de raffinement des matchs dépendents, mais du coup le problème doit être décalé à ici. Il faudrait peut-être introduire la notation à un moment, ou juste ajouter une phrase ici pour aider au déchiffrement.]
 
@@ -1953,29 +1962,31 @@ interest, the one defining composition of OGS strategies, has no hope of being
 guarded. However, observe that if there is a finite chain $x_1 ↦ x_2 ↦
 ... ↦ x_n ↦ t$, such that $t$ is guarded, then after $n$ iteration
 step, $x_1$ will be mapped to a guarded $t$. The iteration starting from $x_1$
-is then still uniquely defined. This was already noted by Jiří Adámek, Stefan
-Milius and Jiří Velebil~#mcite(<AdamekMV10>) with their notion of _grounded_
-variables. However, a clear definition and study of equations containing only
-grounded variables, or _eventually guarded equations_ as I call them, is still
-novel to the best of my knowledge. In fact, in future work it might be fruitful
-to consider this in the setting of~#mcite(<GoncharovRP17>) as a generic
-relaxation of any abstract guardedness criterion. #tom[Hyphen moisis dans la marge ci-contre!]
+is then still uniquely defined. This was already noted by #nm[Adámek],
+#nm[Milius] and #nm[Velebil]~#mcite(<AdamekMV10>) with their notion of
+_grounded_ variables. However, a clear definition and study of equations
+containing only grounded variables, or _eventually guarded equations_ as I call
+them, is still novel to the best of my knowledge. In fact, in future work it
+might be fruitful to consider this in the setting of~#mcite(<GoncharovRP17>) as
+a generic relaxation of any abstract guardedness criterion. #tom[Hyphen moisis
+dans la marge ci-contre!]
 
 #definition[Eventual Guardedness][ Let $Sigma cl icont.t th I$ and $f cl X =>
   itree.t_Sigma th (X + Y)$. An interaction tree is _eventually guarded w.r.t.
   $f$_ if it verifies the following inductive predicate $itree.evguard_f$,
   defined by mutual induction as follows.
 
-  $ kw.dat itree.actevguard_f th {i} cl itree.tp_Sigma th (X + Y) th i -> base.Set kw.whr \
+  $ kw.dat itree.actevguard_f th {i} cl itree.tp_Sigma th (X + Y) th i -> base.Type kw.whr \
     quad itree.evg th {t} cl itree.actguard th t -> itree.actevguard_f th t \
     quad itree.evs th {x} cl itree.evguard_f th (f th x) -> itree.actevguard_f th (itree.retF th (base.inj1 th x)) $
 
-  $ itree.evguard_f th {i} cl itree.t_Sigma th (X + Y) th i -> base.Set \
+  $ itree.evguard_f th {i} cl itree.t_Sigma th (X + Y) th i -> base.Type \
     itree.evguard_f th t := itree.actevguard_f th t .itree.obs $
 
-  An equation is _eventually guarded_ if it is pointwise eventually guarded.
+  An equation is _eventually guarded_ if it is pointwise eventually guarded
+  w.r.t. itself.
 
-  $ itree.eqevguard th {X th Y th i} cl (X => itree.t_Sigma th (X + Y)) -> base.Set \
+  $ itree.eqevguard th {X th Y th i} cl (X => itree.t_Sigma th (X + Y)) -> base.Type \
     itree.eqevguard th f := forall th {i} th (x cl X th i) -> itree.evguard_f th (f th x) $
 ] <def-guarded>
 
