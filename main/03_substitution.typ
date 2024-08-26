@@ -28,7 +28,7 @@ typed and scoped_ representation of syntax. Quoting #nm[Fiore] and
 
 In this setting, the sort of terms is indexed both by a scope (or typing
 context) and by a type, so as to form a family $de("Term") cl de("Scope") ->
-de("Ty") -> base.Set$. This indexation can then be used to enforce that only
+de("Ty") -> base.Set$. This indexing may then be used to enforce that only
 well-typed terms are represented and that only variables in scope are used.
 
 An important specificity of the point of view we will adopt in this
