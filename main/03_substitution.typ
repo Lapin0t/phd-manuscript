@@ -35,27 +35,30 @@ An important specificity of the point of view we will adopt in this
 chapter is to be completely silent on the actual construction of the syntax.
 Indeed, as our goal is to formalize a (reasonably) language-generic OGS
 construction, we will only be interested in _specifying_ what operations a
-syntax should support and leave open the choice for actual _instanciation_.
+syntax should support and leave open the choice for actual _instantiation_.
 Crucially, we will not assume any kind of induction principle and keep the
 syntax opaque. Surely it can be debated whether or not something which is not
-inductively defined diserves to be called syntax, and indeed our generic OGS
-construction could very well be instanciated not by syntax but by some other
-denotational model of a language. However, for clarity we will keep using
-syntactical terminology.
+inductively defined deserves to be called a syntax, and indeed our generic OGS
+construction could very well be instantiated not by syntax but by some other
+denotational model of a language. However, for clarity, we will keep using
+syntactic terminology.
 
 We start in @sec-sub-ovw with a short overview of the core points of the
 intrinsic representation and the axiomatization of substitution. This overview
 largely follows two comprehensive papers with beautifully crafted Agda
 implementations which I heartily recommend~#mcite(dy: -1em,
-<FioreS22>)#mcite(dy: 2em, <AllaisACMM21>). In @sec-sub-scope, we motivate
+<FioreS22>)#mcite(dy: 2em, <AllaisACMM21>). 
+The main point is the introduction of _substitution monoids_, which axiomatize type- and scope-indexed families supporting variables and
+substitutions.
+In @sec-sub-scope, we motivate
 and introduce a small contribution. Typically, the notion of scope is fixed in
 the abstract theory of substitution and defined as lists of types, but this
 rigidity can be cumbersome for some languages. This is remedied by providing a
-succint abstraction for scopes. Finally, in @sec-sub-monoid we will adapt the
-definition of substitution monoids, i.e., families supporting variables and
-substitutions, to this new abstraction. We will also introduce substitution
-modules, a second mild contribution required to deal with substitution inside
+succint abstraction for scopes #tom["succint" est un peu bizarre: "simple", "basic"?]. Finally, in @sec-sub-monoid, we adapt the
+definition of substitution monoid to this new abstraction. We #tom[je passe certains verbes du futur au présent, je trouve que tu emploies parfois le futur à mauvais escient.] also introduce _substitution
+modules_, a second mild contribution required to deal with substitution inside
 other syntactic objects than just terms, such as evaluation contexts.
+#tom[C'est pas hyper juste de dire que c'est une contrib, l'idée des modules dans le cadre de la substitution date au mieux de "modules over monads and linearity", d'un certain A. Hirschowitz avec Maggesi. De même, les monoides de substitution existent à un niveau bien plus abstrait que FinSet, en fait dans n'importe quelle cat skew monoïdale (cf "... dependently-sorted..." de Fiore et notre "cellular Howe theorem").]
 
 == The Theory of Intrinsically-Typed Substitution <sec-sub-ovw>
 
@@ -74,10 +77,10 @@ $ kw.dat th ar ctx.varc ar th {T} cl ctx.ctxc th T -> T -> base.Set th kw.whr \
     ctx.popc th {Gamma th alpha th beta} cl Gamma ctx.varc alpha
     -> (Gamma ctx.conc beta) ctx.varc alpha) $
 
-The main category of interest for syntactical objects is given by _scoped-and-typed
+The main category of interest for syntactic objects is given by _scoped-and-typed
 families_ $ctx.ctxc th T -> T -> base.Set$. Arrows are lifted pointwise from
-$base.Set$ and written $ctx.arr$. Variables are already such a
-family, but this will also be the target for terms and more generally "things
+$base.Set$ and written $ctx.arr$. Variables #tom[ici on ne fait pas le lien avec $ctx.varc$, notationnellement] are already such a
+family, but so too are terms, and more generally "things
 by which variables can be substituted".
 
 Next, renamings are defined as type-preserving mappings from variables in
@@ -94,7 +97,7 @@ $ Gamma asgn(X) Delta := forall th {alpha} -> Gamma ctx.varc alpha -> X th Delta
 #yann[Ci-dessus faire explicitement apparaitre que ce sont les définitions respectives de assignment et de renaming, probablement dans un environnement definition tant qu'à faire.]
 
 #remark[
-  As contexts are finite, assignments are maps with finite domain, and can
+  As contexts are finite, assignments are maps with finite domain, and may
   thus be tabulated and represented as tuples. The tuple representation makes
   intensional equality of assignments better behaved. However as other parts
   of my Coq development already depend on setoids, I will not shy away from
@@ -104,6 +107,7 @@ $ Gamma asgn(X) Delta := forall th {alpha} -> Gamma ctx.varc alpha -> X th Delta
   has other benefits: thanks to #{sym.eta}-equality,
   renamings as defined above construct a _strict_ category, where all the laws
   hold w.r.t. _definitional_ equality.
+  #tom[Ne serait-ce pas le cas aussi avec des n-uplets?]
 ]
 
 #remark[
@@ -115,22 +119,22 @@ $ Gamma asgn(X) Delta := forall th {alpha} -> Gamma ctx.varc alpha -> X th Delta
   computational efficiency is not our prime concern, we will not go down this
   route. Still, we keep this idea around, borrowing and slightly abusing the
   notation $ctx.ren$ for renamings, which is traditionally associated with
-  embeddings.
+  embeddings. #tom[Tjs pas fan de cette notation, au passage, mais bon, j'abandonne.]
 ]
 
 *Substitution Monoids* #sym.space.quad It is now direct to express that a given
 scoped-and-typed family $X$ has variables and substitution. First, variables
-must map into $X$. Second, given an $X$-term over $Gamma$ and an
-$X$-assignment from $Gamma$ to $Delta$ we must compute an $X$-term over
+must map into $X$. #tom[Wow! Ici, l'espacement après le point était tellement faible que j'ai cru que c'était une projection de record X.Second.] Second, given an $X$-term over $Gamma$ and an
+$X$-assignment from $Gamma$ to $Delta$, substitution should return some $X$-term over
 $Delta$. In other words, $X$ must admit maps of the following types.
 
 $ pr("var") th {Gamma th alpha} cl Gamma ctx.varc alpha -> X th Gamma th alpha \
-  pr("sub") th {Gamma th Delta th alpha} cl X th Gamma th alpha -> Gamma asgn(X) Delta -> X th Delta th alpha $
+  pr("sub") th {Gamma th Delta th alpha} cl X th Gamma th alpha -> (Gamma asgn(X) Delta) -> X th Delta th alpha $
 
-This structure is dubbed a _substitution monoid_~#mcite(<FioreS22>) and is
+This structure is dubbed a _substitution monoid_~#mcite(<FioreS22>) #tom[le terme est plus vieux que ça] and is
 further subject to the usual associativity and left and right identity laws of
-monoids. #yann[Tu as la place, spell them out?] To see more clearly how these two maps can be seen as the unit and
-multiplication maps of a monoid, notice that the types of these two maps can be
+monoids. #yann[Tu as la place, spell them out?] To explain how these two maps can be seen as the unit and
+multiplication maps of a monoid, notice that their types may be
 refactored as
 
 $ pr("var") cl ar ctx.varc ar ctx.arr X \
@@ -146,11 +150,11 @@ left adjoint $ar ctx.tens X$, the _substitution tensor product_~#num-cite(<Fiore
 $ (X ctx.tens Y) th Gamma th alpha := (Delta cl ctx.ctxc th T) times X th Delta th alpha times Delta asgn(Y) Gamma. $
 
 This substitution tensor exhibits scoped-and-typed families as a _skew monoidal
-category_~#mcite(<AltenkirchCU10>) with unit $ctx.varc$. By adjointness, the
+category_~#mcite(dy: -1em,<AltenkirchCU10>)#mcite(dy: 2em,<Szlachanyi>) with unit $ctx.varc$. By adjointness, the
 substitution map could be alternatively written with the isomorphic type $
 pr("sub") cl X ctx.tens X ctx.arr X. $
 
-As such, although we prefer using the internal substitution hom presentation
+Thus, although we prefer using the internal substitution hom presentation
 which gives a much more easily manipulated _curried_ function type to
 substitution, from a mathematical point of view, substitution monoids are
 precisely monoid objects in the skew monoidal category $(ctx.ctxc th T -> T ->
@@ -158,29 +162,29 @@ base.Set, ctx.varc, ctx.tens)$.
 
 *Renamings* #sym.space.quad Although in this thesis we will not require a
 particularly fine treatement of renamings, let us finish this overview of the
-state-of-the-art with a notable recent insight on the type theoretical presentation
+state of the art #tom[les tirets c'est quand tu veux faire un adjectif, il me semble] with a notable recent insight on the type-theoretical #tom[idem :D] presentation
 of the operation of _renaming_.
 
 In the categorical approach, it seems particularly obvious to formalize that a
 family $X cl ctx.ctxc th T -> T -> base.Set$ supports renamings if it is
-functorial in the first arguments, i.e., if it is a functor $ctx.ctxcat th T ->
-T -> base.Set$. In fact, as is customary in categorically enclined
+functorial in the first argument, i.e., if it extends to a functor $ctx.ctxcat th T ->
+T -> base.Set$. In fact, as is customary in category-theoretic
 presentations, all of the above theory can be recast in the functor category,
 entirely eliminating families _not_ supporting renamings. However, as shown by
 folklore practice in the dependently-typed community, and stressed by
 #nm[Fiore] and #nm[Szamozvancev]~#mcite(<FioreS22>), working solely in the
 functor category is problematic as it crucially requires to work with quotients.
 
-The trick to provide a theoretical account to the renaming operation while
+The trick to provide a theoretical account of the renaming operation while
 avoiding functors is to notice that the faithful functor $ (ctx.ctxcat th T ->
-T -> base.Set) -> (ctx.ctxc th T -> T -> base.Set) $ is comonadic, and its
-associated comonad is $square X := ctxhom(ctx.varc, X)$, i.e.,
+T -> base.Set) -> (ctx.ctxc th T -> T -> base.Set) $ is comonadic, with
+associated comonad given by $square X := ctxhom(ctx.varc, X)$, i.e.,
 
-$ square X th Gamma th alpha := forall {Delta} -> Gamma ctx.ren Delta -> X th Delta th alpha. $
+$ square X th Gamma th alpha := forall {Delta} -> (Gamma ctx.ren Delta) -> X th Delta th alpha. $
 
 In other words, families supporting renamings, i.e., functors $ctx.ctxcat th T
--> T -> base.Set$ can be equivalently seen as families with a coalgebras
-structure on the $square$ comonad~#mcite(<AllaisACMM21>)#num-cite(<FioreS22>).
+-> T -> base.Set$ can be equivalently seen as families with $square$-coalgebra
+structure~#mcite(<AllaisACMM21>)#num-cite(<FioreS22>).
 This means that we can express the operation of renaming as a map
 
 $ pr("ren") cl X ctx.arr square X. $
@@ -191,12 +195,12 @@ operation of renaming and indeed matches the obvious type
 $ pr("ren") th {Gamma th Delta th alpha} cl X th Gamma th alpha -> Gamma ctx.ren Delta -> X th Delta th alpha. $
 
 Every substitution monoid induces such a renaming coalgebra structure since
-renamings can be implemented by substitution with variables. However the
-typical implementation of substitution on a syntax with binders require readily
+renamings can be implemented by substitution with variables. However, the
+typical implementation of substitution on a syntax with binders requires readily
 available $pr("ren")$ and $pr("var")$ operations to go through. This package of
 renamings and variables can be formalized as a _pointed coalgebra
 structure_~#mcite(<FioreS22>) and its compatibily conditions with a
-substitution monoid structure is straightforward.
+substitution monoid structure are straightforward.
 
 #yann[Ce serait pas mal de faire bien ressortir les remarques vs. les défs explicitement utiles pour la suite. Du coup je pense au moins utiliser un environnement de définition pour chaque définition qui sera réutilisée.]
 
@@ -330,12 +334,13 @@ $ sub.var^snice th i & := sub.var th i \
   sub.sub^snice th {Gamma} th x th gamma & := sub.sub th x th (kw.fun th {alpha} th i |-> gamma th {alpha, Gamma .base.snd th i} th i) $
 
 ]
+#tom[Un peu rapide pour être lisible, non? Tu pourrais pas comparer le type de la nouvelle substitution avec celui de la bonne instance, puis expliquer pourquoi cette fois ça passe mieux?]
 
-The conclusion of this small case study is that although our two definition of
+The conclusion of this small case study is that although our two definitions of
 nice contexts are _isomorphic_, they are by no means equivalent in term of ease
 of use. Because I believe it is important to build abstractions that people will actually
-willingly instanciate in their particular case of interest, it becomes
-necessary to provide some slack in the concrete definition of contexts and
+willingly instantiate in their particular case of interest, it becomes
+necessary to provide some slack #tom[pas sûr que "slack" soit approprié ici...] in the concrete definition of contexts and
 crucially in their notion of variables.
 
 === Abstract Scopes
@@ -397,7 +402,7 @@ Theory~#mcite(<hottbook>, supplement: [§4.4, pp.~136--137]) and
 from the _view_ methodology~#mcite(<McBrideM04>, dy: 4em, supplement: [§6,
 pp.~98--102])#mcite(<Allais23>, dy: 7em), I will axiomatise only the
 backward map and ask that its fibers are _contractible_, i.e., inhabited by
-exactly one element. This will make the isomorphism far easier to use, enabling
+exactly one element. This will make the isomorphism much easier to use, enabling
 inversions by a simple dependent pattern matching instead of tedious equational
 rewriting. #yann[Ça mérite plus d'explication : qu'est-ce qu'une fibre; en quoi la rendre contractible rend l'iso plus facile à utiliser; en quoi d'ailleurs ça permet de récupérer la map forwards; inversion de quoi ? Et plus loin, faire le lien explicitemetn avec view-cat-eq, dis toi bien que ton lecteur est lent, faut êter agile pour le lire et y reconnaitre immédiatement que c'est la contractibilité de la fibre mentionnée avant que ça exprime.]
 
@@ -486,7 +491,7 @@ $ & ar ctx.catc ar cl ctx.ctxc th T -> ctx.ctxc th T -> ctx.ctxc th T $
 $ & Gamma ctx.catc ctx.nilc & := & Gamma \
   & Gamma ctx.catc (Delta ctx.conc alpha) & := & (Gamma ctx.catc Delta) ctx.conc alpha $
 
-I will not provide the full instanciation of the scope structure, suffice to say that
+I will not provide the full instantiation of the scope structure, suffice to say that
 statements about concatenations are proven by induction on the second context
 argument. Notably, proving the subsingleton property of the fibers of the coproduct
 injections ($ctx.vcatirr$) requires the use of #nm[Streicher]'s axiom K.
