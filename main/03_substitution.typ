@@ -150,7 +150,9 @@ left adjoint $ar ctx.tens X$, the _substitution tensor product_~#num-cite(<Fiore
 $ (X ctx.tens Y) th Gamma th alpha := (Delta cl ctx.ctxc th T) times X th Delta th alpha times Delta asgn(Y) Gamma. $
 
 This substitution tensor exhibits scoped-and-typed families as a _skew monoidal
-category_~#mcite(dy: -1em,<AltenkirchCU10>)#mcite(dy: 2em,<Szlachanyi>) with unit $ctx.varc$. By adjointness, the
+category_~#mcite(dy: -1em,<AltenkirchCU10>)#mcite(dy: 2em,<Szlachanyi>) with unit $ctx.varc$.
+#guil{Peut-être brievement rappeler ce qu'est une  _skew monoidal category_ ?}
+ By adjointness, the
 substitution map could be alternatively written with the isomorphic type $
 pr("sub") cl X ctx.tens X ctx.arr X. $
 
@@ -173,7 +175,9 @@ presentations, all of the above theory can be recast in the functor category,
 entirely eliminating families _not_ supporting renamings. However, as shown by
 folklore practice in the dependently-typed community, and stressed by
 #nm[Fiore] and #nm[Szamozvancev]~#mcite(<FioreS22>), working solely in the
-functor category is problematic as it crucially requires to work with quotients.
+functor category is problematic as it crucially requires to work with quotients
+#guil{Pourquoi il y a besoin de quotients ?}.
+
 
 The trick to provide a theoretical account of the renaming operation while
 avoiding functors is to notice that the faithful functor $ (ctx.ctxcat th T ->
@@ -405,6 +409,7 @@ backward map and ask that its fibers are _contractible_, i.e., inhabited by
 exactly one element. This will make the isomorphism much easier to use, enabling
 inversions by a simple dependent pattern matching instead of tedious equational
 rewriting. #yann[Ça mérite plus d'explication : qu'est-ce qu'une fibre; en quoi la rendre contractible rend l'iso plus facile à utiliser; en quoi d'ailleurs ça permet de récupérer la map forwards; inversion de quoi ? Et plus loin, faire le lien explicitemetn avec view-cat-eq, dis toi bien que ton lecteur est lent, faut êter agile pour le lire et y reconnaitre immédiatement que c'est la contractibilité de la fibre mentionnée avant que ça exprime.]
+#guil[+1]
 
 As the domain of the backward map of the second isomorphism has as domain a
 sum type, I will axiomatize it implicitely as the copairing of two simpler maps:
@@ -577,6 +582,8 @@ substitution modules. Let us start with scoped families and assignments.
 
   Scoped-and-typed families form a category with arrows $X ctx.arr Y$ lifted pointwise
   from $base.Set$.
+  #guil[Où est-ce-que tu utilise la structure d'abstract scope structure $ctx.scope_T th S$
+dans cette def?]
 ]
 
 #definition[Assignments][
@@ -655,7 +662,7 @@ $x[gamma][delta] = x[gamma[delta]]$.
   equality. This is the case for $sub.sub$, for which $sub.sext$ is the corresponding
   congruence property. As in the previous chapter, we hide the rather large type
   of $sub.sext$ by liberally using the relational translation of type theory, denoted
-  by the superscript $ar^rel.r$. Explicitely, the type of $sub.sext$ unfolds as
+  by the superscript $ar^rel.r$ #guil[Il manque une ref là, à Bernardy par exemple ?]. Explicitely, the type of $sub.sext$ unfolds as
   follows.
 
   $ forall th & {Gamma th alpha} th {x_1 th x_2 cl X th Gamma th alpha} (x^rel.r cl x_1 = x_2) \
