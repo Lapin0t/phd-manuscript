@@ -462,6 +462,8 @@ $ kw.dat base.vsum th (f cl A -> C) th (g cl B -> C) cl C -> base.Type kw.whr \
     Gamma ctx.ren Delta := forall th {t} -> Gamma ctx.var t -> Delta ctx.var t $
 ]
 
+#tom[en quoi c'est mutuel?]
+
 #definition[Scope Category][
   A scope structure $ctx.scope_T th S$ defines a _category of
   scopes_ $ctx.ctxcat_S$ whose objects are given by $S$ and whose morphisms are
