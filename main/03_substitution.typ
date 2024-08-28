@@ -422,6 +422,11 @@ which can be concisely written
 $ Gamma ctx.ren (Gamma ctx.cat Delta) \
   Delta ctx.ren (Gamma ctx.cat Delta). $
 
+#tom[Ça aiderait sans doute de préciser le statut de cette notation: est-ce une
+notation au sens de coq, ou bien est-ce l'ancienne notation $ctx.ren$ combinée
+avec le fait de voir $ctx.var$ comme une coercion implicite de $S$ vers $T ->
+base.Set$?]
+
 The fibers of the copairing of two maps can be generally characterized by the
 following data type.
 
@@ -432,6 +437,8 @@ $ kw.dat base.vsum th (f cl A -> C) th (g cl B -> C) cl C -> base.Type kw.whr \
 #definition[Abstract Scope Structure][
   Given $S,T cl base.Set$, an _abstract scope structure on $S$ with types $T$_
   is given by the following typeclass.
+  #tom[La formule "with types $T$" sonne un peu bizarre. Je préfèrerais "over
+  $T$", probablement.]
   #margin-note(dy: 2em)[
     Note that in this definition, the set $T$ plays almost no role, being only
     used to form the family category $T -> base.Set$ in the sort of $ctx.var$.
@@ -456,6 +463,15 @@ $ kw.dat base.vsum th (f cl A -> C) th (g cl B -> C) cl C -> base.Type kw.whr \
       ctx.vcat th {Gamma th Delta th t} th (i cl (Gamma ctx.cat Delta) ctx.var t) cl base.vsum th ctx.rcatl th ctx.rcatr th i,
       ctx.vcatirr th {Gamma th Delta th t} th {i cl (Gamma ctx.cat Delta) ctx.var t} th v cl ctx.vcat th i = v) $
 
+#tom[Purée, je me rends compte beaucoup plus tard (mais je l'écris ici) qu'il y
+a $ctx.var$ et $ctx.varc$ et que c'est pas la même chose. A mon sens ça mérite
+clairement au moins une remarque, et si possible une explication de comment ça
+se passe en coq (est-ce qu'on peut vraiment employer le même symbole et
+pourquoi).]
+
+#tom[A l'usage aussi, les noms choisis ici me semblent bizarre et donc je les
+retiens pas. Par ex, pourquoi $ctx.vcat$?!]
+
   _Renamings_ $Gamma ctx.ren Delta$ are mutually defined as follows.
 
   $ ar ctx.ren ar cl S -> S -> base.Set \
@@ -479,29 +495,31 @@ $ ctx.emp ctx.var t & approx th base.bot \
 
 In particular, this entails that $ctx.rcatl$ and $ctx.rcatr$ are both injective
 and have disjoint images. In fact, assuming an abstract scope structure
-$ctx.scope_S th T$, the category $ctx.ctxcat_S$ whose objects are elements of
-$S$ and whose morphisms are given by renamings, has an initial object $ctx.emp$
+$ctx.scope_S th T$, the category $ctx.ctxcat_S$ has an initial object $ctx.emp$
 and a coproduct structure given by $ctx.cat$.
 
 Before moving on to the theory of scoped-and-typed families and substitution
-monoids, we will reap the benefits of this new abstraction and conclude with
+monoids, let us reap the benefits of this new abstraction and conclude with
 some useful instances of abstract scopes.
 
 === Instances
 
 *Concrete Scopes* #sym.space.quad Lists and #nm[De Bruijn] indices are the
 obvious first instance, which we call _concrete scopes_. Concatenation is computed
-by induction on the second right-hand context:
+by induction on the second (=right-hand) context:
 
 $ & ar ctx.catc ar cl ctx.ctxc th T -> ctx.ctxc th T -> ctx.ctxc th T $
 #v(-0.5em)
 $ & Gamma ctx.catc ctx.nilc & := & Gamma \
   & Gamma ctx.catc (Delta ctx.conc alpha) & := & (Gamma ctx.catc Delta) ctx.conc alpha $
 
-I will not provide the full instantiation of the scope structure, suffice to say that
-statements about concatenations are proven by induction on the second context
+I will not provide the full instantiation of the scope structure, suffice it to say that
+statements about concatenation are proven by induction on the second context
 argument. Notably, proving the subsingleton property of the fibers of the coproduct
 injections ($ctx.vcatirr$) requires the use of #nm[Streicher]'s axiom K.
+
+#tom[J'imagine que dans des cadres incompatibles avec l'axiome K, genre HoTT, on
+demanderait que $S$ soit un hset, non?]
 
 #definition[Concrete Scopes][
   Given $T cl base.Set$, _concrete scopes_ $ctx.ctxc th T$ have an abstract
@@ -523,17 +541,16 @@ predicate lifting.
 $ ctx.all_S cl (T -> base.Prop) -> (S -> base.Prop) \
   ctx.all_S th P th Gamma := forall th {alpha} -> Gamma ctx.var alpha -> P th alpha $
 
-We define the subset type of elements of $x$ verifying $P th x$, i.e., the _total
+We define the subset type of elements of $x$ satisfying $P th x$, i.e., the _total
 space_ of the predicate $P$ as follows.
 
 $ base.int th {X cl base.Set} cl (X -> base.Prop) -> base.Set \
   base.int P := (x cl X) times P th x $
 
-#definition[Subset Scopes][
-  Given an abstract scope instance $ctx.scope_T th S$ and a predicate $P
-  cl S -> base.Prop$, _subset scopes_ $base.int (ctx.all_S th P)$ have an
-  abstract scope structure with types $base.int P$ given by the following
-  (incomplete) definition.
+#definition[Subset Scopes][ Given an abstract scope instance $ctx.scope_T th S$
+  and a predicate $P cl T -> base.Prop$, the type $base.int (ctx.all_S th P)$ of
+  _subset scopes_ bears an abstract scope structure with types $base.int P$,
+  given by the following (incomplete) definition.
 
   $ de("SubScope") cl ctx.scope_(base.int P) th base.int (ctx.all_S th P) \
     de("SubScope") := \ pat(
@@ -549,16 +566,16 @@ $ base.int th {X cl base.Set} cl (X -> base.Prop) -> base.Set \
       ...) $
 ]
 
-*Direct Sum of Scopes* #sym.space.quad Another useful instance is the case
+*Direct Sum of Scopes* #sym.space.quad Another useful instance #tom[forward ref?
+ou ref à une annonce passée?] is the case
 where a language is designed with two kinds of variables, i.e., where terms are
 indexed by two contexts. We can capture this as the direct sum of abstract
 scope structures.
 
-#definition[Direct Sum Scopes][
-  Given two abstract scope instances $ctx.scope_(T_1) th S_1$ and
-  $ctx.scope_(T_2) th S_2$, _direct sum scopes_ $S_1 base.prod S_2$ have an
-  abstract scope structure with types $T_1 base.sum T_2$ given by the following
-  (incomplete) definition.
+#definition[Direct Sum Scopes][ Given two abstract scope instances
+  $ctx.scope_(T_1) th S_1$ and $ctx.scope_(T_2) th S_2$, the type $S_1 base.prod
+  S_2$ of _direct sum scopes_ bears an abstract scope structure with types $T_1
+  base.sum T_2$ given by the following (incomplete) definition.
 
   $ de("SumScope") cl ctx.scope_(T_1 base.sum T_2) th (S_1 base.prod S_2) \
     de("SumScope") := \ pat(
@@ -584,14 +601,15 @@ substitution modules. Let us start with scoped families and assignments.
 
   Scoped-and-typed families form a category with arrows $X ctx.arr Y$ lifted pointwise
   from $base.Set$.
-  #guil[Où est-ce-que tu utilise la structure d'abstract scope structure $ctx.scope_T th S$
+  #guil[Où est-ce-que tu utilises la structure d'abstract scope structure $ctx.scope_T th S$
 dans cette def?]
+#tom[Tu veux dire que cette définition marcherait aussi avec $S: base.Set$? Je
+crois que je suis d'accord.]
 ]
 
-#definition[Assignments][
-  Assuming a scope structure $ctx.scope_T th S$, given a scoped-and-typed
-  family $X cl ctx.fam_T th S$, the set of _$X$-assignments from $Gamma$ to
-  $Delta$_ is defined as follows.
+#definition[Assignments][ Assuming a scope structure $ctx.scope_T th S$, given a
+  scoped-and-typed family $X cl ctx.fam_T th S$ and $Gamma, Delta : S$, the set
+  of _$X$-assignments from $Gamma$ to $Delta$_ is defined as follows.
 
   $ ar asgn(X) ar : S -> S -> base.Set \
     Gamma asgn(X) Delta := forall {alpha} -> Gamma ctx.var alpha -> X th Delta th alpha $
@@ -603,6 +621,8 @@ cl Gamma asgn(X) Delta$, it is expressed as follows.
 
 $ gamma approx delta := forall th {alpha} th (i cl Gamma ctx.var alpha) -> gamma th i = delta th i $
 
+#tom[Mauvais choix de noms $gamma$ et $delta$, non?]
+
 === Substitution Monoids
 
 We now define the internal substitution hom and subsequently substitution monoids.
@@ -610,7 +630,7 @@ We now define the internal substitution hom and subsequently substitution monoid
 #definition[Internal Substitution Hom][
   Assuming a scope structure $ctx.scope_T th S$, the _internal substitution hom_ functor
   is defined as follows.
-
+#tom[Comme tu montres pas que c'est un foncteur, ptet pas le dire?]
   $ ctxhom("" ar "", ar "") cl ctx.fam_T th S -> ctx.fam_T th S -> ctx.fam_T th S \
     ctxhom(X, Y) th Gamma th alpha := forall th {Delta} -> Gamma asgn(X) Delta -> Y th Delta th alpha $
 ]
@@ -636,6 +656,8 @@ We now define the internal substitution hom and subsequently substitution monoid
     ) $
 ]
 
+#tom[Pourquoi $sub.sext$ est-il nécessaire? Est-ce qu'on travaille avec des setoïdes?]
+
 To make substitution a bit less wordy we will use the notation $v[gamma] :=
 sub.sub th v th gamma$. Moreover, we extend substitution pointwise to assignments with the same
 notation, using the context to disambiguate:
@@ -650,7 +672,7 @@ $x[gamma][delta] = x[gamma[delta]]$.
   definitionally equal to the _identity assignment_ type $forall th {Gamma} -> Gamma
   asgn(X) Gamma$.
   This coincidence stems from the fact that substitution monoid structures
-  are exactly $ctx.var$-relative monads~#mcite(<AltenkirchCU10>). In this
+  are exactly $ctx.var$-relative monads~#mcite(<AltenkirchCU10>). From this
   perspective, one can construct something similar to a Kleisli category for
   $X$, the _$X$-assignment category_ $de(cal("A"))_X$ whose objects are
   contexts in $S$ and morphisms are given by $X$-assignments. It is then
@@ -664,13 +686,18 @@ $x[gamma][delta] = x[gamma[delta]]$.
   equality. This is the case for $sub.sub$, for which $sub.sext$ is the corresponding
   congruence property. As in the previous chapter, we hide the rather large type
   of $sub.sext$ by liberally using the relational translation of type theory, denoted
-  by the superscript $ar^rel.r$ #guil[Il manque une ref là, à Bernardy par exemple ?]. Explicitely, the type of $sub.sext$ unfolds as
+  by the superscript $ar^rel.r$ #guil[Il manque une ref là, à Bernardy par exemple ?]. Explicitly, the type of $sub.sext$ unfolds as
   follows.
 
   $ forall th & {Gamma th alpha} th {x_1 th x_2 cl X th Gamma th alpha} (x^rel.r cl x_1 = x_2) \
               & {Delta} th {gamma_1 th gamma_2 cl Gamma asgn(X) Delta} (gamma^rel.r cl forall th {beta} th (i cl Gamma ctx.var beta) -> gamma_1 th i = gamma_2 th i) \
               & -> x_1 [gamma_1] = x_2[gamma_2] $
 ]
+
+#tom[C'est un peu ouf que ça se déplie en ça... Si t'as le temps à la fin, je
+serais preneur d'un poil plus d'explications, notamment sur le fait que
+#let eqx = math.attach(sym.eq, br: "X")
+  $ctxhom(eqx, eqx)^de(rel.r)$ fait le bon truc.]
 
 === Substitution Modules
 
@@ -684,7 +711,11 @@ Substitution monoids have neatly been generalized to abstract scopes, but for th
 modelling OGS, a part of the theory of substitution is still missing. As
 explained in the introductory chapter #peio[ref précise?], in OGS we will
 typically see#yann[refer to? Manipulate?] other syntactic constructs such as _values_, _evaluation
-contexts_ and evaluator _configurations_. Values can be readily represented as a
+contexts_ and evaluator _configurations_. 
+#tom[Values c'est un mauvais exemple pcq c'est elles le substitution monoid. Ce
+qui est un module c'est les termes généraux dans un contexte cbv, où on ne
+substitute que par des valeurs.]
+Values can be readily represented as a
 scoped-and-typed family $ val cl S -> T -> base.Set. $ In contrast, evaluation
 contexts are better represented as a family $ ecx cl S -> T -> T -> base.Set, $
 where $E cl ecx th Gamma th alpha th beta$ typically denotes an evaluation
@@ -710,18 +741,15 @@ To capture both kinds of variously indexed families, let us define family
 categories.
 
 #definition[Family Categories][
-  A _family category_ is given by a sequence of types $T_i cl base.Set$ and
-  consist of maps $T_1 -> ... -> T_n -> base.Set$.
+  A _family category_ is a category of the form $T_1 -> ... -> T_n -> base.Set$,
+  for some sequence of types $T_i cl base.Set$, with arrows lifted pointwise
+  from $base.Set$.
 ]
-
-as
-a category of maps $T_1 -> ... -> T_n -> base.Set$ where all $T_i cl base.Set$, with arrows
-lifted pointwise from #base.Set.
 
 #definition[Generalized Substitution Hom][
   Given an abstract scope structure $ctx.scope_T th S$ and a family category
   $cc$, the _generalized substitution hom_ functor is defined as follows.
-
+#tom[Pareil, tu démontres pas que c'est un foncteur, si?]
   $ ctxhom("" ar "", ar "") cl ctx.fam_T th S -> (S -> cc) -> (S -> cc) \
     ctxhom(X, Y) th Gamma th alpha_1 th ... th alpha_n := forall th {Delta} -> Gamma asgn(X) Delta -> Y th Delta th alpha_1 th ... th alpha_n $
 ]
@@ -737,6 +765,8 @@ lifted pointwise from #base.Set.
     sufficient for our purpose. In further work this precise definition
     could be captured by building upon~#text-cite(<Allais19>)
   ]
+  #tom[Tout ça me donne l'impression qu'on n'a pas bien bien nettoyé la notion
+  de module "hétérogène"...]
 
   #let eqx = math.attach(sym.eq, br: "X")
   #let eqm = math.attach(sym.eq, br: "M")
@@ -748,12 +778,12 @@ lifted pointwise from #base.Set.
         cl sub.act th x sub.var = x,
       sub.acomp th {Gamma_1 th Gamma_2 th Gamma_3 th alpha_1 th ... th alpha_n} th (x cl X th Gamma_1 th alpha_1 th ... th alpha_n) \
         quad (gamma cl Gamma_1 asgn(M) Gamma_2) th (delta cl Gamma_2 asgn(M) Gamma_3) \
-        quad cl sub.act (sub.act th x th gamma) th delta = sub.act x th (kw.fun th i |-> sub.sub th (gamma th i) th delta)
+        quad cl sub.act (sub.act th x th gamma) th delta = sub.act x th gamma[delta]
     ) $
 ]
 
-Overloading the notation for the ordinary substitution $sub.sub$, we will write
-$x[gamma]$ as a shorthand for $sub.act th x th gamma$.
+Overloading the notation for the ordinary substitution $sub.sub$, we will use
+$x[gamma]$ as shorthand for $sub.act th x th gamma$.
 
 #remark[
   Although this is irrelevant to our OGS concerns, substitution modules shed a
@@ -766,7 +796,7 @@ $x[gamma]$ as a shorthand for $sub.act th x th gamma$.
   "")$ is a comonad and substitution modules over $M$ are nothing else
   than its coalgebras.
 ]
-
+#tom[Excellente remarque. Est-ce qu'il n'y a pas plus à creuser ici?]
 ]
 
 With substitution monoids and substitution modules defined, we now have the
