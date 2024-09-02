@@ -462,6 +462,7 @@ This exhibits strategies as coalgebras for the following functor.
 #margin-note[
   This category is less informative but equally expressive as
   transition systems over $G$, as it forms a coreflective subcategory.
+
   #peio[right Tom?]
   #tom[Eeeeeh, je sais pas... C'est les strats où $strat.coplay$ est injective,
   c'est ça? Si oui, je dirais plutôt réflexive: si je note $S^i$ la strat
@@ -1745,7 +1746,7 @@ $ (f itree.copr g) th r :=
 
   $ itree.iter_f cl X => itree.t_Sigma th Y \
     itree.iter_f th x := f th x itree.bind ((kw.fun th t |-> itree.tauF (itree.iter_f th t)) itree.copr itree.retF) $
-]
+] <def-iter>
 
 #lemma[Iter Fixed Point][ Given $Sigma cl icont.t th I$, for all $f cl X =>
   itree.t_Sigma th (X + Y)$, $itree.iter_f$ is a weak fixed point of $f$, i.e.,
@@ -1958,7 +1959,7 @@ Equipped with this new guarded iteration, we finally obtain our powerful
 uniqueness of fixed points. This principle will provide us with a big hammer,
 very useful for hitting nails looking like $itree.giter_f th x itree.eq t th x$.
 However, being guarded is quite a strong requirement! Notably, our equation of
-interest, the one defining composition of OGS strategies, has no hope of being
+interest in this thesis, the one defining interaction of OGS strategies and counter-strategies, has no hope of being
 guarded. However, observe that if there is a finite chain $x_1 ↦ x_2 ↦
 ... ↦ x_n ↦ t$, such that $t$ is guarded, then after $n$ iteration
 step, $x_1$ will be mapped to a guarded $t$. The iteration starting from $x_1$

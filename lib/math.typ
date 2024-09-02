@@ -17,6 +17,7 @@
 #let crel(it) = math.class("relation", it)
 #let cnorm(it) = math.class("normal", it)
 #let cop(it) = math.op(it)
+#let cbin(it) = math.class("binary", it)
 
 
 // typing colon
@@ -78,10 +79,10 @@
   endo: de(cop("endo")),
   unit: de(math.bold("1")),
   tt: cs(sym.star),
-  sum: de(crel($+$)),
+  sum: de(cbin(sym.plus)),
   inj1: cs(cop("inl")),
   inj2: cs(cop("inr")),
-  prod: de(cop(sym.times)),
+  prod: de(cbin(sym.times)),
   fst: pr("fst"),
   snd: pr("snd"),
   bot: de(cop(sym.bot)),
@@ -225,6 +226,8 @@
   extP: de(crel(sym.arrow.r.triple)),
   stratA: de(cop($"Strat"^+$)),
   stratP: de(cop($"Strat"^-$)),
+  opp: de($dagger$),
+  par: de(crel(sym.parallel)),
 )
 
 #let strat = (
@@ -239,6 +242,7 @@
 #let asgn(x) = de(crel($- #h(-0.2em) [bk(#x)] #h(-0.2em) ->$))
 #let ctxhom(a, b) = [#de(sym.bracket.double.l) #a #de(",") #b #de(sym.bracket.double.r)]
 
+#let ctxfill(x) = $de(angle.double.l) #x de(angle.double.r)$
 #let ctx = (
   ctxcat: de(cop(math.cal("C"))),
   ctxc: de(cop("Ctx")),
@@ -278,10 +282,13 @@
   bfam: de(cop("BFam")),
   Oper: pr("Op"),
   dom: pr("holes"),
-  fill: de(crel("@")), 
+  //fill: de(crel("@")), 
   oper: pr("op"),
   args: pr("args"),
   cut: de(crel(sym.join)),
+  cute: de(cbin(sym.square.filled.tiny)),
+  named: de(text(font: "EB Garamond", weight: "bold", sym.aleph)),
+  //named: de(math.cal(math.bold("N"))),
 )
 
 #let sub = (
@@ -297,4 +304,18 @@
   aext: pr("act-ext"), 
   aid: pr("act-id"),
   acomp: pr("act-comp"),
+)
+
+#let ogs = (
+  naivehg: de(cop($"OGS-hg"^"naive"_bk(O)$)),
+  naiveg: de(cop($"OGS-g"^"naive"_bk(O)$)),
+  hg: de(cop($"OGS-hg"_bk(O)$)),
+  g: de(cop($"OGS-g"_bk(O)$)),
+  ctx: de(cop("O-Ctx")),
+  catE: de(math.class("opening", math.attach(sym.arrow.b, tr: sym.plus))),
+  catO: de(math.class("opening", math.attach(sym.arrow.b, tr: sym.minus))),
+  stratA: de(cop($"OGS"^+_bk(O)$)),
+  stratP: de(cop($"OGS"^-_bk(O)$)),
+  join: de(crel($|#h(-0.12em)|#h(-0.12em)|$)),
+  compeq: de(cop("interact-eqn")),
 )

@@ -22,7 +22,9 @@
 #let txsc(it) = smallcaps(it)
 
 // surnames
-#let nm(it) = txsc(it)
+// TODO: to smallcaps or not to smallcaps??
+//#let nm(it) = txsc(it)
+#let nm(it) = it
 
 // NOTES
 #let note(it) = box(inset: 0em, outset: (top: 0.3em, bottom: 0.3em, rest: 0.1em),
@@ -31,6 +33,12 @@
 #let tom(it)  = note[T: #it]
 #let guil(it) = note[G: #it]
 #let yann(it) = note[Y: #it]
+/*
+#let peio(it) = []
+#let tom(it)  = []
+#let guil(it) = []
+#let yann(it) = []
+*/
 
 #let mathpar(spacing: 1em, block: false, inset: 0em, ..it) = {
   it.pos()

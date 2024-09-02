@@ -192,8 +192,8 @@
 
   // REPLACEMENTS
   show "Agda": txsc("Agda")
-  show "Coq": txsc("Coq")
-  show "OGS": txsc("ogs")
+  show "Coq": txsc("Coq") // txsc("Rocq")
+  show "OGS": txsc("Ogs")
   show "coq-coinduction": txtt("coq-coinduction")
 
   body

@@ -26,6 +26,7 @@ typed and scoped_ representation of syntax. Quoting #nm[Fiore] and
   typing and scoping of terms."
 ]
 
+
 In this setting, the sort of terms is indexed both by a scope (or typing
 context) and by a type, so as to form a family $de("Term") cl de("Scope") ->
 de("Ty") -> base.Type$. This indexing may then be used to enforce that only
@@ -477,7 +478,7 @@ retiens pas. Par ex, pourquoi $ctx.vcat$?!]
 
   $ ar ctx.ren ar cl S -> S -> base.Type \
     Gamma ctx.ren Delta := forall th {t} -> Gamma ctx.var t -> Delta ctx.var t $
-]
+] <def-scope>
 
 #tom[en quoi c'est mutuel?]
 
@@ -613,11 +614,11 @@ crois que je suis d'accord.]
   of _$X$-assignments from $Gamma$ to $Delta$_ is defined as follows.
 
   $ ar asgn(X) ar : S -> S -> base.Type \
-    Gamma asgn(X) Delta := forall {alpha} -> Gamma ctx.var alpha -> X th Delta th alpha $
+    Gamma asgn(X) Delta := forall th {alpha} -> Gamma ctx.var alpha -> X th Delta th alpha $
 ]
 
 As seen in @sec-sub-ovw, because assignments are represented as functions, we will
-make explicit use of extensional equality on assignments. Given $gamma, delta
+make implicit use of extensional equality on assignments. Given $gamma, delta
 cl Gamma asgn(X) Delta$, it is expressed as follows.
 
 $ gamma approx delta := forall th {alpha} th (i cl Gamma ctx.var alpha) -> gamma th i = delta th i $
