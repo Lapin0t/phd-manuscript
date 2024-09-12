@@ -51,11 +51,21 @@
   else { (it,) }
 }
 
+/*
+#let inferrule(hyp, conc, suppl: "") = {
+  let fmt(it) = centering(mathpar(..to-array(it)))
+  box(stack(
+      box(fmt(hyp)),
+      line(stroke: (thickness: 0.5pt, cap: "round")),
+      box(fmt(conc)),
+    ) + suppl)
+}
+*/
 #let inferrule(hyp, conc, suppl: "") = {
   math.equation(block: true,
     math.frac(
-      centering(mathpar(..to-array(hyp))),
-      centering(mathpar(..to-array(conc)))
+      box(inset: 0.2em, centering(mathpar(..to-array(hyp)))),
+      box(inset: 0.2em, centering(mathpar(..to-array(conc))))
     ) + suppl
   )
 }
