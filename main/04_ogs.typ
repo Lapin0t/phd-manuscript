@@ -6,7 +6,27 @@ In @ch-game we have seen a general definition of games and the structure of
 their strategies and in @ch-subst we have seen an axiomatic framework for
 intrinsically typed and scoped substitution. Everything is now in place to
 define the generic operational game semantics construction. The plan unfolds
-as follows. #peio[wip annonce plan]
+as follows.
+
+1. We first define in @sec-ogs-game the _statics_ of the construction, i.e., the
+  description of the game, in the sense of @def-g, parametrized by the
+  corresponding statics of the _object language_. These object
+  language statics comprise the usual set of _object types_, but also a
+  description of _observations_, which we will introduce. After defining the game,
+  thanks to the generic construction of strategies over a game from @ch-game,
+  we directly obtain the set of OGS strategies and counter-strategies, on which
+  we further define an _interaction_ operator for composing strategies.
+
+2. Next, in @sec-machine-lang we introduce a lightweight axiomatization of the
+  dynamics of a language with evaluator called a _machine language_, suitable
+  for then constructing the OGS model.
+
+3. Building upon this, in @sec-machine-strat we finally construct the OGS model,
+  building a _machine strategy_ embedding machine configurations into OGS
+  strategies. We further introduce substitution equivalence, an analogue of
+  of #txsc[ciu] equivalence for machine languages and state the correctness
+  theorem for OGS.
+
 
 #peio[
   Dans un autre monde je refais le truc en 2 parties, d'abord avec le jeu naif
@@ -26,32 +46,9 @@ as follows. #peio[wip annonce plan]
     2. Refined Strategy
 ]
 
-/*
-1. We first define in @sec-ogs-game the _statics_ of the construction, i.e., the
-  description of the game, in the sense of @def-g, parametrized by the
-  corresponding statics of the _object language_. These object
-  language statics comprise the usual set of _object types_, but also a
-  description of _observations_, which we will introduce. After defining the game,
-  thanks to the generic construction of strategies over a game from @ch-game,
-  we directly obtain the set of OGS strategies and counter-strategies, on which
-  we further define an _interaction_ operator.
+== OGS Game <sec-ogs-game>
 
-2. Next, in @sec-machine-lang we axiomatize the dynamics of the language, which
-  will be used for parametrizing the OGS model construction. Since this
-  axiomatization bears more similarities with abstract machines than usual term
-  languages, we call it a _machine language_. It comprises two families for
-  _values_ and _configurations_, satisfying suitable substitution operators, as
-  well as an _evaluation_ map and an _observation application_ map. We moreover
-  state the properties required for the OGS correction theorem.
-
-3. Building upon this, in @sec-machine-strat we finally construct the OGS model,
-  building a _machine strategy_ embedding machine configurations into OGS
-  strategies.
-
-4. In @sec-ogs-semantics we give #peio[wip]
-*/
-
-== Observations <sec-ogs-obs>
+=== Observations <sec-ogs-obs>
 
 Observations are a central component of the OGS. Recall from the informal
 introductory description (#peio[ref]) that the OGS model consist in computing
@@ -106,8 +103,6 @@ This leads us to axiomatize observations as _binding families_ which we now defi
     pat(ctx.Oper cl T -> base.Type,
         ctx.dom th {alpha} cl ctx.Oper th alpha -> S) $
 ]
-
-== OGS Game <sec-ogs-game>
 
 === The Naive Game
 
@@ -648,13 +643,13 @@ instead of $M.ogs.val$.
   $ &ogs.collP th ogs.tnilP           && := [] \
     &ogs.collP th (e ogs.tconP gamma) && := [ogs.collA e, gamma] $
 
-  Where $rho$ is the obvious renaming $(Delta ctx.cat ogs.catO Psi) ctx.ren (Delta ctx.cat (ogs.catO Psi ctx.cat Gamma))$, given
+  Where $rho$ is the renaming $(Delta ctx.cat ogs.catO Psi) ctx.ren (Delta ctx.cat (ogs.catO Psi ctx.cat Gamma))$, given
   by $[ctx.rcatl, ctx.rcatr[ctx.rcatl]]$.
 ]
 
-=== Construction
+=== Machine Strategy
 
-#peio[ch2: introduce big-step strategies]
+#peio[ch2: introduce big-step strategies instead of small-step]
 
 #definition[Machine Strategy][
   Given a final scope $Delta$, define the _machine strategy_ as the big-step strategy
@@ -671,9 +666,10 @@ instead of $M.ogs.val$.
           ctx.vcatl th i & := itree.ret th (base.inj1 th (i ctx.cute o)),
           ctx.vcatr th j & := itree.ret th (base.inj2 th ((j ctx.cute o), (e ogs.tconP gamma))),
         ),
-      strat.coplay th e th (i ctx.cute o) := \
-        pat(base.fst & := ogsapp(i[ogs.collP e][rho_1], o, rho_2),
-            base.snd & := e ogs.tconA) ,
+      strat.coplay th e th (i ctx.cute o) :=
+        (ogsapp((ogs.collP e th i)[rho_1], o, rho_2), e ogs.tconA) ,
+        /*pat(base.fst & := ogsapp((ogs.collP e th i)[rho_1], o, rho_2),
+            base.snd & := e ogs.tconA) ,*/
     ) $
 
   The renamings $rho_1$ and $rho_2$ are defined as follows.
@@ -682,10 +678,6 @@ instead of $M.ogs.val$.
       rho_2 := ctx.rcatr[ctx.rcatr] $
 ]
 
-== Semantics <sec-ogs-semantics>
+=== OGS Model and Equivalence
 
-=== OGS Equivalence
-
-=== Substitution Equivalence
-
-=== Correctness Theorem
+=== OGS Correctness
