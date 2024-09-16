@@ -72,25 +72,25 @@ While this representation could work out, it would be quite unnatural to
 manipulate. To explain this, let us take a step back.
 
 For other scoped syntactic categories like values or terms, the indexing scope
-constrains what variables the term can _mention_. Because we want to think
-about variables like pointers into a scope, in the information flow of the
-concepts, the scope is pre-existing and the term over it comes after. It is then
-sensible to mimick this information flow formally and use scoped-and-typed
-families, making the sort of terms _depend_ on a scope (and also on an object type).
-On the other hand, the scope of an observation is not there to constrain
-anything but to make known the arity of that observation. Here, the more
-natural information flow is to have the scope come _after_ the observation,
-which would thus only depends on the type.
+constrains what variables the term can _mention_. Because we want to think of
+variables as pointers into a scope, in terms of conceptual dependency, the scope
+is pre-existing and the term over it comes afterwards. It is then sensible to
+reflect this dependency formally and use scoped-and-typed families, making the
+sort of terms _depend_ on a scope (and also on an object type).  On the other
+hand, the scope of an observation is not there to constrain anything but to make
+known the arity of that observation. Here, the more natural information flow is
+to have the scope come _after_ the observation, which would thus only depend on
+the type. 
 
 These fine encoding considerations might be dismissed as philosophical or even
-taste questions but they do typically have consequences on universe levels and
-sizes. As a perhaps more tangible argument, there are in typical calculi only a
-finite number of observations at any given type while the set of scopes is
-infinite. As such, only a fraction of scopes can be the arity of some
+aesthetic. But they do  have pragmatic consequences, typically on universe
+levels and sizes. As a perhaps more tangible argument, there are in typical
+calculi only a finite number of observations at any given type while the set of
+scopes is infinite. As such, only a fraction of scopes can be the arity of some
 observation, wasting the expressivity of scoped-and-typed families since for
 most $Gamma$, $de("Obs") th Gamma th alpha$ would be empty.
 
-This leads us to axiomatize observations as _binding families_ which we now define.
+This leads us to axiomatize observations as _binding families_, which we now define.
 
 #definition[Binding Family][
   #margin-note[
