@@ -24,8 +24,7 @@ as follows.
 3. Building upon this, in @sec-machine-strat we finally construct the OGS model,
   building a _machine strategy_ embedding machine configurations into OGS
   strategies. We further introduce substitution equivalence, an analogue of
-  of #txsc[ciu] equivalence for machine languages and state the correctness
-  theorem for OGS.
+  #txsc[ciu] equivalence for machine languages and state the correctness theorem for OGS.
 
 
 #peio[
@@ -50,8 +49,8 @@ as follows.
 
 === Observations <sec-ogs-obs>
 
-Observations are a central component of the OGS. Recall from the informal
-introductory description (#peio[ref]) that the OGS model consist in computing
+Observations are a central component of OGS. Recall from the informal
+introductory description (#peio[ref]) that the OGS model proceeds by computing
 the normal form of a given configuration (or term) and then splitting it into
 a _head variable_, an _observation_ on it, and a _filling assigment_,
 associating a value to each _hole_ or _argument_ of the observation. An OGS
@@ -59,7 +58,7 @@ _move_ is then obtained by combining the head variable and the observation,
 while the assignment is kept local to the OGS strategy and hidden from the
 opponent. Symmetrically, the opponent can then _query_ these hidden arguments
 by itself playing a move of the same shape, a variable and an observation,
-resuming execution on our side. To make these ideas formal, we first need to
+resuming execution on player's side. To make these ideas formal, we first need to
 properly define what these observations look like.
 
 Intuitively, the set of observations should be indexed by an object type: the
