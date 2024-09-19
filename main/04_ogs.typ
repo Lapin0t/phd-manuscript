@@ -178,7 +178,8 @@ conditions,#margin-note[
 opponent variables $j$ which were introduced _before_ $i$.
 #guil[
   Dans la preuve de soundness, 
-  on a besoin de cette restriction que lorsqu'n n'a pas le droit d'effectuer une évaluation
+  on a besoin de cette restriction uniquement 
+  que lorsqu'on n'a pas le droit d'effectuer une évaluation
   entre l'observation sur $i$ et celle que l'on déclenche sur $j$
   (ce qui corresponds aux prémisses de l'hypothèse mystère).
   C'est pour ça que l'on reste sound dans un cadre avec references d'ordre supérieure,
