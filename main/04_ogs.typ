@@ -175,10 +175,24 @@ conditions,#margin-note[
   This kind of condition is typically called a _visibility_ condition in the game semantic
   litterature. #peio[ref??]
 ] when being observed on some variable $i$, we can only trigger observations on
-opponent variables $j$ which were introduced _before_ $i$. The problem is now
+opponent variables $j$ which were introduced _before_ $i$.
+#guil[
+  Dans la preuve de soundness, 
+  on a besoin de cette restriction que lorsqu'n n'a pas le droit d'effectuer une évaluation
+  entre l'observation sur $i$ et celle que l'on déclenche sur $j$
+  (ce qui corresponds aux prémisses de l'hypothèse mystère).
+  C'est pour ça que l'on reste sound dans un cadre avec references d'ordre supérieure,
+  où l'on n'est plus visible. Dans ce cas là, on a besoin d'aller récupérer dans
+  l'état mémoire le nom $j$ (s'il n'est pas dans notre vue),
+  ce qui nécessite une étape d'évaluation.
+  Du coup je pense qu'il faut soit préciser, soit supprimer 
+  le lien avec la visibilité.
+]
+ The problem is now
 apparent: by keeping the variables of both players in separate scopes we loose
 track of their relative ordering in a common timeline, a prerequisite to talk
 about a variable appearing before another.
+
 
 === Remembering Time
 
