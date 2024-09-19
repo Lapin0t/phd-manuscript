@@ -17,6 +17,7 @@
 #let crel(it) = math.class("relation", it)
 #let cnorm(it) = math.class("normal", it)
 #let cop(it) = math.op(it)
+#let cbin(it) = math.class("binary", it)
 
 
 // typing colon
@@ -51,12 +52,12 @@
 )
 
 #let pat(short: false, ..xs) = context {
-  let paren = [()] //$(and.big)$
+  let paren = [()]
   let paren-len = measure(paren).width
   let gadget = hide(paren) + h(0.2em - paren-len)
   let arg = xs.pos().map(x => gadget + x)
   if short [
-    #h(0.2em) [ #arg.at(0) #th ]
+    #h(0.2em) $lr("[", size: #140%) #arg.at(0)$ //#th ]
   ] else [
     #h(0.2em)
     #math.display(math.cases(delim: "[", ..arg, ..xs.named()))
@@ -78,10 +79,10 @@
   endo: de(cop("endo")),
   unit: de(math.bold("1")),
   tt: cs(sym.star),
-  sum: de(crel($+$)),
+  sum: de(cbin(sym.plus)),
   inj1: cs(cop("inl")),
   inj2: cs(cop("inr")),
-  prod: de(cop(sym.times)),
+  prod: de(cbin(sym.times)),
   fst: pr("fst"),
   snd: pr("snd"),
   bot: de(cop(sym.bot)),
@@ -143,7 +144,7 @@
 
 #let itree = (
   t: de(cop("ITree")),
-  tp: de(sym.prime.double.rev + "ITree"),
+  tp: de(sym.prime.rev + "ITree"),
   obs: pr("out"),
   F: de(cop("Action")),
   RS: [$de("Action")^de(rel.r)_Sigma$],
@@ -171,12 +172,13 @@
   bind: de(crel($> #h(-0.42em) > #h(-0.37em) =$)),
   bindbk: crel($> #h(-0.42em) > #h(-0.37em) =$),
   kbind: de(crel($> #h(-0.37em) = #h(-0.55em) >$)),
+  fmap: de(cbin($angle.l #h(-0.1em) #move($\$$) #h(-0.1em) angle.r$)),
   xtau: de(cop("tau!")),
   xvis: de(cop("vis!")),
   spin: de(cop("spin")),
   iter: de(cop("iter")),
-  actguard: de(cop(sym.prime.double.rev + "guarded")),
-  actevguard: de(cop(sym.prime.double.rev + "ev-guarded")),
+  actguard: de(cop(sym.prime.rev + "guarded")),
+  actevguard: de(cop(sym.prime.rev + "ev-guarded")),
   guard: de(cop("guarded")),
   evguard: de(cop("ev-guarded")),
   eqguard: de(cop("eqn-guarded")),
@@ -225,6 +227,8 @@
   extP: de(crel(sym.arrow.r.triple)),
   stratA: de(cop($"Strat"^+$)),
   stratP: de(cop($"Strat"^-$)),
+  opp: de($dagger$),
+  par: de(crel(sym.parallel)),
 )
 
 #let strat = (
@@ -233,12 +237,15 @@
   stn: pr($"state"^-$),
   play: pr("play"),
   coplay: pr("coplay"),
+  bs: de(cop("BS-System")),
 )
 
 //#let asgn(x) = de(crel($- #h(-0.2em) [bk(#x)] #h(-0.2em) ->$))
 #let asgn(x) = de(crel($- #h(-0.2em) [bk(#x)] #h(-0.2em) ->$))
 #let ctxhom(a, b) = [#de(sym.bracket.double.l) #a #de(",") #b #de(sym.bracket.double.r)]
 
+#let ctxfill(x) = $de(angle.double.l) #x de(angle.double.r)$
+#let eltfill(x) = $cs(angle.l) #x cs(angle.r)$
 #let ctx = (
   ctxcat: de(cop(math.cal("C"))),
   ctxc: de(cop("Ctx")),
@@ -278,10 +285,15 @@
   bfam: de(cop("BFam")),
   Oper: pr("Op"),
   dom: pr("holes"),
-  fill: de(crel("@")), 
+  domnm: de($"holes"^text(font: "EB Garamond", weight: "bold", aleph)$),
+  //fill: de(crel("@")), 
   oper: pr("op"),
   args: pr("args"),
-  cut: de(crel(sym.join)),
+  cute: cs(cbin(sym.square.filled.tiny)),
+  named: de(h(0.05em) + text(font: "EB Garamond", weight: "bold", sym.aleph)),
+  norm: de(cop("Nf")),
+  //nf2obs: de(cop($"nf"cnorm(->)"obs"$)),
+  //named: de(math.cal(math.bold("N"))),
 )
 
 #let sub = (
@@ -298,3 +310,47 @@
   aid: pr("act-id"),
   acomp: pr("act-comp"),
 )
+
+#let ogs = (
+  naivehg: de(cop($"OGS-hg"^"naive"_bk(O)$)),
+  naiveg: de(cop($"OGS-g"^"naive"_bk(O)$)),
+  hg: de(cop($"OGS-hg"_bk(O)$)),
+  g: de(cop($"OGS-g"_bk(O)$)),
+  ctx: de(cop("O-Ctx")),
+  catE: de(math.class("opening", math.attach(sym.arrow.b, tr: sym.plus))),
+  catO: de(math.class("opening", math.attach(sym.arrow.b, tr: sym.minus))),
+  stratA: de(cop($"OGS"^+_bk(O)$)),
+  stratP: de(cop($"OGS"^-_bk(O)$)),
+  //join: de(crel($|#h(-0.12em)|#h(-0.12em)|$)),
+  join: de(crel(sym.join)),
+  compeq: de(cop("interact-eqn")),
+  baremachine: de(cop("BareMachine")),
+  conf: pr("Conf"),
+  val: pr("Val"),
+  eval: pr("eval"),
+  apply: pr("apply"),
+  machine: de(cop("MachineLang")),
+  emb: de(cop("emb")),
+  evalo: de($"eval"^text(font: "EB Garamond", "o")$),
+  evalnf: pr("eval-nf"),
+  appext: pr("apply-ext"),
+  lawmachine: de(cop("LawfulMachine")),
+  valsub: pr("val-sub"),
+  confsub: pr("conf-sub"),
+  evalsub: pr("eval-sub"),
+  appsub: pr("apply-sub"),
+  teleA: cop($de("Tele")^de(+)_Delta$),
+  teleP: cop($de("Tele")^de(-)_Delta$),
+  tnilA: cs($epsilon^+$),
+  tnilP: cs($epsilon^-$),
+  tconA: cs(crel($triangle.r.filled.small^+ circle.dotted$)),
+  tconP: cs(crel($triangle.r.filled.small^-$)),
+  collA: de(cop($attach(arrow.b, tr:+)$)),
+  collP: de(cop($attach(arrow.b, tr: -)$)),
+  mstrat: de(cop("machine-strat")),
+  nf2mv: de(cop("nf" + sym.arrow + "move")),
+)
+
+//#let ogsapp(v,o,g) = $#v de(∗) #o #h(0.2em) de("⟬") #g de("⟭")$
+//#let ogsapp(v,o,g) = $#v pr(∗) #o #h(0.2em) pr("⟬") #g pr("⟭")$
+#let ogsapp(v,o,g) = $#v ∗ #o #h(0.2em) "⟬" #g "⟭"$

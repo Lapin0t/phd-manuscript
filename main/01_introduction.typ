@@ -1,6 +1,6 @@
 #import "/lib/all.typ": *
 
-= Introduction
+= Introduction <ch-intro>
 
 - expliquer "we" vs "I"
 
@@ -22,8 +22,9 @@ explications technique:
 - typical ambiguity
 - typeclasses
 
-== Running Example: Simply-Typed #short.llc
-
 == A Primer to Operational Game Semantics
+
+=== Simply-Typed #short.llc
+
 
 == Thesis Overview

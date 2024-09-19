@@ -3,7 +3,7 @@
 
 #import "lib/template.typ": template, front-matter, main-matter, back-matter
 #show: template.with(
-  title: [WIP PhD],
+  title: [Generic Operational Game Semantics in Type Theory],
   author: "Peio Borthelle",
 )
 
