@@ -1631,7 +1631,8 @@ one to write arbitrary "while" loops. Pioneered by Calvin Elgot in the setting
 of fixed points #tom[Homog: fixed points vs fixpoints] in algebraic
 theories~#mcite(<Elgot75>), iteration in monadic computations enjoys a vast
 literature. Recalling that a monadic term $a cl M th X$ can be understood as an
-"$M$-term" with variables in $X$, the idea is to define systems of recursive
+"$M$-term" with variables in $X$ #guil[Tu veux dire qu'on peut voir
+$M$ comme une forme de signature?], the idea is to define systems of recursive
 equations as morphisms
 
 $ f cl X -> M th (X + Y), $
@@ -1721,6 +1722,7 @@ quotiented by weak bisimilarity into a complete Elgot monad. For readability,
 let us introduce a useful helper. Given $f cl X => itree.tp_Sigma th A$ and $g
   cl Y => itree.tp_Sigma th A$ #margin-note[ Please note the one-step unfolding
   in the codomain!#tom[codomain?! y a une typo ici ou dans le codomaine?]
+  #guil[c'est le codomaine de $f$ et $g$ non ?]
   Moreover, let us emphasise that this definition pattern-matches on its
   argument lazily, i.e. only _after_ being observed.  Indeed, a general trick to
 help satisfy guardedness is to copattern-match on $.itree.obs$ as early as
