@@ -1077,7 +1077,104 @@ most mysterious. To me it was, at least, and I was quite suprised when I
 realized I could _still_ not conclude the eventual guardedness proof of the
 composition equation.
 
-#peio[wip fin]
+In essence, what interlaced positions and telescopic environment buy us, is a
+bound on the number of what we call _chit-chats_. These chit-chats are
+synchronizations events during the composition, for which the exchanged move
+$(i ctx.cute o)$ targets a variable $i$ that is associated in the opponent's
+environment to a value which happens to be some variable $j$. As such, the
+composition continues with some new active configuration $M.ogs.apply th
+(sub.var th j) o th gamma$, which by $ogs.evalnf$ evaluates instantly to
+$((j ctx.cute o), gamma)$. Hence, in case of such a chit-chat, the original
+move $(i ctx.cute o)$ is immediatly "bounced" back to the original player with
+the move $(j ctx.cute o)$. Recalling that to prove eventual guardedness, the
+goal is to find a #itree.tauF move in the reduction of the active configuration,
+it is quite nice to be able to limit the number of such bounces.
+
+As such, we can assume that after some amount of chit-chat, the active
+configuration will be of the form $M.ogs.apply th v th o th gamma$, where $v$
+_is not_ a variable. At this point, we are however completely stuck without any
+further hypothesis. The natural thing to do would be to postulate that such a
+configuration $M.ogs.apply th v th o th gamma$ where $v$ is not a variable
+has a _redex_, in the sense that its evaluation necessarily starts with a
+#itree.tauF move, i.e., a reduction step. This requirement would intuitively
+make sense: $o$ typically stands for an elimination, so applying an elimination
+to something which is not a variable should yield a redex. Alas, I realized
+that this was severely restricting the language machine. Even the
+simply-typed #short.llc fails this hypothesis!
+#margin-note[
+  To be completely honest, the particular example of the #short.llc can be made
+  to verify the redex hypothesis by designing the observations more smartly,
+  but still, we would like to have maximal latitude to design the language
+  machine as we wish.
+] We thus need a weaker hypothesis.
+
+Concretely the statement of the hypothesis is quite technical, but the idea is
+relatively simple, we simply ask for a bound on the number of consecutive times
+that the redex hypothesis can fail. As such, although the configuration may not
+have a redex _right now_, we know that after some more composition steps we will
+eventually find one.
+
+Technically, it is formulated as follows. If the redex hypothesis fails, it
+means that the configuration $M.ogs.apply th v th o th gamma$ happens to be
+some normal form which will thus immediately trigger a new message, say $(i,
+o')$. This defines a relation $o' ogs.badinst o$ on observations. We then require
+that this relation is well-founded.
+
+#definition[Finite Redexes][
+  Assume a scope structure $ctx.scope_T th S$, a binding family $O cl ctx.bfam
+  th S th T$, two families $V$, $C$, and a language machine $M cl ogs.machine
+  th O th V th C$. Pose $tilde(O) := (alpha cl T) base.prod O.ctx.Oper th alpha$
+  and define the _redex failure relation_
+  $ar ogs.badinst ar cl rel.rel th tilde(O) th tilde(O)$ as follows.
+
+  #inferrule(
+    ($i cl Gamma ctx.var alpha_1$,
+     $o_1 cl O.ctx.Oper th alpha_1$,
+     $gamma_1 cl O.ctx.dom th o_1 asgn(V) Gamma$,
+     $v cl V th Gamma th alpha_2$,
+     $o_2 cl O.ctx.Oper th alpha_2$,
+     $gamma_2 cl O.ctx.dom th o_2 asgn(V) Gamma$,
+     $H_1 cl sub.isvar th v -> base.bot$,
+     $H_2 cl M.ogs.apply th v th o_2 th gamma itree.eq itree.ret th ((i ctx.cute o_1), gamma_1)$
+    ),
+    $ogs.badc th H_1 th H_2 cl o_1 ogs.badinst o_2$
+  )
+
+  Then, the machine _$M$ has finite redexes_ if the redex failure relation is well-founded.
+]
+
+#remark[
+  Recall that in type theory, well-foundedness is defined in terms of inductive _accessibility_.
+
+  $ kw.dat de("Acc") th {X} th (R cl rel.rel th X th X) th (a cl X) cl base.Type \
+    pat1(cs("acc") cl (forall th {b} -> R th b th a -> de("Acc") th R th b) -> de("Acc") th R th a
+    ) \
+    \
+    de("WellFounded") th {X} cl rel.rel th X th X -> base.Type \
+    de("WellFounded") th R := (a cl X) -> de("Acc") th R th a $
+
+  Then, well-founded induction is simply obtained by induction on the accessibility proof.
+
+]
+
+We are finally in a position to state the correctness theorem.
+
+#theorem[OGS Correctness][
+  Assuming
+  - a scope structure $ctx.scope_T th S$,
+  - a binding family $O cl ctx.bfam th S th T$,
+  - a family $V cl base.Type^(S,T)$ such that $sub.mon th V$ and $sub.decvar th V$,
+  - a family $C cl base.Type^S$ such that $sub.mod_V th C$,
+  - a language machine $M cl ogs.machine th O th V th C$ such that $M$ respects substitution and $M$ has finite redexes,
+  then, for any final
+  scope $Omega cl S$, the OGS interpretation is correct with respect to
+  substitution equivalence at $Omega$, i.e., the following property holds.
+
+  $ forall th {Gamma} th (c_1 th c_2 cl C th Gamma) -> ogsinterpA(c_1) itree.weq ogsinterpA(c_2) -> c_1 ogs.subeq c_2 $
+]
+
+#peio[wip finir un peu moins abrupte]
+
 
 
 
