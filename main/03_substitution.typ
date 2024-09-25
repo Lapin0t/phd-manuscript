@@ -164,10 +164,9 @@ substitution, from a mathematical point of view, substitution monoids are
 precisely monoid objects in the skew monoidal category $(ctx.ctxc th T -> T ->
 base.Type, ctx.varc, ctx.tens)$.
 
-*Renamings* #sym.space.quad Although in this thesis we will not require a
-particularly fine treatement of renamings, let us finish this overview of the
-state of the art #tom[les tirets c'est quand tu veux faire un adjectif, il me semble] with a notable recent insight on the type-theoretical #tom[idem :D] presentation
-of the operation of _renaming_.
+*Renamings* #sym.space.quad Let us finish this overview of the state of the art
+with a notable recent insight on the type-theoretical presentation of the
+operation of _renaming_.
 
 In the categorical approach, it seems particularly obvious to formalize that a
 family $X cl ctx.ctxc th T -> T -> base.Type$ supports renamings if it is
@@ -190,7 +189,6 @@ la cat des foncteurs. Mais donc ça compte pas comme bosser _uniquement_ dans la
 d'autres quotients habituellement, mais on peut les esquiver. En caté souvent ils définissent
 le tenseur de substitution avec un quotient, ce qui permet d'avoir une structure monoidale non-skew.
 Mais ça on peut s'en passer en faisant du skew.]
-
 
 The trick to provide a theoretical account of the renaming operation while
 avoiding functors is to notice that the faithful functor $ (ctx.ctxcat th T ->
@@ -651,7 +649,7 @@ As seen in @sec-sub-ovw, because assignments are represented as functions, we wi
 make implicit use of extensional equality on assignments. Given $gamma, delta
 cl Gamma asgn(X) Delta$, it is expressed as follows.
 
-$ gamma approx delta := forall th {alpha} th (i cl Gamma ctx.var alpha) -> gamma th i = delta th i $
+$ gamma approx delta := forall th {alpha} th (i cl Gamma ctx.var alpha) -> gamma th i approx delta th i $
 
 #tom[Mauvais choix de noms $gamma$ et $delta$, non?]
 
@@ -672,7 +670,7 @@ We now define the internal substitution hom and subsequently substitution monoid
   Assuming a scope structure $ctx.scope_T th S$ and a family $X cl base.Type^(S,T)$,
   a _substitution monoid_ structure on $X$ is given by the following typeclass.
 
-  #let eqx = math.attach(sym.eq, br: "X")
+  #let eqx = sym.approx
   //$ kw.cls th sub.mon_S th (X cl ctx.fam_T th S) kw.whr \
   $ kw.cls th sub.mon_S th (X cl base.Type^(S,T)) kw.whr \
     pat(
@@ -681,12 +679,12 @@ We now define the internal substitution hom and subsequently substitution monoid
       sub.sext cl sub.sub xrel(eqx th attach(ctx.arr, tr: rel.r) ctxhom(eqx, eqx)^de(rel.r)) sub.sub,
       //sub.sext cl base.ext th sub.sub,
       sub.idl th {Gamma th alpha} th (x cl X th Gamma th alpha)
-        cl sub.sub th x sub.var = x,
+        cl sub.sub th x sub.var approx x,
       sub.idr th {Gamma th alpha} th (i cl Gamma ctx.var alpha) th (gamma cl Gamma asgn(X) Delta)
-        cl sub.sub (sub.var th i) th gamma = gamma th i,
+        cl sub.sub (sub.var th i) th gamma approx gamma th i,
       sub.assoc th {Gamma_1 th Gamma_2 th Gamma_3 th alpha} th (x cl X th Gamma_1 th alpha) \
         quad (gamma cl Gamma_1 asgn(X) Gamma_2) th (delta cl Gamma_2 asgn(X) Gamma_3) \
-        quad cl sub.sub (sub.sub th x th gamma) th delta = sub.sub x th (kw.fun th i |-> sub.sub th (gamma th i) th delta)
+        quad cl sub.sub (sub.sub th x th gamma) th delta approx sub.sub x th (kw.fun th i |-> sub.sub th (gamma th i) th delta)
     ) $
 ]
 
@@ -723,9 +721,9 @@ $x[gamma][delta] = x[gamma[delta]]$.
   by the superscript $ar^rel.r$ #guil[Il manque une ref là, à Bernardy par exemple ?]. Explicitly, the type of $sub.sext$ unfolds as
   follows.
 
-  $ forall th & {Gamma th alpha} th {x_1 th x_2 cl X th Gamma th alpha} (x^rel.r cl x_1 = x_2) \
-              & {Delta} th {gamma_1 th gamma_2 cl Gamma asgn(X) Delta} (gamma^rel.r cl forall th {beta} th (i cl Gamma ctx.var beta) -> gamma_1 th i = gamma_2 th i) \
-              & -> x_1 [gamma_1] = x_2[gamma_2] $
+  $ forall th & {Gamma th alpha} th {x_1 th x_2 cl X th Gamma th alpha} th (x^rel.r cl x_1 approx x_2) \
+              & {Delta} th {gamma_1 th gamma_2 cl Gamma asgn(X) Delta} th (gamma^rel.r cl forall th {beta} th (i cl Gamma ctx.var beta) -> gamma_1 th i approx gamma_2 th i) \
+              & -> x_1 [gamma_1] approx x_2[gamma_2] $
 ]
 
 #tom[C'est un peu ouf que ça se déplie en ça... Si t'as le temps à la fin, je
@@ -785,8 +783,10 @@ categories.
 #definition[Generalized Substitution Hom][
   Given an abstract scope structure $ctx.scope_T th S$ and a family category
   $cc$, the _generalized substitution hom_ functor is defined as follows.
+
 #tom[Pareil, tu démontres pas que c'est un foncteur, si?]
-#peio[nope, mais bon c'est un peu tout trivial (modulo les 1000 arguments implicites):
+#peio[nope, mais bon c'est un peu tout trivial (modulo les 1000 arguments implicites). L'action
+sur les morphismes c'est:
 $ ctxhom(F,G)[x] := kw.fun th gamma |-> G th (x th (kw.fun th i |-> F th (gamma th i))) $
 Les lois sont strictes (vraies par def).
 ]
@@ -814,44 +814,125 @@ Les lois sont strictes (vraies par def).
   Ca nous emmene un peu trop loin, et surtout ça s'éloigne des choix de formalisation
   de garder les catégories au niveau méta.]
 
-  #let eqx = math.attach(sym.eq, br: "X")
-  #let eqm = math.attach(sym.eq, br: "M")
+  #let eqx = sym.approx
+  #let eqm = sym.approx
   //$ kw.cls th sub.mod_S th (X cl ctx.fam_T th S) kw.whr \
   $ kw.cls th sub.mod_S th (X cl base.Type^(S,T_1, .. ,T_n)) kw.whr \
     pat(
       sub.act cl X ctx.arr ctxhom(M, X),
       sub.aext cl sub.act xrel(eqx th attach(ctx.arr, tr: rel.r) ctxhom(eqm, eqx)^de(rel.r)) sub.act,
       sub.aid th {Gamma th alpha_1 th .. th alpha_n} th (x cl X th Gamma th alpha_1 th .. th alpha_n)
-        cl sub.act th x sub.var = x,
+        cl sub.act th x sub.var approx x,
       sub.acomp th {Gamma_1 th Gamma_2 th Gamma_3 th alpha_1 th .. th alpha_n} th (x cl X th Gamma_1 th alpha_1 th .. th alpha_n) \
         quad (gamma cl Gamma_1 asgn(M) Gamma_2) th (delta cl Gamma_2 asgn(M) Gamma_3) \
-        quad cl sub.act (sub.act th x th gamma) th delta = sub.act x th gamma[delta]
+        quad cl sub.act (sub.act th x th gamma) th delta approx sub.act x th gamma[delta]
     ) $
 ]
 
 Overloading the notation for the ordinary substitution $sub.sub$, we will use
 $x[gamma]$ as shorthand for $sub.act th x th gamma$.
 
-#remark[
-  Although this is irrelevant to our OGS concerns, substitution modules shed a
-  new light on the renaming operation. As seen in @sec-sub-ovw the state of
-  the art is to mechanize a family with renamings as a coalgebra for the $ctxhom(ctx.var,
-  ar "")$ comonad~#mcite(<FioreS22>)#mcite(dy: 3em, <AllaisACMM21>).
-  Alternatively, a family with renamings can be characterized as a substitution
-  module over $ctx.var$ (as $ctx.var$ trivially forms a substitution monoid).
+=== Renaming Structures
 
-  Pulling the other way, substitution modules over $M$ can be reframed as
-  coalgebras for the comonad $square_M X := ctxhom(M, X)$, exhibiting the
-  reindexing functor $(de(cal(A))_M -> cal(C)) -> (S -> cal(C))$ as
-  comonadic.
-]
-#tom[Excellente remarque. Est-ce qu'il n'y a pas plus à creuser ici?]
+Substitution modules shed a new light on the renaming operation. Indeed, as seen in
+@sec-sub-ovw the state of the art is to mechanize a family with renamings as a
+coalgebra for the $ctxhom(ctx.var, ar "")$ comonad~#mcite(<FioreS22>)#mcite(dy:
+3em, <AllaisACMM21>). However, a family with renamings can also be
+characterized as a substitution module over $ctx.var$ (as $ctx.var$ trivially
+forms a substitution monoid).
+
+Pulling the other way on these two point of views, substitution modules over $M$
+could be reframed as coalgebras for the comonad $sub.box_M X := ctxhom(M, X)$,
+exhibiting the reindexing functor $(de(cal(A))_M -> cal(C)) -> (S -> cal(C))$
+as comonadic.
+
+Let's give a bit more details. First, the monoid structure on $ctx.var$.
+
+#lemma[Monoid Structure on $ctx.var$][
+  Assuming a scope structure $ctx.scope_T th S$, the scoped-and-typed family
+  $ar ctx.var ar cl base.Type^(S,T)$ can be equipped with a substitution monoid
+  structure as follows.
+
+  $ de(cnorm(in.rev)"-sub-monoid") cl sub.mon th (ar ctx.var ar) \
+    de(cnorm(in.rev)"-sub-monoid") := \
+    pat(
+      sub.var th i := i,
+      sub.sub th i th gamma := gamma th i,
+      ...,
+    ) $
 ]
 
-With substitution monoids and substitution modules defined, we now have the
-flexible tools we need in the next chapter to axiomatize the object language of
-our generic OGS construction. Although we have only seen a glimpse of what can
-be done using the intrinsically typed and scoped approach for modelling
-binders, I hope to have demonstrated the ease with which it can be adapted to
-specific situations like different indexing (such as substitution modules) or
-new context representations (such as abstract scope structures).
+Next, we can define a shorthand for renaming structures.
+
+#definition[Renaming Structure][
+  Assuming a scope structure $ctx.scope_T th S$, given a family $X cl base.Type^(S,T_1,..,T_n)$,
+  a _renaming structure_ on $X$ is given by the following typeclass.
+
+  $ kw.cls sub.ren th X := sub.mod_ctx.var th X $
+]
+
+Finally, we define the $sub.box_M$ comonad and link it with substitution modules.
+
+#definition[Internal Substitution Hom Comonad][
+  Assuming a scope structure $ctx.scope_T th S$, given a family $M cl
+  base.Type^(S,T)$ equipped with a substitution monoid structure $sub.mon th
+  M$, define the following functor.
+
+  $ sub.box_M cl base.Type^(S,T_1,..,T_n) -> base.Type^(S,T_1,..,T_n) \
+    sub.box_M th X := ctxhom(M, X) $
+
+  $sub.box_M$ has a comonad structure, with counit $epsilon$ and
+  comultiplication $delta$ given as follows.
+
+  $ epsilon cl sub.box_M th X ctx.arr X \
+    epsilon th f := f th sub.var \
+    \
+    delta cl sub.box_M th X ctx.arr sub.box_M th (sub.box_M th X) \
+    delta th f th gamma_1 th gamma_2 := f th gamma_1[gamma_2] $
+]
+
+#lemma[Substitution Module is Coalgebra][
+#margin-note[
+  This lemma is more or less trivial, since our definition of substitution
+  module can be directly read as the definition of $sub.box_M$ comonad coalgebras. Indeed,
+  $sub.act$ coincides with the coalgebra structure map while $sub.aid$ and 
+  $sub.acomp$ coincide with the two comonad coalgebra laws.
+]
+  Assuming a scope structure $ctx.scope_T th S$, given a family $M cl
+  base.Type^(S,T)$ equipped with a substitution monoid structure $sub.mon th M$,
+  for any $X cl base.Type^(S,T_1,..,T_n)$, substitution module structures over $M$
+  on $X$ coincide with $sub.box_M$ comonad coalgebra structures on $X$.
+
+  For any $X$, we directly deduce that $sub.box_M th X$ enjoys a substitution
+  module structure over $M$: the free coalgebra structure on $X$.
+]
+
+The above lemma exhibits the link between our substitution modules and
+$sub.box_M$ coalgebras, extending the previous result on renaming
+structures~#mcite(dy: -1em, <AllaisACMM21>)#mcite(dy: 4em, <FioreS22>).
+
+Finally, we conclude this chapter by defining one last structure, for families
+that have both renamings and variables, described by Fiore and Szamozvancev as
+_pointed coalgebras_.
+
+#definition[Pointed Renaming Structure][
+  Assuming a scope structure $ctx.scope_T th S$, given a family $X cl base.Type^(S,T)$,
+  a _pointed renaming structure_ on $X$ is given by the following typeclass.
+
+  $ kw.cls sub.pren th X := \
+    pat(kw.ext th sub.ren th X,
+        sub.var cl ar ctx.var ar ctx.arr X,
+        sub.avar th {Gamma th Delta th alpha} th i th (rho cl Gamma ctx.ren Delta) cl (sub.var th i)[rho] approx sub.var th (rho th i)
+    ) $
+]
+
+]
+
+With substitution monoids, substitution modules and renaming structures
+defined, we now have the flexible tools we need in the next chapter to
+axiomatize the object language of our generic OGS construction. Although we
+have only seen a glimpse of what can be done using the intrinsically typed and
+scoped approach for modelling binders, I hope to have demonstrated the ease
+with which it can be adapted to specific situations like different indexing
+(such as substitution modules) or new context representations (such as abstract
+scope structures).

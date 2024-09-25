@@ -92,6 +92,10 @@
   vlft: cs(cop($"v-left"$)),
   vrgt: cs(cop($"v-right"$)), 
   ext: de(cop("Extensional")),
+  refl: cs(cop("refl")),
+  decidable: de(cop("Decidable")),
+  yes: cs(cop("yes")),
+  no: cs(cop("no")),
 )
 
 #let subs = (
@@ -299,6 +303,8 @@
 #let sub = (
   mon: de(cop("SubstMonoid")),
   mod: de(cop("SubstModule")),
+  ren: de(cop("RenModule")),
+  pren: de(cop("PointedRenModule")),
   var: pr("var"),
   sub: pr("sub"),
   sext: pr("sub-ext"), 
@@ -309,13 +315,20 @@
   aext: pr("act-ext"), 
   aid: pr("act-id"),
   acomp: pr("act-comp"),
+  avar: pr("act-var"),
+  box: de(sym.square),
+  decvar: de("DecidableVar"),
+  isvar: de("is-var"),
+  isvardec: de("is-var?"),
+  isvarirr: de("is-var-irr"),
+  isvarren: de("is-var-ren"),
 )
 
 #let ogs = (
   naivehg: de(cop($"OGS-hg"^"naive"_bk(O)$)),
   naiveg: de(cop($"OGS-g"^"naive"_bk(O)$)),
-  hg: de(cop($"OGS-hg"_bk(O)$)),
-  g: de(cop($"OGS-g"_bk(O)$)),
+  hg: de(cop($"OGS"^#smallcaps("hg")_bk(O)$)),
+  g: de(cop($"OGS"^#smallcaps(sym.zwj + "g")_bk(O)$)),
   ctx: de(cop("O-Ctx")),
   catE: de(math.class("opening", math.attach(sym.arrow.b, tr: sym.plus))),
   catO: de(math.class("opening", math.attach(sym.arrow.b, tr: sym.minus))),
@@ -329,27 +342,41 @@
   val: pr("Val"),
   eval: pr("eval"),
   apply: pr("apply"),
-  machine: de(cop("MachineLang")),
-  emb: de(cop("emb")),
-  evalo: de($"eval"^text(font: "EB Garamond", "o")$),
+  machine: de(cop("LangMachine")),
+  emb: de(cop("nf-emb")),
+  //evalo: de($"eval"^text(font: "EB Garamond", "o")$),
+  evalo: de("eval-to-obs"),
   evalnf: pr("eval-nf"),
   appext: pr("apply-ext"),
-  lawmachine: de(cop("LawfulMachine")),
+  renmachine: de(cop("LangMachineRen")),
+  submachine: de(cop("LangMachineSub")),
+  valren: pr("val-ren"),
+  confren: pr("conf-ren"),
+  evalren: pr("eval-ren"),
+  appren: pr("apply-ren"),
   valsub: pr("val-sub"),
   confsub: pr("conf-sub"),
   evalsub: pr("eval-sub"),
   appsub: pr("apply-sub"),
-  teleA: cop($de("Tele")^de(+)_Delta$),
-  teleP: cop($de("Tele")^de(-)_Delta$),
+  teleA: cop($de("Tele")^de(+)_Omega$),
+  teleP: cop($de("Tele")^de(-)_Omega$),
   tnilA: cs($epsilon^+$),
   tnilP: cs($epsilon^-$),
   tconA: cs(crel($triangle.r.filled.small^+ circle.dotted$)),
   tconP: cs(crel($triangle.r.filled.small^-$)),
   collA: de(cop($attach(arrow.b, tr:+)$)),
   collP: de(cop($attach(arrow.b, tr: -)$)),
-  mstrat: de(cop("machine-strat")),
+  mstrat: de(cop("mstrat")),
   nf2mv: de(cop("nf" + sym.arrow + "move")),
+  mstratA: de(cop($"ogs"^+$)),
+  mstratP: de(cop($"ogs"^-$)),
+  mstratplay: de(cop("mstrat-play")),
+  mstratresp: de(cop("mstrat-coplay")),
+  subeq: crel(math.attach(de(sym.approx), br: de(smallcaps("sub")), tr: sym.Omega)),
 )
+
+#let ogsinterpA(x) = $de(bracket.double.l) #x de(bracket.double.r)^de(+)_M$
+#let ogsinterpP(x) = $de(bracket.double.l) #x de(bracket.double.r)^de(-)_M$
 
 //#let ogsapp(v,o,g) = $#v de(∗) #o #h(0.2em) de("⟬") #g de("⟭")$
 //#let ogsapp(v,o,g) = $#v pr(∗) #o #h(0.2em) pr("⟬") #g pr("⟭")$
