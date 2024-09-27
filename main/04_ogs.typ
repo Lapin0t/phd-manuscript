@@ -838,10 +838,10 @@ $ ogs.mstratA th Psi := C th (Omega ctx.cat ogs.catE Psi) base.prod (ogs.catO Ps
 
 This would indeed work, but now that we have more information we can be much
 more precise in tracking the scopes of each value stored in the assigments.
-This is quite important since every once of precise specification we can cram
+This is quite important since every ounce of precise specification we can cram
 into the typing will be something less to worry about during manipulation and
 proofs. Taking a step back, let us consider what must actually be stored inside
-these assignments, taking the point of view of the machine strategy. At every
+these assignments. Taking the point of view of the machine strategy, at every
 point of the game where we play a move, we have a normal form, we emit its
 named observation part and we must remember the filling assignment part. As such,
 the exact scope used by this filling is the opponent scope _at that point in
@@ -901,7 +901,7 @@ as witnessed by the following _collapsing functions_.
 
   Where $rho$ is the renaming $(Omega ctx.cat ogs.catO Psi) ctx.ren (Omega ctx.cat (ogs.catO Psi ctx.cat Gamma))$, given
   by $[ctx.rcatl, ctx.rcatr[ctx.rcatl]]$.
-]
+] <def-tele-collapse>
 
 The refined machine strategy is now simply a matter of adapting to the new telescopic
 environment, and routing the moves properly, depending on whether they concern the
@@ -932,7 +932,7 @@ final scope $Omega$ or "normal" variables.
 
     $ rho_1 := [ctx.rcatl, ctx.rcatr[ctx.rcatl]] \
       rho_2 := ctx.rcatr[ctx.rcatr] $
-]
+] <def-machine-strat>
 
 #peio[ch2: introduce big-step strategies instead of small-step]
 
@@ -948,7 +948,7 @@ defined by the machine strategy.
 
   $ ogsinterpP(ar) th {Gamma} cl (Gamma asgn(V) Omega) -> ogs.stratP th Omega th (ctx.nilc ctx.conc Gamma) \
     ogsinterpP(gamma) := itree.unrollP_(ogs.mstrat th M) th (ogs.tnilA ogs.tconP gamma[ctx.rcatl]) $
-]
+] <def-ogs-interp>
 
 === Correctness!
 
@@ -998,7 +998,7 @@ renamings we will skip over this notion.]
       ogs.evalnf th {Gamma} th (n cl ctx.norm^(#h(0.15em) O)_V th Gamma) \
         quad cl M.ogs.eval th (ogs.emb th n) itree.eq itree.ret th n
     ) $
-]
+] <def-machine-resp-sub>
 
 Our statement of the law $ogs.appsub$ should be relatively straightforward.
 However, $ogs.evalsub$ is a bit more tricky. Indeed, there is no hope of
@@ -1060,7 +1060,7 @@ making $sub.isvar$ well-behaved.
       sub.isvarirr th {Gamma th alpha} th {v cl V th Gamma th alpha} th (p_1 th p_2 cl sub.isvar th v) cl p_1 = p_2,
       sub.isvarren th {Gamma th Delta th alpha} th (v cl V th Gamma th alpha) th (rho cl Gamma ctx.ren Delta) cl sub.isvar th v[rho] -> sub.isvar th v
     ) $
-]
+] <def-dec-var>
 
 $sub.isvarirr$ is quite powerful, it states that there is at most one way to
 show that a value is a variable. Assuming unicity of identity proofs (axiom K)
@@ -1141,7 +1141,7 @@ that this relation is well-founded.
   )
 
   Then, the machine _$M$ has finite redexes_ if the redex failure relation is well-founded.
-]
+] <def-finite-redex>
 
 #remark[
   Recall that in type theory, well-foundedness is defined in terms of inductive _accessibility_.
@@ -1171,7 +1171,7 @@ We are finally in a position to state the correctness theorem.
   substitution equivalence at $Omega$, i.e., the following property holds.
 
   $ forall th {Gamma} th (c_1 th c_2 cl C th Gamma) -> ogsinterpA(c_1) itree.weq ogsinterpA(c_2) -> c_1 ogs.subeq c_2 $
-]
+] <thm-correctness>
 
 #peio[wip finir un peu moins abrupte]
 

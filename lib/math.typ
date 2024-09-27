@@ -373,6 +373,8 @@
   mstratplay: de(cop("mstrat-play")),
   mstratresp: de(cop("mstrat-coplay")),
   subeq: crel(math.attach(de(sym.approx), br: de(smallcaps("sub")), tr: sym.Omega)),
+  badinst: crel(de(sym.prec)),
+  badc: cs(cop("bad")),
 )
 
 #let ogsinterpA(x) = $de(bracket.double.l) #x de(bracket.double.r)^de(+)_M$
