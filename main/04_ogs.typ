@@ -465,7 +465,7 @@ into active OGS strategies.
 
 Now that the OGS interpretation is defined, we can at last state the
 correctness property. Intuitively, the goal is to say that if two programs
-which have bisimilar OGS interpretations, then they are observationally
+have bisimilar OGS interpretations, then they are observationally
 equivalent. Traditionally, two programs are deemed observationally equivalent,
 or more technically _contextually equivalent_, if for any closed context of
 some given _ground_ type, when placed in that context either both diverge, or
