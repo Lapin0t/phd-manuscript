@@ -67,7 +67,7 @@ Intuitively, the set of observations should be indexed by an object type: the
 type of values they are meant to be observing. Moreover, each observation has a
 given arity, a list of arguments or holes, i.e., a scope. At first sight it
 might seem natural to describe observations simply as a scoped-and-typed family
-$de("Obs") cl base.Type^(S,T)$, where $o cl de("Obs") th Gamma th alpha$
+$de("Obs") cl base.Type^(S,T)$, #guil[C'est quoi S,T ?] where $o cl de("Obs") th Gamma th alpha$
 denotes an observation $o$ on some value of type $alpha$ with arity $Gamma$.
 While this representation could work out, it would be quite unnatural to
 manipulate. To explain this, let us take a step back.
@@ -91,6 +91,11 @@ scopes is infinite. As such, only a fraction of scopes can be the arity of some
 observation, wasting the expressivity of scoped-and-typed families since for
 most $Gamma$, $de("Obs") th Gamma th alpha$ would be empty.
 
+#guil[Est-ce-qu'une autre manière de dire les choses en utilisant le vocabulaire du typage bidirectionnel, 
+c'est que lorsqu'on type une observation, on infère son scope (i.e. il est généré) ?
+C'est en général (par example chez Zeilberger et Krishnaswami) comme ça que l'on présente le jugement de typage des patterns,
+qui génère le contexte (linéaire) des variables qu'ils bindent.]
+
 This leads us to axiomatize observations as _binding families_, which we now define.
 
 #definition[Binding Family][
@@ -110,9 +115,9 @@ observation (or in fact _triplets_ accounting for the type which is also
 implicitely there).
 
 #definition[Named Observation][
-  Assuming a scope structure $ctx.scope_T th S$, given a binding family $O cl
-  ctx.bfam th S th T$ _named observations_ is the scoped family $O^ctx.named cl
-  base.Type^S$ defined as follows.
+  Assuming a scope structure $ctx.scope_T th S$ and a binding family $O cl
+  ctx.bfam th S th T$, the scoped family of _named observations_ $O^ctx.named cl
+  base.Type^S$ is defined as follows.
 
   $ O^ctx.named th Gamma := (alpha cl T) base.prod (Gamma ctx.var alpha) base.prod O.ctx.Oper th alpha $
 
@@ -174,6 +179,8 @@ as interaction trees developped in @ch-game, we obtain OGS strategies easily.
   $ ogs.stratA := game.stratA_(ogs.g) th (kw.fun th (Gamma, Delta) |-> base.bot) \
     ogs.stratP := game.stratP_(ogs.g) th (kw.fun th (Gamma, Delta) |-> base.bot) $
 ] <def-ogs-strat>
+
+#guil[À ce moment là on ne sait pas ce que c'est $base.bot$]
 
 === Diving Into the Machine Strategy
 
@@ -298,7 +305,9 @@ passive machine strategy state, a move and returns the next active machine strat
 state. Active states contain a configuration, but also an assignment quite similar to the passive
 configuration. This assignment will simply be weakened and passed along: when the opponent
 plays a move, we do not introduce any new shared variable, hence, the list of
-values we need to remember does not change. We can already provide a partial definition.
+values we need to remember does not change. #guil[j'ai peur que cette phrase
+puisse générer un contre-sens, car Opposant introduit bien des nouvelles variables dans
+l'observation qu'il joue.] We can already provide a partial definition.
 
 $ ogs.mstratresp th {Psi} cl ogs.mstratP th Psi -> (ogs.hg game.extP ogs.mstratA) th Psi \
   ogs.mstratresp th sigma th o := \
@@ -339,6 +348,10 @@ Note that this definition crucially requires that values has a pointed renaming
 structure. Indeed, both variables and renamings are used to weaken the
 assignment part of the state and to "synthesize" the filling assignment passed
 to $ogs.apply$.
+
+#guil[J'ai du mal à comprendre le deuxième apply, 
+en pratique on ne lui fournit toujours comme value assignment
+qu'un weakening ?]
 
 === The OGS Interpretation
 
@@ -428,6 +441,9 @@ renamings, we can give the full definition of the machine strategy.
             base.snd & := sigma[ctx.rcatl])
     ) $
 ]
+
+#guil[Il me semble que la notion de big-step system
+n'a pas encore été introduite.]
 
 We finish up the model construction by embedding the language configurations
 into active OGS strategies.
