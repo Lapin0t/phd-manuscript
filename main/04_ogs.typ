@@ -488,6 +488,8 @@ will discuss after the actual definition.
   $ ogs.evalo th {Gamma} cl C th Gamma -> delay.t th (O^ctx.named th Gamma) \
     ogs.evalo th c := base.fst itree.fmap M.ogs.eval th c $
 
+  #guil[$itree.fmap$ n'a pas encore été introduit.]
+
   Then, given a scope $Omega cl S$, _substitution equivalence at final scope
   $Omega$_ is the indexed relation on $C$ defined as follows.
 
@@ -539,7 +541,9 @@ Finally, we can state the much awaited correctness property of the OGS model.
 #definition[OGS Correctness][
   Assume a language machine $M cl ogs.machine th O th V th C$ such that $V$
   forms a substitution monoid $sub.mon th V$ and that $C$ forms a
-  substitution module over it $sub.mod_V th C$. Given a scope $Omega cl S$,
+  substitution module over it $sub.mod_V th C$
+  #guil[Pourquoi tu n'imposes pas dans la def de language machine que $V$ et $C$ 
+  soient des substitution monoid/module ?]. Given a scope $Omega cl S$,
   _OGS is correct with respect to substitution equivalence at $Omega$_ if
   the following holds.
 
@@ -580,7 +584,7 @@ $ ar game.par ar cl ogs.stratA th (Gamma, ctx.emp)
 
 So how would we go about to define composition? Although we have not yet talked
 about it, composition is quite a natural thing to do and makes sense for any
-game as introduced in @ch-game, after all, games exist to be played! Forgetting
+game as introduced in @ch-game. After all, games exist to be played! Forgetting
 about OGS for a second, intuitively, composition works by inspecting the
 beginning of the active strategy, searching for the first _return_ or _visible_
 move. In case of a $itree.retF th r$ move, composition ends, returning the
@@ -610,7 +614,7 @@ _empty_ output family, i.e., $R := base.bot$. As such, no #itree.retF move will
 ever be encountered and the composition operator we have defined will output an
 element of $delay.t th base.bot$, in other words an infinite loop!
 
-The definition of composition is definitely works as it intuitively should,
+The definition of composition definitely works as it intuitively should,
 so the problem lies in our treatment of $Omega$ in the OGS strategies. To fix
 this, the idea is that instead of $Omega$ being part of the game position, it
 should appear in the output family. We thus update our definition of OGS
@@ -641,7 +645,7 @@ work we can show that the left-hand side, $ogs.evalo th c[gamma]$, seen as a
 function of $c$ and $gamma$, is also a fixed point of the same equation. Then,
 since both sides are fixed points of the same equation, to conclude adequacy it
 is sufficient to show that this composition equation has unicity of fixed
-points. To ensure this, we build upon our new theory of fixed points and prove
+points #guil[up-to bisimulation ?]. To ensure this, we build upon our new theory of fixed points and prove
 that the composition equation is _eventually guarded_.
 
 What eventual guardedness means in this case, is that synchronizations (move
@@ -649,7 +653,12 @@ exchanges) do not happen _too often_. More precisely, in the output of
 composition, silent moves have two sources: the ones arising from seeking the
 next non-silent move of the active strategy, and the ones arising from a
 synchronization. Then, eventual guardedness of composition means that
-"move-seeking" #itree.tauF#""s happen infinitely often. This is no small
+"move-seeking" #itree.tauF#""s happen infinitely often 
+#guil[Je suis perdu,
+je pensais que l'eventual guardedness c'était qu'il n'y avait qu'un nombre fini
+de synchronization entre deux move-seeking #itree.tauF#"".]. 
+
+This is no small
 property and it does not hold for the composition of arbitrary strategies,
 only for _visible_ ones. Essentially, visibility mandates that in a position
 $(Gamma, Delta)$ when a strategy is queried on a given variable in its scope,
