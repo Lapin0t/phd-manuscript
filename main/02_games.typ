@@ -1635,6 +1635,9 @@ $ x_1 & itree.weq f th x_1 \
       & th dots.v \
   x_n & itree.weq f th x_n, $
 
+#guil[Est-ce-que chaque $f th x_i$ ne peut utiliser que $x_i$
+et pas les autres $x_j$ ? Ça me semble étrange.]
+
 where each $f th x_i$ is an $M$-term mentioning either recursive variables $x_i
 cl X$ or fixed parameters $y_i cl Y$. A _solution_ is then a mapping $s cl X ->
 M th Y$ assigning to each "unknown" in $X$ an $M$-term mentioning only

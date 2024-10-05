@@ -543,7 +543,10 @@ Finally, we can state the much awaited correctness property of the OGS model.
   forms a substitution monoid $sub.mon th V$ and that $C$ forms a
   substitution module over it $sub.mod_V th C$
   #guil[Pourquoi tu n'imposes pas dans la def de language machine que $V$ et $C$ 
-  soient des substitution monoid/module ?]. Given a scope $Omega cl S$,
+  soient des substitution monoid/module ?]. #guil[À je vois que tu fais ça 
+  dans la def de _Language Machine Respects Substitution_.
+  Du coup tu pourrais peut-être annoncé que tu vas raffiner au fur-et-à-mesure
+  les axiomes nécessaires pour les languages machines.] Given a scope $Omega cl S$,
   _OGS is correct with respect to substitution equivalence at $Omega$_ if
   the following holds.
 
@@ -801,16 +804,19 @@ th Omega)$. We follow up with the composition equation.
   $
 ]
 
+#guil[Je suis un peu perdu par cette def. Est-ce-que ça ne serait pas
+plus éclairant de juste fournir les équations explicites ?
+Tu pourrais aussi faire un renvoi à la section sur Iteration Operators ici.]
 #remark[
   Note the different treatement of iteration in the #itree.tauF case and in the
   #itree.visF case. In the #itree.tauF case, we
   emit a #itree.tauF move, guarding a _coinductive_ self-call, while in the
   #itree.visF case, we instead return into the left component of the equation,
-  in a sense performing a _formal_ self-call.
+  in a sense of performing a _formal_ self-call.
 
   One way to look at it, is that the interaction works by seeking the first
   visible move (or return move) of the active strategy and that an
-  interaction step (i.e. formal loop of the equation) should only happens
+  interaction step (i.e. a formal loop of the equation) should only happens
   when both strategies truly _interact_.
 
   More pragmatically, much of the work for proving OGS correctness will be dedicated
@@ -891,8 +897,12 @@ the interleaved OGS position.
       ar ogs.tconP ar th {Psi th Gamma} cl ogs.teleA th Psi -> Gamma asgn(ogs.val) (Omega ctx.cat ogs.catE Psi) -> ogs.teleP th (Psi ctx.conc Gamma),
     ) $
 
+  #guil[C'est quoi $ogs.tconA$ ?]
+
   #peio[j'hésite avec la présentation règle de déduction ci-dessous. Mais si je
         fais ça va falloir que je change toutes les defs pour etre cohérents..]
+  #guil[Je trouve ça beaucoup plus lisible avec les règles de déductions.
+  Qu'est-ce-que tu devrais changer dans les autres defs pour être cohérent ?]
 
   #mathpar(block: true, inset: 0.2em,
     inferrule([], $ogs.tnilA cl ogs.teleA th ctx.nilc$),
@@ -1029,12 +1039,13 @@ Our statement of the law $ogs.appsub$ should be relatively straightforward.
 However, $ogs.evalsub$ is a bit more tricky. Indeed, there is no hope of
 stating a simple law such as
 $ M.ogs.eval th c[gamma] itree.eq (M.ogs.eval th c)[c] $
+#guil[On est d'accord que c'est $(M.ogs.eval th c)[gamma]$ à droite ?]
 since it is a well-known fact that normal forms are never stable by
 substitution. Instead, after evaluating $c$ to a normal form $n$, we need to
 embed it into configurations, substitute it _and then_ evaluate the result
 again. The last law $ogs.evalnf$ should have a clear meaning: it justifies
 calling normal forms _normal_ as it requires them to be stable under
-evaluation. Although, it might be a bit surprising to find it in this package
+evaluation #guil["it requires them to be already fully evaluated" plutôt que stable under evaluation ?]. Although, it might be a bit surprising to find it in this package
 since it does not seem to have anything to do with substitution. The reason
 for including it here, is that assuming $ogs.submachine th M$, although there
 is no hope of defining substitution of normal forms, we can show that the family
@@ -1047,6 +1058,9 @@ $ de("NfSub") cl sub.mod_V th (delay.t compose ctx.norm^(#h(0.15em) O)_V) \
     sub.act th u th sigma := u itree.bind kw.fun th n |-> M.ogs.eval th (ogs.emb th n)[sigma],
     ..
   ) $
+
+#guil[Est-ce-que tu peux donner plus de détails sur le lien entre
+eval-nf et la substitution identity law ?]
 
 We are now done with the core hypotheses, but there are two more technical
 hypotheses we must require.
@@ -1110,7 +1124,7 @@ environment to a value which happens to be some variable $j$. As such, the
 composition continues with some new active configuration $M.ogs.apply th
 (sub.var th j) o th gamma$, which by $ogs.evalnf$ evaluates instantly to
 $((j ctx.cute o), gamma)$. Hence, in case of such a chit-chat, the original
-move $(i ctx.cute o)$ is immediatly "bounced" back to the original player with
+move $(i ctx.cute o)$ is immediatly "bounced" #guil[copycat ?] back to the original player with
 the move $(j ctx.cute o)$. Recalling that to prove eventual guardedness, the
 goal is to find a #itree.tauF move in the reduction of the active configuration,
 it is quite nice to be able to limit the number of such bounces.
