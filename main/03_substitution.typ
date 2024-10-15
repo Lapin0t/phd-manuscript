@@ -238,7 +238,8 @@ manipulate than others.
 
 #[
 
-#let nice = emoji.sparkles
+//#let nice = emoji.sparkles
+#let nice = image("/images/sparkle.svg", height: 0.8em)
 #let snice = nice //text(size: 7pt, nice)
 #let cnice = $de(ctx.ctxc^snice)$
 #let tnice = $T^snice$
@@ -248,9 +249,8 @@ manipulate than others.
 
 // TODO: remove this when 0.12 is released with color emoji support or fix
 // ctheorems which is broken with typst master
-#show emoji.sparkles: text(fill: colors.kw, sym.star.filled)
+//#show emoji.sparkles: text(fill: colors.kw, sym.star.filled)
 
-#peio[fix sparkles emoji]
 The prime example is the following setting.
 #margin-note[
   This situation is not entirely artificial and does in fact appear
@@ -265,7 +265,7 @@ Assuming we have worked out the theory of substitution for bare terms, we want
 to lift it to the nice setting.
 
 In the framework of lists and #nm[De Bruijn] indices, we must define
-nice contexts as lists of pairs of a type together with a proof that it is nice.
+nice contexts as lists of pairs of a type together with a proof that it is nice:
 
 $ tnice := (alpha cl T) times nice th alpha \
   cnice th T := ctx.ctxc th tnice $
@@ -312,9 +312,10 @@ downgraded nice context $i cl downg Gamma ctx.varc alpha$, and to apply it to
 the nice assignment we need to _upgrade_ this into a niceness witness
 $p cl nice th alpha$ and a membership proof in the original nice context $Gamma
 ctx.varc (alpha, p)$.
-
 This is perfectly doable as indeed the following isomorphism holds
+
 $ downg Gamma ctx.varc alpha approx (p cl nice th alpha) times Gamma ctx.varc (alpha, p), $
+
 but I will stop at this
 point. It is in some way satisfying, but quite exhausting, to play the
 upgrade-downgrade yoga on variables which is required to finish the definition

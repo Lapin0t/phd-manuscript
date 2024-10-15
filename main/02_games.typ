@@ -1753,7 +1753,8 @@ $ (f itree.copr g) th r :=
     itree.iter_f th x := f th x itree.bind ((kw.fun th t |-> itree.tauF (itree.iter_f th t)) itree.copr itree.retF) $
 ] <def-iter>
 
-#lemma[Iter Fixed Point][ Given $Sigma cl icont.t th I$, for all $f cl X =>
+#lemma[Iter Fixed Point][ \
+  Given $Sigma cl icont.t th I$, for all $f cl X =>
   itree.t_Sigma th (X + Y)$, $itree.iter_f$ is a weak fixed point of $f$, i.e.,
   the following holds.
 
@@ -1765,6 +1766,19 @@ $ (f itree.copr g) th r :=
                base.inj1 th x & |-> th itree.iter_f th x,
                base.inj2 th y & |-> th itree.ret th y) $
 ]
+#proof[
+  By straightforward tower induction, using the up-to bind principle (@lem-up2bind).
+]
+
+Furthermore, we prove the following monotonicity statement for iteration.
+
+#lemma[Iter Monotonicity][ \
+  Given $Sigma cl icont.t th I$, for all $X^rel.r cl rel.irel th X^1 th X^2$ and
+  $Y^rel.r cl rel.irel th Y^1 th Y^2$, the following statements holds.
+
+  1. $ itree.iter xrel((X^rel.r rel.iarr iteqn(X^rel.r + Y^rel.r)) rel.arr (X^rel.r rel.iarr iteqn(Y^rel.r))) itree.iter $
+  2. $ itree.iter xrel((X^rel.r rel.iarr itweqn(X^rel.r + Y^rel.r)) rel.arr (X^rel.r rel.iarr itweqn(Y^rel.r))) itree.iter $
+] <lem-iter-mon>
 #proof[
   By straightforward tower induction, using the up-to bind principle (@lem-up2bind).
 ]

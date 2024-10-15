@@ -107,3 +107,9 @@
   sym.zwj
   margin-note(dy: dy, text-cite(key, ..args))
 }
+
+#let par-eqn(it) = {
+  linebreak()
+  box(width: 100%, inset: (y: 0.5em), it)
+  linebreak()
+}

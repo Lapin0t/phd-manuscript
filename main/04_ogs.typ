@@ -802,7 +802,7 @@ th Omega)$. We follow up with the composition equation.
           itree.tauF th t & := itree.tauF th (ogs.compeq th (t ctx.cute s^-)),
           itree.visF th m th k & := itree.retF th (base.inj1 th (s^- th m ctx.cute k))))
   $
-]
+] <def-compo-eqn>
 
 #guil[Je suis un peu perdu par cette def. Est-ce-que ça ne serait pas
 plus éclairant de juste fournir les équations explicites ?
@@ -834,9 +834,12 @@ only w.r.t. weak bisimilarity.
   S$, define the _composition operator_ by iteration (@def-iter)
   of the interaction equation.
 
+  $ ogs.comp cl (ogs.stratA th Omega) ogs.join (ogs.stratP th Omega) -> delay.t th (O^ctx.named th Omega) \
+    ogs.comp := itree.iter_ogs.compeq $
+
   $ ar game.par ar th {Psi} cl ogs.stratA th Omega th Psi -> ogs.stratP th Omega th Psi -> delay.t th (O^ctx.named th Omega) \
-    s^+ game.par s^- := itree.iter_ogs.compeq th (s^+ ctx.cute s^-) $
-]
+    s^+ game.par s^- := ogs.comp th (s^+ ctx.cute s^-) $
+] <def-compo-opaq>
 
 This concludes our abstract constructions on the refined OGS game.
 
@@ -1039,7 +1042,7 @@ Our statement of the law $ogs.appsub$ should be relatively straightforward.
 However, $ogs.evalsub$ is a bit more tricky. Indeed, there is no hope of
 stating a simple law such as
 $ M.ogs.eval th c[gamma] itree.eq (M.ogs.eval th c)[c] $
-#guil[On est d'accord que c'est $(M.ogs.eval th c)[gamma]$ à droite ?]
+
 since it is a well-known fact that normal forms are never stable by
 substitution. Instead, after evaluating $c$ to a normal form $n$, we need to
 embed it into configurations, substitute it _and then_ evaluate the result
@@ -1180,6 +1183,8 @@ that this relation is well-founded.
   )
 
   Then, the machine _$M$ has finite redexes_ if the redex failure relation is well-founded.
+
+  $ ogs.finred th M := de("WellFounded") th ogs.badinst $
 ] <def-finite-redex>
 
 #remark[
@@ -1202,9 +1207,15 @@ We are finally in a position to state the correctness theorem.
   Assuming
   - a scope structure $ctx.scope_T th S$,
   - a binding family $O cl ctx.bfam th S th T$,
+  - a substitution monoid of values $V cl base.Type^(S,T)$ with decidable variables,
+  - a substitution module over values of configurations $C cl base.Type^S$,
+  - a language machine $M cl ogs.machine th O th V th C$ which respects substitution
+    and which has finite redexes,
+  /*
   - a family $V cl base.Type^(S,T)$ such that $sub.mon th V$ and $sub.decvar th V$,
   - a family $C cl base.Type^S$ such that $sub.mod_V th C$,
-  - a language machine $M cl ogs.machine th O th V th C$ such that $M$ respects substitution and $M$ has finite redexes,
+  - a language machine $M cl ogs.machine th O th V th C$ such that $ogs.submachine th M$ and $ogs.finred th M$,
+  */
   then, for any final
   scope $Omega cl S$, the OGS interpretation is correct with respect to
   substitution equivalence at $Omega$, i.e., the following property holds.

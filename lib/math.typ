@@ -96,6 +96,7 @@
   decidable: de(cop("Decidable")),
   yes: cs(cop("yes")),
   no: cs(cop("no")),
+  nat: de(cop($ℕ$)),
 )
 
 #let subs = (
@@ -298,6 +299,7 @@
   norm: de(cop("Nf")),
   //nf2obs: de(cop($"nf"cnorm(->)"obs"$)),
   //named: de(math.cal(math.bold("N"))),
+  lenc: de(cop("length")),
 )
 
 #let sub = (
@@ -319,9 +321,9 @@
   box: de(sym.square),
   decvar: de("DecidableVar"),
   isvar: de("is-var"),
-  isvardec: de("is-var?"),
-  isvarirr: de("is-var-irr"),
-  isvarren: de("is-var-ren"),
+  isvardec: pr("is-var?"),
+  isvarirr: pr("is-var-irr"),
+  isvarren: pr("is-var-ren"),
 )
 
 #let ogs = (
@@ -336,7 +338,8 @@
   stratP: de(cop($"OGS"^-_bk(O)$)),
   //join: de(crel($|#h(-0.12em)|#h(-0.12em)|$)),
   join: de(crel(sym.join)),
-  compeq: de(cop("interact-eqn")),
+  compeq: de(cop("compo-eqn")),
+  comp: de(cop("compo")),
   baremachine: de(cop("BareMachine")),
   conf: pr("Conf"),
   val: pr("Val"),
@@ -375,6 +378,17 @@
   subeq: crel(math.attach(de(sym.approx), br: de(smallcaps("sub")), tr: sym.Omega)),
   badinst: crel(de(sym.prec)),
   badc: cs(cop("bad")),
+  finred: de(cop("FiniteRedexes")),
+  mcompeq: de(cop("m-compo-eqn")),
+  mcomp: de(cop("m-compo")),
+  mcarg: de("MCArg"),
+  zipev: de(cop("zip-then-eval")),
+  zlr: de(crel(sym.arrow.cw.half)),
+  zrl: de(crel(sym.arrow.ccw.half)),
+  depthA0: de(cop($"depth"^+_0$)),
+  depthP0: de(cop($"depth"^-_0$)),
+  depthA: de(cop($"depth"^+$)),
+  depthP: de(cop($"depth"^-$)),
 )
 
 #let ogsinterpA(x) = $de(bracket.double.l) #x de(bracket.double.r)^de(+)_M$
