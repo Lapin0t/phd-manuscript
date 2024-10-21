@@ -4,7 +4,7 @@
 
 In @ch-ogs we have constructed the OGS model, interpreting configurations of a
 language machine into OGS strategies. Then we have given the correctness
-theorem, stating that when two configurations are equivalent in the OGS model
+theorem (@thm-correctness), stating that when two configurations are equivalent in the OGS model
 (i.e., when they have bisimilar strategies), then they are substitution
 equivalent, an analogue of contextual equivalence tailored for language
 machines. The current chapter is now devoted to providing the actual proof
@@ -45,7 +45,7 @@ from two properties of composition, _congruence_ and _adequacy_.
   The composition operator is _adequate_ if for all $Gamma cl S$, $c cl C th Gamma$
   and $gamma cl Gamma asgn(V) Omega$, the following property holds.
 
-  $ ogs.evalo th c[gamma] itree.weq (ogsinterpA(c) game.par ogsinterpP(gamma)) $
+  $ ogs.evalo th (c dot gamma) itree.weq (ogsinterpA(c) game.par ogsinterpP(gamma)) $
 ]
 
 Congruence is quite straightforward to prove, the most important task being the
@@ -149,20 +149,20 @@ be particularly useful at several points.
   For any $c cl C th (Omega ctx.cat Gamma)$ and $sigma cl Gamma asgn(V) Omega$,
   the following proposition holds.
 
-  $ ogs.eval th c[sub.var,sigma]
+  $ ogs.eval th (c dot [sub.var,sigma])
     itree.eq pat(((i ctx.cute o), gamma) <- ogs.eval th c th ";", 
                   kw.case th ctx.vcat th i,
-                  pat(ctx.vcatl th j & := itree.ret th ((j ctx.cute o), gamma[sub.var,sigma]),
-                       ctx.vcatr th j & := ogs.eval th (ogs.apply th (sigma th j) th o th gamma[sub.var,sigma])))
+                  pat(ctx.vcatl th j & := itree.ret th ((j ctx.cute o), (gamma dot [sub.var,sigma])),
+                       ctx.vcatr th j & := ogs.eval th (ogs.apply th (sigma th j) th o th (gamma dot [sub.var,sigma]))))
   $
 ] <lem-evalsub-shift>
 #proof[
   By $ogs.evalsub$, unfolding the definition of $ogs.emb$, we have the following.
 
-  $ ogs.eval th c[sub.var,sigma]
+  $ ogs.eval th (c dot [sub.var,sigma])
     itree.eq
     pat(((i ctx.cute o), gamma) <- ogs.eval th c th ";",
-        ogs.eval th (ogs.apply th ([sub.var,sigma] th i) th o th gamma[sub.var,sigma])) $
+        ogs.eval th (ogs.apply th ([sub.var,sigma] th i) th o th (gamma dot [sub.var,sigma]))) $
 
   The right-hand sides of the lemma and the above both start by $ogs.eval th c$. Hence
   by monotonicity of bind, consider some $((i ctx.cute o), gamma)$. By case on $ctx.vcat th i$.
@@ -262,8 +262,9 @@ composition.
                           ctx.vcatr th j & := ogs.evalo th (ogs.apply th ((a ogs.zrl b) th j) th o th gamma[sub.var,a ogs.zrl b]))) & #[(monad)] \
   $
 
-  The above is now simple enough and we will obtain the same
-  starting from the right-hand side. First pose the following
+  The last computation above is now simple enough. We will remember it and seek
+  to obtain the same starting from the right-hand side of the theorem
+  statement. To ease the unfolding of definitions, first pose the following
   shorthands.
 
   $ f := kw.fun pat(base.inj1 th r      & := base.inj1 th r,
@@ -389,9 +390,8 @@ this.
      $ ogs.depthA th j < ogs.depthP th i $
 ] <lem-depth-decreases>
 #proof[
-  Without detailling the proof, the two statements are proven simultaneously, by
-  induction on $Psi$ and then by pattern matching in such a way as to make the
-  computation of the depth and the lookup inside $a$ progress.
+  The two statements are proven simultaneously, by direct induction on the
+  graph of the depth function at $i$.
 ]
 
 We can now prove eventual guardedness.
@@ -516,4 +516,36 @@ We finally prove OGS correctness w.r.t. contextual equivalence (@thm-correctness
   #v(-1em)
 ]
 
-#peio[un petit mot de la fin]
+To conclude this chapter, and with it the proof of the central result of this
+thesis, let me say a couple words about its significance. First of all, OGS
+models which are sound with respect to contextual equivalence have already been
+published, some in fact for instances which we do not cover here, such as, say,
+impure languages with references #peio[ref]. As such, although there is some
+progress in providing a generic proof for all languages which are expressible
+as language machines, I believe that the core contribution is in the way we
+streamline the correctness proof, hopefully making it accessible to a broader
+community. Indeed, while the decomposition into an adequacy and congruence
+proof for composition is common, in the published proofs adequacy is typically
+proven monolithically #peio[ref]. The method provided here further decomposes
+adequacy into two independent arguments, each quite informative on its own.
+
+First, @lem-zipev-fix provides what we can think of as the core semantical
+argument for adequacy: one step of composition does not change the result
+obtained by syntactically substituting the two machine strategy states and
+evaluating the obtained language configuration. Satisfyingly, the proof is
+quite direct and relatively free of administrative headaches: it is simply a
+sequence of rewriting step.
+
+Knowing this, one should not be blamed for thinking it is enough to conclude
+adequacy. After all, if one composition step leaves the final result unaltered,
+why should it be any different after an infinite number of steps, i.e., full
+composition? But arbitrary fixed points of partial computations can behaved
+surprisingly. Thus, a second argument, @lem-compo-guarded, concentrates the
+technical justification of the informal reasoning: the composition
+equation is "nice" enough and thus enjoys unicity of fixed points.
+
+I hope that this separation between the high-level argument and the tedious
+technical justification demystifies the adequacy proof, and enables a better
+understanding of it by non specialists. In particular, it opens up an
+intermediate level of explaination in which @lem-zipev-fix is detailled but
+where unicity is taken for granted.
