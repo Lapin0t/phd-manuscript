@@ -1,4 +1,4 @@
-#import "@preview/hydra:0.4.0": hydra
+#import "@preview/hydra:0.5.1": hydra
 #import "/lib/macros.typ": *
 
 #let in-outline = state("in-outline", false)
@@ -147,8 +147,7 @@
   }
 
   // PARAGRAPH
-  set par(leading: 0.7em, justify: true, linebreaks: "optimized")
-  show par: set block(spacing: 1.35em)
+  set par(leading: 0.7em, justify: true, linebreaks: "optimized", spacing: 1.35em)
 
   // EQUATIONS
   set math.equation(numbering: none)
@@ -194,6 +193,7 @@
   show "Agda": txsc("Agda")
   show "Coq": txsc("Coq") // txsc("Rocq")
   show "OGS": txsc("Ogs")
+  show "NF": txsc("Nf")
   show "coq-coinduction": txtt("coq-coinduction")
 
   body

@@ -23,8 +23,8 @@
 
 // surnames
 // TODO: to smallcaps or not to smallcaps??
-//#let nm(it) = txsc(it)
-#let nm(it) = it
+#let nm(it) = txsc(it)
+//#let nm(it) = it
 
 // NOTES
 #let note(it) = box(inset: 0em, outset: (top: 0.3em, bottom: 0.3em, rest: 0.1em),
