@@ -885,11 +885,12 @@ Finally, we define the $sub.box_M$ comonad and link it with substitution modules
   $sub.box_M$ has a comonad structure, with counit $epsilon$ and
   comultiplication $delta$ given as follows.
 
+  #mathpar(block: true, spacing: 2em,
   $ epsilon cl sub.box_M th X ctx.arr X \
-    epsilon th f := f th sub.var \
-    \
-    delta cl sub.box_M th X ctx.arr sub.box_M th (sub.box_M th X) \
+    epsilon th f := f th sub.var $,
+  $ delta cl sub.box_M th X ctx.arr sub.box_M th (sub.box_M th X) \
     delta th f th gamma_1 th gamma_2 := f th gamma_1[gamma_2] $
+  )
 ]
 
 #lemma[Substitution Module is Coalgebra][
