@@ -18,6 +18,7 @@
 #let cnorm(it) = math.class("normal", it)
 #let cop(it) = math.op(it)
 #let cbin(it) = math.class("binary", it)
+#let mtxt(it) = text(font: "New Computer Modern Math", it)
 
 
 // typing colon
@@ -234,6 +235,10 @@
   stratP: de(cop($"Strat"^-$)),
   opp: de($dagger$),
   par: de(crel(sym.parallel)),
+  eqA: de(math.attach(sym.approx.eq, tr: $+$)),
+  weqA: de(math.attach(sym.approx, tr: $+$)),
+  eqP: de(math.attach(sym.approx.eq, tr: $-$)),
+  weqP: de(math.attach(sym.approx, tr: $-$)),
 )
 
 #let strat = (
@@ -394,6 +399,23 @@
 #let ogsinterpA(x) = $de(bracket.double.l) #x de(bracket.double.r)^de(+)_M$
 #let ogsinterpP(x) = $de(bracket.double.l) #x de(bracket.double.r)^de(-)_M$
 
+#let nfinterpA(x) = $de(bracket.double.l) #x de(bracket.double.r)^de("NF")_M$
+#let nfinterpP(x) = $de(bracket.double.l) #x de(bracket.double.r)^de("NF")_M$
+
 //#let ogsapp(v,o,g) = $#v de(∗) #o #h(0.2em) de("⟬") #g de("⟭")$
 //#let ogsapp(v,o,g) = $#v pr(∗) #o #h(0.2em) pr("⟬") #g pr("⟭")$
 #let ogsapp(v,o,g) = $#v ∗ #o #h(0.2em) "⟬" #g "⟭"$
+
+#let nf = (
+  g: de(cop($"NF"^#smallcaps(sym.zwj + "g")_bk(O)$)),
+  stratA: de(cop($"NF"^+_bk(O)$)),
+  stratP: de(cop($"NF"^-_bk(O)$)),
+  ogs2nfA: de(cop($"OGS-to-NF"^+$)),
+  ogs2nfP: de(cop($"OGS-to-NF"^-$)),
+  renA: de(cop($"NF-ren"^+$)),
+  renP: de(cop($"NF-ren"^-$)),
+  nf2ogsA: de(cop($"NF-to-OGS"^+$)),
+  nf2ogsP: de(cop($"NF-to-OGS"^-$)),
+  nf2ogs: de(cop("NF-to-OGS")),
+  mstrat: de(cop("NF-mstrat")),
+)
