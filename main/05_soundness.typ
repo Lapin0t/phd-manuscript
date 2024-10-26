@@ -41,6 +41,9 @@ from two properties of composition, _congruence_ and _adequacy_.
   $ s^+_1 itree.weq s^+_2 -> (s^+_1 game.par s^-) itree.weq (s^+_2 game.par s^-) $
 ] <def-compo-congr>
 
+#guil[En général on dit plutôt que c'est l'équivalence qui
+  est une congruence pour la composition.]
+
 #definition[Adequacy of Composition][
   The composition operator is _adequate_ if for all $Gamma cl S$, $c cl C th Gamma$
   and $gamma cl Gamma asgn(V) Omega$, the following property holds.
@@ -53,14 +56,15 @@ proof of adequacy. The idea to prove adequacy boils down to two arguments:
 first we show that $kw.fun th c th gamma |-> ogs.evalo th c[gamma]$ is a fixed
 point of the composition equation and second we show that the composition
 equation is eventually guarded, hence has unique fixed points. At this point
-however, it $ogs.evalo$ being a fixed point of composition does not make much
+however, $ogs.evalo$ being a fixed point of composition does not make much
 sense, since the composition equation operates on pairs of OGS strategies while
 $ogs.evalo$ takes a configuration and an assignment. To fix this issue we will
 make two patches, respectively bringing composition and $ogs.evalo$ to a common
 meeting point: machine strategy states.
 
-First, we will define a second composition equation, operating not on _opaque_
-OGS strategies, but specifically on pairs of active and passive states of the
+First, we will define a second composition equation, called machine composition, 
+operating not on _opaque_ OGS strategies, 
+but specifically on pairs of active and passive states of the
 machine strategy. The definition will be essentially the same, but instead of
 peeling off layers of a coinductive tree to obtain the next moves, we will call
 the $strat.play$ and $strat.coplay$ functions of a big-step system.
@@ -139,6 +143,11 @@ introduced in the previous chapter.
   Then, by @lem-iter-mon we have $R th a th b -> (ogs.mcomp th a) itree.eq
   (ogs.comp th b)$, and we obtain the result by instanciating the relation
   witness $R th a th b$ by $(base.refl, base.refl)$.
+
+#guil[Ça pourrait aider de rappeler que $ogs.mcomp$ et $ogs.comp$ 
+sont tous les deux définis par des iter, ce qui permet d'appliquer le
+@lem-iter-mon]
+
 ]
 
 Finally, before moving on, we will prove a variant of the $ogs.evalsub$ law
@@ -164,8 +173,8 @@ be particularly useful at several points.
     pat(((i ctx.cute o), gamma) <- ogs.eval th c th ";",
         ogs.eval th (ogs.apply th ([sub.var,sigma] th i) th o th (gamma dot [sub.var,sigma]))) $
 
-  The right-hand sides of the lemma and the above both start by $ogs.eval th c$. Hence
-  by monotonicity of bind, consider some $((i ctx.cute o), gamma)$. By case on $ctx.vcat th i$.
+  The right-hand sides of both the lemma and the equivalence above start by $ogs.eval th c$. Hence
+  by monotonicity of bind, consider some $((i ctx.cute o), gamma)$ #guil[la phrase s'arrête trop tôt, qu'est-ce-que tu déduis de la monotonie du bind ?]. By case on $ctx.vcat th i$.
   - If $ctx.vcat th i = ctx.vcatl th j$, then $[sub.var,sigma] th i = sub.var th j$. Conclude
     by $ogs.evalnf$, showing that $ogs.eval th (ogs.apply th (sub.var th j) th o th
     gamma[sub.var,sigma]) itree.eq itree.ret th ((j ctx.cute o), gamma[sub.var, sigma]).$
@@ -202,6 +211,10 @@ which nicely mesh into one together.
     & ogs.tnilA     & ogs.zlr & ogs.tnilP           && := [] \
     & (ogs.tconA a) & ogs.zlr & (b ogs.tconP gamma) && := b ogs.zrl a \ $
 ]
+#guil[Cette définition est assez dure à type-checker, ça vaudrait le coup
+de rappeler le type de $gamma$, et d'expliquer pourquoi
+on le met à la pouvelle dans la def de 
+$(ogs.tconA a) ogs.zlr (b ogs.tconP gamma)$.]
 
 Before going further, let us prove the crucial property relating the zipping of two telescopic
 environments and their respective collapse. Recall that the collapsing functions have the
@@ -528,6 +541,11 @@ community. Indeed, while the decomposition into an adequacy and congruence
 proof for composition is common, in the published proofs adequacy is typically
 proven monolithically #peio[ref]. The method provided here further decomposes
 adequacy into two independent arguments, each quite informative on its own.
+#guil[Je dirais plutôt que la principale nouveauté de cette preuve, 
+c'est d'avoir isolé les axiomes clés que la présentation du langage machine
+doit satisfaire pour obtenir la correction de l'OGS;
+Avant ton travail, il n'y avait aucune preuve générique de correction
+de l'OGS.]
 
 First, @lem-zipev-fix provides what we can think of as the core semantical
 argument for adequacy: one step of composition does not change the result

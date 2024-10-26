@@ -884,7 +884,7 @@ the following definition of _telescopic environment_, defined inductively over
 the interleaved OGS position.
 
 #definition[Telescopic Environments][
-  Given a final scope $Omega cl S$ _active and passive telescopic environments_
+  Given a final scope $Omega cl S$, _active and passive telescopic environments_
   are given by the two families $ogs.teleA$ and $ogs.teleP$ of sort $ctx.ctxc
   th S -> base.Type$ given by the following mutually inductive definitions.
 
