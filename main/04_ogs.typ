@@ -543,9 +543,9 @@ Finally, we can state the much awaited correctness property of the OGS model.
   forms a substitution monoid $sub.mon th V$ and that $C$ forms a
   substitution module over it $sub.mod_V th C$
   #guil[Pourquoi tu n'imposes pas dans la def de language machine que $V$ et $C$ 
-  soient des substitution monoid/module ?]. #guil[À je vois que tu fais ça 
+  soient des substitution monoid/module ?]. #guil[Ah je vois que tu fais ça 
   dans la def de _Language Machine Respects Substitution_.
-  Du coup tu pourrais peut-être annoncé que tu vas raffiner au fur-et-à-mesure
+  Du coup tu pourrais peut-être annoncer que tu vas raffiner au fur-et-à-mesure
   les axiomes nécessaires pour les languages machines.] Given a scope $Omega cl S$,
   _OGS is correct with respect to substitution equivalence at $Omega$_ if
   the following holds.
