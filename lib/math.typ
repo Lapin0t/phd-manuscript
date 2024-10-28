@@ -133,6 +133,7 @@
   //isum: crel(math.attach("+", tr: relr)), NEEDED?
   arr: crel(math.attach(sym.arrow, tr: relr)),
   iarr: crel(math.attach(sym.arrow.double, tr: relr)),
+  carr: crel(math.attach("⇾", tr: relr)),
 )
 
 #let tower = (
