@@ -114,8 +114,8 @@
       let num = block(inset: 0.3cm, text(size: 60pt, cnt))
 
       layout(size => {
-        let title-size = measure(block(width: size.width, title))
-        let num-size = measure(block(width: size.width, num))
+        let title-size = measure(title)
+        let num-size = measure(num)
 
         place(top + right, dy: -title-size.height, title)
         place(top + right, dx: 0.3cm, deco)
