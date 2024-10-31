@@ -28,8 +28,7 @@
 
         #v(1fr)
 
-        Thèse dirigée par *M. Tom HIRSCHOWITZ* et \
-        codirigée par *M. Guilhem JABER*,
+        Thèse dirigée par *M. Tom HIRSCHOWITZ*
 
         #v(0.3fr)
 
@@ -51,19 +50,21 @@
           *M. David MONNIAUX* \
           Directeur de Recherche, Université Grenoble Alpes, Président \
           *Mme. Stephanie WEIRICH* \
-          Professeure, University of Pennsylvania, Rapportrice \
+          Distinguished Professor, University of Pennsylvania, Rapportrice \
           *M. Damien POUS* \
-          Directeur de Recherche, CNRS, ENS Lyon, Rapporteur \
+          Directeur de Recherche, CNRS, ENS de Lyon, Rapporteur \
           *M. Hugo HERBELIN* \
           Directeur de Recherche, INRIA, Université Paris Cité, Examinateur\
           *Mme. Kathrin STARK* \
-          Professeure Assistante, Heriot-Watt University, Examinatrice\
+          Assistant Professor, Heriot-Watt University, Examinatrice\
           *M. Pierre-Évariste DAGAND* \
           Chargé de Recherche, CNRS, Université Paris Cité, Examinateur\
           *M. Paul Blain LEVY* \
-          Maître de Conférence, University of Birmingham, Examinateur\
+          Reader in Theoretical Computer Science, University of Birmingham, Examinateur\
+          *M. Guilhem JABER* \
+          Maître de Conférences, Nantes Université, Invité (Co-encadrant)\
           *M. Yannick ZAKOWSKI* \
-          Chargé de Recherche, INRIA, ENS Lyon, Invité (Co-encadrant)\
+          Chargé de Recherche, INRIA, ENS de Lyon, Invité (Co-encadrant)\
         ])
 
         #v(0.3fr)
