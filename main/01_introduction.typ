@@ -16,13 +16,13 @@ are purely formal constructs, this gives to the study of their semantics the
 feel of a natural science, where mathematical models are built to capture an
 ever increasing level of detail. For sure, a handful of languages do admit
 truly exhaustive semantic descriptions, but this arguably only ever happens when they
-are designed with this intent (e.g., Lisp or #txsc[WebAssembly] #peio[ref]). In
+are designed with this intent (e.g., #nm[Lisp] or #txsc[WebAssembly] #peio[ref]). In
 fact, even for programming languages strongly rooted in the theoretical
 computer science community and routinely used by semanticists, such as proof
-assistants like Agda or Coq #peio[ref], a perfect description is still
-elusive!#margin-note[To completely be honest, in the case of Coq _kernel_, the
-#txsc[MetaCoq] #peio[ref] project is increasingly close to the ground
-truth.] Yet, this predicament never stopped anyone from programming and
+assistants like Agda~#mcite(<Agda>) or Coq~#mcite(dy: 1em, <Coq>), a perfect description is still
+elusive#margin-note(mark: true, dy: 2em)[To completely be honest, in the case of Coq _kernel_, the
+#txsc[MetaCoq]~#num-cite(<Metacoq>) project is increasingly close to the ground
+truth.]! Yet, this predicament never stopped anyone from programming and
 simplified semantics from being useful. In fact, the value of a mathematical
 model does not reside in its faithfullness to reality in all its gruesome
 details, but in its ability to ease reasoning on a particular aspect of
@@ -37,28 +37,31 @@ parts to be studied independantly. But to a greater degree, programs are
 _written_ modularly in the first place. Programming languages live and die by
 the means they provide to organize abstractions and interfaces, and organizing
 bits and pieces is perhaps the primary task of the programmer. Then,
-equivalence is our first step towards a meaning, and it is already sufficient
-for a variety of tasks such as justifying correctness by comparison to a
-reference implementation, or verifying optimisations and simplifications, in
-particular in the context of compilation---the art of translating programs.
+studying equivalence is our first step towards a meaning, and it is already
+sufficient for a variety of tasks such as justifying correctness by comparison
+to a reference implementation, or verifying optimisations and simplifications,
+in particular in the context of compilation---the art of translating programs.
 
 The most important definition for equivalence of program fragments is due to
-#nm[Morris]#peio[ref]: _observational_ (or _contextual_) equivalence. It builds
+#nm[Morris]~#mcite(<Morris68>): _observational_ (or _contextual_) equivalence. It builds
 upon the notion of _context_, that is, a program with a hole, which can be
 combined with a program fragment to yield a complete program. Then, two program
-fragments are considered observationally equivalent, whenever for any context
-they might be combined with, the two program compute the same final result. As
-the name suggests, observational equivalence characterizes program fragments
-which cannot be distinguished by programatically interacting with them in any
-way, and it is in a precise sense the "best" (weakest) such notion.
-Observational equivalence is the gold standard, but it is also quite hard to
-work with directly, as it is as much of a property on two programs as a
-statement on all the contexts they could fit in. As simple as the programs may
-be, the intricacy of the possible contexts is without limit. In consequence, a
-fruitful area of research has been to develop alternative characterisations of
-observational equivalence, more intrinsically related to the programs at hand,
-with the hope of being easier to establish in concrete cases. Among such efforts,
-one particular strand of prime importance for us is dubbed _game semantics_.
+fragments $a$ and $b$ are considered observationally equivalent, whenever for
+any context $C$ they might be combined with, the final result of the
+combinations $C[a]$ and $C[b]$ will satisfy exactly the same basic
+observations, for some sensible notion of "basic observation" on program
+results. As the name suggests, observational equivalence characterizes program
+fragments which cannot be distinguished by programatically interacting with
+them in any way, and it is in a precise sense the "best" (logically weakest)
+such notion. Observational equivalence is the gold standard, but it is also
+quite hard to work with directly, as it is as much of a property on two
+programs, as a statement on _all_ the contexts they could fit in. As simple as the
+programs may be, the intricacy of the possible contexts is without limit. In
+consequence, a fruitful area of research has been to develop alternative
+characterisations of observational equivalence, more intrinsically related to
+the programs at hand, with the hope of being easier to establish in concrete
+cases. Among such efforts, one particular strand of prime importance for us is
+dubbed _game semantics_.
 
 #[
 #let twice = txtt("twice")
@@ -103,17 +106,19 @@ let us return to our exposition.
 
 Under this light a program fragment can be understood on its own without any
 mention of contexts, as a blueprint or _strategy_, describing how to react to
-any possible action. Equivalence of such strategies---reacting the same way to
+any possible action by the other party. Equivalence of such strategies---reacting the same way to
 any action---can then serve as replacement for observational equivalence. Put
 more succintly, game semantics is a family of models in which program fragments
 are interpreted as strategies for restricted forms of dialogues between them
-and the rest of the program. This basic idea is quite flexible and suitable to
-model a wide range of features. In fact it originates as part of a wider
-interpretation not of programs in programming languages but of _proofs_, i.e.,
-evidences, in logical systems. Game semantics in this wider acception is
-sometimes known as _dialogical logic_, but we will not try to trace it down to
-its origins since the connection between logic and argumentative dialogues is
-most likely as old as logic itself.
+and the rest of the program. Although the rules of these dialogues are called "games",
+bear in mind that they are only tangentially related to games as studied in
+game _theory_, e.g., they are devoid of any notion of reward. This basic idea
+is quite flexible and suitable to model a wide range of programming language
+features. In fact it originates as part of a wider interpretation not of
+programs but of _proofs_, i.e., evidences, in logical systems. Game semantics
+in this wider acception is sometimes known as _dialogical logic_, but we will
+not try to trace it down to its origins since the connection between logical
+proofs and argumentative dialogues is most likely as old as logic itself.
 
 Although it has been motivated as a practical tool for reasoning with
 observational equivalence, and that its flexibility has been demonstrated to
@@ -121,18 +126,27 @@ apply to a number of advanced programming language features, game semantics has
 not yet truly gone out of the hands of the game semanticists and into the
 everyday toolkit of the generalist programming language researcher. This can be
 contrasted e.g. with the framework of _logical relations_, also known as
-#nm[Tait]'s method of computability~#mcite(dy: 4.2em, <Tait67>), which has
-intersecting usecases~#mcite(<DreyerNB12>) and which enjoys a very large number
-of introductory material, tutorials and proof walk throughs. While game
+#nm[Tait]'s method of computability~#mcite(<Tait67>), which has
+intersecting usecases~#mcite(dy: 3em, <DreyerNB12>) and which enjoys a very large number
+of introductory material, tutorials and other proof walk-throughs. While game
 semantics is relatively lively as a research area, it has seen comparably
 little activity in digesting existing methods, streamlining proofs and
 definitions, and making them technically approachable to a wider community.
-This venture is a wide ranging one, and it will require an important collective
-effort, but it is with this motivation in the back of the mind that this thesis
-is written. More precisely---and as we will detail in the following---this
-thesis commits to reconstructing from the ground up a particular flavour of
-dialog models, _operational game semantics_, a the mathematical language
-familiar to computer-assisted proofs: _type theory_.
+This thesis is no tutorial, but we will keep this motivation in the back of the
+mind.
+
+More concretely, the goal of this thesis is to reconstruct from the ground up a
+particular flavour of dialog models, _operational game semantics_ (OGS), and
+prove that equivalence of strategies entails observational equivalence. We do
+not build it for a precise programming language, but instead target a generic
+construction, readily applicable to several languages. This generality is not
+for the sake of it, but practically guided by getting to the core of the
+construction and separating it from the technicalities pertaining to the given
+language. We do so fully formally, in the mathematical language of _type
+theory_ common in computer-assisted proving. Before jumping to the content we
+will provide a bit more details on operational game semantics, but for now let
+us discuss some of the methodological underpinnings of computer-assisted
+proofs.
 
 == Programming Mathematics: How and Why?
 
@@ -155,7 +169,7 @@ proof, and at the end, when it will check that the proofs we have written are
 correct and missing no argument.
 
 There are a number of such systems, but the one we have used in the code
-artifact accompagning this thesis is Coq#peio[ref] (or the #txsc[Rocq] Prover,
+artifact accompagning this thesis is Coq~#mcite(<Coq>) (or the #txsc[Rocq] Prover,
 as it is in the process of being renamed). It is part of a wider family of
 systems which we will simply call _type theories_ and whose distinguishing
 characteristic is that they are in fact programming languages, although perhaps
@@ -224,12 +238,15 @@ concepts, however, we dare to say that this has been a rather organic task,
 mostly left to esthetic judgment and to time. By inflicting upon oneself the
 rigor of entirely formal reasoning as is done when using proof assistants,
 there is no other way than to rationalize the concepts down to their core. When
-programming, nothing can be "left for the reader", the gentleman's agreement
+programming, nothing can be "left for the reader", which is the gentleman's agreement
 providing an escape hatch for uninteresting and tedious mathematical writing,
 on facts which are usually self-evident for trained mathematicians with a good
 _mental_ representation of the objects in question. When programming, such
-_boilerplate_ or _glue code_, is usually linked it to improper data
-representations or abstractions and it is resolved by refactoring.
+"boilerplate" or "glue code", is usually caused improper data representations
+or missing abstractions and it can be resolved by refactoring. As such,
+formalization can encourage mathematicians to question the presentational
+status quo, and provide sound criteria for judging the suitability of
+abstractions.
 
 A third aspect concerns _accessibility_. Programming is quite notable for its
 number of self-taught practitioners, sometimes of very young age or otherwise
@@ -255,24 +272,161 @@ around for pointing out errors. All in all, there is no reason to believe that
 mathematics and computer science are better or worse than any other academic
 discipline with respect to gatekeeping. Yet a large amount of crucial knowledge
 is hidden behind unspoken conventions, behind a number of little ambiguities
-that the reader is assumed to resolve, or inside a sea of publication that
-requires a full time job to navigate. By building upon programming languages,
-which are executable and clearly defined, the bar to start understanding and
-producing meaningful mathematics can be enormously lowered. In fact, we can
-already observe several substancial contributions by students and
-non-professional mathematicians, in particular in type theory implementations
-such as Agda or #txsc[Lean] whose syntax is quite close to mainstream
-programming languages.
+that the reader is assumed to resolve, or inside a sea of publications that
+requires a full time job and a dedicated mentor to navigate. By building upon
+programming languages, which are executable and clearly specified, the bar to
+start understanding and producing meaningful mathematics can be enormously
+lowered. In fact, we can already observe several substancial contributions by
+students and non-professional mathematicians, in particular using type theory
+implementations such as Agda~#mcite(<Agda>) or #txsc[Lean]~#mcite(dy: 1em, <MouraU21>)
+whose syntax is quite close to mainstream programming languages.
 
-Now enough with the historical background and the philosophical statements of
-intent, what is this thesis truly about? We still have not left much through
-which was not known from the title: there will be operational game semantics
-and type theory. Before exposing the plan and jumping to the content, let us
-first provide a bit of technical details about operational game semantics.
+With the frame of discourse now set, let us jump back to operational game
+semantics and provide some technical grounding for the rest of this thesis.
+From this point on, we will start assuming some familiarity with the
+#short.llc.
 
 == A Primer to Operational Game Semantics
 
-== How to Read This Document
+To set some intuitions about operational game semantics and to introduce some
+design choices that will follow us throughout the thesis, let us start by
+describing its rules and the obtained strategies in the case of a very simple
+programming language: simply-typed #short.llc with recursive functions and
+booleans. We recall its syntax, typing, and operational semantics in @fig-stlc
+#peio[todo numbering].
+
+#figure(placement: bottom, caption: [#txsc[Stlc] Syntax and Semantics], box(stroke: 1pt, outset: 0.5em, radius: 0.3em)[
+  *Syntax*
+
+  $ & "Value"       && in.rev V, W && ::= x  | stlc.tt | stlc.ff | stlc.lam f,x. P \
+    & "Term"        && in.rev P, Q && ::= V | P th Q \
+    & "Eval. Cont." && in.rev E, F && ::= square | E th V | P th E $
+
+  *Reduction*
+
+  $ (stlc.lam f,x. P) th V quad & ~> quad P[f |-> (stlc.lam f,x. P), x |-> V] \
+    E[P]                 quad & ~> quad E[Q] quad quad "whenever " P ~> Q $
+
+  *Typing*
+
+  $ & "Type"        && in.rev A, B && ::= A -> B | stlc.bool \
+    & "Scope"       && in.rev Gamma, Delta && ::= epsilon | Gamma, x cl A $
+
+  #mathpar(block: true,
+    inferrule($Gamma in.rev x cl A$, $Gamma ⊢ x cl A$),
+    inferrule($$, $Gamma ⊢ stlc.tt cl stlc.bool$),
+    inferrule($$, $Gamma ⊢ stlc.ff cl stlc.bool$),
+    inferrule($Gamma, f cl A -> B, x cl A ⊢ P cl B$, $Gamma ⊢ stlc.lam f,x. P cl A -> B$),
+    inferrule(($Gamma ⊢ P cl A -> B$, $Gamma ⊢ Q cl A$), $Gamma ⊢ P th Q cl B$),
+  )
+]) <fig-stlc>
+
+The game goes as follows: the two players, unoriginally named "client" and
+"server", exchange function _symbols_ such as $txtt("twice")$ and $txtt("a")$
+from the previous example, but whose associated definition they do not disclose
+to each other. These symbols are introduced in two possible ways: by _calling_
+a previously introduced symbol or by _returning_ a value following a previous
+call. When calling, if the argument is a boolean it is passed as-is, but in
+case it is a function, a fresh symbol is introduced in its place. Similarly
+when returning, booleans are given explicitely but functions are again hidden
+and shared as a new symbol. This syntactic category consisting of true, false
+and fresh function variables can be recognized as _patterns_. Together with
+moves they are defined as follows.
+
+#let ret = txtt("ret")
+#let call = txtt("call")
+
+$ & "Pattern" && in.rev Z && ::= x | stlc.tt | stlc.ff \
+  & "Move"    && in.rev M && ::= ret(Z) | call(x, Z) $
+
+#remark[
+  Assuming some existing symbol $x cl (A -> B) -> C$, the move
+  $call(x, f)$ should really be understood as _binding_ the symbol $f cl A ->
+  B$ for the other player for the rest of the play.
+
+  Note that what we call "symbols" in the context of the game are technically
+  plain and simple variables.
+]
+
+The interpretation of terms as strategies is conceptually very simple. First,
+we evaluate the term to its normal form. If this does not terminate, the
+strategy never plays. If we find a normal form, it can be of two shapes: either
+a value $V$ or a term $E[x th V]$ stuck on a symbol $x$ introduced by the
+server. In the first case we play $ret(Z)$ and in the second $call(x, Z)$,
+where $Z$ is, depending on the type of $V$, either a fresh function symbol or
+the boolean $V$. Upon playing this move, we remember everything that we have
+not put into the move, that is, possibly the evaluation context $E$ and the
+function associated to the fresh symbol. Then, to react to moves, if the server
+plays $ret(Z)$, we find our last stored evaluation context $E$ and restart our
+strategy as above with $E[Z]$. If the server instead plays $call(x, Z)$, we
+look up the value $V$ associated to $x$ and restart with $V th Z$.
+
+To make this more precise we need to know how to represent strategies, and this
+is an important specificity distinguishing OGS from more usual game semantics
+models. In OGS, these are described quite concretely by mean of an _automaton_,
+or _transition system_, that is, by giving a set of states and a transition
+relation. More precisely, because a strategy needs to both play moves and
+respond to server moves, there will be two sets of states and two transition
+relations, respectively for _active positions_ and _passive positions_.
+
+#let sact = txtt("act")
+#let spas = txtt("pas")
+#let abstr = "abstr"
+#let coln = cnorm(sym.colon.double)
+
+For our OGS strategy, an active state consists of a term $P$ being evaluated, and
+the data that we need to remember: a stack of evaluation contexts $S$ and an
+environment of function values $gamma$. Passive states only contains the
+evaluation stack and the environment. We write them respectively as $sact(P, S, gamma)$
+and $spas(S, gamma)$. Before giving the transitions, let us precise
+the _abstraction_ procedure, which hides function expressions from values. It
+takes a type and a value of that type and returns a pattern, together with a
+_filling_, i.e., an environment containing the value which may have been
+abstracted.
+
+$ & abstr_(S -> T)(V)    && := (x, {x |-> V}) quad #[with $x$ a fresh symbol] \
+  & abstr_(stlc.bool)(V) && := (V, {}) $
+
+#let red(x) = math.attach(math.stretch($=>$, size: 4em), t: x)
+
+The transitions are given by a relation between states, labeled by the move
+$M$ which is played or received, or by $tau$, signifying a sort of silent move,
+where the strategy is "thinking", i.e., reducing the current term.
+
+$ & sact(P, S, gamma)         && quad red(tau)        quad && sact(Q, S, gamma)               && #[whenever $P ~> Q$] \
+  & sact(V, S, gamma)         && quad red(ret(Z))     quad && spas(S, gamma union.plus delta)        && #[with $(Z, delta) := abstr(V)$] \
+  & sact(E[x th V], S, gamma) && quad red(call(x, Z)) quad && spas(S cnorm(colon.double) E, gamma union.plus delta) quad && #[with $(Z, delta) := abstr(V)$] \
+  & spas(S cnorm(colon.double) E, gamma)       && quad red(ret(Z))     quad && sact(E[Z], S, gamma) && \
+  & spas(S, gamma)            && quad red(call(x, Z)) quad && sact(gamma(x) th Z, S, gamma) && $
+
+A term $P$ can now be interpreted as a strategy by embeding it as the
+initial active state $sact(P, epsilon, {})$. Then, strategies are considered equivalent
+when they are _weakly bisimilar_, which in this case essentially means that they
+have the same set of _traces_, that is, the infinite sequences of moves obtained by
+unfolding the transitions starting from the initial state. The primary task to
+make sure the model is sensible is to prove that for the above given strategy,
+when two terms are bisimilar, then they are observationally equivalent---a
+statement which we will call _correctness_ w.r.t. observational equivalence.
+
+Although this game seems a priori relatively reasonable, our treatement in this
+thesis will require a slight change of perspective. As a hint, it is slightly
+bothering that our strategy requires two devices instead of one for remembering
+what it needs to: a stack and an environment. The blocker for putting
+evaluation contexts into the environment is that they are not named by a
+symbol. Instead, they are always referred to implicitely, as in $ret(Z)$ which
+implicitely means "return $Z$ to the context at the top of the stack", much
+like $call(x, Z)$ means "send $Z$ to the function $x$". WIP
+
+/*
+Now enough with the historical background and the philosophical statements of
+intent, what is this thesis truly about? We still have not said much beyond
+what could be known from the title: there will be operational game semantics
+and type theory. Before explaining the plan and jumping to the content, let us
+first provide a bit more of technical details about operational game semantics.
+*/
+
+
+== How to Read This Thesis
 
 /*
 #pagebreak()

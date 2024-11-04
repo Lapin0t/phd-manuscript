@@ -18,13 +18,6 @@
 #let remark = my_thm("Remark")
 
 #let centering(it) = align(center, box(it))
-#let txtt(it) = text(size: 8pt, font: "Fira Mono", it)
-#let txsc(it) = smallcaps(it)
-
-// surnames
-// TODO: to smallcaps or not to smallcaps??
-#let nm(it) = txsc(it)
-//#let nm(it) = it
 
 // NOTES
 #let note(it) = box(inset: 0em, outset: (top: 0.3em, bottom: 0.3em, rest: 0.1em),
@@ -82,21 +75,25 @@
   }
 }
 
-#let margin-note(dy: 0em, content) = {
+#let margin-note(mark: false, dy: 0em, content) = {
   let note = block(width: 4cm, {
     set text(size: 0.75em)
+    if mark { box(move(dy: 0.2em, scale(150%, "* "))) }
     content
   })
-  box(with-absolute-pos(pos => {
-    let dx = {
-      if calc.even(here().page()) {
-        page.margin.outside - 4.4cm
-      } else {
-        page.width - page.margin.outside + 0.4cm
+  box({
+    if mark { "*" }
+    with-absolute-pos(pos => {
+      let dx = {
+        if calc.even(here().page()) {
+          page.margin.outside - 4.4cm
+        } else {
+          page.width - page.margin.outside + 0.4cm
+        }
       }
-    }
-    place(dx: dx - pos.x, dy: dy - 0.5em, note)
-  }))
+      place(dx: dx - pos.x, dy: dy - 0.5em, note)
+    })
+  })
 }
 
 #let num-cite(key, ..args) = cite(key, style: "/ieee-fullname.csl", ..args)

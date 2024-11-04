@@ -133,6 +133,9 @@
     <group delimiter=", ">
       <text macro="edition"/>
       <group delimiter=" ">
+        <text variable="collection-title"/>
+      </group>
+      <group delimiter=" ">
         <text term="volume" form="short"/>
         <number variable="volume" form="numeric"/>
       </group>
@@ -220,6 +223,10 @@
         <!-- doi: 10.1000/xyz123. -->
         <text variable="DOI" prefix=" doi: " suffix="."/>
       </else-if>
+      <else-if match="any" variable="ISBN">
+        <!-- doi: 10.1000/xyz123. -->
+        <text variable="ISBN" prefix=" isbn: " suffix="."/>
+      </else-if>
       <else-if variable="URL">
         <!-- Accessed: Mon. DD, YYYY. [Medium]. Available: https://URL.com/ -->
         <group delimiter=". " prefix=" " suffix=". ">
@@ -298,7 +305,11 @@
   <!-- Citation -->
   <citation collapse="citation-number">
     <sort>
+<!--
       <key variable="citation-number"/>
+-->
+      <key macro="author"/>
+      <key macro="issued"/>
     </sort>
     <layout delimiter=", ">
       <group prefix="[" suffix="]" delimiter=", ">
@@ -309,6 +320,13 @@
   </citation>
   <!-- Bibliography -->
   <bibliography entry-spacing="0" second-field-align="flush">
+    <sort>
+<!--
+      <key variable="citation-number"/>
+-->
+      <key macro="author"/>
+      <key macro="issued"/>
+    </sort>
     <layout>
       <!-- Citation Number -->
       <text variable="citation-number" prefix="[" suffix="]"/>

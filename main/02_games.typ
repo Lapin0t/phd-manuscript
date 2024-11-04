@@ -744,7 +744,7 @@ types are derivable in the presence of impredicativity.
 The basis of coq-coinduction is the observation that with impredicativity,
 #base.Prop forms a complete lattice. In fact, not only #base.Prop, but also
 predicates $X -> base.Prop$ or relations $X -> Y -> base.Prop$, our case of
-interest for bisimilarity. By the Knaster-Tarski theorem one can obtain the
+interest for bisimilarity. By the #nm[Knaster]-#nm[Tarski] theorem~#mcite(<Tarski55>) one can obtain the
 greatest fixpoint $nu f := or.big { x | x lt.tilde f th x }$ of any monotone
 endo-map $f$ on the complete lattice.
 #yann[Ref de KT]
@@ -797,7 +797,7 @@ In this way, one delays until actually required in the proof the choice and use
 of any particular enhancement $g lt.tilde t_f$.#yann[Techniquement ça se passe aussi bien que cela aussi parce que le companion contient l'identité, f lui-même, et son carré notamment, pour vraiment pouvoir sortir des up-to unitaires à la volée pendant la preuve.] This theory based on the
 companion is the one used in the Coq formalization of this thesis. However,
 since I started writing the formalization, an even more practical solution,
-Steven Schäfer and Gert Smolka's _tower induction_~#mcite(<SchaferS17>), has
+#nm[Schäfer] and #nm[Smolka]'s _tower induction_~#mcite(<SchaferS17>), has
 been merged into coq-coinduction. However, I did not have the time to
 port my Coq development to the new version. I will nonetheless present it
 here and use it in the rest of the thesis.
@@ -936,7 +936,7 @@ to subsume the tools provided by the companion construction and by parametrized
 coinduction~#mcite(<HurNDV13>). The coq-coinduction library follows-up with
 some helpers for deriving inf-closedness of predicates, the definition of the
 most useful instances of complete lattices and some generic duality and
-symmetry arguments. Schäfer and Smolka~#mcite(<SchaferS17>) follow-up by
+symmetry arguments. #nm[Schäfer] and #nm[Smolka]~#mcite(<SchaferS17>) follow-up by
 deriving the companion and then provide a case study on strong bisimilarity in
 the Calculus of Communicating Processes (CCS).
 
@@ -1618,7 +1618,7 @@ effects", i.e., helpers to perform a silent step or play a move.
 Interaction trees~#mcite(<XiaZHHMPZ20>) were originally introduced to encode
 arbitrary---i.e., possibly non-terminating---computation. As such, apart from
 monadic operators, they support _iteration operators_, which intuitively allow
-one to write arbitrary "while" loops. Pioneered by Calvin Elgot in the setting
+one to write arbitrary "while" loops. Pioneered by Calvin #nm[Elgot] in the setting
 of fixed points #tom[Homog: fixed points vs fixpoints] in algebraic
 theories~#mcite(<Elgot75>), iteration in monadic computations enjoys a vast
 literature. Recalling that a monadic term $a cl M th X$ can be understood as an
@@ -1699,7 +1699,7 @@ coherent choice of solution~#mcite(<GoncharovRP17>)~#mcite(dy: 4em,
 <MiliusL17a>). This criterion may be syntactic as in the first family, or
 vacuous (every equation is considered guarded) as in the second
 family. The iteration operator may then be axiomatized to be coherent in the
-style of iteration or Elgot monads, and uniqueness of solutions may be framed as
+style of iteration or #nm[Elgot] monads, and uniqueness of solutions may be framed as
 the most restrictive of these coherence conditions. #tom[La phrase précédente
 n'est pas claire, je pense. ] For the type theory practicioner seeking a modern
 account, I recommend in particular Goncharov et al.~#num-cite(<GoncharovRP17>),
@@ -1712,7 +1712,7 @@ which also features much appreciated graphical depictions of the coherence laws.
 In the original interaction tree library~#mcite(<XiaZHHMPZ20>), an iteration
 _operator_ has been devised, which constructs fixpoints of arbitrary equation
 systems up to weak bisimilarity. This makes the interaction tree monad
-quotiented by weak bisimilarity into a complete Elgot monad.
+quotiented by weak bisimilarity into a complete #nm[Elgot] monad.
 
 For readability, let us introduce two helpers for copairing. First the usual one:
 given $f cl X => itree.t_Sigma th A$ and $g cl Y => itree.t_Sigma th A$, define
@@ -1784,7 +1784,7 @@ Furthermore, we prove the following monotonicity statement for iteration.
 ]
 
 We will not prove here that this iteration operator satisfies the requirements
-of complete Elgot monads. These properties could be useful for reasoning about
+of complete #nm[Elgot] monads. These properties could be useful for reasoning about
 interaction trees constructed by iteration, but they are quite limited compared
 to something such as uniqueness of solutions. The prime shortcoming of these
 coherence properties, is that they are limited to rearranging equation systems.
@@ -1798,7 +1798,7 @@ uniqueness of solutions.
 === Guarded Iteration
 
 A general trend in the research on iteration operators is the observation that,
-very often, the unguarded iteration operator of, e.g., an Elgot monad, may be
+very often, the unguarded iteration operator of, e.g., an #nm[Elgot] monad, may be
 shown to somehow derive from an underlying guarded iteration operator enjoying
 unique fixed points, with the former monad typically being a quotient of the
 latter.  With interaction trees, we find ourselves exactly in this situation.

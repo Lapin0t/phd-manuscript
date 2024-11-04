@@ -20,6 +20,13 @@
 #let cbin(it) = math.class("binary", it)
 #let mtxt(it) = text(font: "New Computer Modern Math", it)
 
+#let txtt(it) = text(size: 8pt, font: "Fira Mono", it)
+#let txsc(it) = smallcaps(it)
+
+// surnames
+// TODO: to smallcaps or not to smallcaps??
+#let nm(it) = txsc(it)
+//#let nm(it) = it
 
 // typing colon
 #let cl = h(0.2em) + ":" + h(0.3em)
@@ -98,6 +105,15 @@
   yes: cs(cop("yes")),
   no: cs(cop("no")),
   nat: de(cop($ℕ$)),
+)
+
+#let stlc = (
+  tt: txtt("tt"),
+  ff: txtt("ff"),
+  xif: txtt("if"),
+  lam: $lambda^"rec"$,
+  bool: txtt("bool"),
+  y: txtt("fix"),
 )
 
 #let subs = (
