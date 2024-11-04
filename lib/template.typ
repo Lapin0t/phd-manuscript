@@ -1,5 +1,5 @@
 #import "@preview/hydra:0.5.1": hydra
-#import "/lib/macros.typ": *
+#import "/lib/all.typ": *
 
 #let in-outline = state("in-outline", false)
 #let flex-caption(long, short) = context {
