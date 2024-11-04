@@ -295,16 +295,18 @@ programming language: simply-typed #short.llc with recursive functions and
 booleans. We recall its syntax, typing, and operational semantics in @fig-stlc
 #peio[todo numbering].
 
-#figure(placement: bottom, caption: [#txsc[Stlc] Syntax and Semantics], box(stroke: 1pt, outset: 0.5em, radius: 0.3em)[
+=== First Steps
+
+#figure(placement: bottom, caption: [#txsc[Stlc] Syntax and Semantics], box(stroke: 1pt, outset: 0.7em, radius: 0.3em)[
   *Syntax*
 
   $ & "Value"       && in.rev V, W && ::= x  | stlc.tt | stlc.ff | stlc.lam f,x. P \
-    & "Term"        && in.rev P, Q && ::= V | P th Q \
-    & "Eval. Cont." && in.rev E, F && ::= square | E th V | P th E $
+    & "Term"        && in.rev P, Q && ::= V | P Q \
+    & "Eval. Cont." && in.rev E, F && ::= square | E V | P E $
 
   *Reduction*
 
-  $ (stlc.lam f,x. P) th V quad & ~> quad P[f |-> (stlc.lam f,x. P), x |-> V] \
+  $ (stlc.lam f,x. P) V quad & ~> quad P[f |-> (stlc.lam f,x. P), x |-> V] \
     E[P]                 quad & ~> quad E[Q] quad quad "whenever " P ~> Q $
 
   *Typing*
@@ -317,7 +319,7 @@ booleans. We recall its syntax, typing, and operational semantics in @fig-stlc
     inferrule($$, $Gamma ⊢ stlc.tt cl stlc.bool$),
     inferrule($$, $Gamma ⊢ stlc.ff cl stlc.bool$),
     inferrule($Gamma, f cl A -> B, x cl A ⊢ P cl B$, $Gamma ⊢ stlc.lam f,x. P cl A -> B$),
-    inferrule(($Gamma ⊢ P cl A -> B$, $Gamma ⊢ Q cl A$), $Gamma ⊢ P th Q cl B$),
+    inferrule(($Gamma ⊢ P cl A -> B$, $Gamma ⊢ Q cl A$), $Gamma ⊢ P Q cl B$),
   )
 ]) <fig-stlc>
 
@@ -340,12 +342,14 @@ $ & "Pattern" && in.rev Z && ::= x | stlc.tt | stlc.ff \
   & "Move"    && in.rev M && ::= ret(Z) | call(x, Z) $
 
 #remark[
-  Assuming some existing symbol $x cl (A -> B) -> C$, the move
-  $call(x, f)$ should really be understood as _binding_ the symbol $f cl A ->
-  B$ for the other player for the rest of the play.
+  Assuming some existing symbol $x cl (A -> B) -> C$, the move $call(x, y)$
+  should really be understood as _binding_ the symbol $y cl A -> B$ for the
+  other player for the rest of the play, which is moreover asserted fresh. It
+  is a _location_, while $x$ on the other hand is a _pointer_.
 
   Note that what we call "symbols" in the context of the game are technically
-  plain and simple variables.
+  plain and simple variables. The name is a reference to the "program symbols"
+  as appear in shared library object files.
 ]
 
 The interpretation of terms as strategies is conceptually very simple. First,
@@ -359,7 +363,7 @@ not put into the move, that is, possibly the evaluation context $E$ and the
 function associated to the fresh symbol. Then, to react to moves, if the server
 plays $ret(Z)$, we find our last stored evaluation context $E$ and restart our
 strategy as above with $E[Z]$. If the server instead plays $call(x, Z)$, we
-look up the value $V$ associated to $x$ and restart with $V th Z$.
+look up the value $V$ associated to $x$ and restart with $V Z$.
 
 To make this more precise we need to know how to represent strategies, and this
 is an important specificity distinguishing OGS from more usual game semantics
@@ -389,44 +393,153 @@ $ & abstr_(S -> T)(V)    && := (x, {x |-> V}) quad #[with $x$ a fresh symbol] \
 
 #let red(x) = math.attach(math.stretch($=>$, size: 4em), t: x)
 
-The transitions are given by a relation between states, labeled by the move
-$M$ which is played or received, or by $tau$, signifying a sort of silent move,
-where the strategy is "thinking", i.e., reducing the current term.
+The transitions are given by relations between states, labeled by the move $M$
+which is played or received. The active and passive transitions are given as
+follows.
 
-$ & sact(P, S, gamma)         && quad red(tau)        quad && sact(Q, S, gamma)               && #[whenever $P ~> Q$] \
+/*$ & sact(P, S, gamma)         && quad red(tau)        quad && sact(Q, S, gamma)               && #[whenever $P ~> Q$] \
   & sact(V, S, gamma)         && quad red(ret(Z))     quad && spas(S, gamma union.plus delta)        && #[with $(Z, delta) := abstr(V)$] \
   & sact(E[x th V], S, gamma) && quad red(call(x, Z)) quad && spas(S cnorm(colon.double) E, gamma union.plus delta) quad && #[with $(Z, delta) := abstr(V)$] \
   & spas(S cnorm(colon.double) E, gamma)       && quad red(ret(Z))     quad && sact(E[Z], S, gamma) && \
-  & spas(S, gamma)            && quad red(call(x, Z)) quad && sact(gamma(x) th Z, S, gamma) && $
+  & spas(S, gamma)            && quad red(call(x, Z)) quad && sact(gamma(x) th Z, S, gamma) && $*/
 
-A term $P$ can now be interpreted as a strategy by embeding it as the
-initial active state $sact(P, epsilon, {})$. Then, strategies are considered equivalent
-when they are _weakly bisimilar_, which in this case essentially means that they
-have the same set of _traces_, that is, the infinite sequences of moves obtained by
-unfolding the transitions starting from the initial state. The primary task to
+#let xred = $attach(~>, tr: *)$
+
+#block(stroke: 1pt, width: 100%, outset: (y: 0.7em), radius: 0.3em, spacing: 2em)[
+  $ & sact(P, S, gamma) && quad red(ret(Z))     quad && spas(S, gamma union.plus delta)
+      quad && #block(move(dy: -0.2em, text(size: 0.8em)[whenever $P xred V$ and \ $(Z, delta) := abstr(V)$])) \
+    & sact(P, S, gamma) && quad red(call(x, Z)) quad && spas(S cnorm(colon.double) E, gamma union.plus delta)
+      quad && #block(move(dy: -0.2em, text(size: 0.8em)[whenever $P xred E[x V]$ and \ $(Z, delta) := abstr(V)$])) \
+    & spas(S cnorm(colon.double) E, gamma) && quad red(ret(Z))     quad && sact(E[Z], S, gamma) && \
+    & spas(S, gamma)                       && quad red(call(x, Z)) quad && sact(V Z, S, gamma) && quad quad #text(size: 0.8em)[when $(x |-> V) in gamma$] $
+]
+
+A term $P$ can now be interpreted as a strategy by embeding it as the initial
+active state $sact(P, epsilon, {})$. Then, strategies are considered equivalent
+when they are _bisimilar_, which in this case essentially means that they have
+the same set of _traces_, that is, the infinite sequences of moves obtained by
+unfolding any possible transition starting from the initial state. The primary task to
 make sure the model is sensible is to prove that for the above given strategy,
 when two terms are bisimilar, then they are observationally equivalent---a
-statement which we will call _correctness_ w.r.t. observational equivalence.
+statement called _soundness_ of OGS w.r.t. observational equivalence.
+#peio[un mot sur la preuve de soundness/adequacy/composition, et sur CIU?]
 
-Although this game seems a priori relatively reasonable, our treatement in this
-thesis will require a slight change of perspective. As a hint, it is slightly
-bothering that our strategy requires two devices instead of one for remembering
-what it needs to: a stack and an environment. The blocker for putting
-evaluation contexts into the environment is that they are not named by a
-symbol. Instead, they are always referred to implicitely, as in $ret(Z)$ which
-implicitely means "return $Z$ to the context at the top of the stack", much
-like $call(x, Z)$ means "send $Z$ to the function $x$". WIP
+Although this game seems a priori relatively reasonable, before starting our
+formal treatement in this thesis we will make a slight change of perspective.
+As a hint, it is slightly bothering that our strategy requires two devices
+instead of one for remembering what it needs to: a stack and an environment.
+The blocker for putting evaluation contexts into the environment is that they
+are not named by a symbol. Instead, they are always referred to implicitely, as
+e.g. in $ret(Z)$ which can be read "return $Z$ to the context at the _top
+of the stack_", much like $call(x, Z)$ reads "send $Z$ to the function $x$".
+This change of perspective thus involves naming contexts with symbols, as
+functions are, and unify the return and call moves into one: symbol
+_observation_.
 
-/*
-Now enough with the historical background and the philosophical statements of
-intent, what is this thesis truly about? We still have not said much beyond
-what could be known from the title: there will be operational game semantics
-and type theory. Before explaining the plan and jumping to the content, let us
-first provide a bit more of technical details about operational game semantics.
-*/
+=== More Symbols and Less Moves
 
+We amend the game as follows. First, the exchanged symbols may now refer either
+to functions or to evaluation contexts, which we will sometimes (but not
+always) distinguish by writing them $alpha$, $beta$, etc. Next, as now both
+move kinds explicit the symbol they are targetting, we will separate it
+more clearly from the arguments, writing $alpha dot ret(Z)$ and $x dot call(Z, alpha)$.
+Note that function calling now has a second argument $alpha$, binding the
+continuation symbol on which this call expects a return. They are precisely
+defined as follows.
+
+$ & "Observation"    && in.rev O && ::= ret(Z) | call(Z, alpha) \
+  & "Move"           && in.rev M && ::= x dot O $
+#margin-note(dy: -3em)[
+  The Agda programmer or #short.uuc afficionado will surely be happy to recognize
+  "observations" as copatterns and "moves" as postfix copattern applications. #peio[ref]
+]
+
+#let conf(x, y) = $angle.l #x || #y angle.r$
+
+To adapt the OGS strategy to this new game, we do away with the context stack,
+as was our motivation. In compensation, we now need to track explicitely the
+"current context symbol". The active states thus comprise a _named_ program
+$conf(P, alpha)$, i.e. a pair of a program and a continuation symbol, and an
+environment $gamma$ mapping symbols to generalized values, that is, function
+symbols to function values and context symbols to _named contexts_ $conf(E,
+    alpha)$. The passive states now simply consist of an environment. The
+transition system can be rewritten as follows.
+
+#block(stroke: 1pt, width: 100%, outset: (y: 0.7em), radius: 0.3em, spacing: 2em)[
+  $ & sact(conf(P, alpha), gamma) && quad red(alpha th dot ret(Z))     quad && spas(gamma union.plus delta)
+      quad && #block(move(dy: -0.2em, text(size: 0.8em)[whenever $P xred V$ and \ $(Z, delta) := abstr(V)$])) \
+    & sact(conf(P, alpha), gamma) && quad red(x th dot call(Z, beta)) quad && spas(gamma union.plus delta')
+      quad && #block(move(dy: 0.2em, text(size: 0.8em)[whenever $P xred E[x V]$, \ $(Z, delta) := abstr(V)$ and \ $delta' := delta union.plus {beta |-> conf(E, alpha)}$])) $
+  $ & spas(gamma) && quad red(alpha th dot ret(Z))     quad && sact(conf(E[Z], beta), gamma)
+      && quad quad #text(size: 0.8em)[when $(alpha |-> conf(E, beta)) in gamma$] \
+    & spas(gamma)                       && quad red(x th dot call(Z, beta)) quad && sact(conf(V Z, beta), gamma)
+      && quad quad #text(size: 0.8em)[when $(x |-> V) in gamma$] $
+]
+
+To put the final blow, let us fuse the definition of the return and call transitions, for
+active transitions and passive transitions. For the active transitions, notice that
+in essence, what is happening is that the named program is reduced to a named normal
+form, which is subsequently split into three parts: the head symbol, an observation
+on it with more or less opaque arguments, and a small environment storing the value of
+anything that has been hidden. Let us define this splitting as follows, where as
+usual we make use of $(Z, gamma) := abstr(V)$.
+
+#let split = "split"
+$ & split th conf(V, alpha)         && := (alpha dot ret(Z), gamma) \
+  & split th conf(E[x V], alpha) && := (x dot call(Z, beta), gamma union.plus {beta |-> conf(E, alpha)}) $
+
+Our active transition now satisfyingly reads as follows.
+$ & sact(conf(P, alpha), gamma) && quad red(x th dot th O) quad && spas(gamma union.plus delta)
+      quad && #block(move(dy: -0.2em, text(size: 0.8em)[whenever $P xred N$ and \ $(x dot O, delta) := split th conf(N, alpha)$])) $
+
+To unify the two passive transitions, what we are missing is a generalized
+"observation application" operator $dot.circle$, which would subsume both context filling and
+function application. Define it as follows.
+
+$ & conf(E, alpha) th && dot.circle th ret(Z) && := conf(E[Z], alpha) \
+  & V && dot.circle th call(Z, alpha)      && := conf(V Z, alpha) $
+
+The passive transition can now be recovered quite simply, and we reproduce the whole
+transition system one last time in its final form.
+
+#block(stroke: 1pt, width: 100%, outset: (y: 0.7em), radius: 0.3em, spacing: 2em)[
+$ & sact(conf(P, alpha), gamma) && quad red(x th dot th O) quad && spas(gamma union.plus delta)
+      && quad #block(move(dy: -0.2em, text(size: 0.8em)[when $P xred N$ and \ $(x dot O, delta) := split th conf(N, alpha)$])) \
+  & spas(gamma)                 && quad red(x th dot th O) quad && sact(X dot.circle O, gamma)
+      && quad #text(size: 0.8em)[when $(x |-> X) in gamma$] $
+]
+
+The path to generalize the OGS construction to other languages is now ready: we
+will abstract over the notions of named term, generalized values, observations,
+normal form splitting and observation application. Notice how both the
+explicit threading of evaluation contexts as well as the named term
+construction $conf(P, alpha)$ are reminescent of abstract machines based
+presentations of a language's operational semantics. In this sense, in our
+opinion, OGS is first and foremost a construction on an abstract machine, and
+not on a "programming language". This point of view will guide us during the
+axiomatization, as we will indeed entirely forget about bare terms and
+evaluation contexts, keeping only _configurations_ (e.g. named terms) and
+generalized values. On top of streamlining the OGS, letting go of evaluation
+contexts will also greatly simplify the necessary syntactic metatheory, as
+these "programs with a hole" are perhaps _fun_, but certainly not
+_easy_~#mcite(<AbbottAGM03>)#mcite(dy: 4em, <McBride08>).
+Yet as we have seen, this does not preclude to treating languages
+given by more traditional small- or big-step operational semantics, or even
+with syntactic denotational semantics into some computational metalanguage.
+
+
+
+As it happens, this new game with
+explicit return pointers is common in OGS constructions for languages with
+first-class continuations~#mcite(<LassenL07>)#mcite(dy: 3em, <Laird07>)#mcite(dy: 5em, <JaberM21>). However, we stress that even for
+languages without such control operators, as in our #short.llc, it is an
+important tool to streamline the system.
+
+Let us now expose how this thesis will unfold.
 
 == How to Read This Thesis
+
+WIP
 
 /*
 #pagebreak()
