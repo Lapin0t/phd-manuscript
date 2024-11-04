@@ -323,6 +323,8 @@ booleans. We recall its syntax, typing, and operational semantics in @fig-stlc
   )
 ]) <fig-stlc>
 
+Our presentation will more or less follow #nm[Laird]~#mcite(<Laird07>), keeping
+only what is required for our simple example language.
 The game goes as follows: the two players, unoriginally named "client" and
 "server", exchange function _symbols_ such as $txtt("twice")$ and $txtt("a")$
 from the previous example, but whose associated definition they do not disclose
@@ -531,7 +533,7 @@ with syntactic denotational semantics into some computational metalanguage.
 
 As it happens, this new game with
 explicit return pointers is common in OGS constructions for languages with
-first-class continuations~#mcite(<LassenL07>)#mcite(dy: 3em, <Laird07>)#mcite(dy: 5em, <JaberM21>). However, we stress that even for
+first-class continuations~#mcite(<LassenL07>)#mcite(dy: 3em, <JaberM21>). However, we stress that even for
 languages without such control operators, as in our #short.llc, it is an
 important tool to streamline the system.
 
