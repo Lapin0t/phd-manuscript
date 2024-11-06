@@ -95,6 +95,7 @@
   snd: pr("snd"),
   bot: de(cop(sym.bot)),
   exfalso: de(cop("ex-falso")),
+  top: de(cop(sym.top)),
   int: de(cnorm("∫")),
   vsum: de(cop("SumView")),
   vlft: cs(cop($"v-left"$)),
@@ -322,6 +323,7 @@
   //nf2obs: de(cop($"nf"cnorm(->)"obs"$)),
   //named: de(math.cal(math.bold("N"))),
   lenc: de(cop("length")),
+  eltupg: de(cop("elt-upgr")),
 )
 
 #let sub = (
@@ -436,3 +438,54 @@
   nf2ogs: de(cop("NF-to-OGS")),
   mstrat: de(cop("NF-mstrat")),
 )
+
+#let jwa = (
+  cmd: de(cop("cmd")),
+  val: de(cop("val")),
+  typ: de(cop("typ")),
+  isneg: de(cop("is-neg")),
+  //ntyp: de(cop($not"-typ"$)),
+  //nctx: de(cop($not"-ctx"$)),
+  ntyp: de(cop($"typ"^"neg"$)),
+  nctx: de(cop($"ctx"^"neg"$)),
+  pat: de(cop("pat")),
+  dom: de(cop("dom")),
+  obs: de(cop("obs")),
+  p2v: de(cop($"p-emb"$)),
+  v2p: de(cop($"split-pat"$)),
+  v2a: de(cop($"split-fill"$)),
+  jcmd: de(crel(math.attach("⊢", tr: "c"))),
+  jval: de(crel(math.attach("⊢", tr: "v"))),
+  prod: cs(cbin($times$)),
+  sum: cs(cbin($+$)),
+  base: cs(cop($BB$)),
+  neg: cs($not$),
+  capp: cs(cbin($arrow.tr$)),
+  vvar: cs(cop("var")),
+  vlam: cs(cop($gamma$)),
+  vinl: cs(cop("inl")),
+  vinr: cs(cop("inr")),
+  vyes: cs(cop("true")),
+  vno: cs(cop("false")),
+  //plam: cs(cop(circle($not$, stroke: 0.5pt + colors.cs, inset: 0pt, outset: -0.5pt))),
+  plam: cs(cop($square.filled$)),
+  //plam: cs(cop(h(1pt) + box($not^p$, stroke: 0.5pt + colors.cs, outset: (bottom: 1pt, top: 0.5pt, left: 0.5pt, right: 0.2pt), radius: 1pt))),
+  pinl: cs(cop($"inl"^p$)),
+  pinr: cs(cop($"inr"^p$)),
+  pyes: cs(cop($"true"^p$)),
+  pno: cs(cop($"false"^p$)),
+  refold: de(cop("refold")),
+  eval: de(cop("eval")),
+  evalstep: de(cop("eval-step")),
+  apply: de(cop("apply")),
+  jwa: de(cop("JWA")),
+  patX: de(cop($"pat"^*$)),
+  domX: de(cop($"dom"^*$)),
+  embX: de(cop($"p-emb"^*$)),
+)
+#let jwavpair(x, y) = $cs(angle.l) #x cs(",") #y cs(angle.r)$
+#let jwappair(x, y) = $cs(angle.l) #x cs(",") #y cs(angle.r^p)$
+#let jwaletin(x, y) = $cs("split") #x cs("in") #y$
+#let jwaxxletin(x, y) = $cs("let") #x cs("in") #y$
+//#let jwacasein(x, y, z) = $cs("if") #x cs("then") #y cs("else") #z$
+#let jwacasein(x, y, z) = $cs("case") #x cs("in") cs("[") #y cs(",") #z cs("]")$

@@ -195,6 +195,8 @@
   show "Coq": txsc("Coq") // txsc("Rocq")
   show "OGS": txsc("Ogs")
   show "NF": txsc("Nf")
+  show "JWA": txsc("Jwa")
+  show "CBPV": txsc("Cbpv")
   show "coq-coinduction": txtt("coq-coinduction")
 
   body

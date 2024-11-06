@@ -25,8 +25,8 @@
 #include "main/03_substitution.typ"
 #include "main/04_ogs.typ"
 #include "main/05_soundness.typ"
-#include "main/06_instances.typ"
 #include "main/07_nf_bisim.typ"
+#include "main/06_instances.typ"
 
 #show: back-matter
 

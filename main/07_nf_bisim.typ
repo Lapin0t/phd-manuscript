@@ -297,7 +297,7 @@ We can now prove the normal form bisimulation correctness theorem.
   following statement holds.
 
   $ nfinterpA(c_1) game.weqA nfinterpA(c_2) -> c_1 ogs.subeq c_2 $
-]
+] <thm-nf-correctness>
 #proof[
   Assume $c_1$ and $c_2$ such that $nfinterpA(c_1) game.weqA nfinterpA(c_2)$. By @thm-correctness
   it is sufficient to prove $ogsinterpA(c_1) game.weqA ogsinterpA(c_2)$.

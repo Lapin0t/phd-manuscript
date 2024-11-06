@@ -524,7 +524,7 @@ evaluation contexts, keeping only _configurations_ (e.g. named terms) and
 generalized values. On top of streamlining the OGS, letting go of evaluation
 contexts will also greatly simplify the necessary syntactic metatheory, as
 these "programs with a hole" are perhaps _fun_, but certainly not
-_easy_~#mcite(<AbbottAGM03>)#mcite(dy: 4em, <McBride08>).
+_easy_~#mcite(dy: -5em, <AbbottAGM03>)#mcite(dy: -1em, <McBride08>)#mcite(dy: 1em, <HirschowitzL22>).
 Yet as we have seen, this does not preclude to treating languages
 given by more traditional small- or big-step operational semantics, or even
 with syntactic denotational semantics into some computational metalanguage.
@@ -533,7 +533,7 @@ with syntactic denotational semantics into some computational metalanguage.
 
 As it happens, this new game with
 explicit return pointers is common in OGS constructions for languages with
-first-class continuations~#mcite(<LassenL07>)#mcite(dy: 3em, <JaberM21>). However, we stress that even for
+first-class continuations~#mcite(dy: 1em, <LassenL07>)#mcite(dy: 4em, <JaberM21>). However, we stress that even for
 languages without such control operators, as in our #short.llc, it is an
 important tool to streamline the system.
 

@@ -595,7 +595,7 @@ $ base.int th {X cl base.Type} cl (X -> base.Prop) -> base.Type \
                   base.vrgt th j &:= Delta .base.snd th i)),
       Gamma ctx.var alpha & := Gamma .base.fst ctx.var alpha .base.fst,
       ...) $
-]
+] <def-subset-scope>
 
 *Direct Sum of Scopes* #sym.space.quad Another useful instance #tom[forward ref?
 ou ref à une annonce passée?] is the case
