@@ -438,7 +438,7 @@ This change of perspective thus involves naming contexts with symbols, as
 functions are, and unify the return and call moves into one: symbol
 _observation_.
 
-=== More Symbols and Less Moves
+=== More Symbols and Less Moves <sec-intro-cps>
 
 We amend the game as follows. First, the exchanged symbols may now refer either
 to functions or to evaluation contexts, which we will sometimes (but not

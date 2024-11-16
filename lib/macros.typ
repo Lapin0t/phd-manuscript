@@ -37,6 +37,7 @@
   it.pos()
     .map(x => box(inset: inset, math.equation(block: block, x)))
     .join(h(weak: true, spacing))
+    //.join(sym.space)
 }
 
 #let to-array(it) = {
@@ -109,4 +110,9 @@
   linebreak()
   box(width: 100%, inset: (y: 0.5em), it)
   linebreak()
+}
+
+#let full-page(content) = context {
+  let dx = if calc.even(here().page()) { - 4.4cm } else { 0cm }
+  align(left, move(dx: dx, block(width: 100% + 4.4cm, align(center, content))))
 }

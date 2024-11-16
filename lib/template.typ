@@ -98,7 +98,7 @@
   // HEADINGS
   set heading(numbering: "1.1")
   set heading(supplement: "§" + h(-0.2em))
-  show heading.where(level: 1): set heading(supplement: "Chapter")
+  show heading.where(level: 1): set heading(supplement: "Ch.")
   show heading: set text(hyphenate: false)
   show heading: it => v(2.5em, weak: true) + it + v(2em, weak: true)
 
@@ -158,6 +158,8 @@
   }
   show math.equation.where(block: false): box
   show math.equation: set text(font: ("EB Garamond", "New Computer Modern Math",), features: ("cv01",))
+  show math.equation: set block(breakable: true)
+
 
   // FIGURES
   set figure(numbering: n => {

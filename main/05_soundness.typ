@@ -206,10 +206,10 @@ which nicely mesh into one together.
   are defined by mutual induction as follows.
 
   $ & ogs.tnilA     & ogs.zrl & ogs.tnilP           && := [] \
-    & (ogs.tconA a) & ogs.zrl & (b ogs.tconP gamma) && := [b ogs.zlr a, gamma[sub.var, b ogs.zrl a] ] \
+    & (a ogs.tconA) & ogs.zrl & (b ogs.tconP gamma) && := [b ogs.zlr a, gamma[sub.var, b ogs.zrl a] ] \
     \
     & ogs.tnilA     & ogs.zlr & ogs.tnilP           && := [] \
-    & (ogs.tconA a) & ogs.zlr & (b ogs.tconP gamma) && := b ogs.zrl a \ $
+    & (a ogs.tconA) & ogs.zlr & (b ogs.tconP gamma) && := b ogs.zrl a \ $
 ]
 #guil[Cette définition est assez dure à type-checker, ça vaudrait le coup
 de rappeler le type de $gamma$, et d'expliquer pourquoi

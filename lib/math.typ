@@ -106,6 +106,11 @@
   yes: cs(cop("yes")),
   no: cs(cop("no")),
   nat: de(cop($ℕ$)),
+  fin: de(cop("Fin")),
+  ze: cs(cop("ze")),
+  su: cs(cop("su")),
+  fwkn: de(cop("fin-weaken")),
+  fshft: de(cop("fin-shift")),
 )
 
 #let stlc = (
@@ -310,9 +315,11 @@
   fam0: de(cop($"SFam"_1$)),
   fam: de(cop($"SFam"$)),
   fam2: de(cop($"SFam"_2$)),
-  bfam: de(cop("BFam")),
+  bfam: de(cop("Bind")),
+  btfam: de(cop("BindTgt")),
   Oper: pr("Op"),
   dom: pr("holes"),
+  tgt: pr("target"),
   domnm: de($"holes"^text(font: "EB Garamond", weight: "bold", aleph)$),
   //fill: de(crel("@")), 
   oper: pr("op"),
@@ -320,10 +327,13 @@
   cute: cs(cbin(sym.square.filled.tiny)),
   named: de(h(0.05em) + text(font: "EB Garamond", weight: "bold", sym.aleph)),
   norm: de(cop("Nf")),
+  nret: cs(cop("nf-ret")),
+  ncall: cs(cop("nf-call")),
   //nf2obs: de(cop($"nf"cnorm(->)"obs"$)),
   //named: de(math.cal(math.bold("N"))),
   lenc: de(cop("length")),
   eltupg: de(cop("elt-upgr")),
+  untyped: de(cop("UntypedScope")),
 )
 
 #let sub = (
@@ -370,6 +380,11 @@
   eval: pr("eval"),
   apply: pr("apply"),
   machine: de(cop("LangMachine")),
+  language: de(cop("Language")),
+  resume: pr("resume"),
+  elim: pr("elim"),
+  resumesub: pr("resume-sub"),
+  elimsub: pr("elim-sub"),
   emb: de(cop("nf-emb")),
   //evalo: de($"eval"^text(font: "EB Garamond", "o")$),
   evalo: de("eval-to-obs"),
@@ -377,6 +392,7 @@
   appext: pr("apply-ext"),
   renmachine: de(cop("LangMachineRen")),
   submachine: de(cop("LangMachineSub")),
+  sublang: de(cop("LanguageSub")),
   valren: pr("val-ren"),
   confren: pr("conf-ren"),
   evalren: pr("eval-ren"),
@@ -489,3 +505,150 @@
 #let jwaxxletin(x, y) = $cs("let") #x cs("in") #y$
 //#let jwacasein(x, y, z) = $cs("if") #x cs("then") #y cs("else") #z$
 #let jwacasein(x, y, z) = $cs("case") #x cs("in") cs("[") #y cs(",") #z cs("]")$
+
+#let uut = (
+  uut: de(cop($Mu tilde(Mu)$)),
+  pol: de(cop("pol")),
+  pp: cs($+$),
+  pn: cs($-$),
+  xtyp: de(cop($"typ"^o$)),
+  typ: de(cop("typ")),
+  tvar: cs(cop("tvar")),
+  tzer: cs($0$),
+  ttop: cs($top$),
+  tbot: cs($bot$),
+  tone: cs($1$),
+  tten: cs($times.circle$),
+  tpar: cs($cbin(⅋)$),
+  tplu: cs($plus.circle$),
+  tand: cs($cbin(\&)$),
+  tdw: cs($cnorm(arrow.b)$),
+  tup: cs($cnorm(arrow.t)$),
+  tmin: cs($cnorm(minus.circle)$),
+  tneg: cs($not$),
+  tmu: cs($mu$),
+  tnu: cs($nu$),
+  tsub: de($slash$),
+  styp: de(cop($"typ"^s$)),
+  sneg: de($dagger$),
+  ctx: de(cop("ctx")),
+  tv: cs(cnorm(move(dy: -4pt, $script(+)$))),
+  tk: cs(cnorm(move(dy: -4pt, $script(-)$))),
+  cmd: de(cop("conf")),
+  val: de(cop("val")),
+  tm: de(cop("term")),
+  wht: de(cop("whn")),
+  jc: de(crel(math.attach("⊢", tr: "c"))),
+  //jval: de(crel(math.attach("⊢", tr: "v"))),
+  jt: de(crel(math.attach("⊢", tr: "t"))),
+  jw: de(crel(math.attach("⊢", tr: "w"))),
+  mu: cs(cop($mu$)),
+  mut: cs(cop($tilde(mu)$)),
+  vw: cs(cop("whn")),
+  vvar: cs(cop("var")),
+  vtt: cs($()$),
+  vff: cs($[]$),
+  vinl: cs(cop("inl")),
+  vinr: cs(cop("inr")),
+  vfst: cs(cop("fst")),
+  vsnd: cs(cop("snd")),
+  vdw: cs(cnorm($arrow.b$)),
+  vup: cs(cnorm($arrow.t$)),
+  vmin: cs(cnorm($minus.circle$)),
+  vneg: cs($not$),
+  vmu: cs(cop("con")),
+  vnu: cs(cop("out")),
+  ptt: cs($()^p$),
+  pff: cs($[]^p$),
+  pinl: cs(cop($"inl"^p$)),
+  pinr: cs(cop($"inr"^p$)),
+  pfst: cs(cop($"fst"^p$)),
+  psnd: cs(cop($"snd"^p$)),
+  pdw: cs(cnorm($attach(arrow.b, tr: p)$)),
+  pup: cs(cnorm($attach(arrow.t, tr: p)$)),
+  pmin: cs(cnorm($minus.circle^p$)),
+  pneg: cs($not^p$),
+  pmu: cs(cop($"con"^p$)),
+  pnu: cs(cop($"out"^p$)),
+  lam: cs($lambda$),
+  colam: cs(scale(x: -100%, $lambda$)),
+  ntyp: de(cop($"typ"^"priv"$)),
+  nctx: de(cop($"ctx"^"priv"$)),
+  isneg: de(cop("is-priv")),
+  pat: de(cop("pat")),
+  dom: de(cop("dom")),
+  obs: de(cop("obs")),
+  p2v: de(cop($"p-emb"$)),
+  v2p: de(cop($"split-pat"$)),
+  v2a: de(cop($"split-fill"$)),
+  eval: de(cop("eval")),
+  evalstep: de(cop("eval-step")),
+  apply: de(cop("apply")),
+  pbox: cs(cop($square.filled$)),
+)
+#let uutcfg(x, y) = $cs(angle.l) #x & cs(cbin(||)) & #y cs(angle.r)$
+#let uutcfgp(p, x, y) = $cs(angle.l) #x cbin(cs(cnorm(|))cnorm(#p)cs(cnorm(|))) #y cs(angle.r)$
+#let uutvpair(x, y) = $cs("(") #x cs(",") #y cs(")")$
+#let uutvcase(x, y) = $cs("[") #x cs(",") #y cs("]")$
+#let uutppair(x, y) = $cs("(") #x cs(",") #y cs(")"^p)$
+#let uutpcase(x, y) = $cs("[") #x cs(",") #y cs("]"^p)$
+#let uutpbox(x, y) = $uut.pbox^#box(x)_#y$
+#let uutpm(s, ..xs) = {
+  $uut.colam_#s$
+  cs("{")
+  xs.pos().join(cs(","))
+  cs("}")
+}
+#let uutabs(s, ..xs) = {
+  $uut.lam_#s$
+  cs("{")
+  xs.pos().join(cs(","))
+  cs("}")
+}
+
+#let fil = (
+  mon: de(cop("FillMonoid")),
+  mod: de(cop("FillModule")),
+  hole: pr(cop(sym.bullet)),
+  fill: pr(cop("fill")),
+  fillext: pr(cop("fill-ext")),
+  idl: pr(cop($"fill-id"_l$)),
+  idr: pr(cop($"fill-id"_r$)),
+  assoc: pr(cop($"fill-assoc"$)),
+  act: pr(cop("f-act")),
+  actext: pr(cop("f-act-ext")),
+  actid: pr(cop("f-act-id")),
+  actcomp: pr(cop("f-act-comp")),
+  smon: de(cop("FillMonoidSubst")),
+  smod: de(cop("FillModuleSubst")),
+  fillsub: pr(cop("sub-fill")),
+  holesub: pr(cop($"sub-"cnorm(bullet)$)),
+  actsub: pr(cop("sub-f-act")),
+)
+
+#let llc = (
+  llc: de(cop("Lambda")),
+  v2t: de(cop("v-to-t")),
+  term: de(cop("term")),
+  norm: de(cop("norm")),
+  val: de(cop("val")),
+  nval: cs(cop("value")),
+  split: de(cop("split")),
+  fold: de(cop("fold")),
+  nstuck: cs(cop("stuck")),
+  evc: de(cop("ev-ctx")),
+  fterm: de(cop($"term"'$)),
+  fval: de(cop($"val"'$)),
+  fevc: de(cop($"ev-ctx"'$)),
+  pat: de(cop("pat")),
+  elim: de(cop("elim")),
+  var: cs(cop("var")),
+  vvar: cs(cop($"var"^v$)),
+  ehole: cs(cop($bullet$)),
+  eappl: cs(cop($dot_l$)),
+  eappr: cs(cop($dot_r$)),
+  app: cs(cop($dot$)),
+  lam: cs(cop($lambda$)),
+  vlam: cs(cop($lambda^v$)),
+  eval: de(cop("eval")),
+)
