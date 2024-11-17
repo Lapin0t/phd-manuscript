@@ -652,3 +652,30 @@
   vlam: cs(cop($lambda^v$)),
   eval: de(cop("eval")),
 )
+
+#let kriv = (
+  kriv: de(cop(nm("Krivine"))),
+  sort: de(cop("sort")),
+  ctx: de(cop("ctx")),
+  obs: de(cop("obs")),
+  fobs: de(cop("o-fam")),
+  dom: de(cop("o-dom")),
+  stm: cs(cop("tm")),
+  sreq: cs(cop("req")),
+  sstk: cs(cop("stk")),
+  syn: de(cop("syn")),
+  conf: de(cop("conf")),
+  app: cs($dot$),
+  lam: cs($lambda$),
+  cons: cs($colon.double$),
+  var: cs(cop("var")),
+  grab: cs(cop("grab")),
+  force: cs(cop("force")),
+  push: cs(cop("push")),
+  eval: de(cop("eval")),
+  evalstep: de(cop("eval-step")),
+  apply: de(cop("apply")),
+)
+
+#let krivreq(x) = $cs(floor.l) #x cs(floor.r_r)$
+#let krivcfg(x, y) = $cs(angle.l) th #x cs(cbin(||)) #y th cs(angle.r)$

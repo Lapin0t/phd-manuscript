@@ -9,19 +9,14 @@ observational equivalence. Hopefully some intuitions from the introduction
 helped understand these abstract constructions, but it is now time to look at
 some concrete examples. In this chapter we try to show a small but
 representative collection of calculi that are covered by our abstract theorem.
-We start with two calculi neatly fitting the language machine presentation, a
-very simple one for warming up, Jump-with-Argument (@sec-inst-jwa) and a quite
-featureful one, polarized #short.uuc (@sec-inst-mumu). Then, in @sec-inst-nd,
-we give some more details on the "named term" construction sketched in the
-introduction. Indeed, some languages such as #short.llc do not directly make
-sense as language machines, mostly because the notion of _configuration_ and
-our peculiar choice of normal form representation are alien to their standard
-presentation. In order to treat them idiomatically, we provide a more fitting
-axiomatization of such languages, comprising terms, values and evaluation
-contexts and we then show how to derive a language machine from this new
-axiomatization, in a sort of lightweight CPS transform. We then use this
-refined axiomatization to instanciate OGS with pure untyped #short.llc,
-demonstrating how untyped calculi are handled.
+We start with two calculi neatly fitting our language machine presentation,
+finally showing the driving intuitions behind our axiomatization. To warm
+up we start with perhaps the simplest one: Jump-with-Argument (@sec-inst-jwa).
+We then follow up with a much more featureful language, polarized #short.uuc
+(@sec-inst-mumu). Then, in @sec-inst-krivine, we look at a language which for
+several reasons does not look like the prototypical language machine, but still
+can be twisted (rather heavily) to fit our axiomatization: pure untyped #short.llc
+under weak head reduction.
 
 == Jump-with-Argument <sec-inst-jwa>
 
@@ -1257,602 +1252,326 @@ cl uut.ctx$. If needed, these can be obtained exactly as for JWA, by patching
 the OGS or NF interpretation equivalence to first quantify over patterns for
 each type in $Gamma$.
 
-== Natural Deduction Style Calculi <sec-inst-nd>
+== Untyped Weak Head #short.llc <sec-inst-krivine>
 
-Our first two examples were centered around the concept of first-class
-continuation and of an abstract machine. As such, they were quite easy to fit
-into the generic framework of language machines. However, it is common for
-functional languages _not_ to fit into this shape. The prime example is the
-#short.llc, whose evaluator does not operate on "configurations" (a notion
-which is not standard for this language), but rather on terms. Moreover, it
-does not naturally have an unified notion of observation, but rather two kinds
-of shapes for normal forms: calls (stuck eliminations) and returns
-(values).
+Our first two examples were in several aspects quite similar: two simply-typed
+languages, rather low level and centered around explicit control flow using
+some form of first-class continuations. Let us now turn to a radically
+different language: pure untyped #short.llc with weak head reduction semantics.
+There will be several hurdles to overcome, so lets give an overview, in increasing
+order of difficulty.
 
-In concrete cases, probably the easiest way to obtain a language machine is to
-use a minimal amount of cheating: instead of building a language machine for
-the standard evaluator of the language at hand, we can switch to an abstract
-machine presentation of the semantics. Although it is not self-evident how to
-design a language machine for the #short.llc, it is relatively easy to build
-one out of, say, the #nm[Krivine] machine~#mcite(<Curien91>), or the #txsc[Cek]
-machine~#mcite(dy: 3em, <FelleisenF87>), following the blueprint of JWA. But
-sometimes moving the goalpost is not acceptable and we would prefer to stay
-with the standard evaluator. In that case, we can instead perform a lightweight
-continuation passing style (#txsc[Cps]) translation, much like we sketched in the
-introduction (@sec-intro-cps).
+*Typing* #sym.space.quad The language is untyped, but our framework for
+substitution requires some set of types. This is quite easy to overcome with a
+benign change of perspective, we can see any untyped language as an
+un#[*i*]typed language, that is, a language with a single type.
 
-Instead of presenting this technique with a couple concrete examples, we
-describe it _generically_. To do so, we replace the notion of language machine
-with an axiomatization better fitting languages in the natural deduction style
-of the #short.llc, which we call a _language with evaluator_. We then show how
-to derive a language machine from any such language with evaluator, by way of a
-formal #txsc[Cps] translation, and finally we give an example language: untyped
-call-by-value #short.llc.
+*Configurations* #sym.space.quad The language is presented with natural
+deduction style judgments, as opposed to language machines and the first two
+examples, which have sequent calculus style judgments. What we mean by this, is
+that the #short.llc is usually presented without any notion which would be
+similar to a language machine's configurations: the thing on which the
+evaluator operates and which is only indexed by a scope. The way out is
+two-fold.
 
-=== A Language With Evaluator
+First, we switch to a common, but perhaps not the most standard presentation of
+weak head reduction: some variant of the #nm[Krivine] machine. This is a bit of
+a goalpost moving, as arguably we will not present a #short.llc language
+machine but rather a #nm[Krivine] language machine. However it is best to go
+with the flow of the axiomatization and adopt the abstract machine mindset.
+This will pay off when proving the correctness theorem hypotheses.
 
-A language with evaluator has two main differences with a machine language.
-First, we will replace the binding family of observations with two similar
-structures, _eliminators_ and _patterns_, respectively representing the shape
-of calls and the shape of returns. Second, we drop the family of configurations
-and replace it with two new families: the terms and the evaluation contexts.
+Second, since continuations, a.k.a. _stacks_, will start floating around our
+#nm[Krivine] machine configurations, we will need to introduce formal
+continuations, i.e., a new kind of variable denoting continuations. Indeed,
+during the OGS game and in the NF interpretation, we will need to exchange
+symbolic continuations with our opponent. To distinguish them from the already
+existing "term" variables there is a simple mean: typing. We had a single type,
+now we already have two: one for terms and one for continuations. To avoid
+confusion, we will stop referring to them as types and instead call them
+_sorts_.
 
-*Patterns and Eliminators* #sym.space.quad
-Patterns are easily dealt with, as they can simply be specified by a binding family.
-Indeed, patterns should be indexed by a type, the type of the pattern at hand, and
-each pattern should have a domain, a scope listing its distinct and fresh
-variables, or holes. Likewise, eliminators are typed and have a domain, listing
-their arguments. But their description should also contain the _target_ of each
-eliminator, designating the type of the return they are expecting. We formalize
-this as a family of _bindings with target_.
+*Observations* #sym.space.quad The usual intuition behind the design of the
+binding family of observations is that they denote some kind of copatterns, or
+eliminators. This understanding is enough to get a satisfying definition when
+the language already circles around this concept, like our first two examples.
+More pragmatically, as our axiomatization derives the normal forms
+from these observations, we better engineer them to fit the normal forms we
+intend to have. For call-by-value #short.llc, as sketched in the introduction,
+it does not take much squinting to see that the two shapes of normal forms---
+a value and a stuck application in an evaluation context---do indeed look
+like eliminators. Namely calls (on opponent functions) and returns (on implicit
+opponent continuations).
 
-#definition[Bindings With Target][
-  Given $S,T cl base.Type$, a family of _bindings with targets_ is given by
-  records of the following type.
+For weak head reduction, there are two shapes for normal forms: lambda
+abstractions $lambda x.T$ and stuck applications $x T_1 ... T_n$. Applications
+are not too difficult to see as being eliminators. We deduce that in this
+world, functions are eliminated by giving not one but a spine of arguments. In
+fact, one can recognize this spine as a stack, which is nice since our earlier
+choices start to make more sense. However, the lambda abstraction is rather
+devilish. It does not look like it is stuck on anything, so once again, this
+must be an elimination on an implicit context/stack variable. But which part
+of $lambda x.T$ is the pattern (the static part) and the filling? Lets look
+at it backwards: what kind of elimination would make sense for a stack? Stacks
+are sequences of terms, so it would make sense to pattern match on them. And indeed,
+the $lambda x.T$ normal form is simply a request to _grab_ the next argument
+from the stack. If the stack is empty, this request cannot be fullfilled. But
+if it is not, we the opponent may answer it by a "here it is", giving us two
+new handles, a term variable for the head and a stack variable for the rest.
 
-  $ kw.rec th ctx.btfam th S th T kw.whr \
-    pat(
-      ctx.Oper cl T -> base.Type,
-      ctx.dom th {alpha} cl ctx.Oper th alpha -> S,
-      ctx.tgt th {alpha} cl ctx.Oper th alpha -> T
-    ) $
+Putting things back together, what we just did is to introduce a _third_ sort,
+for argument _requests_, which will accordingly need be accompagnied by
+request variables. Eliminating a stack introduces a new _request variable_ for
+the opponent, and eliminating a request introduces a term variable and a stack
+variable. Let us formalize that!
+
+=== Syntax and Semantics
+
+#definition[Sorts][
+  Define _sorts_ as the following data type.
+
+  $ kw.dat th kriv.sort cl base.Type := kriv.stm th | th kriv.sstk th | th kriv.sreq $
+
+  Further define _contexts_ by the following shorthand $kriv.ctx := ctx.ctxc th kriv.sort$.
 ]
 
-*Syntactic Structure* #sym.space.quad
-Terms and evaluation contexts are simpler: they are indexed sets.
-Assuming a set of scopes $S$ and types $T$, terms can be represented as
-a family $base.Type^(S,T)$, indexed by a scope and a type, just like values.
-Evaluation contexts can be represented by a family $base.Type^(S,T,T)$,
-indexed by a scope, an inner type and an outer type. Without surprise,
-we will require that values form a substitution monoid and that terms and
-evaluation contexts form substitution modules over values. There is however one
-more syntactic operation on contexts: putting something in their hole. More
-precisely, we can replace the hole by a context, yielding the _composition_ of
-the two contexts, or we can alternatively replace the hole by a term, yielding
-a new term. This is again a monoid-and-module situation, but of a different
-kind. Our goal is thus to define _filling monoids_ and _filling modules_ and
-axiomatize that evaluation contexts form a filling monoid and that terms form
-a filling module over them. Note that there will be additional compatibility
-conditions between the substitution structures and the filling structures.
-
-#definition[Filling Monoid][
-  Given $S,T cl base.Type$ and a family $X cl base.Type^(S,T,T)$, a _filling monoid_
-  structure on $X$ is given by instances of the following typeclass.
-
-  $ kw.cls fil.mon th X kw.whr \
-    pat(
-      fil.hole th {Gamma th alpha} cl X th Gamma th alpha th alpha,
-      fil.fill th {Gamma th alpha th beta th iota} cl X th Gamma th beta th iota -> X th Gamma th alpha th beta -> X th Gamma th alpha th iota,
-      fil.fillext cl fil.fill xrel(cnorm(approx) rel.carr cnorm(approx) rel.carr cnorm(approx)) fil.fill,
-      fil.idl th {Gamma th alpha th beta} th (x cl X th Gamma th alpha th beta) cl fil.fill th fil.hole th x approx x,
-      fil.idr th {Gamma th alpha th beta} th (x cl X th Gamma th alpha th beta) cl fil.fill th x th fil.hole approx x,
-      fil.assoc th {Gamma th alpha th beta th iota th tau} th (x cl X th Gamma th iota th tau) th (y cl X th Gamma th beta th iota) (z cl X th Gamma th alpha th beta) \
-        quad cl fil.fill th (fil.fill th x th y) th z approx fil.fill th x th (fil.fill th y th z),
-    ) $
-]
-
-#remark[
-  We have represented filling monoids by families $X cl
-  base.Type^(S,T,T)$, where $x cl X th Gamma th alpha th beta$ should be
-  thought of as an evaluation context in scope $Gamma$, with interior type
-  (or hole type) $alpha$ and exterior type $beta$. Note that there is only one
-  scope, and that the scope of what $x$ can be filled with is the same as what
-  we will obtain as output. In other words, the above axiomatization only
-  applies to notions of evaluations contexts which _do not_ capture variables.
-  We could certainly complexify our above notions to encompass such capturing
-  contexts, by tracking both the inner scope and the outer scope in the
-  indexes, i.e., by using families $base.Type^(S,T,S,T)$. However, OGS models
-  and NF bisimulations are most useful with _weak_ reductions, which indeed do not
-  reduce under binders. As such, we opt for simplicity, at the cost of some
-  generality.
-]
-
-#definition[Filling Module][
-  Given $S,T cl base.Type$, a family $X cl base.Type^(S,T,T)$, a filling monoid
-  $fil.mon th X$ and a family $Y cl base.Type^(S,T)$, a _filling module_ structure
-  over $X$ on $Y$ is given by instances of the following typeclass.
-
-  $ kw.cls fil.mod_X th Y kw.whr \
-    pat(
-      fil.act th {Gamma th alpha th beta} cl X th Gamma th alpha th beta -> Y th Gamma th alpha -> X th Gamma th beta,
-      fil.actext cl fil.act xrel(cnorm(approx) rel.carr cnorm(approx) rel.carr cnorm(approx)) fil.act,
-      fil.actid th {Gamma th alpha} th (t cl Y th Gamma th alpha) cl fil.act th fil.hole th t approx t,
-      fil.actcomp th {Gamma th alpha th beta th iota} th (x cl X th Gamma th beta th iota) th (y cl X th Gamma th alpha th beta) th (t cl Y th Gamma th iota) \
-        quad cl fil.act th (fil.fill x th y) th t approx fil.act th x th (fil.act th y th t),
-    ) $
-]
-
-In the following we will write $fil.fill th E th F$ and $fil.act th E th t$
-respectively as $E[F]$ and $E[t]$, as is standard practice. It is slightly
-unfortunate that this collides with the notation for substitution, but we will
-use the typing to disambiguate. We can now state the compatibility conditions
-of filling structures w.r.t. substitution.
-
-#definition[Filling Monoid With Substitution][
-  Given $S,T cl base.Type$, a family $V cl base.Type^(S,T)$ with a substitution
-  monoid structure $sub.mon th V$, and a family $X cl base.Type^(S,T,T)$, a
-  _filling monoid structure with substitution_ on $X$ over $V$ is given by
-  instances of the following typeclass.
-
-  $ kw.cls th fil.smon_V th X kw.whr \
-    pat(
-      kw.ext sub.mod_V th X,
-      kw.ext fil.mon th X,
-      fil.fillsub th {Gamma th Delta th alpha th beta th iota} th (E cl X th Gamma th beta th iota) th (F cl X th Gamma th alpha th beta) th (gamma cl Gamma asgn(V) Delta) \
-        quad cl E[F][gamma] approx E[gamma][F[gamma]],
-      fil.holesub th {Gamma th Delta th alpha} th (gamma cl Gamma asgn(V) Delta) cl fil.hole_alpha [gamma] approx fil.hole_alpha
-    ) $
-]
-
-#definition[Filling Module With Substitution][
-  Given $S,T cl base.Type$, a family $V cl base.Type^(S,T)$ with a substitution
-  monoid structure $sub.mon th V$, a family $X cl base.Type^(S,T,T)$ with
-  a filling monoid structure with substitution $fil.smon_V th X$, and a family $Y cl base.Type^(S,T)$,
-  a _filling module structure with substitution_ on $Y$ over $V$ and $X$ is
-  given by instances of the following typeclass.
-
-  $ kw.cls th fil.smod_(V,X) th Y kw.whr \
-    pat(
-      kw.ext sub.mod_V th Y,
-      kw.ext fil.mod_X th Y,
-      fil.actsub th {Gamma th Delta th alpha th beta} th (E cl X th Gamma th alpha th beta) th (t cl Y th Gamma th alpha) th (gamma cl Gamma asgn(V) Delta) \
-        quad cl E[t][gamma] approx E[gamma][t[gamma]],
-    ) $
-]
-
-*Evaluator* #sym.space.quad
-The last piece of _stuff_ required to define a language with evaluator is the
-family of normal forms. Recall that in a language machine, the evaluator
-computes on configurations, and returns normal configurations, i.e., named observations
-filled with values. Here, the our goal is to make the evaluator compute on
-terms, so that we need to build a family $base.Type^(S,T)$ of normal forms based
-upon the analogue of observations: patterns and eliminators. Following the intuitions
-from the #short.llc, they can be of two forms.
-- A decomposed value, that is, a pattern filled with values.
-- A stuck elimination, that is, a variable, an elimination on it, arguments
-  given by a sequence of values and an evaluation context whose hole matches the
-  elimination target.
-
-#definition[Normal Forms][
-  Given a scope structure $ctx.scope_T th S$, patterns $P cl ctx.bfam th S th T$,
-  eliminators $E cl ctx.btfam th S th T$, values $V cl base.Type^(S,T)$ and contexts
-  $C cl base.Type^(S,T,T)$, the family of normal forms
-
-  $ kw.dat th ctx.norm^(#h(0.1em)P,E)_(V,C) cl base.Type^(S,T) $
-
-  is defined by the following constructors.
-
-  #mathpar(block: true,
-    inferrule(
-      ($p cl P.ctx.Oper th alpha$, $gamma cl P.ctx.dom th p asgn(V) Gamma$),
-      box(inset: 0.7em, $ctx.nret th p th gamma cl ctx.norm^(#h(0.1em)P,E)_(V,C) th Gamma th alpha$)
-    ),
-    inferrule(
-      ($i cl Gamma ctx.var beta$,
-      $e cl E.ctx.Oper th beta$,
-      $gamma cl P.ctx.dom th p asgn(V) Gamma$,
-      $k cl C th Gamma th (P.ctx.tgt th p) th alpha $),
-      box(inset: 0.7em, $ctx.ncall th i th e th gamma th k cl ctx.norm^(#h(0.1em)P,E)_(V,C) th Gamma th alpha$)
-    ),
-  )
-] <def-lang-nf>
-
-We are now ready to give the definition of a language with evaluator. Note that the counterpart to
-language machine's $ogs.apply$ is given by two maps, one for _resuming_ by giving a filled
-pattern to an evaluation context, and one for _eliminating_ by applying an elimination with arguments
-to a value.
-
-#definition[Language With Evaluator][
-  Given a scope structure $ctx.scope_T th S$, patterns $P cl ctx.bfam th S th T$,
-  eliminators $E cl ctx.btfam th S th T$, values $V cl base.Type^(S,T)$, contexts
-  $C cl base.Type^(S,T,T)$ and terms $T cl base.Type^(S,T)$, a _language with
-  evaluator_ is given by records of the following type.
-
-  $ kw.rec ogs.language_(P,E) th V th C th T kw.whr \
-    pat(
-      ogs.eval th {Gamma th alpha} cl T th Gamma th alpha -> delay.t th (ctx.norm^(#h(0.1em)P,E)_(V,C) th Gamma th alpha),
-      ogs.resume th {Gamma th alpha th beta} th (k cl C th Gamma th alpha th beta) \
-        quad (p cl P.ctx.Oper th alpha) th (gamma cl P.ctx.dom th p asgn(V) Gamma) cl T th Gamma th beta,
-      ogs.elim th {Gamma th alpha} th (v cl V th Gamma th alpha) th (e cl E.ctx.Oper th p) \
-        quad (gamma cl E.ctx.dom th p asgn(V) Gamma) cl T th Gamma th (E.ctx.tgt th p)
-    ) $
-]
-
-We can now conclude with by stating the core hypothesis for OGS correctness, namely that
-a language with evaluator respects substitution.
-
-#definition[Language With Evaluator Respects Substitution][
-  Assume a scope structure $ctx.scope_T th S$, patterns $P cl ctx.bfam th S th T$,
-  eliminators $E cl ctx.btfam th S th T$, families $V$, $C$ and $T$ and a
-  language with evaluator $L cl ogs.language_(P,E) th V th C th T$, such that
-  moreover $sub.mon th V$, $fil.smon_V th C$ and $fil.smod_(V,C) th T$.
-  Define the embedding of normal forms into terms $T$ as follows.
-
-  $ ogs.emb cl ctx.norm^(#h(0.1em)P,E)_(V,C) th Gamma th alpha ctx.arr T $
-  #v(-0.8em)
-  $ & ogs.emb th (ctx.nret th p th gamma) && := L.ogs.resume th fil.hole th p th gamma \
-    & ogs.emb th (ctx.ncall th i th e th gamma th k) && := k[L.ogs.elim th (sub.var th i) th e th gamma] $
-
-  Then, the language $L$ _respects substitution_ if there is an instance of the following
-  typeclass.
-
-  $ kw.cls th ogs.sublang th L kw.whr \
-    pat(
-      ogs.evalsub th {Gamma th Delta th alpha} th (t cl T th Gamma th alpha) th (sigma cl Gamma asgn(V) Delta) \
-        quad cl L.ogs.eval th t[sigma] itree.eq (L.ogs.eval th t itree.bind kw.fun th n |-> L.ogs.eval th (ogs.emb th n)[sigma]),
-      ogs.resumesub th {Gamma th Delta th alpha th beta} th (k cl C th Gamma th alpha th beta) th p th gamma th (sigma cl Gamma asgn(V) Delta) \
-        quad cl L.ogs.resume th k[sigma] th p th gamma[sigma] approx (L.ogs.resume k th p th gamma)[sigma],
-      ogs.elimsub th {Gamma th Delta th alpha} th (v cl V th Gamma th alpha) th e th gamma th (sigma cl Gamma asgn(V) Delta) \
-        quad cl L.ogs.elim th v[sigma] th e th gamma[sigma] approx (L.ogs.elim th v th e th gamma)[sigma],
-      ogs.evalnf th {Gamma th alpha} th (n cl ctx.norm^(#h(0.1em)P,E)_(V,C) th Gamma th alpha) \
-        quad cl L.ogs.eval th (ogs.emb th n) itree.eq itree.ret th n
-    ) $
-]
-
-=== Untyped #short.llc
-
-Before jumping to the translation from languages with evaluators to language
-machines, let us showcase this new abstraction with an short example: untyped
-call-by-value pure #short.llc.
-
-Our first hurdle is the typing: our framework
-requires typing, yet this calculus is untyped. The standard way out is a benign
-change of nomenclature: an untyped system is entirely equivalent to an
-un#[*i*]typed one, i.e., a system with a single type. It is however not _that_
-simple. Setting $T := base.top$ and going on working with e.g., concrete scopes
-$ctx.ctxc th base.top$, term judgments $de("tm") cl base.Type^(ctx.ctxc th
-base.top, base.top)$ and #nm[De-Bruijn] indices is slightly unsatisfying. First
-of all, $ctx.ctxc th base.top$ is isomorphic to the more idiomatic $base.nat$
-and likewise, the corresponding #nm[De-Bruijn] indices $ar ctx.varc base.tt cl
-base.Type^(ctx.ctxc th base.top)$ are isomorphic to $base.fin cl
-base.Type^base.nat$, the finite sets. Apart from these esthetical
-considerations, a more worrying technicality arises when your chosen type theory does
-_not_ support #sym.eta equivalence on $base.top$. This principle
-is quite important as it makes all inhabitants of $base.top$
-definitionally equal, and, more importantly, all function $f cl base.top -> X$
-definitionally constant. In the idealized type theory chosen for this thesis we
-do assume this #sym.eta rule, but our concrete code artifact is stuck with a
-theory which does not (Coq!). Once again, the flexibility of scope structures comes to
-our rescue. Let us define a more idiomatic scope structure for untyped scopes.
-
-#definition[Untyped Scopes][
-  Define _finite sets_ $kw.dat th base.fin cl base.Type^base.nat$ with the following constructors.
-
-  #mathpar(block: true,
-    inferrule("", $base.ze cl base.fin th (base.su th n)$),
-    inferrule($i cl base.fin th n$, $base.su th i cl base.fin th (base.su th n)$),
-  )
-
-  Further define the following helpers.
-
-  $ base.fwkn th {m th n} cl base.fin th m -> base.fin th (m + n) $
-  #v(-0.8em)
-  $ & base.fwkn th base.ze && := base.ze \
-    & base.fwkn th (base.su i) && := base.su th (base.fwkn th i) $
-
-  $ base.fshft th {m th n} cl base.fin th n -> base.fin th (m + n) $
-  #v(-0.8em)
-  $ & base.fshft th {base.ze}   && th {n} th i && := i \
-    & base.fshft th {base.su m} && th {n} th i && := base.su th (base.fshft th {m} th {n} th i) $
-
-  Finally define _untyped scopes_ as the following instance of scope structure.
-
-  $ ctx.untyped cl ctx.scope_base.top th base.nat \
-    ctx.untyped := \
-    pat(
-      ctx.emp & := base.ze,
-      m ctx.cat n & := n + m,
-      n ctx.var x & := base.fin th n,
-      ctx.rcatl & := base.fshft,
-      ctx.rcatr & := base.fwkn,
-      dots
-    ) $
-  #margin-note(dy: -11em)[
-    Note that we swap $m$ and $n$ in the definition of $m ctx.cat n$. The
-    reason for this is that scopes are traditionally taken to grow towards
-    the right, while unary natural numbers grow towards the left, i.e.,
-    addition is defined by recursion on the first argument. This is technically
-    unnecessary but helps avoid unpleasant surprises during index juggling.
-  ]
-]
-
-With these considerations out of the way, let us define the call-by-value #short.llc syntax and
-semantics.
+Instead of writing three mutually defined judgments for terms, stacks and
+requests, we will simply use a single syntactic judgment, indexed by sorts.
+This will have the happy side effect to fuse the three different variables in a
+single sorted construct. Note that we did not talk a lot about
+_configurations_, but they unsurprisingly pair a term with a stack.
 
 #definition[Syntax][
-  #short.llc _terms_ are given by the data type $kw.dat th llc.term cl base.Type^base.nat$
+  Define the unified judgment for _syntax_ as the data type $kw.dat th kriv.syn cl base.Type^(kriv.ctx,kriv.sort)$
   with the following constructors.
 
-  #mathpar(block: true,
-    inferrule($i cl base.fin th n$, $llc.var th i cl llc.term th n$),
+  #mathpar(block: true, spacing: 0em,
     inferrule(
-      $t cl llc.term th (base.su th n)$,
-      $llc.lam th t cl llc.term th n$
+      $Gamma ctx.varc th s$,
+      $kriv.var th i cl kriv.syn th Gamma th s$
     ),
     inferrule(
-      ($t cl llc.term th n$, $u cl llc.term th n$),
-      $t llc.app u cl llc.term th n$
-    ),
-  )
-
-  #short.llc _values_ are given by the data type $kw.dat th llc.val cl base.Type^base.nat$
-  with the following constructors.
-
-  #mathpar(block: true,
-    inferrule($i cl base.fin th n$, $llc.vvar th i cl llc.val th n$),
-    inferrule(
-      $t cl llc.term th (base.su th n)$,
-      $llc.vlam th t cl llc.val th n$
-    ),
-  )
-
-  Their embedding into terms is given by the following function.
-
-  $ llc.v2t th {n} cl llc.val th n -> llc.term th n $
-  #v(-0.8em)
-  $ & llc.v2t th (llc.vvar th i) && := llc.var th i \
-    & llc.v2t th (llc.vlam th t) && := llc.lam th t $
-
-  #short.llc _evaluation contexts_ are given by the data type $kw.dat th llc.evc cl base.Type^base.nat$
-  with the following constructors.
-
-  #mathpar(block: true, spacing: 1fr,
-    inferrule("", $llc.ehole cl llc.evc th n$),
-    inferrule(
-      ($t cl llc.term th n$, $k cl llc.evc th n$),
-      $t llc.eappr k cl llc.evc th n$
+      ($a cl kriv.syn th Gamma th kriv.stm$, $b cl kriv.syn th Gamma th kriv.stm$),
+      $a kriv.app b cl kriv.syn th Gamma th kriv.stm$
     ),
     inferrule(
-      ($k cl llc.evc th n$, $v cl llc.val th n$),
-      $k llc.eappl v cl llc.evc th n$
+      $r cl kriv.syn th Gamma th kriv.sreq$,
+      $krivreq(r) cl kriv.syn th Gamma th kriv.stm$
+    ),
+    inferrule(
+      $a cl kriv.syn th (Gamma ctx.conc kriv.stm) th kriv.stm$,
+      $kriv.lam th a cl kriv.syn th Gamma th kriv.sreq$
+    ),
+    inferrule(
+      ($a cl kriv.syn th Gamma th kriv.stm$, $k cl kriv.syn th Gamma th kriv.sstk$),
+      $a kriv.cons k cl kriv.syn th Gamma th kriv.sstk$ 
     ),
   )
 
-  Further define the following shorthands.
+  Further define the judgment for _configurations_ as the data type $kw.dat th kriv.conf cl base.Type^kriv.ctx$
+  with the following constructor.
 
-  #mathpar(block: true, spacing: 1fr,
-    $llc.fterm cl base.Type^(base.nat,base.top) \
-     llc.fterm th n th x := llc.term th n$,
-    $llc.fval cl base.Type^(base.nat,base.top) \
-     llc.fval th n th x := llc.val th n$,
-    $llc.fevc cl base.Type^(base.nat,base.top,base.top) \
-     llc.fevc th n th x th y := llc.evc th n$,
-  )
+  #block(inferrule(
+    ($a cl kriv.syn th Gamma th kriv.stm$, $k cl kriv.syn th Gamma th kriv.sstk$),
+    $krivcfg(a,k) cl kriv.conf th Gamma$
+  ))
 ]
 
-#lemma[Substitution and Filling Structures][
-  $llc.fval$ forms a substitution monoid, $llc.fevc$ forms a filling monoid
-  with substitution over $llc.fval$, and $llc.fterm$ forms a filling module
-  with substitution over $llc.fval$ and $llc.fevc$.
-]
+#lemma[Substitution][
+  The family $kriv.syn$ forms a substitution monoid with decidable variables, and $kriv.conf$ forms a substitution module
+  over it.
+] <lem-kriv-sub>
 #proof[
-  By standard construction.
+  Although the meaning of $kriv.syn$ is perhaps still puzzling, it can be opaquely viewed as
+  an arbitrary syntax with bindings. As such, the renaming and substitution operators and
+  their laws can be derived by standard means.
 ]
 
-Let us now define the evaluator. For once, we will design our own family for
-normal forms, instead of defining patterns and eliminators and relying on the
-generic $ctx.norm$ construction (@def-lang-nf), as it would be more of a hassle
-to use. We will explain later how to translate from our own to the generic one.
+We can now define the binding family of observations. Because technically there is exactly
+one observation at each sort, we could take the tricky $kw.fun th s |-> base.top$
+definition. The $ctx.dom$ map would be quite puzzling though, so that we prefer defining
+a special purpose family and give these observations nice names.
 
-#definition[Normal Forms][
-  Define the family of normal forms $kw.dat th llc.norm cl base.Type^base.nat$ by
-  the following constructors.
+#definition[Observations][
+  Define the family of _observations_ as the data type $kw.dat th kriv.fobs cl base.Type^kriv.sort$
+  with the following constructors.
 
   #mathpar(block: true, spacing: 1fr,
-    inferrule(
-      $v cl llc.val th n$,
-      $llc.nval th v cl llc.norm th n$
-    ),
-    inferrule(
-      ($i cl base.fin th n$, $v cl llc.val th n$, $k cl llc.evc th n$),
-      $llc.nstuck th i th v th k cl llc.norm th n$
-    ),
+    inferrule($$, $kriv.force cl kriv.fobs th kriv.stm$),
+    inferrule($$, $kriv.grab cl kriv.fobs th kriv.sstk$),
+    inferrule($$, $kriv.push cl kriv.fobs th kriv.sreq$),
   )
+
+  Define their _domain_ by the following function.
+
+  $ kriv.dom th {s} cl kriv.fobs th s -> kriv.ctx $
+  #v(-0.8em)
+  $ & kriv.dom th kriv.force & := ctx.nilc ctx.conc kriv.sstk \
+    & kriv.dom th kriv.grab & := ctx.nilc ctx.conc kriv.sreq \
+    & kriv.dom th kriv.push & := ctx.nilc ctx.conc kriv.stm ctx.conc th kriv.sstk $
+
+  Further define their binding family as follows.
+
+  $ kriv.obs cl ctx.bfam th S th T \
+    pat(
+      ctx.Oper th s & := kriv.fobs th s,
+      ctx.dom th o  & := kriv.dom th o,
+    ) $
 ]
+
+Let us recapitulate. We have a $kriv.force$ observation on terms, which has one argument, a stack
+in which it should be evaluated. We have a $kriv.grab$ observation on stacks,
+which has one argument, a request, that is, a lambda abstraction. And finally we have a $kriv.push$
+observation on requests, which has two arguments, a head term and a tail stack. We are ready
+to see the evaluator.
 
 #definition[Evaluator][
-  Define the #short.llc evaluator by the following coinductive function.
+  Define the _evaluation_ map by iteration of the following _evaluation step_ map.
 
-  $ llc.eval th {n} cl llc.term th n -> delay.t th (llc.norm th n) $
+  #let cxl = cs(sym.angle.l + th)
+  #let cxr = cs(th + sym.angle.r)
+  #let cxm = $cs(cbin(||))$
+
+  $ kriv.eval th {Gamma} cl kriv.conf th Gamma -> delay.t th (ctx.norm_kriv.syn^(#h(0.2em) kriv.obs) th Gamma) $
   #v(-0.8em)
-  $ & llc.eval th (llc.var th i) && := itree.ret th (ctx.nret th (llc.vvar th i)) \
-    & llc.eval th (llc.lam th t) && := itree.ret th (ctx.nret th (llc.vlam th t)) \
-    & llc.eval th (t llc.app u)  && := $
+  $ kriv.eval := itree.iter th (itree.ret compose kriv.evalstep) $
+
+  $ kriv.evalstep th {Gamma} cl kriv.conf th Gamma -> ctx.norm_kriv.syn^(#h(0.2em) kriv.obs) th Gamma base.sum kriv.conf th Gamma $
   #v(-0.8em)
-  $ pat(
-      m <- itree.tau th (llc.eval th u) th ";",
-      kw.case th m,
-      pat(
-        ctx.nret th v th := \
-        pat(
-          n <- itree.tau th (llc.eval th t) th ";",
-          kw.case th n,
-          pat(
-            ctx.nret th (llc.vvar th i) & := itree.ret th (ctx.ncall th i th v th k) ,
-            ctx.nret th (llc.vlam th a) & := itree.tau th (llc.eval th a[sub.var,v]),
-            ctx.ncall th i th w th k    & := itree.ret th (ctx.ncall th i th w th (k llc.eappl v)) ,
-          )
-        ),
-        ctx.ncall th i th v th k th := itree.ret th (ctx.ncall th i th v th (s llc.eappr k)),
-      )
-    ) $
+  $ & kriv.evalstep th & cxl kriv.var th i & cxm k cxr && := base.inj1 th (i ctx.cute kriv.force, [ k ]) \
+    & kriv.evalstep th & cxl a kriv.app b & cxm k cxr && := base.inj2 th krivcfg(a, b kriv.cons k) \
+    & kriv.evalstep th & cxl krivreq(r) & cxm kriv.var i cxr && := base.inj1 th (i ctx.cute kriv.grab, [ r ]) \
+    & kriv.evalstep th & cxl krivreq(kriv.var th i) & cxm b kriv.cons k cxr && := base.inj1 th (i ctx.cute kriv.push, [ b, k ]) \
+    & kriv.evalstep th & cxl krivreq(kriv.lam th a) & cxm b kriv.cons k cxr && := base.inj2 th krivcfg(a[sub.var,b], k) $
 ]
 
-#remark[
-  There is some cheating in the above definition, as there is no chance that it will
-  pass any syntactic guard checker for coinductive definition, as it full of
-  monadic binds on recursive calls. Even when written "properly", that
-  is, by copattern-matching on $itree.obs$ before case splitting on anything, Coq
-  still does not understand it. However, we humans can observe that every recursive $llc.eval$
-  call is hidden behind a $itree.tau$ step. And indeed, there is a systematic trick to
-  obtain a definition _strongly bisimilar_ to the above, by adapting #nm[McBride]'s
-  _General monad_ technique. We have not introduced the combinator for doing so
-  in @ch-game, but it can be easily lifted from the original non-indexed
-  interaction trees~#mcite(<XiaZHHMPZ20>) §4.2.
-]
+Let us rejoice! The journey to obtain this may have been convoluted, but the
+resulting observations and evaluator are even shorter than for JWA. In fact, once
+the pattern is ingrained, the proofs that this language machine verifies the
+correctness hypotheses is similarly straightforward. The sole exception is that the
+well-foundedness of our so called _bad instanciation_ relation will not be
+entirely vacuous, as indeed chains of length greater than zero do exist. This
+phenomenon is a trademark of natural deduction style calculi implemented as
+abstract machines. But before jumping to the proofs, let us actually define the
+observation application map and finally the language machine.
 
-#remark[
-  Perhaps you have noticed that we have gone for a right-to-left evaluation order (this
-  was already decided at the time we wrote down the evaluation contexts). This
-  choice might raise some eyebrows as it is not the standard practice, but could be
-  dismissed as just a matter of taste, and indeed, why miss an oportunity to
-  pay tribute to the #txsc[Zinc] not so abstract machine~#mcite(<Leroy90>)?
-  However, this choice is not entirely innocent and mandates a small
-  digression. Recall that our evaluator is working on _open_ terms, in stark
-  contrast with the typical setting for call-by-value. See e.g.,
-  #nm[Accattoli] and #nm[Guerrieri]~#mcite(<AccattoliG16>) for some
-  discussion of the peculiarities of open call-by-value strategies.
+#definition[Observation Application][
+  Define the observation application map as follows.
 
-  The hurdle with the left-to-right order, is that when evaluating the application $t
-  llc.app u$, if $t$ reduces to a stuck normal form, it is not certain that
-  this is the head variable. To convince yourself, consider the term $x
-  (lambda z. z) Omega$. This would make the evaluator slightly more verbose to write
-  down, with one more #kw.case expression. In fact, looking closer we can realize that our
-  above evaluator is strictly speaking _not_ implementing full call-by-value.
-  It is slightly more lazy, as it will happily consider $Omega (x
-  (lambda y. y))$ to be in normal form. It could perhaps be dubbed weak _head_
-  right-to-left call-by-value. It can be analyzed that this strategy will find
-  the same stuck head variable as #nm[Lassen]'s~#mcite(<Lassen05>) _eager
-  reduction_, but may converge more often.
-]
-
-Let us now define patterns and eliminators. At this point, in the previous examples,
-we introduced the _negative_ or _private_ types, but as we are here in an untyped
-setting where there is thus only one type, there is not much to restrict. By chance, the
-_pure_ #short.llc has semantically only one kind of objects, functions, which
-we are quite happy to treat as negative. It would be quite more complicated to
-instanciate our generic OGS construction with an untyped #short.llc with say,
-functions and booleans. Indeed, while it is not obvious at first sight, this
-would make the language effectful, as treating a boolean value as a function
-and applying it to an argument should trigger an exception
-for "value mismatch" during evaluation.
-#margin-note(dy: -2em)[
-  For the particular case of exceptions, we could probably get away with
-  modelling them as partiality, as we do support it thanks to the #delay.t
-  monad, but conflating exceptions (i.e., the $de("Option")$ monad) with
-  partiality is a rather dirty trick in constructive settings.
-]
-
-As our sole type is negative, its patterns should be entirely
-trivial: they can only be a single fresh variable, that is, a placeholder whose
-domain is the singleton scope $base.su th base.ze$. Eliminators are similarly
-easy: the only thing one can do to a function is to apply it. There is only one (functional)
-argument, so that its domain is again the singleton scope, while the target is, well,
-the only type there is.
-
-#definition[Patterns and Eliminators][
-  Define #short.llc _patterns_ and _eliminators_ by the following records.
-
-  #mathpar(block: true,
-    $llc.pat cl ctx.bfam th base.nat th base.top \
-     llc.pat :=
-     pat(
-      ctx.Oper th x & := base.top,
-      ctx.dom th x th p & := base.su th base.ze
-     )$,
-    $llc.elim cl ctx.btfam th base.nat th base.top \
-     llc.elim :=
-     pat(
-      ctx.Oper th x & := base.top,
-      ctx.dom th x th p & := base.su th base.ze,
-      ctx.tgt th x th p & := base.tt,
-    )$
-  )
-]
-
-We can now exhibit the isomorphism between our representation of normal forms and
-the generic "split" representation $ctx.norm^(#h(0.1em)llc.pat,llc.elim)_(llc.val,llc.evc)$.
-
-#definition[Normal Form Splitting][
-  Define the following two functions, respectively splitting normal forms and folding
-  them.
-
-  $ llc.split th {n} cl llc.norm th n -> ctx.norm^(#h(0.3em)llc.pat,llc.elim)_(llc.fval,llc.fevc) th n th base.tt $
+  $ kriv.apply th {Gamma th s} th (x cl kriv.syn th Gamma th s) th (o cl kriv.fobs th s) cl kriv.dom th o asgn(kriv.syn) th Gamma -> kriv.conf th Gamma $
   #v(-0.8em)
-  $ & llc.split th (llc.nval th v) && := ctx.nret th base.tt th [v] \
-    & llc.split th (llc.nstuck th i th v th k) && := ctx.ncall th i th base.tt th [v] th k $
-
-  $ llc.fold th {n} cl ctx.norm^(#h(0.3em)llc.pat,llc.elim)_(llc.fval,llc.fevc) th n th base.tt -> llc.norm th n $
-  #v(-0.8em)
-  $ & llc.fold th (ctx.nret th p th gamma) && := llc.nval th (gamma th ctx.topc) \
-    & llc.fold th (ctx.ncall th i th e th gamma th k) && := llc.nstuck th i th (gamma th ctx.topc) th k $
+  $ & kriv.apply th a th kriv.force th gamma && := krivcfg(a, gamma th ctx.topc) \
+    & kriv.apply th k th kriv.grab th gamma && := krivcfg(krivreq(gamma th ctx.topc), k) \
+    & kriv.apply th r th kriv.push th gamma && := krivcfg(krivreq(r), gamma th (ctx.popc th ctx.topc) kriv.cons gamma th ctx.topc) $
 ]
 
-#lemma[Refolding][
-  $llc.split$ and $llc.fold$ form an isomorphism up to extensional equality on $ctx.norm^(#h(0.3em)llc.pat,llc.elim)_(llc.val,llc.evc)$.
-] <lem-llc-refold>
-#proof[By direct case analysis.]
+#definition[Language Machine][
+  Define the #nm[Krivine] language machine by the following record.
 
-We are finally ready to instanciate the #short.llc language with evaluator.
-
-#definition[#short.llc Language With Evaluator][
-  The #short.llc language with evaluator is given by the following record.
-
-  $ llc.llc cl ogs.language_(llc.pat,llc.elim) th llc.fval th llc.fevc th llc.fterm kw.whr \
+  $ kriv.kriv cl ogs.machine_kriv.obs th kriv.syn \
+    kriv.kriv := \
     pat(
-      ogs.eval th t & := llc.split itree.fmap llc.eval th t,
-      ogs.resume th k th p th gamma & := k[llc.v2t th (gamma th ctx.topc)],
-      ogs.elim th v th e th gamma & := llc.v2t th v llc.app llc.v2t th (gamma th ctx.topc),
+      ogs.eval & := kriv.eval,
+      ogs.apply & := kriv.apply,
+      ogs.appext & := ...
     ) $
 ]
 
-#theorem[#short.llc respects substitutions][
-  $llc.llc$ respects substitutions.
+#lemma[Machine Respects Substitution][
+  The #nm[Krivine] language machine respects substitution.
+] <lem-kriv-resp-sub>
+#proof[
+  - $ogs.evalsub$ #sym.space.quad Given $Gamma, Delta cl kriv.ctx$, $c cl kriv.conf th Gamma$ and
+    $sigma cl Gamma asgn(kriv.syn) Delta$, we need to prove the following statement.
+
+    $ kriv.eval th c[sigma] itree.eq kriv.eval th c itree.bind kw.fun th n |-> kriv.eval th (ogs.emb th n)[sigma] $
+
+    Proceed by coinduction, then destruct $c$ following the pattern of $kriv.evalstep$.
+
+    - When $c := krivcfg(kriv.var th i, k)$, by reflexivity.
+    - When $c := krivcfg(a kriv.app b, k)$, by synchronization and coinduction hypothesis.
+    - When $c := krivcfg(krivreq(r), kriv.var th i)$, by reflexivity.
+    - When $c := krivcfg(krivreq(kriv.var th i), b kriv.cons k)$, by reflexivity.
+    - When $c := krivcfg(krivreq(kriv.lam th a), b kriv.cons k)$, the LHS is definitionally equal
+      to $ itree.tauF th (kriv.eval th krivcfg(a[sigma[ctx.popc],ctx.topc][sub.var,b], k[sigma])). $
+      Rewrite it to the following and conclude by synchronization and coinduction hypothesis.
+      $ itree.tauF th (kriv.eval th krivcfg(a[sub.var,b][sigma], k[sigma])) $
+  - $ogs.appsub$ #sym.space.quad By direct case analysis on the observation.
+  - $ogs.evalnf$ #sym.space.quad By direct case analysis on the normal form.
+#v(-1.9em)
+]
+
+#lemma[Finite Redexes][
+  The #nm[Krivine] language machine has finite redexes.
+] <lem-kriv-finred>
+#proof[
+  Recall that we need to prove the following relation to be well-founded.
+
+  #inferrule(
+    ($i cl Gamma ctx.var s_1$,
+     $o_1 cl kriv.fobs th s_1$,
+     $gamma_1 cl kriv.dom th o_1 asgn(kriv.syn) Gamma$,
+     $x cl kriv.syn th Gamma th s_2$,
+     $o_2 cl kriv.fobs th s_2$,
+     $gamma_2 cl kriv.dom th o_2 asgn(kriv.syn) Gamma$,
+     $H_1 cl sub.isvar th v -> base.bot$,
+     $H_2 cl kriv.eval th (kriv.apply th x th o_2 th gamma) itree.eq itree.ret th ((i ctx.cute o_1), gamma_1)$
+    ),
+    $ogs.badc th H_1 th H_2 cl o_1 ogs.badinst o_2$
+  )
+
+  Introduce $s_2$ and $o_2 cl kriv.fobs th s_2$ and let us show that $o_2$ is accessible. By
+  constructor, assume $s_1$ and $o_1 cl kriv.fobs th s_1$ such that $o_1 ogs.badc o_2$, and
+  let us show that $o_1$ is accessible. Destruct the relation witness and
+  introduce all the hypotheses as above. Proceed by case on $o_2$.
+
+  1. When $o_2 := kriv.push$, then $x$ must be a request.
+     - When $x := kriv.var th i$, then $H_1$ is absurd.
+     - When $x := kriv.lam th a$, then $H_2$ is absurd as $kriv.apply th (kriv.lam th a) th kriv.push th gamma$
+       will perform an evaluation step.
+  2. When $o_2 := kriv.grab$, then $x$ must be a stack.
+     - When $x := kriv.var th i$, then $H_1$ is absurd.
+     - When $x := b kriv.cons k$, let $r := gamma th ctx.topc$.
+       - When $r := kriv.var th i$, by $H_2$, $o_1$ must be $kriv.push$, which is accessible by (1).
+       - When $r := kriv.lam th a$, then $H_2$ is absurd.
+  3. When $o_2 := kriv.force$, then $x$ must be a term. Proceed by case on $x$.
+     - When $x := kriv.var th i$, then $H_1$ is absurd.
+     - When $x := a kriv.app b$, then $H_2$ is absurd.
+     - When $x := krivreq(r)$, pose $k := gamma th ctx.topc$.
+       - When $k := kriv.var th i$, by $H_2$, $o_1$ must be $kriv.grab$, which is accessible by (2).
+       - When $k := a kriv.cons k'$, by case on $r$.
+         - When $r := kriv.var th i$, by $H_2$, $o_1$ must be $kriv.push$ which is accessible by (1).
+         - When $r := kriv.lam th a$, then $H_2$ is absurd.
+  #v(-1.8em)
+]
+
+This concludes the correctness of the #nm[Krivine] language machine! Its NF
+strategies from @ch-nf-bisim can be recognized as #nm[Levy]-#nm[Longo]
+trees~#mcite(<Levy75>)#mcite(dy: 3em, <Longo83>). Thus, @thm-nf-correctness
+gives us a soundness proof of #nm[Levy]-#nm[Longo] tree w.r.t. weak head
+observational equivalence, giving an alternative to #nm[Hyland]'s set
+theoretical proof~#mcite(dy: 2em, <Hyland76>). #peio[Guilhem tu comprends qqch
+à ces papiers? Je dis pas de betise?] This fact should probably be properly
+justified by formalizing a clean representation of these trees and proving them
+isomorphic to our NF strategies, but we will not go further than this. For the
+sake of it, let us simply state the OGS correctness theorem, for the last time
+in this thesis!
+
+#theorem[OGS Correctness][
+  Define the weak head normalization predicate as follows.
+
+  #let whn = de(cnorm(sym.arrow.double.b))
+  #let intp(x) = $de(bracket.double.l) #x de(bracket.double.r)^de(+)_kriv.kriv$
+
+  $ ar whn cl kriv.syn th (ctx.nilc ctx.conc kriv.sstk) th kriv.stm -> base.Prop \
+    t whn := (base.fst itree.fmap kriv.eval th krivcfg(t, kriv.var th ctx.topc)) itree.weq itree.ret th (ctx.topc ctx.cute kriv.grab) $
+
+  For all $Gamma$ and $t_1, t_2 cl kriv.syn th Gamma th kriv.stm$ such that
+  $ intp(krivcfg(t_1[ctx.popc], kriv.var th ctx.topc)) itree.weq intp(krivcfg(t_2[ctx.popc], kriv.var th ctx.topc)), $
+  then for all $sigma cl Gamma asgn(kriv.syn) (ctx.nilc ctx.conc kriv.sstk)$,
+  $ t_1[sigma] whn <-> t_2[sigma] whn. $
 ]
 #proof[
-First, by direct case splitting, $llc.v2t$ commutes with substitutions, i.e.
-$(llc.v2t th v)[sigma] = llc.v2t th v[sigma]$. Then, prove the required properties
-as follows.
-
-- $ogs.evalsub$
-- $ogs.resumesub$~ By commutation of $llc.v2t$ with substitutions, then
-    application of $fil.actsub$.
-- $ogs.elimsub$~ $llc.v2t$ commutes with substitutions, which concludes.
-- $ogs.evalnf$ By case on the normal form.
-  - For $ctx.nret th base.tt th [v]$, by case on $v$ concludes.
-  - For $ctx.ncall th i th base.tt th [v] th k$, we need to prove
-    $llc.eval th k[llc.var th i llc.app v] itree.eq llc.nstuck th i th v th k$.
-    By induction on $k$.
-    - For $k := llc.ehole$. AHHHH.....
-
+  By application of @thm-correctness, with hypotheses proven in @lem-kriv-sub, @lem-kriv-resp-sub
+  and @lem-kriv-finred.
 ]
-
-
-=== The Named Term Translation
-
-Our goal is now to construct a language machine out of a given language with
-evaluator, and we will moreover prove that if $L$ respects substitution, then
-so does the obtained language machine. To do so we apply a continuation passing
-style translation. However, since we know nothing about the syntax and types of
-the language, there is no clear way to model continuations. The idea is thus to
-do an entirely formal translation, where we freely add types for continuations:
-formally negated types. Configurations, then, consist of a pair of a continuation
-variable and a term, a package which we call a _named term_. Likewise, 
-
-
-Configurations are simply a pair of a continuation
-variable and a term, i.e., the package of a term and its current continuation.
-However, as we know very little 
-
-
-
