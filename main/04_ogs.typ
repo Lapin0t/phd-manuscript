@@ -166,7 +166,7 @@ definition.
   absolute presentation. Note that the absolute presentation is still symmetric
   but in a weaker sense, only up to a function adapting the position (namely
   swapping the two scopes).
-]
+] <rem-ogs-g-abs-vs-rel>
 
 With the OGS game defined, using the generic description of game strategies
 as interaction trees developped in @ch-game, we obtain OGS strategies easily.
@@ -331,12 +331,16 @@ the returned configuration's scope. We thus obtain the following type.
 
 $ ogs.apply th {Gamma th alpha} cl "Val" th Gamma th alpha -> (o cl O.ctx.Oper th alpha) -> (O.ctx.dom th o asgn("Val") Gamma) -> "Conf" th Gamma $
 
+#remark[
 While slightly superfluous for the OGS construction, in presence of variables
-and renamings, both variants are mutually expressible. My feeling is that this
+and substitution, both variants are mutually expressible. My feeling is that this
 second variant is more natural to implement in instances as it is the natural encoding
 of a generalized eliminator. This design
 choice should probably be revisited in future work, if only to motivate it
-better. Using the $ogs.apply$ operator we now finish the definition of the coplay
+better.
+] <rem-langm-apply-alt>
+
+Using the $ogs.apply$ operator we now finish the definition of the coplay
 transition function.
 
 $ ogs.mstratresp th {Psi} cl ogs.mstratP th Psi -> (ogs.hg game.extP ogs.mstratA) th Psi \

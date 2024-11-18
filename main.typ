@@ -27,6 +27,7 @@
 #include "main/05_soundness.typ"
 #include "main/07_nf_bisim.typ"
 #include "main/06_instances.typ"
+#include "main/08_conclusion.typ"
 
 #show: back-matter
 

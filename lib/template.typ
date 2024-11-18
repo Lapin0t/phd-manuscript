@@ -97,7 +97,7 @@
 
   // HEADINGS
   set heading(numbering: "1.1")
-  set heading(supplement: "§" + h(-0.2em))
+  set heading(supplement: box("§" + h(-0.2em)))
   show heading.where(level: 1): set heading(supplement: "Ch.")
   show heading: set text(hyphenate: false)
   show heading: it => v(2.5em, weak: true) + it + v(2em, weak: true)
