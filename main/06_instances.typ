@@ -28,10 +28,17 @@ target for his _stack passing style_ transform of Call-By-Push-Value
 continuations centered around so-called _non-returning commands_: an ideal
 target for our first language machine. We will assume some familiarity with the
 language and refer the reader to #nm[Levy]~#num-cite(<Levy04>) as a more gentle
-entry point. In fact we also direct the interested reader to two existing
+entry point.
+#guil[Je pense que tu fournis ce qu'il faut pour comprendre JWA à part $jwa.vlam$ dans le paragraphe d'après, du coup je pense que tu peux presque supprimer cette remarque précédente.]
+In fact we also direct the interested reader to two existing
 constructions of normal form bisimulation and OGS construction for increasingly
 featureful variants of JWA by #nm[Levy] and
-#nm[Lassen]~#mcite(<LassenL07>)#mcite(dy: 3em, <LassenL08>). This is typed
+#nm[Lassen]~#mcite(<LassenL07>)#mcite(dy: 3em, <LassenL08>).
+#guil[Peut-être mettre une footnote pour expliquer que dans #mcite(<LassenL08>),
+les états sur lesquels leur normal-form bisimulations sont définis
+utilisent une notion d'environnement,
+et sont donc plutôt des bisimulations sur le LTS de l'OGS.]
+This is a typed
 language, so as is usual, there is some leeway regarding which types are
 included. As we are aiming for simplicity, we will only look at a
 representative fragment featuring three types of values: booleans $jwa.base$,
@@ -95,6 +102,8 @@ jwa.jval ar$ when it is more practical. The constructors are as follows.
   as $v jwa.capp jwa.vlam c$.
 ]
 ]
+
+#guil[Une petite explication pour $jwa.vlam$ ne serait pas de refus.]
 
 #lemma[Substitution][
   JWA values form a substitution monoid, and JWA commands form a substitution
@@ -190,8 +199,8 @@ block(height: 6em, align(horizon,
 
 For these negative types, i.e., continuations, we need to devise a notion of
 observation which will make up the content of the OGS moves. The only sensible
-thing to do with a continuation $jwa.neg A$ is to send it a something of type
-$A$, and as our goal is to hide continuations from moves, this something should
+thing to do with a continuation $jwa.neg A$ is to send it something of type
+$A$. As our goal is to hide continuations from moves, this something should
 be void of any continuation abstraction. This can be recognized as the set of
 _ultimate patterns_ of type $A$, i.e., maximally deep patterns of type $A$.
 
@@ -226,6 +235,9 @@ _ultimate patterns_ of type $A$, i.e., maximally deep patterns of type $A$.
       ctx.dom th p & := jwa.dom th p
     ) $
 ]
+
+#guil[Tu pourrais expliciter que $jwa.plam_A$ est
+une variable représentant un trou de type $A$.]
 
 The first thing to do with ultimate patterns is to show how to embed them into values.
 
@@ -312,9 +324,12 @@ $ ogs.eval th {Gamma cl jwa.nctx} cl jwa.cmd th Gamma -> delay.t th (ctx.norm^("
   ogs.apply th {Gamma cl jwa.nctx} th {A cl jwa.ntyp} th (v cl jwa.val th Gamma th A) th (o cl jwa.obs"".ctx.Oper th Gamma th alpha) \
     quad cl jwa.obs"".ctx.dom th o asgn(jwa.val) Gamma -> jwa.cmd th Gamma $
 
+#guil[Je pense que le type de $o$ est plutôt 
+$(o cl jwa.obs"".ctx.Oper th A)$]
+
 Let us start with the evaluation map. Although it is not really necessary, for
 clarity we will implement an _evaluation step_ function, taking a command
-either a normal form or to a new command to be evaluated. The evaluation map is
+to either a normal form or to a new command to be evaluated. The evaluation map is
 then simply obtained by iteration in the #delay.t monad.
 
 #definition[Evaluation][
@@ -373,7 +388,7 @@ We now have everything to instanciate the JWA language machine.
   substitution monoid structure of values.
 ]
 
-By the above definition we already can already instanciate the OGS model, but
+By the above definition we can already instanciate the OGS model, but
 to obtain correctness w.r.t. substitution equivalence, we need to verify the
 hypotheses of @thm-correctness. We are left with the two interesting
 hypotheses: the core semantic argument, the JWA machine respects substitution
@@ -468,7 +483,7 @@ redexes (@def-finite-redex).
      $o_2 cl jwa.pat th alpha_2$,
      $gamma_2 cl jwa.dom th o_2 asgn(V) Gamma$,
      $H_1 cl sub.isvar th v -> base.bot$,
-     $H_2 cl jwa.eval th (jwa.apply th v th o_2 th gamma) itree.eq itree.ret th ((i ctx.cute o_1), gamma_1)$
+     $H_2 cl jwa.eval th (jwa.apply th v th o_2 th gamma_2) itree.eq itree.ret th ((i ctx.cute o_1), gamma_1)$
     ),
     $ogs.badc th H_1 th H_2 cl o_1 ogs.badinst o_2$
   )
@@ -672,7 +687,10 @@ We hope that all the symmetries are enjoyable. The consequence is that at a
 positive type, the #uut.mu reduction rule will fire across any coterm, while the #uut.mut
 rule will only fire across a weak-head normal term, and symetrically at
 negative types. For a more general introduction to #short.uuc, we can recommend
-the tutorial by #nm[Binder] _et. al_~#mcite(<BinderTMO24>). Technically, our
+the tutorial by #nm[Binder] _et. al_~#mcite(<BinderTMO24>).
+#guil[Je ne pense pas que ce soit une bonne ref, vu qu'ils ne présentent pas
+le #short.uuc polarisé dans ce papier]
+ Technically, our
 polarized presentation approximately follows the one from #nm[Downen]
 and #nm[Ariola]~#mcite(dy: 1.8em, <DownenA20>), obtaining a middle ground
 between their #nm[System L] and #nm[System D]. Without further ado, let us jump
@@ -768,6 +786,9 @@ obtaining a #nm[Turing]-complete language.
     (uut.tk""A)^uut.sneg := uut.tv""A $
 ]
 
+#guil[ça crée de la confusion d'utiliser les symboles $+$
+et $-$ pour les deux formes de polarisation 
+(terme/pile) et (positif/negatif) je trouve.]
 //#show figure.where(kind: "full-page"): context {
 //  set block(width: page.width + 4.4cm)
 //}
@@ -951,7 +972,7 @@ obtaining a #nm[Turing]-complete language.
 
 === Patterns
 
-We will now define the infrastructure for patterns: first the _observable_
+We now define the infrastructure for patterns: first the _observable_
 subset of side-annotated types, which will appear in the OGS game, then the
 patterns, their embedding into values, and finally the splitting of values into
 a pattern and a filling, together with the associated refolding lemmas. In JWA
@@ -1077,7 +1098,7 @@ we first go through the dual notion of _patterns_.
   $)
 ]
 
-With patterns defined, we will define the embedding and splitting in one go, without giving
+With patterns defined, we introduce the embedding and splitting in one go, without giving
 the entire definitions as they are becoming quite unwieldy.
 
 #lemma[Value Splitting][
@@ -1094,6 +1115,9 @@ the entire definitions as they are becoming quite unwieldy.
   2. For all $Gamma cl uut.nctx$, $A cl uut.typ$, $p cl uut.pat th A$ and $gamma cl uut.dom th p asgn(uut.val) Gamma$,
     $ (p, gamma) approx (uut.v2p th (uut.p2v th p)[gamma], uut.v2a th (uut.p2v th p)[gamma]). $
 ] <lem-uut-refold>
+
+#guil[l'énoncé ne ressemble pas à un lemme mais plutôt à une définition]
+
 #proof[
   $uut.p2v$ is defined by direct induction on patterns. $uut.v2p$ is defined through the following two
   mutually inductive auxiliary functions.
@@ -1168,6 +1192,9 @@ and application maps.
     & uut.evalstep th & agl uut.vw th uutabs(uut.tnu, c) & xpn uut.vw th (uut.vnu th k) agr && := base.inj2 th c[sub.var,k]
   $
 ]
+
+#guil[J'ai l'impression que la fonction eval-step est non-déterministe
+à cause de la règle sur le &]
 
 #definition[Observation Application][
   Define observation application as follows.
@@ -1551,7 +1578,20 @@ trees~#mcite(<Levy75>)#mcite(dy: 3em, <Longo83>). Thus, @thm-nf-correctness
 gives us a soundness proof of #nm[Levy]-#nm[Longo] tree w.r.t. weak head
 observational equivalence, giving an alternative to #nm[Hyland]'s set
 theoretical proof~#mcite(dy: 2em, <Hyland76>). #peio[Guilhem tu comprends qqch
-à ces papiers? Je dis pas de betise?] This fact should probably be properly
+à ces papiers? Je dis pas de betise?]
+#guil[Le papier de Hyland ne prouve pas ça il me semble,
+il relie plutôt l'équivalence observationnelle
+du lambda-calcul en (strong) CBN, où les observations
+peuvent des formes normales de tête (faible), avec les modèles D-infini 
+et P-omega.
+Les arbres de Levy-Longo n'ont pas été étudié
+avant les années 90, lorsque Abramsky et Ong ont introduit
+le lazy lambda-calculus.
+Il y a au moins trois preuves que
+l'egalité des arbres de Levy-Longo implique l'equivalence observationnelle,
+par Ong, par Sangiorgi et par Lassen.
+]
+ This fact should probably be properly
 justified by formalizing a clean representation of these trees and proving them
 isomorphic to our NF strategies, but we will not go further than this. For the
 sake of it, let us simply state the OGS correctness theorem, for the last time
