@@ -16,7 +16,7 @@ are purely formal constructs, this gives to the study of their semantics the
 feel of a natural science, where mathematical models are built to capture an
 ever increasing level of detail. For sure, a handful of languages do admit
 truly exhaustive semantic descriptions, but this arguably only ever happens when they
-are designed with this intent (e.g., #nm[Lisp] or #txsc[WebAssembly] #peio[ref]). In
+are designed with this intent (e.g., #nm[Lisp] or #txsc[WebAssembly] #peio[ref]#guil[Plutôt Standard ML que List]). In
 fact, even for programming languages strongly rooted in the theoretical
 computer science community and routinely used by semanticists, such as proof
 assistants like Agda~#mcite(<Agda>) or Coq~#mcite(dy: 1em, <Coq>), a perfect description is still
