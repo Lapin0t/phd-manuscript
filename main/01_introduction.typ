@@ -116,7 +116,7 @@ game _theory_, e.g., they are devoid of any notion of reward. This basic idea
 is quite flexible and suitable to model a wide range of programming language
 features. In fact it originates as part of a wider interpretation not of
 programs but of _proofs_, i.e., evidences, in logical systems. Game semantics
-in this wider acception is sometimes known as _dialogical logic_, but we will
+in this wider acception is sometimes known as _dialogical logic_#guil[c'est la première fois que je vois une mentioner _dialogical logic_, tu penses à quel type de travaux ?], but we will
 not try to trace it down to its origins since the connection between logical
 proofs and argumentative dialogues is most likely as old as logic itself.
 
@@ -127,7 +127,7 @@ not yet truly gone out of the hands of the game semanticists and into the
 everyday toolkit of the generalist programming language researcher. This can be
 contrasted e.g. with the framework of _logical relations_, also known as
 #nm[Tait]'s method of computability~#mcite(<Tait67>), which has
-intersecting usecases~#mcite(dy: 3em, <DreyerNB12>) and which enjoys a very large number
+interesting usecases~#mcite(dy: 3em, <DreyerNB12>) and which enjoys a very large number
 of introductory material, tutorials and other proof walk-throughs. While game
 semantics is relatively lively as a research area, it has seen comparably
 little activity in digesting existing methods, streamlining proofs and
@@ -374,6 +374,12 @@ or _transition system_, that is, by giving a set of states and a transition
 relation. More precisely, because a strategy needs to both play moves and
 respond to server moves, there will be two sets of states and two transition
 relations, respectively for _active positions_ and _passive positions_.
+#guil[Il y a aussi toute une branche de la sémantique des jeux
+qui s'appelle Algorithmic Game Semantics, et qui utilise
+différentes formes d'automates pour représenter les strategies
+de sémantique des jeux, en restreignant l'ordre des types des programmes
+considérés pour pouvoir encoder la structure de pointeurs convenablement.
+Mais dans cette branche-là, on raisonne par induction sur la structure du programme plutôt que d'utiliser une sémantique opérationnelle. ]
 
 #let sact = txtt("act")
 #let spas = txtt("pas")
@@ -419,7 +425,7 @@ follows.
 A term $P$ can now be interpreted as a strategy by embeding it as the initial
 active state $sact(P, epsilon, {})$. Then, strategies are considered equivalent
 when they are _bisimilar_, which in this case essentially means that they have
-the same set of _traces_, that is, the infinite sequences of moves obtained by
+the same set of _traces_ #guil[since the transition system is deterministic], that is, the infinite sequences of moves obtained by
 unfolding any possible transition starting from the initial state. The primary task to
 make sure the model is sensible is to prove that for the above given strategy,
 when two terms are bisimilar, then they are observationally equivalent---a
@@ -516,7 +522,7 @@ will abstract over the notions of named term, generalized values, observations,
 normal form splitting and observation application. Notice how both the
 explicit threading of evaluation contexts as well as the named term
 construction $conf(P, alpha)$ are reminescent of abstract machines based
-presentations of a language's operational semantics. In this sense, in our
+presentations of a language's operational semantics #guil[Est-ce-que tu pourrais détailler ce que tu entends par "explicit threading of evaluation contexts" ?]. In this sense, in our
 opinion, OGS is first and foremost a construction on an abstract machine, and
 not on a "programming language". This point of view will guide us during the
 axiomatization, as we will indeed entirely forget about bare terms and
@@ -524,10 +530,12 @@ evaluation contexts, keeping only _configurations_ (e.g. named terms) and
 generalized values. On top of streamlining the OGS, letting go of evaluation
 contexts will also greatly simplify the necessary syntactic metatheory, as
 these "programs with a hole" are perhaps _fun_, but certainly not
-_easy_~#mcite(dy: -5em, <AbbottAGM03>)#mcite(dy: -1em, <McBride08>)#mcite(dy: 1em, <HirschowitzL22>).
+_easy_~#mcite(dy: -5em, <AbbottAGM03>)#mcite(dy: -1em, <McBride08>)#mcite(dy: 1em, <HirschowitzL22>)
+#guil[Les deux premiers papiers que tu cites se concentrent sur contextes généraux plus que sur les contextes d'évaluation.].
 Yet as we have seen, this does not preclude to treating languages
 given by more traditional small- or big-step operational semantics, or even
-with syntactic denotational semantics into some computational metalanguage.
+with syntactic denotational semantics into some computational metalanguage
+#guil[Qu'est-ce-que tu veux dire par "syntactic denotational semantics" ?].
 
 
 
