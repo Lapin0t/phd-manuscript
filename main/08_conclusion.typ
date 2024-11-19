@@ -204,11 +204,12 @@ arbitrary (of course strictly positive) monad.
 
 $ de("itreeT")_(M,Sigma) th X := nu A. th M th (X + A + Sigma th A) $
 
-We conjecture that this can be precised to form the initial iterative monad
-with a monad morphism from $M$ and a $Sigma$ algebra. The hard part however,
-starts even before proving any property: a good notion of _weak_ bisimilarity is
-still elusive! In other words, given a _relator_ on $M$, we have some trouble
-defining a good relator on $de("itreeT")_(M,Sigma)$ for weak bisimilarity.
+We conjecture that with a suitable notion of weak bisimilarity, this can be
+precised to form the initial #nm[Elgot] monad with a monad morphism from $M$ and
+a $Sigma$ algebra. The hard part however, starts even before proving any
+property: a good notion of _weak_ bisimilarity is still elusive! In other
+words, given a _relator_ on $M$, we have some trouble defining a good relator
+on $de("itreeT")_(M,Sigma)$ for weak bisimilarity.
 
 *Proof Engineering* #sym.space.quad Finally, we have said very little of the
 accompagnying code artifact, but it leaves a lot to be desired as it is nowhere
