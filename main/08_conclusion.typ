@@ -211,21 +211,25 @@ property: a good notion of _weak_ bisimilarity is still elusive! In other
 words, given a _relator_ on $M$, we have some trouble defining a good relator
 on $de("itreeT")_(M,Sigma)$ for weak bisimilarity.
 
-*Proof Engineering* #sym.space.quad Finally, we have said very little of the
-accompagnying code artifact, but it leaves a lot to be desired as it is nowhere
-near a reusable software library. As one would imagine, a number of design
-mistakes have been made during the development and partially patched out, so
-that it would greatly benefit a thorough re-architecturing. In fact, because we
-tried to stay true to the actual code, some of these oddities can at times be
-felt in the manuscript.
+We could go on for quite some time, but perhaps this is already enough open
+questions! Let us finish with more down to the earth comments on our
+code artifact.
+
+*Proof Engineering* #sym.space.quad Throughout this thesis we have said very
+little of the accompagnying code artifact, but it leaves a lot to be desired as
+it is nowhere near a reusable software library. As one would imagine, a number
+of design mistakes have been made during the development and partially patched
+out, so that it would greatly benefit a thorough re-architecturing. In fact,
+because we tried to stay true to the actual code, some of these oddities can at
+times be felt in the present manuscript.
 
 A particularly central point is the absence of any definition of _setoid_.
 Reasoning up-to some equivalence relation is central throughout this thesis,
 but it has been worked out on a case by case basis (mostly for value
 assignments and for interaction trees). As such the artifact is left with some
 definitions which are too strict for some usecases (substitution structures and
-language machines). We have tried to make up for this in the manuscript by an
-appeal to a slightly nebulous "extensional equality" written $approx$, akin to
+language machines). We have tried to make up for this in the manuscript by
+appealling to a slightly nebulous "extensional equality" written $approx$, akin to
 a fictive type class. The clean solution is quite simple: truly parametrize by
 setoids and setoid families instead of types everywhere it is relevant.
 
