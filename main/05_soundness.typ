@@ -135,13 +135,13 @@ introduced in the previous chapter.
   Then, for any $a cl ogs.mcarg$ and $b cl ogs.stratA th Omega ogs.join ogs.stratP th Omega$,
   we prove that $R th a th b -> (ogs.mcompeq th a) iteq(cnorm(=) de(+^rel.r) cnorm(R)) (ogs.compeq th b)$.
 
-  Succintly, the above proposition is proven by inspecting the head of the
+  Succinctly, the above proposition is proven by inspecting the head of the
   configuration part of the active state $a$. In case it plays
   #itree.retF, the conclusion is direct, while for #itree.tauF the
   conclusion is by coinduction.
 
   Then, by @lem-iter-mon we have $R th a th b -> (ogs.mcomp th a) itree.eq
-  (ogs.comp th b)$, and we obtain the result by instanciating the relation
+  (ogs.comp th b)$, and we obtain the result by instantiating the relation
   witness $R th a th b$ by $(base.refl, base.refl)$.
 
 #guil[Ça pourrait aider de rappeler que $ogs.mcomp$ et $ogs.comp$ 
@@ -450,7 +450,7 @@ We can now prove eventual guardedness.
   Then, by case on whether or not $v := ogs.collP sigma^- th i$ is a variable ($sub.isvardec$).
 
   - If $v$ is some variable $j cl (Omega ctx.cat ogs.catO Psi) ctx.var alpha$,
-    the $ogs.apply$ expression is in fact the embeddeding of the normal form
+    the $ogs.apply$ expression is in fact the embedding of the normal form
     $((rho_1 th j ctx.cute o), rho_2)$. Thus, by $ogs.evalnf$ we know its evaluation.
     Then by case on $ctx.vcat th j$:
     - If $j cl Omega ctx.var alpha$, the composition ends with
@@ -565,5 +565,5 @@ equation is "nice" enough and thus enjoys unicity of fixed points.
 I hope that this separation between the high-level argument and the tedious
 technical justification demystifies the adequacy proof, and enables a better
 understanding of it by non specialists. In particular, it opens up an
-intermediate level of explaination in which @lem-zipev-fix is detailled but
+intermediate level of explanation in which @lem-zipev-fix is detailed but
 where unicity is taken for granted.

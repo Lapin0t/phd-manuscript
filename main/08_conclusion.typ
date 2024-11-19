@@ -20,9 +20,9 @@ the type theorist. Let us review some of the most important steps we have taken.
 
 - In @ch-ogs we arrived at operational game semantics. We constructed a generic
   OGS model, proposing an axiomatization of languages with open evaluation. This
-  axiomatization is inspired by abtract machines, taking a computational approach
+  axiomatization is inspired by abstract machines, taking a computational approach
   to operational semantics. Most notably, it leaves the syntax entirely opaque and
-  devoid of any inductive nature, to be constrasted e.g., with structural
+  devoid of any inductive nature, to be contrasted e.g., with structural
   operational semantics~#mcite(<Plotkin04a>). Yet this is enough to construct an
   OGS model, and to prove it correct w.r.t. an observational equivalence
   under suitable hypotheses (@ch-proof). This underlines that much like
@@ -31,7 +31,7 @@ the type theorist. Let us review some of the most important steps we have taken.
 
 - Finally, we reaped some rewards from all of these constructions. First we
   generically defined normal form bisimilarity, proving it correct by going
-  through OGS strategy bisimilarity (@ch-nf-bisim). Then, we instanciated our
+  through OGS strategy bisimilarity (@ch-nf-bisim). Then, we instantiated our
   language axiomatization with three standard calculi (@ch-instance). 
 
 As always, there is the feeling that we have barely started scratching the
@@ -57,7 +57,7 @@ symmetric.
 
 First of all, games are routinely used as models for linear logic. It would be
 interesting to see how our notion of games fare in this respect. In fact our
-OGS game is quite reminescent of "bang" games in typical such interpretations.
+OGS game is quite reminiscent of "bang" games in typical such interpretations.
 In both cases, the game position is a list (or scope) of possible game copies
 to choose from, and moving _spawns_ new possible positions (by concatenation on
 this list).
@@ -154,7 +154,7 @@ questions) or _visibility_ (only observing variables which are in the causal
 past). Further, perhaps our novel eventual guardedness condition can be
 rephrased as a particular _liveness_ property, as it is intuitively stating
 that every so many numbers of trivial looping, we do find a non-trivial step in
-the equation body: somethig good eventually happens.
+the equation body: something good eventually happens.
 
 Such a logic on the traces arising from coinductive automata has already been
 proposed in the case of non-indexed interaction trees~#mcite(<SilverZ21>)#mcite(dy: 4em, <YoonZZ22>).
@@ -216,7 +216,7 @@ questions! Let us finish with more down to the earth comments on our
 code artifact.
 
 *Proof Engineering* #sym.space.quad Throughout this thesis we have said very
-little of the accompagnying code artifact, but it leaves a lot to be desired as
+little of the accompanying code artifact, but it leaves a lot to be desired as
 it is nowhere near a reusable software library. As one would imagine, a number
 of design mistakes have been made during the development and partially patched
 out, so that it would greatly benefit a thorough re-architecturing. In fact,
@@ -227,9 +227,9 @@ A particularly central point is the absence of any definition of _setoid_.
 Reasoning up-to some equivalence relation is central throughout this thesis,
 but it has been worked out on a case by case basis (mostly for value
 assignments and for interaction trees). As such the artifact is left with some
-definitions which are too strict for some usecases (substitution structures and
+definitions which are too strict for some use cases (substitution structures and
 language machines). We have tried to make up for this in the manuscript by
-appealling to a slightly nebulous "extensional equality" written $approx$, akin to
+appealing to a slightly nebulous "extensional equality" written $approx$, akin to
 a fictive type class. The clean solution is quite simple: truly parametrize by
 setoids and setoid families instead of types everywhere it is relevant.
 

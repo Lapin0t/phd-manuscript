@@ -54,7 +54,7 @@ as follows.
 Recall from the informal
 introductory description (#peio[ref]) that the OGS model proceeds by computing
 the normal form of a given configuration (or term) and then splitting it into
-a _head variable_, an _observation_ on it, and a _filling assigment_,
+a _head variable_, an _observation_ on it, and a _filling assignment_,
 associating a value to each _hole_ or _argument_ of the observation. An OGS
 _move_ is then obtained by combining the head variable and the observation,
 while the assignment is kept local to the OGS strategy and hidden from the
@@ -75,7 +75,7 @@ manipulate. To explain this, let us take a step back.
 For other scoped syntactic categories like values or terms, the indexing scope
 constrains what variables the term can _mention_. Because we want to think of
 variables as pointers into a scope, in terms of conceptual dependency, the scope
-is pre-existing and the term over it comes afterwards. It is then sensible to
+is preexisting and the term over it comes afterwards. It is then sensible to
 reflect this dependency formally and use scoped-and-typed families, making the
 sort of terms _depend_ on a scope (and also on an object type).  On the other
 hand, the scope of an observation is not there to constrain anything but to make
@@ -112,7 +112,7 @@ This leads us to axiomatize observations as _binding families_, which we now def
 
 Let us now define OGS moves, which are made of pairs of a variable and an
 observation (or in fact _triplets_ accounting for the type which is also
-implicitely there).
+implicitly there).
 
 #definition[Named Observation][
   Assuming a scope structure $ctx.scope_T th S$ and a binding family $O cl
@@ -151,7 +151,7 @@ definition.
 ] <def-ogs-g-naive>
 
 #remark[
-  To avoid needlessly duplicating definitions we have prefered a symmetric game,
+  To avoid needlessly duplicating definitions we have preferred a symmetric game,
   where the client and server half-games are equal. To achieve this, we do
   not use an _absolute_ point of view on the scopes, where some player would
   always append to the first component $Gamma$ while the other player would
@@ -169,7 +169,7 @@ definition.
 ] <rem-ogs-g-abs-vs-rel>
 
 With the OGS game defined, using the generic description of game strategies
-as interaction trees developped in @ch-game, we obtain OGS strategies easily.
+as interaction trees developed in @ch-game, we obtain OGS strategies easily.
 
 #definition[OGS Strategies][
   Assuming an abstract scope structure $ctx.scope_T th S$, given a binding
@@ -205,7 +205,7 @@ _relative_ point of view we have to take some care with the scopes. Recall that
 in a position $(Gamma, Delta)$, if it is _our turn_ to play, then $Gamma$ lists
 the opponent-introduced variables, while $Delta$ lists the ones we introduced.
 As such, the _active_ states of the machine strategy should contain an
-assigment
+assignment
 
 $ sigma cl Delta asgn("Val") Gamma. $
 
@@ -284,9 +284,9 @@ $ ogs.mstratplay th {Psi} cl ogs.mstratA th Psi -> delay.t th (base.bot base.sum
 machine strategy, which is empty in concordance with @def-ogs-strat.]
 The
 function starts by computing the normal form $(o, gamma)$, where $o$ is a named
-observation and $gamma$ the filling assigment. Then, it plays the move $o$ and
-stores the new filling $gamma$ besides the currently stored assigment $sigma$
-by copairing of assigments. To detail the typing, assuming $Psi = (Gamma,
+observation and $gamma$ the filling assignment. Then, it plays the move $o$ and
+stores the new filling $gamma$ besides the currently stored assignment $sigma$
+by copairing of assignments. To detail the typing, assuming $Psi = (Gamma,
 Delta)$, we have
 
 $ sigma & cl Delta & asgn("Val") Gamma \
@@ -319,14 +319,14 @@ state. Recall that intuitively, upon receiving a move $(i ctx.cute o)$,
 the OGS construction obtains the next configuration by looking up the value $v$
 associated to $i$ and _applying_ the observation $o$ to $v$. As such, we need
 to axiomatize this application operator in the language machine. It could be
-modelled by a map of the following type.
+modeled by a map of the following type.
 
 $ "apply" th {Gamma th alpha} cl "Val" th Gamma th alpha -> (o cl O.ctx.Oper th alpha) -> "Conf" th (Gamma ctx.cat O.ctx.dom th o) $
 
 Note that the scope of the returned configuration is extended by the observation's
 holes, since the filling was not given. While this is precisely the operator needed
 for the OGS construction, we chose to generalize it slightly by adding the filling
-assigment (i.e., the observation's arguments) as arguments instead of extending
+assignment (i.e., the observation's arguments) as arguments instead of extending
 the returned configuration's scope. We thus obtain the following type.
 
 $ ogs.apply th {Gamma th alpha} cl "Val" th Gamma th alpha -> (o cl O.ctx.Oper th alpha) -> (O.ctx.dom th o asgn("Val") Gamma) -> "Conf" th Gamma $
@@ -506,12 +506,12 @@ plays the same role as the ground _type_ of contextual equivalence. The
 generalization from a single type to an entire scope is required simply
 because in the abstract scope structure axiomatization we did not introduce any
 mean to talk about singleton scopes. However, as this scope is freely chosen in
-the instances, it may very well be instanciated by a singleton scope, which usually
+the instances, it may very well be instantiated by a singleton scope, which usually
 exist in concrete cases.
 
 Second, instead of directly comparing two normal forms obtained by evaluation,
 substitution equivalence first project them onto their named observation part,
-disregarding the filling assigments. The reason for this stems from what makes
+disregarding the filling assignments. The reason for this stems from what makes
 a "good" ground type. For standard calculi, the ground type of contextual
 equivalence is invariably taken to be a very simple type such as booleans or
 the unit type. What is important, is that values of this type can be
@@ -611,7 +611,7 @@ $ ar game.par ar cl game.stratA_G th (kw.fun th i |-> R) th i
           itree.tauF th t & := itree.tauF th (t game.par s^-),
           itree.visF th m th k & := itree.tauF th (s^- th m game.par k))) $
 
-Our first roadblock is now apparent: instanciating this with the OGS game does
+Our first roadblock is now apparent: instantiating this with the OGS game does
 not match the type that we wanted. There are two discrepancies. First,
 for two strategies to compose, they must agree on the current game position
 $i$. However, for adequacy to typecheck, we need to compose $ogsinterpA(c)$
@@ -643,7 +643,7 @@ There is however one more roadblock, much more insidious. To understand it, we
 need to dive yet deeper into the correctness proof. Proving congruence of
 composition will be entirely straightforward and the meat of the correctness
 proof is concentrated in the much trickier adequacy proof. Attacking adequacy
-directly, by starting to construct a bisimulation, is largely infeasible
+directly, by starting to construct a bisimulation, is largely unfeasible
 because of the complexity of the right hand side. Hence, we again need to cut
 this statement into smaller pieces and devise a more structured proof strategy.
 As it happens, composition can be presented as the fixed point of an equation
@@ -812,7 +812,7 @@ th Omega)$. We follow up with the composition equation.
 plus éclairant de juste fournir les équations explicites ?
 Tu pourrais aussi faire un renvoi à la section sur Iteration Operators ici.]
 #remark[
-  Note the different treatement of iteration in the #itree.tauF case and in the
+  Note the different treatment of iteration in the #itree.tauF case and in the
   #itree.visF case. In the #itree.tauF case, we
   emit a #itree.tauF move, guarding a _coinductive_ self-call, while in the
   #itree.visF case, we instead return into the left component of the equation,
@@ -875,7 +875,7 @@ $ ogs.mstratA th Psi := C th (Omega ctx.cat ogs.catE Psi) base.prod (ogs.catO Ps
   ogs.mstratP th Psi := ogs.catE Psi asgn(V) (Omega ctx.cat ogs.catO Psi) $
 
 This would indeed work, but now that we have more information we can be much
-more precise in tracking the scopes of each value stored in the assigments.
+more precise in tracking the scopes of each value stored in the assignments.
 This is quite important since every ounce of precise specification we can cram
 into the typing will be something less to worry about during manipulation and
 proofs. Taking a step back, let us consider what must actually be stored inside
@@ -1119,7 +1119,7 @@ $sub.isvar th v -> sub.isvar th v[rho]$. In fact, thanks to $sub.isvarirr$, we
 can even deduce that these two implications are inverse to each other.
 
 *Finite Redexes* #sym.space.quad The last technical hypothesis is perhaps the
-most mysterious. To me it was, at least, and I was quite suprised when I
+most mysterious. To me it was, at least, and I was quite surprised when I
 realized I could _still_ not conclude the eventual guardedness proof of the
 composition equation.
 
@@ -1131,7 +1131,7 @@ environment to a value which happens to be some variable $j$. As such, the
 composition continues with some new active configuration $M.ogs.apply th
 (sub.var th j) o th gamma$, which by $ogs.evalnf$ evaluates instantly to
 $((j ctx.cute o), gamma)$. Hence, in case of such a chit-chat, the original
-move $(i ctx.cute o)$ is immediatly "bounced" #guil[copycat ?] back to the original player with
+move $(i ctx.cute o)$ is immediately "bounced" #guil[copycat ?] back to the original player with
 the move $(j ctx.cute o)$. Recalling that to prove eventual guardedness, the
 goal is to find a #itree.tauF move in the reduction of the active configuration,
 it is quite nice to be able to limit the number of such bounces.

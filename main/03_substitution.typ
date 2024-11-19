@@ -55,7 +55,7 @@ In @sec-sub-scope, we motivate
 and introduce a small contribution. Typically, the notion of scope is fixed in
 the abstract theory of substitution and defined as lists of types, but this
 rigidity can be cumbersome for some languages. This is remedied by providing a
-succint abstraction for scopes #tom["succint" est un peu bizarre: "simple", "basic"?]. Finally, in @sec-sub-monoid, we adapt the
+simple abstraction for scopes #tom["succint" est un peu bizarre: "simple", "basic"?]. Finally, in @sec-sub-monoid, we adapt the
 definition of substitution monoid to this new abstraction. We #tom[je passe certains verbes du futur au présent, je trouve que tu emploies parfois le futur à mauvais escient.] also introduce _substitution
 modules_, a second mild contribution required to deal with substitution inside
 other syntactic objects than just terms, such as evaluation contexts.
@@ -115,7 +115,7 @@ $ Gamma asgn(X) Delta := forall th {alpha} -> Gamma ctx.varc alpha -> X th Delta
   When computational efficiency is a concern, another typical choice is to
   define a more economic subcategory of contexts, whose renamings consist
   only of order-preserving embeddings (#txsc[ope]~#peio[ref?]). An #txsc[ope] can
-  be computationally modelled by a bitvector, where a 0 at position $i$ means
+  be computationally modeled by a bitvector, where a 0 at position $i$ means
   that the $i$-th variable is dropped while 1 means that it is kept. However as
   computational efficiency is not our prime concern, we will not go down this
   route. Still, we keep this idea around, borrowing and slightly abusing the
@@ -214,7 +214,7 @@ renamings can be implemented by substitution with variables. However, the
 typical implementation of substitution on a syntax with binders requires readily
 available $pr("ren")$ and $pr("var")$ operations to go through. This package of
 renamings and variables can be formalized as a _pointed coalgebra
-structure_~#mcite(<FioreS22>) and its compatibily conditions with a
+structure_~#mcite(<FioreS22>) and its compatibility conditions with a
 substitution monoid structure are straightforward.
 
 #yann[Ce serait pas mal de faire bien ressortir les remarques vs. les défs explicitement utiles pour la suite. Du coup je pense au moins utiliser un environnement de définition pour chaque définition qui sera réutilisée.]
@@ -226,7 +226,7 @@ variables as #nm[De Bruijn] indices is practically unsatisfactory. Perhaps the
 most convincing reason is that storing sequences as singly-linked lists and
 membership proofs as unary numbers is not computationally efficient. When
 efficient execution is a concern, one typically chooses an off-the-shelf finite
-map datastructure such as binary trees, which enjoy logarithmic time lookup and
+map data structure such as binary trees, which enjoy logarithmic time lookup and
 logarithmic size membership proofs.
 
 Although I like to imagine that my Coq development makes sound computational
@@ -417,7 +417,7 @@ $ctx.emp ctx.var t -> base.bot$ to obtain the first isomorphism (4) in full.
 For the second isomorphism (5), taking hints both from Homotopy Type
 Theory~#mcite(<hottbook>, supplement: [§4.4, pp.~136--137]) and
 from the _view_ methodology~#mcite(<McBrideM04>, dy: 4em, supplement: [§6,
-pp.~98--102])#mcite(<Allais23>, dy: 7em), I will axiomatise only the
+pp.~98--102])#mcite(<Allais23>, dy: 7em), I will axiomatize only the
 backward map and ask that its fibers are _contractible_, i.e., inhabited by
 exactly one element. This will make the isomorphism much easier to use, enabling
 inversions by a simple dependent pattern matching instead of tedious equational
@@ -425,7 +425,7 @@ rewriting. #yann[Ça mérite plus d'explication : qu'est-ce qu'une fibre; en quo
 #guil[+1]
 
 As the domain of the backward map of the second isomorphism has as domain a
-sum type, I will axiomatize it implicitely as the copairing of two simpler maps:
+sum type, I will axiomatize it implicitly as the copairing of two simpler maps:
 
 $ Gamma ctx.var t -> (Gamma ctx.cat Delta) ctx.var t \
   Delta ctx.var t -> (Gamma ctx.cat Delta) ctx.var t, $
@@ -457,7 +457,7 @@ $ kw.dat base.vsum th (f cl A -> C) th (g cl B -> C) cl C -> base.Type kw.whr \
     used to form the family category $T -> base.Type$ in the sort of $ctx.var$.
     In future work I believe to be particularly fruitful to replace $T ->
     base.Type$ with an arbitrary suitably well-behaved category $cal("A")$,
-    i.e. axiomatising variables as $ar ctx.var cl S -> cal("A")$.
+    i.e. axiomatizing variables as $ar ctx.var cl S -> cal("A")$.
 
     In particular $cal("A") := base.Type$ provides a more satisfying account of
     untyped calculi than setting $T := base.unit$, i.e. $cal("A") :=
@@ -706,11 +706,11 @@ $x[gamma][delta] = x[gamma[delta]]$.
   asgn(X) Gamma$.
   This coincidence stems from the fact that substitution monoid structures
   are exactly $ctx.var$-relative monads~#mcite(<AltenkirchCU10>). From this
-  perspective, one can construct something similar to a Kleisli category for
+  perspective, one can construct something similar to a #nm[Kleisli] category for
   $X$, the _$X$-assignment category_ $de(cal("A"))_X$ whose objects are
   contexts in $S$ and morphisms are given by $X$-assignments. It is then
   unsurprising that $sub.var$---the unit of the relative monad $X$---is the
-  identity morphism of its Kleisli category.
+  identity morphism of its #nm[Kleisli] category.
 ]
 
 #remark[
@@ -741,7 +741,7 @@ serais preneur d'un poil plus d'explications, notamment sur le fait que
 #let ecx = de(cop("ECtx"))
 
 Substitution monoids have neatly been generalized to abstract scopes, but for the purpose of
-modelling OGS, a part of the theory of substitution is still missing. As
+modeling OGS, a part of the theory of substitution is still missing. As
 explained in the introductory chapter #peio[ref précise?], in OGS we will
 typically see#yann[refer to? Manipulate?] other syntactic constructs such as _values_, _evaluation
 contexts_ and evaluator _configurations_. 
@@ -759,7 +759,7 @@ is only indexed by a scope: $ cfg cl S -> base.Type. $
 We already know how to axiomatize substitution for values: their
 scoped-and-typed family should form a substitution monoid. But for the other
 two kinds of families, we would like to axiomatize a substitution operation
-that allows replacing their variables by values. More explicitely, we want the
+that allows replacing their variables by values. More explicitly, we want the
 following substitution operations.
 
 $ sub.sub th {Gamma th alpha th beta} cl ecx th Gamma th alpha th beta -> Gamma asgn(val) Delta -> ecx th Delta th alpha th beta \
@@ -914,7 +914,7 @@ $sub.box_M$ coalgebras, extending the previous result on renaming
 structures~#mcite(dy: -1em, <AllaisACMM21>)#mcite(dy: 4em, <FioreS22>).
 
 Finally, we conclude this chapter by defining one last structure, for families
-that have both renamings and variables, described by Fiore and Szamozvancev as
+that have both renamings and variables, described by #nm[Fiore] and #nm[Szamozvancev] as
 _pointed coalgebras_.
 
 #definition[Pointed Renaming Structure][
@@ -934,7 +934,7 @@ With substitution monoids, substitution modules and renaming structures
 defined, we now have the flexible tools we need in the next chapter to
 axiomatize the object language of our generic OGS construction. Although we
 have only seen a glimpse of what can be done using the intrinsically typed and
-scoped approach for modelling binders, I hope to have demonstrated the ease
+scoped approach for modeling binders, I hope to have demonstrated the ease
 with which it can be adapted to specific situations like different indexing
 (such as substitution modules) or new context representations (such as abstract
 scope structures).

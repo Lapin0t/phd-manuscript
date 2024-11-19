@@ -27,7 +27,7 @@ form bisimilar_ language configurations are _substitution equivalent_.
 
 == Normal Form Bisimulations in a Nutshell <sec-nf-bisim>
 
-Implicitely or explicitely, the main idea in all normal form (NF) bisimulations
+Implicitly or explicitly, the main idea in all normal form (NF) bisimulations
 constructions, is to associate to each program a possibly infinite tree. Here,
 we will call these trees _normal form strategies_, that is, strategies for the
 _normal form game_. This induces a notion of program equivalence which holds
@@ -41,7 +41,7 @@ are obtained by coinductively applying the same process to the subterms of the
 normal form. By now this process of splitting a normal forms into a head and a
 sequence of subterms should ring a bell... Although OGS and NF bisimulations
 have historically been introduced in reverse order, we can use our readily
-available knowledge of the OGS game to provide a very succint and precise
+available knowledge of the OGS game to provide a very succinct and precise
 description of the normal form game. The NF game is nothing else than a
 restriction of the OGS game, where the server is only allowed to query the
 variables introduced by the last client move.
@@ -292,7 +292,7 @@ namely that $nf.nf2ogs$ respects to weak bisimilarity.
 We can now prove the normal form bisimulation correctness theorem.
 
 #theorem[NF Correctness][
-  Assming the same set of hypotheses as OGS correctness (@thm-correctness), NF bisimulation
+  Assuming the same set of hypotheses as OGS correctness (@thm-correctness), NF bisimulation
   is correct w.r.t. substitution equivalence, i.e., for any $Gamma cl S$ and $c_1, c_2 cl C th Gamma$, the
   following statement holds.
 

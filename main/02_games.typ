@@ -7,10 +7,10 @@ semantics, rest upon a dialogue following particular rules, a so-called two
 player game. The main task in this chapter is to properly define what is
 meant by a "game", "strategy", "transition system", and to provide basic
 building blocks for manipulating them. This chapter thus takes a step back and
-temporarly puts on hold our concerns about programming language semantics, in
+temporarily puts on hold our concerns about programming language semantics, in
 order to introduce the tools required to concretely represent games and
 strategies in type theory. These tools are in part novel, but consist mostly of
-natural extensions of pre-existing devices.
+natural extensions of preexisting devices.
 
 == A Matter of Computation
 
@@ -92,7 +92,7 @@ notions from classical game theory such as "winning", "reward" or
 "optimal play" will be completely absent. Moreover, I will restrict
 attention to games where two agents play in alternating turns. Thus,
 for my purpose, games will just consist of the description of allowed
-moves.#margin-note[Games in such a retricted view---two-player,
+moves.#margin-note[Games in such a restricted view---two-player,
 alternating, no notion of winning---are similar to combinatorial games
 and might perhaps be more appropriately named _protocols_, as
 typically arises in the field of computer networks.]
@@ -412,7 +412,7 @@ is closely linked to the dreaded _spaghetti code_ and _callback hell_. It is
 perhaps the prime reason why widely used programming languages have started
 organizing it using syntactic facilities like the #txtt("yield") keyword of python's
 _generators_#margin-note[
-  For enlighting background on Python's generator syntax, see for example the Motivation
+  For enlightening background on Python's generator syntax, see for example the Motivation
   section of the #link("https://peps.python.org/pep-0255/")[PEP 255].
 ] or the #txtt("await") keyword for sequencing asynchronous _promises_ (or _awaitables_),
 now common in event-driven programming. Both of these concepts are automata in
@@ -512,7 +512,7 @@ simpler notion.
 #definition[Game to Container][
   There is a functor from games to containers defined on object as follows.
     $game.g th I^+ th I^- -> icont.t th I^+$ defined
-  on objets as follows.
+  on objects as follows.
 
   $ floor(ar) cl game.g th I^+ th I^- -> icont.t th I^+ \
     floor(A) :=
@@ -527,7 +527,7 @@ simpler notion.
 
 #remark[Container to Game][ Although games include information about passive
   positions which containers do not, we can guess this information and inject
-  containters into games as follows.
+  containers into games as follows.
 
   $ ceil(ar) cl (Sigma cl icont.t th I) -> game.g th I th ((i cl I) times Sigma .icont.qry th i) \
     ceil(Sigma) :=
@@ -566,7 +566,7 @@ the _action functor_ on $Sigma$.
 ]
 
 Being itself the extension of some indexed container, $itree.F_Sigma th R$ has a
-thorougly understood theory of fixpoints~#mcite(<AltenkirchGHMM15>) and we can
+thoroughly understood theory of fixed points~#mcite(<AltenkirchGHMM15>) and we can
 form its final coalgebra as a coinductive family which is accepted by most type
 theory implementations#guil[proof assistants] such as Agda and Coq.
 
@@ -745,12 +745,12 @@ The basis of coq-coinduction is the observation that with impredicativity,
 #base.Prop forms a complete lattice. In fact, not only #base.Prop, but also
 predicates $X -> base.Prop$ or relations $X -> Y -> base.Prop$, our case of
 interest for bisimilarity. By the #nm[Knaster]-#nm[Tarski] theorem~#mcite(<Tarski55>) one can obtain the
-greatest fixpoint $nu f := or.big { x | x lt.tilde f th x }$ of any monotone
+greatest fixed point $nu f := or.big { x | x lt.tilde f th x }$ of any monotone
 endo-map $f$ on the complete lattice.
 #yann[Ref de KT]
 
 This is only the first part of the story. Indeed this will provide us with the
-greatest fixpoint $nu f$, in our case, bisimilarity, but the reasoning
+greatest fixed point $nu f$, in our case, bisimilarity, but the reasoning
 principles will be cumbersome. At first sight, the only principle available is the
 following one.
 
@@ -762,7 +762,7 @@ following one.
 Programming solely with this principle is painful, much in the same way as
 manipulating inductive types solely using eliminators, instead of using
 pattern-matching and recursive functions. Thankfully, in the context of
-bisimulations, a line of work has developped a theory of _enhanced_
+bisimulations, a line of work has developed a theory of _enhanced_
 bisimulations, in which the premise is weakened to $x lt.tilde f th (g th x)$---
 bisimulation _up-to $g$_---for some _compatible_ $g$, which must verify $g
 compose f lt.tilde f compose g$. 
@@ -805,7 +805,7 @@ here and use it in the rest of the thesis.
 Tower induction rests upon the inductive definition of the tower predicate $tower.t_f$,
 whose elements can be understood as all the transfinite iterations of $f$,
 starting from $top$. In other words, $tower.t_f$ characterizes the transfinite approximants
-of the greatest fixpoint of $f$.
+of the greatest fixed point of $f$.
 
 For more easily working with predicates, we will use some notations. For any
 predicate $P$ we will write $x in P$ instead of $P th x$ and $forall th x in P
@@ -943,7 +943,7 @@ the Calculus of Communicating Processes (CCS).
 === Strong Bisimilarity
 
 #peio[intro nulle, citer @Levy11] Equipped with this new construction of
-coinductive fixpoints we will apply them, in the complete lattice of relations.#yann[Peut-être sans importance, mais le lattice en question est plus précisément celui des relations indexées sur une paire de type family fixées (comme tu le définies ci-dessous)]
+coinductive fixed points we will apply them, in the complete lattice of relations.#yann[Peut-être sans importance, mais le lattice en question est plus précisément celui des relations indexées sur une paire de type family fixées (comme tu le définies ci-dessous)]
 Bisimilarity (both strong and weak), are typically built on non-indexed
 automata, which moreover do not have _outputs_. As such they consist of a single
 relation, on such automata. As our automata (indexed interaction trees,
@@ -1162,11 +1162,11 @@ tool, weak bisimilarity will play the role of a semantic equivalence.
 
 To define weak bisimilarity, we will follow a similar route to strong bisimilarity, 
 reusing the action relator, but when defining the monotone endo-map, we will insert
-a gagdet, allowing to skip over a finite number of silent moves. Let us define this
+a gadget, allowing to skip over a finite number of silent moves. Let us define this
 gadget. For readability, we will define a shorthand for trees where the top layer of
 actions has been exposed:
 
-#tom[Environnement notation?]
+#tom[Environment notation?]
 $ itree.tp_Sigma th R := itree.F_Sigma th R th (itree.t_Sigma th R) $
 
 #definition[Eating Relation][
@@ -1259,7 +1259,7 @@ entre le "statement regarding sequential composition of relations" du
   $R^rel.r$ is transitive, then so is $itweq(R^rel.r)$. ] 
   
 #proof[ Pose the following shorthands, respectively for "one step
-  sychnronization then weak bisimilarity" and for one-step unfolding of weak
+  synchronization then weak bisimilarity" and for one-step unfolding of weak
   bisimilarity.
 
   #tom[Environnement notation ?]
@@ -1425,7 +1425,7 @@ _effects_ will be to perform game moves and wait for an answer. While at first
 sight---considering only the goal of representing game strategies---such an
 output might seem unnecessary, the compositionality offered by monads, that is,
 sequential composition, is tremendously useful to construct and reason on
-strategies piecewise.
+strategies piece wise.
 
 The monad structure on interaction trees takes place in the family category
 $base.Type^I$ and its laws hold both w.r.t. strong bisimilarity and weak
@@ -1597,7 +1597,7 @@ effects", i.e., helpers to perform a silent step or play a move.
     itree.xvis th q := itree.vis th q th (kw.fun th r. th itree.ret th (subs.fib th r)) $
 
   #margin-note(dy: -4em)[ While slightly funky, the type of $itree.xvis$ is
-    quite notable: it is the type of what Xia et. al~#num-cite(<XiaZHHMPZ20>)
+    quite notable: it is the type of what #nm[Xia] et. al~#num-cite(<XiaZHHMPZ20>)
     call _event handlers_.  It encodes a natural transformation of $[| Sigma |]$
     into $itree.t_Sigma$. This one in particular is the identity handler, part
     of a larger structure making $itree.t$ a _relative
@@ -1701,8 +1701,8 @@ vacuous (every equation is considered guarded) as in the second
 family. The iteration operator may then be axiomatized to be coherent in the
 style of iteration or #nm[Elgot] monads, and uniqueness of solutions may be framed as
 the most restrictive of these coherence conditions. #tom[La phrase précédente
-n'est pas claire, je pense. ] For the type theory practicioner seeking a modern
-account, I recommend in particular Goncharov et al.~#num-cite(<GoncharovRP17>),
+n'est pas claire, je pense. ] For the type theory practitioner seeking a modern
+account, I recommend in particular #nm[Goncharov] et al.~#num-cite(<GoncharovRP17>),
 which also features much appreciated graphical depictions of the coherence laws.
 
 #tom[Ouf! On se retrouve à la fin d'un paragraphe d'into fleuve, sans du tout savoir ce qui nous attend pour cette partie...]
@@ -1710,7 +1710,7 @@ which also features much appreciated graphical depictions of the coherence laws.
 === Unguarded Iteration
 
 In the original interaction tree library~#mcite(<XiaZHHMPZ20>), an iteration
-_operator_ has been devised, which constructs fixpoints of arbitrary equation
+_operator_ has been devised, which constructs fixed points of arbitrary equation
 systems up to weak bisimilarity. This makes the interaction tree monad
 quotiented by weak bisimilarity into a complete #nm[Elgot] monad.
 

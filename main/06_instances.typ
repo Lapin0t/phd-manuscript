@@ -146,7 +146,7 @@ values are "given" to the opponent as part of a move, while some other are
 distinction at all during our generic development, as we simply assumed there
 was a set of types $T$ and worked on top of that. This discrepancy is simply
 explained: what the generic construction considers as _types_ should not be
-instanciated to all of our language's types, but only the ones that are
+instantiated to all of our language's types, but only the ones that are
 interacted with, i.e., the "hidden" types.
 
 Most eloquently described in the case of CBPV~#mcite(<Levy04>), this split
@@ -192,7 +192,7 @@ block(height: 6em, align(horizon,
 
   again form respectively a substitution monoid and a substitution module. We will
   overload the notations $jwa.val$ and $jwa.cmd$ for both the unrestricted and restricted
-  families. Similarly we will drop the projections $base.fst$ and implicitely treat negative
+  families. Similarly we will drop the projections $base.fst$ and implicitly treat negative
   types and scopes as normal ones.
 ]
 #proof[By #sym.eta\-expansion of the records and functions witnessing the unrestricted structures.]
@@ -312,11 +312,11 @@ that this splitting is unique.
 
 === The JWA Language Machine
 
-Lets recapitulate where we stand in the instanciation. We have defined the
+Lets recapitulate where we stand in the instantiation. We have defined the
 negative types $jwa.ntyp$ and scopes $jwa.nctx$, as well as the matching
 observation family $jwa.obs cl ctx.bfam th jwa.nctx th jwa.ntyp$. We have
 defined values $jwa.val$ and commands $jwa.cmd$ over general types and then
-restricted them to negative types and scopes. To instanciate a language
+restricted them to negative types and scopes. To instantiate a language
 machine, this leaves us to define the evaluation and application maps, which
 have the following types.
 
@@ -357,7 +357,7 @@ $ jwa.apply th {Gamma cl jwa.nctx} th {A cl jwa.ntyp} th (v cl jwa.val th Gamma 
     quad cl jwa.obs"".ctx.dom th o asgn(jwa.val) Gamma -> jwa.cmd th Gamma $
 
 is perhaps slightly scary, but this is largely due to the fact that $A$ is
-quantified over negative types, instead of explicitely asking that it is a
+quantified over negative types, instead of explicitly asking that it is a
 continuation type. This is an artifact of the language machine axiomatization and in this
 case it would be better written with the following isomorphic representation.
 
@@ -372,7 +372,7 @@ $ jwa.apply th {Gamma cl jwa.nctx} th {A cl jwa.typ} th (v cl jwa.val th Gamma t
     jwa.apply th {Gamma} th {jwa.neg A} th v th o th gamma := (jwa.p2v th o)[gamma] jwa.capp v $
 ]
 
-We now have everything to instanciate the JWA language machine.
+We now have everything to instantiate the JWA language machine.
 
 #definition[Language Machine][
   The JWA language machine is given by the following record.
@@ -388,7 +388,7 @@ We now have everything to instanciate the JWA language machine.
   substitution monoid structure of values.
 ]
 
-By the above definition we can already instanciate the OGS model, but
+By the above definition we can already instantiate the OGS model, but
 to obtain correctness w.r.t. substitution equivalence, we need to verify the
 hypotheses of @thm-correctness. We are left with the two interesting
 hypotheses: the core semantic argument, the JWA machine respects substitution
@@ -501,7 +501,7 @@ redexes (@def-finite-redex).
 ]
 
 #remark[
-  The above proof of finite redex is quite remarkable: no "bad instanciation" can happen,
+  The above proof of finite redex is quite remarkable: no "redex failure" can happen,
   and evaluating the application of a non-variable value _always_ creates a redex. "Low-level"
   languages such as JWA which are designed around first-class continuations
   usually have this stronger property.
@@ -549,7 +549,7 @@ equivalence to use a notion of big-step reduction $c arrow.b.double b$.
 ]
 
 Note that we obtain correctness only for commands in negative contexts. This is
-easily delt with, by defining an extended equivalence relation on such
+easily dealt with, by defining an extended equivalence relation on such
 commands, which first quantifies over an ultimate pattern for each type in
 $Gamma cl ctx.ctxc th jwa.typ$ and asserts OGS equivalence of the configurations
 substituted by the given sequence of patterns. First, let us sketch the pointwise lifting
@@ -615,7 +615,7 @@ And finally we recover correctness.
   interpretation by the NF strategy interpretation.
 ]
 
-This concludes the instanciation of our generic framework for JWA. Arguably,
+This concludes the instantiation of our generic framework for JWA. Arguably,
 although defining the actual data takes some getting used to, the proof mostly
 amounts to busywork. The only meaningful lemma to be designed and proven is the
 refolding lemma. 
@@ -685,7 +685,7 @@ different dualities mingle!
 
 We hope that all the symmetries are enjoyable. The consequence is that at a
 positive type, the #uut.mu reduction rule will fire across any coterm, while the #uut.mut
-rule will only fire across a weak-head normal term, and symetrically at
+rule will only fire across a weak-head normal term, and symmetrically at
 negative types. For a more general introduction to #short.uuc, we can recommend
 the tutorial by #nm[Binder] _et. al_~#mcite(<BinderTMO24>).
 #guil[Je ne pense pas que ce soit une bonne ref, vu qu'ils ne présentent pas
@@ -1001,7 +1001,7 @@ whose sharing between players is mediated by variables.
 ]
 
 With syntax, values and private (OGS) types defined we can properly start the
-language machine instanciation. This starts by defining observations, and as for JWA,
+language machine instantiation. This starts by defining observations, and as for JWA,
 we first go through the dual notion of _patterns_.
 
 #definition[Patterns][
@@ -1342,12 +1342,12 @@ of $lambda x.T$ is the pattern (the static part) and the filling? Lets look
 at it backwards: what kind of elimination would make sense for a stack? Stacks
 are sequences of terms, so it would make sense to pattern match on them. And indeed,
 the $lambda x.T$ normal form is simply a request to _grab_ the next argument
-from the stack. If the stack is empty, this request cannot be fullfilled. But
+from the stack. If the stack is empty, this request cannot be fulfilled. But
 if it is not, we the opponent may answer it by a "here it is", giving us two
 new handles, a term variable for the head and a stack variable for the rest.
 
 Putting things back together, what we just did is to introduce a _third_ sort,
-for argument _requests_, which will accordingly need be accompagnied by
+for argument _requests_, which will accordingly need be accompanied by
 request variables. Eliminating a stack introduces a new _request variable_ for
 the opponent, and eliminating a request introduces a term variable and a stack
 variable. Let us formalize that!
@@ -1476,7 +1476,7 @@ Let us rejoice! The journey to obtain this may have been convoluted, but the
 resulting observations and evaluator are even shorter than for JWA. In fact, once
 the pattern is ingrained, the proofs that this language machine verifies the
 correctness hypotheses is similarly straightforward. The sole exception is that the
-well-foundedness of our so called _bad instanciation_ relation will not be
+well-foundedness of our so called _redex failure_ relation will not be
 entirely vacuous, as indeed chains of length greater than zero do exist. This
 phenomenon is a trademark of natural deduction style calculi implemented as
 abstract machines. But before jumping to the proofs, let us actually define the
