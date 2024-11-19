@@ -111,6 +111,8 @@
   su: cs(cop("su")),
   fwkn: de(cop("fin-weaken")),
   fshft: de(cop("fin-shift")),
+  btrue: cs(cop("true")),
+  bfalse: cs(cop("false")),
 )
 
 #let stlc = (
@@ -262,6 +264,7 @@
   weqA: de(math.attach(sym.approx, tr: $+$)),
   eqP: de(math.attach(sym.approx.eq, tr: $-$)),
   weqP: de(math.attach(sym.approx, tr: $-$)),
+  xpar: de(cbin($⅋$)),
 )
 
 #let strat = (

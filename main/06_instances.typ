@@ -1,6 +1,6 @@
 #import "/lib/all.typ": *
 
-= OGS Instances
+= OGS Instances <ch-instance>
 
 In @ch-ogs we have seen a language-generic OGS construction, parametrized by an
 abstract notion of language machine. We have even seen a shiny theorem,
@@ -1593,25 +1593,38 @@ par Ong, par Sangiorgi et par Lassen.
 ]
  This fact should probably be properly
 justified by formalizing a clean representation of these trees and proving them
-isomorphic to our NF strategies, but we will not go further than this. For the
-sake of it, let us simply state the OGS correctness theorem, for the last time
-in this thesis!
+isomorphic to our NF strategies, but we will not go further than this.
 
-#theorem[OGS Correctness][
+For the sake of it, let us simply state the normal form bisimulation
+correctness theorem, for the last time in this thesis!
+
+#theorem[NF Correctness][
   Define the weak head normalization predicate as follows.
 
   #let whn = de(cnorm(sym.arrow.double.b))
-  #let intp(x) = $de(bracket.double.l) #x de(bracket.double.r)^de(+)_kriv.kriv$
+  #let intp(x) = $de(bracket.double.l) #x de(bracket.double.r)^de("NF")_kriv.kriv$
 
-  $ ar whn cl kriv.syn th (ctx.nilc ctx.conc kriv.sstk) th kriv.stm -> base.Prop \
-    t whn := (base.fst itree.fmap kriv.eval th krivcfg(t, kriv.var th ctx.topc)) itree.weq itree.ret th (ctx.topc ctx.cute kriv.grab) $
+  $ ar whn cl kriv.conf th (ctx.nilc ctx.conc kriv.sstk) -> base.Prop \
+    c whn := (base.fst itree.fmap kriv.eval th c) itree.weq itree.ret th (ctx.topc ctx.cute kriv.grab) $
 
-  For all $Gamma$ and $t_1, t_2 cl kriv.syn th Gamma th kriv.stm$ such that
+  For all $t_1, t_2 cl kriv.syn th Gamma th kriv.stm$ such that
   $ intp(krivcfg(t_1[ctx.popc], kriv.var th ctx.topc)) itree.weq intp(krivcfg(t_2[ctx.popc], kriv.var th ctx.topc)), $
-  then for all $sigma cl Gamma asgn(kriv.syn) (ctx.nilc ctx.conc kriv.sstk)$,
-  $ t_1[sigma] whn <-> t_2[sigma] whn. $
+  then for all $sigma cl Gamma asgn(kriv.syn) (ctx.nilc ctx.conc kriv.sstk)$ and
+  $k cl kriv.syn th (ctx.nilc ctx.conc kriv.sstk) th kriv.sstk$
+  $ krivcfg(t_1[sigma], k) whn <-> krivcfg(t_2[sigma],k) whn. $
 ]
 #proof[
-  By application of @thm-correctness, with hypotheses proven in @lem-kriv-sub, @lem-kriv-resp-sub
-  and @lem-kriv-finred.
+  By application of @thm-nf-correctness to $kriv.kriv$, $t_1$, $t_2$ and
+  $[sigma,k]$, with hypotheses proven in @lem-kriv-sub, @lem-kriv-resp-sub
+  and @lem-kriv-finred, obtain the following.
+
+  $           & base.fst itree.fmap kriv.eval th krivcfg(t_1[ctx.popc], sub.var ctx.topc)[sigma,k] \
+    itree.weq & base.fst itree.fmap kriv.eval th krivcfg(t_2[ctx.popc], sub.var ctx.topc)[sigma,k] $
+
+  Conclude by substitution fusion and equivalence.
 ]
+
+We could further post-process the above theorem to obtain a statement on the
+more standard #sym.lambda\-terms and evaluation contexts, as they embed into our
+#nm[Krivine] machine syntax, but we will stop
+it here.

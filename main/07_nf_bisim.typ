@@ -103,7 +103,7 @@ final scope $Omega$, as for OGS strategies.
       [] := de("from") th [] $,
     $ [k_1, k_2] cl nf.stratP th Omega th (Gamma_1 ctx.cat Gamma_2) th Delta \
       [k_1, k_2] := de("from") th [de("into") th k_1, de("into") th k_2] $)
-]
+] <rem-nf-unary>
 
 Given a language machine with renamings, we now construct the strategy associated to
 any given language configuration. Once again, it is merely a simplified version of
@@ -194,7 +194,7 @@ weaken the scope of NF strategies.
     \
     nf.renP th {Omega th Gamma} cl nf.stratP th Omega th Gamma ctx.arr ctxhom((ctx.var), nf.stratP th Omega th Gamma) \
     nf.renP th k th rho th m := nf.renA th (k th m) th [rho dot ctx.rcatl, ctx.rcatr] $
-]
+] <def-nf-ren>
 
 #definition[NF to OGS][
   Assuming a scope structure $ctx.scope_T th S$, given a binding family $O cl
@@ -217,7 +217,7 @@ weaken the scope of NF strategies.
 
   $ nf.nf2ogs th {Omega th Gamma} cl nf.stratA th Omega th Gamma -> ogs.stratA th Omega th (ctx.nilc ctx.conc Gamma) \
     nf.nf2ogs th s := nf.nf2ogsA th s th [] $
-]
+] <def-nf-to-ogs>
 
 We can now show that the OGS interpretation can be factorized through the NF
 interpretation. However, because the coinductive call of $nf.nf2ogsP$ is below
