@@ -22,14 +22,14 @@ computer science community and routinely used by semanticists, such as proof
 assistants like Agda~#mcite(<Agda>) or Coq~#mcite(dy: 1em, <Coq>), a perfect description is
 elusive#margin-note(mark: true, dy: 2em)[To be completely honest, in the case of Coq _kernel_, the
 #txsc[MetaCoq]~#num-cite(<Metacoq>) project is increasingly close to the ground
-truth.]! Yet, this predicament never stopped anyone from programming, nor
+truth.]! #tom[Collision dans la marge →!!!] Yet, this predicament never stopped anyone from programming, nor
 simplified semantics from being useful. The value of a mathematical
 model does not reside in its faithfulness to reality with all its gruesome
 details, but in its ability to ease reasoning about a particular aspect of
 interest.
 
 In this thesis, the focus of attention begins with the following question:
-When can two _programs fragments_ be considered equivalent? The motivation for
+When can two _program fragments_ be considered equivalent? The motivation for
 studying program fragments---i.e., code snippets, modules, individual
 functions, etc.---is of practical nature. It can be abstractly argued that
 approaching large programs is most easily done by cutting them into smaller
@@ -123,11 +123,11 @@ not try to trace it down to its origins since the connection between logical
 proofs and argumentative dialogues is most likely as old as logic itself.
 
 Although it has been motivated as a practical tool for reasoning with
-observational equivalence, and that its flexibility has been demonstrated to
+observational equivalence, and although its flexibility has been demonstrated to
 apply to a number of advanced programming language features, game semantics has
 not yet truly gone out of the hands of the game semanticists and into the
 everyday toolkit of the generalist programming language researcher. This can be
-contrasted e.g. with the framework of _logical relations_, also known as
+contrasted, e.g., with the framework of _logical relations_, also known as
 #nm[Tait]'s method of computability~#mcite(<Tait67>), which has
 interesting use cases~#mcite(dy: 3em, <DreyerNB12>) and which enjoys a very large number
 of introductory material, tutorials and other proof walk-through. While game
@@ -574,16 +574,20 @@ powerful reasoning principles for their strong and weak bisimilarity, inside a
 framework for coinduction based on complete
 lattices~#mcite(dy: 2em, <Pous16>)#mcite(dy: 4em, <SchaferS17>). Further, we
 introduce a new notion of _eventually guarded_ systems of recursive equations on
-indexed interaction trees, which we prove to have existence and unicity of
+indexed interaction trees, which we prove to have existence and uniqueness of
 fixed points w.r.t. strong bisimilarity.
 
-*Theory of Substitution* #sym.space.quad In @ch-subst, we lightly review the
-standard tools for modeling intrinsically typed and scoped syntaxes with
-substitution~#mcite(<FioreS22>)#mcite(dy: 3em, <AllaisACMM21>). To fit our
-needs, we introduce a new notion of _substitution module_ over a substitution
-monoid, generalizing upon the theory of renaming. We further introduce a novel
-notion of _scope structures_, generalizing upon the traditional #nm[De-Bruijn]
-indices. Although relatively superficial, scopes structure provide us with much
+*Theory of Substitution* #sym.space.quad In @ch-subst, we lightly
+review the standard tools for modeling intrinsically typed and scoped
+syntaxes with substitution~#mcite(<FioreS22>)#mcite(dy: 3em,
+<AllaisACMM21>). To fit our needs, we introduce a new notion of
+_substitution module_ #tom[je suis un peu biaisé, mais je pense que
+c'est mon père et Marco Maggesi les premiers à avoir parlé de modules
+sur des monades dans ce contexte, donc je pense que tu devrais les
+citer] over a substitution monoid, generalizing upon the theory of
+renaming. We further introduce a novel notion of _scope structures_,
+generalizing upon the traditional #nm[De-Bruijn] indices. Although
+relatively superficial, scope structures provide us with much
 appreciated flexibility in choosing how variables should look like.
 
 *OGS Construction* #sym.space.quad With all the necessary scaffolding in place,
@@ -591,11 +595,11 @@ in @ch-ogs we define a generic OGS game, parametrized only by a notion of
 _observation_, inspired by copatterns~#mcite(<AbelPTS13>). We then introduce
 _language machines_, axiomatizing languages with open evaluators and derive
 from them a strategy for the OGS game, constructing the OGS model. We then
-state and discuss the hypotheses for correction of equivalence in the model
+state and discuss the hypotheses for correctness of equivalence in the model
 w.r.t. observational equivalence and state the correctness theorem. A notable
 finding is the appearance of a hypothesis which was never isolated in previous
 OGS correctness proofs, as for most concrete languages it is a simple annoyance
-to deal with. The language generic setting, however, makes the requirement and
+to deal with. The language-generic setting, however, makes the requirement and
 its reason clear.
 
 *OGS Correctness* #sym.space.quad We prove the correctness theorem in
@@ -607,21 +611,21 @@ point of the recursive equations defining composition. This part is relatively
 straightforward as it does not involve coinduction but only a series a basic
 rewriting steps. Second, we show that the composition equation is eventually
 guarded. This second part is the most technical, but provides an isolated
-justification for concluding by unicity of fixed points.
+justification for concluding by uniqueness of fixed points.
 
 *Normal Form Bisimulations* #sym.space.quad Normal form (NF) bisimulations are
 a notion of program equivalence closely related to the OGS model. Their game
 is much more restricted, so that it is typically easier to prove two
 concrete programs normal form bisimilar than OGS model equivalent. In
-@ch-nf-bisim, we construct the NF game and the NF model parametrized as OGS by
+@ch-nf-bisim, we construct the NF game and the NF model parametrized, as OGS, by
 observations and a language machine. As a first application of the OGS
-correctness theorem, we prove normal form bisimulations by showing that the OGS
-interpretation factorizes through the NF interpretation.
+correctness theorem, we prove that NF bisimilarity is correct by showing that the OGS
+interpretation factors through the NF interpretation.
 
 *Language Machine Instances* #sym.space.quad To demonstrate the viability of
 our axiomatization of language machines, in @ch-instance we provide three
-representative examples. For each, we instantiate a language machine and prove
-the correctness theorem hypotheses. First, we study Jump-with-Argument, a
+representative #tom[je pense que c'est un faux ami: illustrative? significant?] examples. For each of them, we define a language machine and prove
+the correctness theorem hypotheses. First, we study Jump-with-Argument, a #tom[collisions dans la marge ←]
 minimalistic continuation passing style calculus~#mcite(dy: -1em, <Levy04>).
 Then, we study #short.uuc with recursive types~#mcite(<CurienH00>)#sym.zwj#mcite(dy: 3em, <DownenA20>), a very expressive language
 with explicit control flow. Similarly to Call-by-Push-Value~#mcite(<Levy04>), it has been exhibited as
