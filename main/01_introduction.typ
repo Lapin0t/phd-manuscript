@@ -244,7 +244,7 @@ programming, nothing can be "left for the reader", which is the gentleman's agre
 providing an escape hatch for uninteresting and tedious mathematical writing,
 on facts which are usually self-evident for trained mathematicians with a good
 _mental_ representation of the objects in question. When programming, such
-"boilerplate" or "glue code", is usually caused improper data representations
+"boilerplate" or "glue code", is usually caused by improper data representations
 or missing abstractions and it can be resolved by refactoring. As such,
 formalization can encourage mathematicians to question the presentational
 status quo, and provide sound criteria for judging the suitability of
@@ -549,9 +549,89 @@ important tool to streamline the system.
 
 Let us now expose how this thesis will unfold.
 
-== How to Read This Thesis
+== Contributions
 
-WIP
+The broad goal of this thesis is to formally implement the OGS model in type
+theory, and prove it correct w.r.t. observational equivalence. We do not do so
+for a particular concrete language, but instead formalize it on top of an
+axiomatization of pure, simply-typed programming languages, for which we provide
+several instances. This result, as well as most other constructions in this
+thesis have been entirely proven in Coq. The resulting
+code artifact can be found at the following address.
+
+#align(center)[
+  #link("https://github.com/lapin0t/ogs")
+]
+#block()
+
+*Games and Strategies in Type Theory* #sym.space.quad In order to represent dialogue games and
+game strategies in type theory, we start off in @ch-game by reviewing a notion
+of game by #nm[Levy] and #nm[Staton]~#mcite(<LevyS14>). We then generalize upon the
+construction of _interaction trees_~#mcite(dy: 0.8em, <XiaZHHMPZ20>) and
+introduce _indexed interaction trees_, to represent game strategies as finely
+typed coinductive automata. In order to reason on such strategies, we show
+powerful reasoning principles for their strong and weak bisimilarity, inside a
+framework for coinduction based on complete
+lattices~#mcite(dy: 2em, <Pous16>)#mcite(dy: 4em, <SchaferS17>). Further, we
+introduce a new notion of _eventually guarded_ systems of recursive equations on
+indexed interaction trees, which we prove to have existence and unicity of
+fixed points w.r.t. strong bisimilarity.
+
+*Theory of Substitution* #sym.space.quad In @ch-subst, we lightly review the
+standard tools for modeling intrinsically typed and scoped syntaxes with
+substitution~#mcite(<FioreS22>)#mcite(dy: 3em, <AllaisACMM21>). To fit our
+needs, we introduce a new notion of _substitution module_ over a substitution
+monoid, generalizing upon the theory of renaming. We further introduce a novel
+notion of _scope structures_, generalizing upon the traditional #nm[De-Bruijn]
+indices. Although relatively superficial, scopes structure provide us with much
+appreciated flexibility in choosing how variables should look like.
+
+*OGS Construction* #sym.space.quad With all the necessary scaffolding in place,
+in @ch-ogs we define a generic OGS game, parametrized only by a notion of
+_observation_, inspired by copatterns~#mcite(<AbelPTS13>). We then introduce
+_language machines_, axiomatizing languages with open evaluators and derive
+from them a strategy for the OGS game, constructing the OGS model. We then
+state and discuss the hypotheses for correction of equivalence in the model
+w.r.t. observational equivalence and state the correctness theorem. A notable
+finding is the appearance of a hypothesis which was never isolated in previous
+OGS correctness proofs, as for most concrete languages it is a simple annoyance
+to deal with. The language generic setting, however, makes the requirement and
+its reason clear.
+
+*OGS Correctness* #sym.space.quad We prove the correctness theorem in
+@ch-proof. After a standard detour on game strategy composition, we provide a
+novel decomposition of the correctness proof into two main high-level
+components, isolating the purely technical argument from the rest. First, a
+core semantical argument, showing essentially that substitution is a fixed
+point of the recursive equations defining composition. This part is relatively
+straightforward as it does not involve coinduction but only a series a basic
+rewriting steps. Second, we show that the composition equation is eventually
+guarded. This second part is the most technical, but provides an isolated
+justification for concluding by unicity of fixed points.
+
+*Normal Form Bisimulations* #sym.space.quad Normal form (NF) bisimulations are
+a notion of program equivalence closely related to the OGS model. Their game
+is much more restricted, so that it is typically easier to prove two
+concrete programs normal form bisimilar than OGS model equivalent. In
+@ch-nf-bisim, we construct the NF game and the NF model parametrized as OGS by
+observations and a language machine. As a first application of the OGS
+correctness theorem, we prove normal form bisimulations by showing that the OGS
+interpretation factorizes through the NF interpretation.
+
+*Language Machine Instances* #sym.space.quad To demonstrate the viability of
+our axiomatization of language machines, in @ch-instance we provide three
+representative examples. For each, we instantiate a language machine and prove
+the correctness theorem hypotheses. First, we study Jump-with-Argument, a
+minimalistic continuation passing style calculus~#mcite(dy: -1em, <Levy04>).
+Then, we study #short.uuc with recursive types~#mcite(<CurienH00>)#sym.zwj#mcite(dy: 3em, <DownenA20>), a very expressive language
+with explicit control flow. Similarly to Call-by-Push-Value~#mcite(<Levy04>), it has been exhibited as
+a fine compilation target, so that this instance also implicitly captures all
+the calculi which can be compiled to #short.uuc. Finally, we study a more
+traditional calculus, untyped #short.llc under weak head reduction. In this
+case, our generic NF bisimulations specialize to #nm[Levy]-#nm[Longo] trees~#mcite(<Levy75>),
+thus providing a new proof of their soundness w.r.t. observational equivalence.
+
+== Metatheory
 
 /*
 #pagebreak()
