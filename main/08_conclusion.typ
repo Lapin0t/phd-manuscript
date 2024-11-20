@@ -1,6 +1,6 @@
 #import "/lib/all.typ": *
 
-= Perspectives
+= Perspectives <ch-ccl>
 
 I hope that this thesis has somewhat demystified operational game semantics to
 the type theorist. Let us review some of the most important steps we have taken.

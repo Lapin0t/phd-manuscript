@@ -78,7 +78,7 @@
 
 #let margin-note(mark: false, dy: 0em, content) = {
   let note = block(width: 4cm, {
-    set text(size: 0.75em)
+    set text(size: 7pt)
     if mark { box(move(dy: 0.2em, scale(150%, "* "))) }
     content
   })

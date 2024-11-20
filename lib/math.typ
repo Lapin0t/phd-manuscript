@@ -34,10 +34,13 @@
 #let th = h(0.25em)
 // binding argument
 #let ar = cop(move(sym.bracket.b, dy: -0.24em))
+#let nar = cnorm(move(sym.bracket.b, dy: -0.24em))
 //#let ar = cop("-")
 
 #let mutl = "µ" + box(move(dx: -0.25em, "\u{0303}"))
 #let mumutl = "µ" + mutl
+
+#let cm = cs($,$)
 
 #let short = (
   llc: sym.lambda + "-calculus",
@@ -54,6 +57,7 @@
   wit: ckw("with"),
   case: ckw("case"),
   where: ckw("where"),
+  cons: ckw("constructor"),
   whr: $:=$,
   do: ckw("do"),
   fun: ckw($lambda$),
@@ -81,6 +85,7 @@
 
 #let base = (
   Prop: de(cop("Prop")),
+  sProp: de(cop($"Prop"_s$)),
   Set: de(cop("Set")),
   Type: de(cop("Type")),
   Cat: de(cop("Cat")),
@@ -111,8 +116,10 @@
   su: cs(cop("su")),
   fwkn: de(cop("fin-weaken")),
   fshft: de(cop("fin-shift")),
+  bool: de(cop("bool")),
   btrue: cs(cop("true")),
   bfalse: cs(cop("false")),
+  eq: de($=$),
 )
 
 #let stlc = (
@@ -300,7 +307,8 @@
   catc: de(crel($triangle.r.filled.small #h(-0.25em) triangle.r.filled.small$)),
   cat: pr(crel("⧺")),
   vvar: pr(math.bold("V")),
-  var: pr(crel($in.rev$)),
+  //var: pr(crel($in.rev$)),
+  var: pr(crel("⋻")),
   rcatl: pr($"r-cat"_l$),
   rcatr: pr($"r-cat"_r$),
   //ren: de(crel($arrow.squiggly$)),

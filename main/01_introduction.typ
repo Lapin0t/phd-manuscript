@@ -129,7 +129,7 @@ not yet truly gone out of the hands of the game semanticists and into the
 everyday toolkit of the generalist programming language researcher. This can be
 contrasted, e.g., with the framework of _logical relations_, also known as
 #nm[Tait]'s method of computability~#mcite(<Tait67>), which has
-interesting use cases~#mcite(dy: 3em, <DreyerNB12>) and which enjoys a very large number
+overlapping use cases~#mcite(dy: 3em, <DreyerNB12>) and which enjoys a very large number
 of introductory material, tutorials and other proof walk-through. While game
 semantics is relatively lively as a research area, it has seen comparably
 little activity in digesting existing methods, streamlining proofs and
@@ -461,7 +461,7 @@ $ & "Observation"    && in.rev O && ::= ret(Z) | call(Z, alpha) \
   & "Move"           && in.rev M && ::= x dot O $
 #margin-note(dy: -3em)[
   The Agda programmer or #short.uuc aficionado will surely be happy to recognize
-  "observations" as copatterns and "moves" as postfix copattern applications. #peio[ref]
+  "observations" as copatterns and "moves" as postfix copattern applications.
 ]
 
 #let conf(x, y) = $angle.l #x || #y angle.r$
@@ -637,29 +637,179 @@ thus providing a new proof of their soundness w.r.t. observational equivalence.
 
 == Metatheory
 
-/*
-#pagebreak()
-#pagebreak()
+Before sailing off, there is one last thing we need to do, which is to review
+the metatheory in which we will work. As we said earlier, our concrete code
+artifact is written using the Rocq proof assistant. However, in order to make
+this thesis accessible to a wider community, we have chosen to keep the present
+text self-contained and without any Rocq snippet. Our construction are written
+quite explicitly in a dependently typed programming style, but using a fictive
+type theory. From this point on, we will assume a good understanding of
+dependent type theory in general, and familiarity at least with _reading_ code
+in either Agda, Coq or some other type theory (#txsc[Lean], #txsc[Idris], ...).
 
-=== Simply-Typed #short.llc
+This type theory can be quite succinctly described as an idealized Coq kernel
+with an Agda syntax. More explicitly, it is an _intensional_ type theory, with a
+predicative hierarchy of types $base.Type_i$, an impredicative universe of
+propositions $base.Prop$ and _strict_#margin-note(mark: true)[
+  Our use of strict propositions is anecdotic, so do not worry if your favorite
+  proof assistant does not support it. On the other hand, having an
+  impredicative sort is crucial.
+] propositions $base.sProp$. We rely on typical ambiguity and cumulativity to entirely disregard
+the universe levels of types. We moreover assume propositional unicity of
+identity proofs in the form of #nm[Streicher]'s axiom K for
+pattern-matching~#mcite(dy: 1em, <Cockx17>), as well as definitional #sym.eta\-law on
+all records and functions (in particular for the empty record type
+$base.unit$). We further assume the ability to define inductive data types and
+coinductive record types.
 
-== Mechanizing Mathematics with Coq
+More superficially, we adopt Agda like syntax. Let us go through all the
+constructions. Keywords are highlighted in $ckw("orange")$, definitions in
+$de("blue")$, data type constructors in $cs("green")$, record projections
+in $pr("pink")$ and identifier and some primitive type formers in black.
 
-- coder les maths: important pour l'accessibilité
-- coder les maths: important pour juger l'abstraction
-- cette thèse: manuel du code (idealisé), guide de réimplementation
+*Function Types* #sym.space Given $A cl base.Type$ and $B cl A -> base.Type$, the dependent function type
+is written $(a cl A) -> B th a$, or possibly $forall th a -> B th a$, when $A$ can be
+inferred from the context. We additionally make use of implicit argument,
+written in braces like ${a cl A} -> B th a$ or $forall th {a} -> B th a$. We
+adopt the Coq convention of writing some argument binders left of the typing
+colon, simply separated by spaces. For example, we may declare the polymorphic
+identity function as $de("id") th {A} cl A -> A$, instead of $de("id") cl
+forall th {A} -> A -> A$. When readability is at stake, we will even entirely
+drop implicit binders, but we will try to use this sparingly. Any
+dangling seemingly free identifier should be considered implicitly universally
+quantified.
 
-explications technique:
-- def-eq vs prop-eq vs ext-eq
-- setoid rewriting, proper?
-- with abstraction
-- copattern matching
-- implicit arguments
-- set vs prop vs strict-prop
-- typical ambiguity
-- typeclasses
+#remark[
+  For Rocq programmers confused by the Agda-like $forall$ symbol: just parse the rest of the
+  type as you do in Rocq when left of the typing colon. Any appearance of $->$
+  switches back the rest to the usual parsing.
+]
 
-== Thesis Overview
+As we will use type families quite heavily, we introduce the notation
+$base.Type^(X_1, ..., X_n)$ to denote $X_1 -> ... -> X_n -> base.Type$.
 
-- expliquer "we" vs "I"
-*/
+*(Inductive) Data Types* #sym.space Data types identifier are declared preceded by the
+keyword $kw.dat$ and we given their constructors as inference rules. When the
+rules are self-referential, the type is always an inductive type. For extremely
+simple finite types, such as booleans, or the empty type, we write the following.
+
+#mathpar(block: true,
+  $kw.dat th base.bool cl base.Type := base.btrue th | th base.bfalse$,
+  $kw.dat th base.bot cl base.Type := #hide($|$)$
+)
+
+We declare so called _mixfix_ identifiers with the symbol $ar$ as a placeholder
+for arguments in the identifier. As such, the disjoint sum $A base.sum B$ is declared as
+$kw.dat th nar""cnorm(base.sum)nar cl base.Type -> base.Type -> base.Type$. Its constructors
+are given as follows.
+
+#mathpar(block: true,
+  inferrule($a cl A$, $base.inj1 th a cl A base.sum B$),
+  inferrule($b cl B$, $base.inj2 th b cl A base.sum B$),
+)
+
+To avoid heavy notations, we may sometimes simply write $base.sum$, or
+$(base.sum)$, when referring to infix combinators such the disjoint sum which
+should normally be identified by $nar""cnorm(base.sum)nar$. The propositional equality
+type is declared as $kw.dat th nar""cnorm(base.eq)nar th {A} cl A -> A -> base.Prop$,
+with the following constructor.
+#v(-1em)
+#mathpar(block: true, inset: 0em,
+  inferrule("", $base.refl cl x base.eq x$)
+)
+
+Pattern matching functions are written by listing their _clauses_.
+Pattern matching is dependent and we do not write absurd clauses, as the $base.inj2$
+case in $de("foo")$ below.
+
+#mathpar(block: true,
+  $de("foo") th {A} cl A base.sum base.bot -> A \
+   de("foo") th (base.inj1 th a) := a \ #v(0.2em) $,
+  box[
+   $de("swap") th {A th B} cl A base.sum B -> B base.sum A$
+   #v(0em)
+   $&de("swap") th (base.inj1 th a) && := base.inj2 th a \
+    &de("swap") th (base.inj2 th b) && := base.inj1 th b$
+  ]
+)
+
+Sometimes, we will use the $kw.case$ keyword, to pattern match on an expression. For
+example, we could have alternatively defined $de("swap")$ as follows.
+
+$ de("swap") th {A th B} cl A base.sum B -> B base.sum A \
+  de("swap") th x := kw.case th x \
+  pat(base.inj1 th a & := base.inj2 th a,
+      base.inj2 th b & := base.inj1 th b) $
+#margin-note(dy: -7em)[
+  The leftist programmer~#mcite(dy: 7em, <McBrideM04>) unsettled by this $kw.case$
+  construction should note that we will use it very sparingly. In fact, we will
+  only use it in head position, as a $ckw("with")$ construction in disguise.
+]
+
+*(Coinductive) Record Types* #sym.space Record types are introduced by the
+keyword $kw.rec$ and by listing the type of their projections. When the
+declaration is self-referential, record types are always coinductive. The
+sigma type is technically declared as below, but we will write it $(a cl A)
+base.prod B th a$ with the exact same conventions as the dependent function
+type.
+
+$ kw.rec th de("sigma") th (A cl base.Type) th (B cl A -> base.Type) cl base.Type := \
+  pat(
+    base.fst cl A,
+    base.snd cl B th a
+  ) $
+
+We will write projections in postfix notation and define record elements by
+so-called record expressions, giving the value of each projection, such as
+follows.
+
+$ de("flip") th {A th B} cl A base.prod B -> B base.prod A \
+  de("flip") th p :=
+  pat(
+    base.fst & := p .base.snd,
+    base.snd & := p .base.fst,
+  ) $
+
+We will sometimes introduce constructors for record elements. In particular,
+for the sigma type we define the constructor $nar""cm""nar$ allowing us to
+write pairs as the usual $(a cm b)$, and destruct them by pattern matching. We
+additionally define the unit type as the empty record $kw.rec th base.unit cl base.Type
+:= []$, with the constructor $base.tt$.
+
+*Induction and Coinduction* #sym.space.quad We have not described which kind
+of inductive or coinductive functions we should be allowed to write. This is
+quite a tricky subject, as we use self-referential definitions instead of
+eliminators (and coeliminators). As such we will here only mostly say that "it
+works like in Rocq". Slightly more precisely, we will allow ourselves mutually
+recursive definitions with calls on structurally smaller arguments, and
+similarly only corecursive calls below record projections.
+
+*Typeclasses* #sym.space.quad To structure our development, we will make use of
+typeclasses, which are simply records introduced by the keyword $kw.cls$ and
+whose projections are written free standing. We will moreover use the keyword
+$kw.ext$, to denote the fact that a given typeclass declaration depends an
+instance of a previously declared one. As an example, we could define magmas
+and unital magmas as follows.
+
+#mathpar(block: true, spacing: 1fr,
+  $kw.cls de("Magma") th (X cl base.Type) := \
+  pat(nar""pr(cnorm(bullet))nar cl X -> X -> X) \ #v(1.5em)$,
+  $kw.cls de("UnitalMagma") th (X cl base.Type) := \
+    pat(
+      kw.ext th de("Magma") th X,
+      pr("id") cl X,
+      pr("id-"cnorm(bullet)) th {x} cl pr("id") pr(bullet) x base.eq x,
+      pr(cnorm(bullet)"-id") th {x} cl x pr(bullet) pr("id") base.eq x,
+    )$
+)
+
+*Extensional Equality* #sym.space.quad Although we pride ourselves in being
+very precise and explicit in all of our constructions, there will be a small
+technical informality (see @ch-ccl for a mea culpa). Because we will work with
+coinductive objects in intensional type theory, propositional equality will be
+too strong for several statements. As such, we will use _extensional_ equality
+in several places, written $a approx b$. The problem is that the definition of
+extensional equality depends on the type we are considering, so that this
+should by essentially considered as a kind of typeclass giving the extensional
+equality equivalence relation at any given type. We will try to be explicit
+around its use. For types $A$ and $B$, $A approx B$ denotes an isomorphism.
