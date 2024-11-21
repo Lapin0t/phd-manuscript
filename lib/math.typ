@@ -115,12 +115,16 @@
   fin: de(cop("Fin")),
   ze: cs(cop("ze")),
   su: cs(cop("su")),
+  fze: cs(cop($"ze"_f$)),
+  fsu: cs(cop($"su"_f$)),
   fwkn: de(cop("fin-weaken")),
   fshft: de(cop("fin-shift")),
   bool: de(cop("bool")),
   btrue: cs(cop("true")),
   bfalse: cs(cop("false")),
   eq: de($=$),
+  eqtrans: de("eq-trans"),
+  eqsubst: de("eq-subst"),
 )
 
 #let stlc = (

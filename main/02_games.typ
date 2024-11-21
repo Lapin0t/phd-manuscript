@@ -131,8 +131,8 @@ player and the second player's turn to play. Then, instead of describing moves
 by mere sets, we can describe them by two families $M^+ cl I^+ -> base.Type$ and
 $M^- cl I^- -> base.Type$, mapping to each position the set of currently allowed
 moves. Finally, we must describe how the position evolves after a move has been
-played. This can be encoded by two maps $"next"^+ cl forall {i^+} -> th M^+ th i^+ ->
-I^-$ and $"next"^- cl forall {i^-} -> th M^- th i^- -> I^+$. This leads us to the
+played. This can be encoded by two maps $"next"^+ cl forall th {i^+} -> th M^+ th i^+ ->
+I^-$ and $"next"^- cl forall th {i^-} -> th M^- th i^- -> I^+$. This leads us to the
 following definitions.
 
 #definition[Half-Game][
@@ -168,16 +168,11 @@ correctness of OGS. Moreover, as already noted by #nm[Dagand] and
 of indexed containers, describing the extremely rich structures at play requires
 advanced concepts, such as framed bicategories and two-sided fibrations.
 
-#peio["simulation" vs "morphism"?]
-
 #definition[Half-Game Simulation][
   Given two half-games $A, B cl game.hg th I th J$, a _half-game simulation
-  from $A$ to $B$_ is given by the following record.
+  from $A$ to $B$_ is given by a record of the following type.
 
-#tom[by a record of the following type (partout...)?]
-  
-
-  $ kw.rec game.hsim th A th B kw.whr \
+  $ kw.rec game.hsim th {I th J} th (A th B cl game.hg th I th J) kw.whr \
     pat(game.hstr {i} cl A .game.mv th i -> B .game.mv th i,
         game.hscoh {i} th (m cl A .game.mv th i) cl B .game.nx th (game.hstr th m) = A .game.nx th m) $
 ]
@@ -187,17 +182,34 @@ advanced concepts, such as framed bicategories and two-sided fibrations.
   Given two games $A, B cl game.g th I^+ th I^-$, a _game simulation from $A$
   to $B$_ is given by a record of the following type.
 
-  $ kw.rec game.sim th A th B kw.whr \
+  $ kw.rec game.sim th {I^+ th I^-} th (A th B cl game.g th I^+ th I^-) kw.whr \
     pat(game.scli cl game.hsim th A .game.client th B .game.client,
         game.ssrv cl game.hsim th B .game.server th A .game.server) $
 ]
 
-#guil[Tu pourrais expliquer à ce moment là la structure catégorique sur HGame et sur Game,
-en explicitant notamment la composition de simulations et la simulation identité.
-Sinon on a du mal à comprendre d'où sort le $base.Cat$ en dessous.]
+The identity and composition of half-game simulations are given as follows.
+
+$ de("copycat") th {I th J} th (A cl game.hg th I th J) cl game.hsim th A th A \
+  de("copycat") :=
+  pat(
+    game.hstr th m & := m,
+    game.hscoh th m & := base.refl,
+  ) $
+
+$ nar""compose""nar th {I th J} th {A th B th C cl game.hg th I th J} cl game.hsim th B th C -> game.hsim th A th B -> game.hsim th A th C \
+  F compose G :=
+  pat(
+    game.hstr th m & := F .game.hstr th (G .game.hstr th m),
+    game.hscoh th m & := ...
+  ) $
+
+After defining the proper extensional equality on simulations (namely pointwise
+equality of the $game.hstr$ projection), we could prove that the above
+structure on half-games verifies the laws of a category, and easily deduce the
+same fact on games. For the reasons explained above, we leave this sketching as it is.
 
 #remark[Half-Game is Functorial][
-  $game.hg$ extends to a strict functor $base.Type^"op" times base.Type -> base.Cat$ as witnessed
+  $game.hg$ extends to a strict functor $"Set"^"op" times "Set" -> "Cat"$ as witnessed
   by the following action on morphisms, which we write curried and in infix style.
 
   $ ar game.reixl ar game.reixr ar cl (I_2 -> I_1) -> game.hg th I_1 th J_1 -> (J_1 -> J_2) -> game.hg th I_2 th J_2 \
@@ -214,6 +226,19 @@ Sinon on a du mal à comprendre d'où sort le $base.Cat$ en dessous.]
 
 Let us introduce a couple example games, to get a feel for their expressivity.
 
+*Dual Game* #sym.space Perhaps the simplest combinator on games that we can
+devise is _dualization_. This allows us to swap the roles of the client and
+the server. It is defined as follows.
+
+$ nar^game.opp th {I^+ th I^-} cl game.g th I^+ th I^- -> game.g th I^- th I^+ \
+  G^game.opp := pat(
+    game.client & := G .game.server,
+    game.server & := G .game.client,
+  ) $
+
+Remark that dualization is _strictly_ involutive, i.e., $nar^game.opp compose
+nar^game.opp$ is definitionally equal to the identity function.
+
 #let conway = (
   t: de("Conway"),
   lft: pr("left"),
@@ -221,45 +246,164 @@ Let us introduce a couple example games, to get a feel for their expressivity.
   ls: de("G-Conway"),
 )
 
-*#nm[Conway] Games* #sym.space #nm[Conway] games are an important tool in the study of
-_combinatorial games_~#mcite(<Conway76>) #peio[check def there] and may in fact
-be considered their prime definition. I will explain how they are an instance of
-our notion. We will use the following coinductive, exceedingly simple
-definition: a #nm[Conway] game $G cl conway.t$ is given by two subsets of #nm[Conway]
-games $G_L, G_R subset.eq conway.t$. The left subset $G_L$ is to be thought of
-as the set of games reachable by the left player in one move, and symmetrically
-for $G_R$.
+*Nim* #sym.space.quad The game of Nim is typically played with
+matchsticks. A number of matchsticks are on the playing board, grouped in several
+_heaps_. The two players must in turn take at least one matchstick away from one
+heap. They might take as many as they wish, so as long as they all belong to the
+same heap. Let us first encode the Nim game with a single heap. It is a symmetric game,
+where both active and passive positions are given by a natural number $n$, the number
+of available matchsticks in the only heap. A move is then an natural number no
+smaller than one and no greater than $n$. Equivalently, we can say that it is $1 +
+i$, where $i$ is any natural number strictly smaller than $n$. Conveniently,
+the encoding in type theory of naturals strictly smaller than a given one are a
+well-known inductive family, the _finite sets_ $kw.dat th base.fin cl base.nat
+-> base.Type$ with constructors given as follows.
 
-#guil[I think Joyal was the first to introduce a categorical
-structure on Conway games. See also the presentation by
-Méllies of Conway games in connection with Game Semantics.]
+#mathpar(block: true,
+  inferrule("", $base.fze cl base.fin th (base.su th n)$),
+  inferrule($i cl base.fin th n$, $base.fsu th i cl base.fin th (base.su th n)$),
+)
 
-#margin-note[For a more in-depth discussion of the two notions of subsets in
-    type theory, see #text-cite(<HancockH06>, supplement: [pp. 194--198])]
+Given $n cl base.nat$ and $i cl base.fin th n$, the substraction $n - (1 + i)$ is
+easily expressed.
+
+#let nsubf = de($"sub"_f$)
+#let nim1h = de($"Nim"^"half"_1$)
+#let nim1g = de($"Nim"_1$)
+#let nim3g = de($"Nim"_3$)
+
+$ nsubf cl (n cl base.nat) -> base.fin th n -> base.nat $
+#v(-0.8em)
+$ & nsubf th (base.su th n) th base.fze && := n \
+  & nsubf th (base.su th n) th (base.fsu th i) && := nsubf th n th i $
+
+We thus obtain the single-heap Nim game as follows.
+
+#mathpar(block: true, spacing: 1fr,
+  $nim1h cl game.hg th base.nat th base.nat \
+   nim1h := pat(
+    game.mv th n & := base.fin th n,
+    game.nx th {n} th i & := nsubf th n th i,
+  )$,
+  $nim1g cl game.g th base.nat th base.nat \
+   nim1g := pat(
+     game.client := nim1h,
+     game.server := nim1h,
+   )$
+)
+
+We could obtain the many-heap Nim game by a similar construction. We would define
+the positions as lists of natural numbers, the moves as first selecting a heap and
+then choosing a number of matchsticks to take away, etc. Let us seek a more structured
+approach. Intuitively, the multi-heap Nim game is just a some fixed number of
+parallel copies of the single-heap game. In case of two copies, the game positions
+consists of pairs of single-heap Nim positions. A move is then defined
+as choosing either a single-heap move on the first position or on the second. Let us define
+this as a generic binary combinator on games.
+
+#let csumh = $de(+^"half")$
+#let csumg = $de(+^"G")$
+
+$ nar""cnorm(csumh)nar th {I th J} cl game.hg th I th I -> game.hg th J th J -> game.hg th (I base.prod J) th (I base.prod J) \
+  A csumh B := pat(
+    game.mv th (i, j) & := A .game.mv th i base.sum B .game.mv th j,
+    game.nx th (i, j) th (base.inj1 th m) & := (A .game.nx th m, j),
+    game.nx th (i, j) th (base.inj2 th m) & := (i, B .game.nx th m),
+  ) $
+
+$ nar""cnorm(csumg)nar th {I th J} cl game.g th I th I -> game.g th J th J -> game.g th (I base.prod J) th (I base.prod J) \
+  A csumg B := pat(
+    game.client & := A .game.client csumh B .game.client,
+    game.server & := A .game.server csumh B .game.server,
+  ) $
+
+A many-heap Nim game, say with three heaps can then be simply be given as the following sum.
+
+$ nim3g cl game.g th (base.nat base.prod base.nat base.prod base.nat) th (base.nat base.prod base.nat base.prod base.nat) \
+  nim3g := nim1g csumg nim1g csumg nim1g $
+
+#remark[
+  Note that in the above binary sum of games, we constrained the games to have
+  only a single set of positions. Indeed, it is crucial in Nim that one can
+  play two times in a row in the same heap, while the opponent played in an
+  other one. This only makes sense when the active and passive positions are
+  the same.
+
+  For the curious reader, in case the active and passive positions differ, we can
+  devise the following "parallel" sum, where the server is restricted to respond
+  in the game that the client chose.
+
+  #let psumh = $de(cbin(⅋^"h"))$
+  #let xsumh = $de(cbin(times.circle^"h"))$
+  #let psumg = $de(cbin(⅋^"G"))$
+
+  $ nar""cnorm(psumh)nar cl game.hg th I_1 th J_1 -> game.hg th I_2 th J_2 \
+    quad quad quad -> game.hg th (I_1 base.prod I_2) th ((J_1 base.prod I_2) base.sum (I_1 base.prod J_2)) \
+    A psumh B := pat(
+      game.mv th & (i_1, i_2) & := A .game.mv th i_1 base.sum B .game.mv th i_2,
+      game.nx th & {i_1, i_2} th (base.inj1 th m) & := base.inj1 th (A .game.nx th m, i_2),
+      game.nx th & {i_1, i_2} th (base.inj2 th m) & := base.inj2 th (i_1, B .game.nx th m),
+    ) $
+
+  $ nar""cnorm(xsumh)nar cl game.hg th I_1 th J_1 -> game.hg th I_2 th J_2 \
+    quad quad quad -> game.hg th ((I_1 base.prod J_2) base.sum (J_1 base.prod I_2)) th (J_1 base.prod J_2)  \
+    A xsumh B := pat(
+      game.mv th & (base.inj1 th (i_1, j_2)) & := A .game.mv th i_1,
+      game.mv th & (base.inj2 th (j_1, i_2)) & := B .game.mv th i_2,
+      game.nx th & {base.inj1 th (i_1, j_2)} th m & := (A .game.nx th m , j_2),
+      game.nx th & {base.inj2 th (j_1, i_2)} th m & := (j_1, B .game.nx th m),
+    ) $
+
+  $ nar""cnorm(psumg)nar th {I th J} cl game.g th I th I -> game.g th J th J \
+    quad quad quad -> game.g th (I_1 base.prod I_2) th ((J_1 base.prod I_2) base.sum (I_1 base.prod J_2)) \
+    A psumg B := pat(
+      game.client & := A .game.client psumh B .game.client,
+      game.server & := A .game.server xsumh B .game.server,
+    ) $
+
+  This game, or rather its #nm[De Morgan] dual $A de(times.circle^"G") B := (A^game.opp psumg
+  B^game.opp)^game.opp$ has been used by #nm[Levy] and #nm[Staton]~#mcite(<LevyS14>) in their
+  study of game strategy composition.
+]
+
+*#nm[Conway] Games* #sym.space #nm[Conway] games are an important tool in the
+study of _combinatorial games_~#mcite(<Conway76>) and may in fact be considered
+their prime definition. I will explain how they are an instance of our notion.
+In their infinite variant, sometimes called _hypergame_, they admit the
+following coinductive, exceedingly simple definition: a #nm[Conway] game $G cl
+conway.t$ is given by two subsets of #nm[Conway] games $G_L, G_R subset.eq
+conway.t$. The left subset $G_L$ is to be thought of as the set of games
+reachable by the left player in one move, and symmetrically for $G_R$.
+For more background, see #nm[Honsell] and #nm[Lenisa]~#mcite(<HonselL11>), as well
+as #nm[Joyal]~#mcite(dy: 3em, <Joyal77>).
+
 In order to translate this definition into type theory, the only
-question is how to represent subsets.
+question is how to represent subsets#margin-note(dy: 2em, mark: true)[
+  For a more in-depth discussion of the two notions of subsets in type theory,
+  see #text-cite(<HancockH06>, supplement: [pp. 194--198])
+].
 The most familiar one is the powerset construction, adopting the point-of-view
 of subsets as (proof-relevant) predicates:
 
 $ subs.Pow cl base.Type -> base.Type \
   subs.Pow th X kw.whr X -> base.Type $
 
-However there is another, more intensional one, viewing subsets as families:
-
-#tom[Proof-relevant plus que intentional, non?] 
-#tom[Euh... et en fait je comprends pas la def... Ah si, c'est la version
-fibrée! Qui l'eut cru venant de toi... Bon, bref, ça coule pas de source à cet
-endroit.]
-#tom[De plus, les deux defs n'étant pas équivalentes, est-ce qu'il ne vaudrait
-pas mieux assumer la différence et appeler ça des proof-relevant Conway games?]
+However there is a different, more intensional one, viewing subsets as families. In
+this view, a subset is given by a type which encodes its _domain_, or _support_,
+and by a decoding function from this domain to the original set.
 
 $ kw.rec subs.Fam th (X cl base.Type) cl base.Type kw.whr \
   pat(subs.dom cl base.Type,
       subs.idx cl subs.dom -> X) $
 
-Because we want to easily manipulate the support of the two subsets $G_L$ and
-$G_R$, i.e., in this context the set of left moves and right moves, we adopt
-the second representation.
+We can go back and forth between the two representations, but only at the cost
+of a bump in universe levels. As such, to avoid universe issues it is important
+to choose the side which is most practical for the task at hand. Because we
+want to easily manipulate _elements_ of the two subsets $G_L$ and $G_R$, i.e.,
+in this context the actual left moves and right moves, it is best to have we
+have them readily available by adopting the second representation. Perhaps more
+convincingly, the following definition would not go through when using $subs.Pow$
+as it is not a strictly positive type operator.
 
 #definition[#nm[Conway] Game][
     The set of _#nm[Conway] games_ is given by the following coinductive record.
@@ -269,12 +413,13 @@ the second representation.
           conway.rgt cl subs.Fam th conway.t) $
 ]
 
-We can now give the #nm[Levy] & #nm[Staton] game of #nm[Conway] games. As in a
-#nm[Conway] game one does not known whose turn it is to play, the sets of
+We can now give a #nm[Levy] & #nm[Staton] game of #nm[Conway] games. As in a
+#nm[Conway] game it is ambiguous whose turn it is to play, the sets of
 active and passive positions will be the same. Moreover, the current position
 is in fact given by the current Conway game.
 
-#example[Game of #nm[Conway] Games][ We start by noticing that $I -> subs.Fam th J$
+#example[Game of #nm[Conway] Games][
+  We start by noticing that $I -> subs.Fam th J$
   is just a shuffling of $game.hg th I th J$:
 
   $ de("fam-to-hg") cl (I -> subs.Fam th J) -> game.hg th I th J \
@@ -290,15 +435,10 @@ Then, the _game of #nm[Conway] games_ can be given as follows.
           game.server := de("fam-to-hg") th conway.rgt) $
 ]
 
-#peio[inj LS $=>$ Conway]
-
-#tom[Bon c'est rigolo, mais le sens de tout ça n'est pas hyper clair, si? Est-ce
-que les parties au sens de Conway sont les mêmes que celles de Levy-Staton sur
-$conway.ls$?]
-
-*Applicative Bisimilarity* #sym.space #peio[applicative bisim]
-
-*OGS Game* #sym.space #peio[ogs stlc?]
+To make this example more solid, we should relate the notion strategy in the
+sense of #nm[Conway] to the #nm[Levy] and #nm[Staton] strategies on the #conway.ls
+game. But let's not get ahead of ourselves, as the latter are only introduced in
+the next section. We leave this funny little sketch as it is.
 
 === Strategies as Transition Systems
 
@@ -309,21 +449,14 @@ client strategies on the dual game---the prime benefit of our symmetric notion
 of game. We first need to define two interpretations of half-games as functors.
 
 
-#tom[Les espaces sont bizarres dans la def ci-dessous, non?]
-#peio[Fixed? Je vois pas trop lesquels]
 #definition[Half-Game Functors][
   Given a half-game $G cl game.hg th I th J$, we define the
   _active interpretation_ and _passive interpretation of $G$_ as functors
   $base.Type^J -> base.Type^I$, written $G game.extA ar$ and $G game.extP ar$ and defined as follows.
 
-  $ (G game.extA X) th i := (m cl G.game.mv th i) times X th (G.game.nx th m) \
-    (G game.extP X) th i := (m cl G.game.mv th i) -> X th (G.game.nx th m) $
+  $ & (G game.extA X) && th i := (m cl G.game.mv th i) #h(0.4em) times  && X th (G.game.nx th m) \
+    & (G game.extP X) && th i := (m cl G.game.mv th i) -> && X th (G.game.nx th m) $
 ] <def-hg-ext>
-
-#tom[Chuis pas super fan de la notation $game.extA$, parce qu'elle ressemble
-trop à $game.extP$, elle évoque aussi un adjoint à droite plus qu'à gauche.]
-#peio[Mieux?]
-#guil[Je trouve ça mieux.]
 
 #definition[Transition System][
   Given a game $G cl game.g th I^+ th I^-$ and a family $R cl base.Type^(I^+)$,
@@ -337,10 +470,23 @@ trop à $game.extP$, elle évoque aussi un adjoint à droite plus qu'à gauche.]
   $ kw.rec strat.t_G th R kw.whr \
     pat(strat.stp cl I^+ -> base.Type,
         strat.stn cl I^- -> base.Type,
-        strat.play cl strat.stp => R + strat.stp + G.game.client game.extA strat.stn,
-        strat.coplay cl strat.stn => G.game.server game.extP strat.stp) $
-  Where $X => Y := forall th {i}, th X i -> Y i$ denotes a morphism of families.
+        strat.play cl strat.stp ctx.arr R base.sum strat.stp base.sum G.game.client game.extA strat.stn,
+        strat.coplay cl strat.stn ctx.arr G.game.server game.extP strat.stp) $
 ] <def-tsys>
+#remark[
+  In the above, $X ctx.arr Y := forall th {i} -> X th i -> Y th i$ denotes a
+  morphism of families. Moreover, we have slightly abused the $base.sum$
+  notation, using here its pointwise lifting to families $(X base.sum Y) th i
+  := X th i base.sum Y th i$.
+
+  More generally, given $n$-ary families $X, Y cl base.Type^(I_1,.., I_n)$,
+  $X ctx.arr th Y$ will denote the following implicitly $n$-ary indexed function space.
+  $ forall th {i_1 th .. th i_n} -> X th i_1 th .. th i_n -> Y th i_1 th .. th i_n $
+
+  We will regularly implicitly lift constructions pointwise to families, although
+  we try to say it every time we encounter a new one.
+]
+
 
 There is a lot to unpack here. First the states: instead of a mere set, as is
 usual in a classical transition system, they here consist of two families
@@ -368,20 +514,17 @@ active state  $s cl strat.stp th i$  over $i$ and returns one of three things:
 ]
 
 #par(hanging-indent: 2em)[$(G.game.client game.extA strat.stn) th i$ ~~ _"client move"_ \
-  By @def-hg-ext, this data consists of a client move valid at the current
-  position $i$, together with a passive state over the next position. This case is
-  the one which actually _chooses_ a move and sends it to a hypothetical
-  opponent.
+  #box[ #set par(hanging-indent: 0em)
+  By @def-hg-ext, this data consists of a client move valid at the current position $i$
+  $ m cl G .game.client"".game.mv th i, $
+  together with a passive state over the next position
+  $ x cl strat.stn th (G .game.client"".game.nx th m). $
+  This case is the one which actually _chooses_ a move and sends it to a hypothetical opponent.]
 ]
 
 The #strat.coplay function is simpler. By @def-hg-ext, it takes a passive
 position, a passive state over it, and a currently valid _"server move"_, and must
 then return an active state over the next position.
-
-#guil[You could explain why there is no return move for Opponent.]
-#tom[+1! Et "compositional manipulation" survend un peu le truc, non?]
-#peio[C'est mieux?]
-#guil[oui!]
 
 #remark[
   It might seem as if the hypothetical opponent must be pure, as return and
@@ -396,21 +539,21 @@ then return an active state over the next position.
 
 == Strategies as Indexed Interaction Trees <sec-itree>
 
-In @def-tsys, I have defined strategies similarly to #nm[Levy] and
+In @def-tsys, we have defined strategies similarly to #nm[Levy] and
 #nm[Staton]~#mcite(<LevyS14>), that is, by a state-and-transition-function
 presentation of automata. This representation is theoretically satisfying,
 however most of the time it is painful to work with formally. As an example,
-let's assume I want to define a binary combinator, taking two transition systems as
+let's assume we want to define a binary combinator, taking two transition systems as
 arguments and returning a third one. Each of the two inputs is a dependent record with
-four fields, so that I have to work with eight input components to define the
+four fields, so that we have to work with eight input components to define the
 resulting transition systems, itself consisting of two families of states, and
 then, depending on these new states, two suitable transition functions. This is
 a lot to manage!
 
 This unwieldiness is well known: while useful, writing state-machine-like code
-is closely linked to the dreaded _spaghetti code_ and _callback hell_. It is
+explicitly is closely linked to the dreaded _spaghetti code_ and _callback hell_. It is
 perhaps the prime reason why widely used programming languages have started
-organizing it using syntactic facilities like the #txtt("yield") keyword of python's
+organizing it more soundly with syntactic facilities like the #txtt("yield") keyword of python's
 _generators_#margin-note[
   For enlightening background on Python's generator syntax, see for example the Motivation
   section of the #link("https://peps.python.org/pep-0255/")[PEP 255].
@@ -421,60 +564,49 @@ featuring bespoke state transitions (producing a sequence element,
 sleeping in wait of a network response) as if they were normal code. As the precise
 definition of the state space is left implicit and for the language implementation to
 work out, it can no longer be manipulated by the programmer. What is left is an
-opaque notion of automaton (e.g., generators, awaitables), for which the only possible
+_opaque_ notion of automaton (e.g., generators or awaitable objects), for which the only possible
 operation is _stepping_, i.e., running until the next transition.
-In this section I will apply this methodology to the definition of transition
-systems over games and this will bring us to my first contribution: _indexed
-interaction trees_.
 
-#tom[Ça je connais pas du tout.]
-#yann[Euuuh je ne comprends pas bien le lien avec cooperative multithreading]
-#peio[Better?]
-#guil[Je suis encore un peu perplexe par le paragraphe du dessus,
-mais c'est surement car je ne m'y connais pas du tout en event-driven programming.]
+There are thus two benefits. First, we can program automata mostly as we do
+normal functions, only sprinkling some automata-specific primitives where
+required. Second, automata are now black boxes, in a sense much like functions.
+This makes them quite a bit easier to pass around as their internal details are
+tightly sealed away. In this section we will apply the same methodology to the
+definition of transition systems over games and this will bring us to our first
+contribution: _indexed interaction trees_.
 
 === From Games to Containers
 
-Notice that @def-tsys is exactly the definition of a coalgebra for some
-endofunctor on $base.Type^(I^+) times base.Type^(I^-)$.
-#guil[Est-ce-que tu peux détailler ? Vu que G et R dépendent aussi de 
-$I^+$ et $I^-$, ce n'est pas complètement évident je trouve.]
- Then, as by definition
-any coalgebra maps uniquely into the final coalgebra, it is sufficient to work
-with this final coalgebra, whose states intuitively consist of infinite trees,
-describing the traces of any possible transition system over $G$. This
-"universal" state space---the state space of the final coalgebra---will be our
-core notion of automata.
+Notice that given $G$ and $R$, @def-tsys is exactly the definition of a coalgebra for the
+following endofunctor on $base.Type^(I^+) times base.Type^(I^-)$.
 
-#tom[Là-dessus ptet dire "modulo les questions de taille" quelque part?]
-#peio[Je comprend pas où ça poserait pb, la coinduction coq nous donne bien
-une coalgèbre terminale des t-sys de taille $alpha$ (les itree), elle-mème un
-t-sys de taille $alpha$, il n'y a pas de bump de taille.]
+$ (X^+, X^-) #h(0.4em) |-> #h(0.4em) (#h(0.2em) R base.sum X^+ base.sum G.game.client game.extA X^- #h(0.2em) , #h(0.4em) G.game.server game.extP X^+ #h(0.2em)) $
 
-However, before constructing this final coalgebra, I will simplify the setting
-slightly. Notice that we can easily make passive states disappear, by
-describing systems as a family of active states $strat.stp cl base.Type^(I^+)$
-and a single transition function:
+Then, as by definition any coalgebra maps uniquely into the final coalgebra, it
+is sufficient to work with this final coalgebra, whose states intuitively
+consist of infinite trees, describing the traces of any possible transition
+system over $G$. This "universal" state space---the state space of the final
+coalgebra---will be our core notion of automata.
+
+However, we will not construct this final coalgebra directly, but instead
+simplify the setting slightly. 
+
+
+Notice that we can easily make passive states disappear, by
+describing systems solely as the family of active states $strat.stp cl
+base.Type^(I^+)$ and a single transition function:
 
 $ strat.stp => R + strat.stp + G.game.client game.extA (G.game.server game.extP strat.stp) $
 
 This exhibits strategies as coalgebras for the following functor.
 #margin-note[
-  This category is less informative but equally expressive as
-  transition systems over $G$, as it forms a coreflective subcategory.
-
-  #peio[right Tom?]
-  #tom[Eeeeeh, je sais pas... C'est les strats où $strat.coplay$ est injective,
-  c'est ça? Si oui, je dirais plutôt réflexive: si je note $S^i$ la strat
-  "injective" en ce sens induite par $S$, on a plutôt un morphisme $S -> S^i$,
-  qui est universel vis-à-vis des strats injectives, si je me trompe pas. Non? ]
-  #peio[Ah oui ok, j'ai posé le calcul. C'est plutot celles où $strat.coplay$ est l'identité (ou un iso).
-    Du coup la strat $S^i$ induite elle a les même états actifs, et comme états passifs
-    $G.game.server game.extP S^+$. Donc oui $S -> ceil(S^i)$ c'est l'unité de l'adjonction.
-    Et la counité est un iso: $ceil(T)^i approx T$.]
+  This new category of coalgebras is less informative but equally expressive as
+  transition systems over $G$. More precisely, we conjecture that it forms a
+  reflective subcategory of the first one, with the embedding given by
+  $X |-> (X, G.game.server game.extP X)$ and the reflection given by $(X^+, X^-) |-> X^+$.
 ]
 
-$ X |-> R + X + G.game.client game.extA (G.game.server game.extP X)) $
+$ X |-> R + X + G.game.client game.extA (G.game.server game.extP X) $
 
 #tom[Le truc ci-dessous s'enfonce dans une voie un peu imprévisible, donc c'est
 dur à suivre. Il faudrait ptet baliser un peu mieux, dire où tu vas.]
