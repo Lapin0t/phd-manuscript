@@ -24,7 +24,7 @@ the type theorist. Let us review some of the most important steps we have taken.
   où c'était vraiment utile.]
 
 - In @ch-ogs we arrived at operational game semantics. We constructed a generic
-  OGS model, proposing an axiomatization of languages with open evaluation. This
+  OGS model, proposing an axiomatization of languages with open evaluation#guil[tu veux dire quoi par open evaluation ?]. This
   axiomatization is inspired by abstract machines, taking a computational approach
   to operational semantics. Most notably, it leaves the syntax entirely opaque and
   devoid of any inductive nature, to be contrasted, e.g., with structural
@@ -63,7 +63,8 @@ theory, which we have mostly skipped over. As a consequence, we did
 not say anything about the properties of OGS as a game, beyond the
 fact that it is symmetric.
 
-First of all, games are routinely used as models for linear logic. It would be
+First of all, games are routinely used as models for linear logic #guil[c'est un peu dangeureux de dire ça vu que c'est complexe de faire des modèles de jeu de (tout) LL, il faut arriver à déséquentialiser un peu la structure de jeu,
+cf les travaux de PAM.]. It would be
 interesting to see how our notion of games fare in this respect. In fact our
 OGS game is strongly reminiscent of "bang" games in typical such interpretations.
 In both cases, the game position is a list (or scope) of possible game copies
@@ -149,14 +150,14 @@ coinductive counterpart, their more intensional nature can be at times useful.
 
 *A Logic for Strategies* #sym.space.quad Besides correctness w.r.t.
 observational equivalence, a common property to investigate is the reverse
-implication, i.e., completeness. Following game semantical insights, it is
+implication, i.e., completeness #guil[full abstraction]. Following game semantical insights, it is
 largely expected that our OGS model of effect-free languages can only hope to
 be complete when restricted to _innocent_ strategies. Innocence is a property
 of a strategy, essentially meaning that it plays the same moves in any two
 observationally equivalent situations. It is a characterization of _purity_ at
 the level of strategies. Logically, it is a _safety property_, in the sense
 that it can be expressed as the inability to play certain moves, solely based
-on the past history: nothing bad ever happens.
+on the past history: nothing bad ever happens. #guil[Je ne comprends pas cette analogie avec une propriété de safety.]
 
 More generally, other such predicates are of interest in game semantics,
 such as _well-bracketedness_ (following a stack discipline for answering
@@ -165,6 +166,7 @@ past). Further, perhaps our novel eventual guardedness condition can be
 rephrased as a particular _liveness_ property, as it is intuitively stating
 that every so many numbers of trivial looping, we do find a non-trivial step in
 the equation body: something good eventually happens.
+#guil[Il y a un lien entre les deux parties de ce paragraphe ?]
 
 Such a logic on the traces arising from coinductive automata has already been
 proposed in the case of non-indexed interaction trees~#mcite(<SilverZ21>)#mcite(dy: 4em, <YoonZZ22>).

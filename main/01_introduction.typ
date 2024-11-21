@@ -632,7 +632,7 @@ with explicit control flow. Similarly to Call-by-Push-Value~#mcite(<Levy04>), it
 a fine compilation target, so that this instance also implicitly captures all
 the calculi which can be compiled to #short.uuc. Finally, we study a more
 traditional calculus, untyped #short.llc under weak head reduction. In this
-case, our generic NF bisimulations specialize to #nm[Levy]-#nm[Longo] trees~#mcite(<Levy75>),
+case, our generic#guil["it is known that" plutôt que "our generic", avec une petite citation à Lassen ? La rèf à la thèse de JJ-Levy n'est pas bonne en tout cas.] NF bisimulations specialize to #nm[Levy]-#nm[Longo] trees~#mcite(<Levy75>),
 thus providing a new proof of their soundness w.r.t. observational equivalence.
 
 == Metatheory
