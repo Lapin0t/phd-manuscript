@@ -11,7 +11,7 @@ trees, and other constructions tailored to a variety of settings #peio[ref]. In
 this short chapter, we start by introducing our own variant of normal form
 bisimulation, for any given language machine (@sec-nf-bisim). Then, in
 @sec-nf-ogs we show how the interpretation from language configurations to OGS
-strategies can be factorized through _normal form strategies_. Thanks to this,
+strategies can be factored through _normal form strategies_. Thanks to this,
 we deduce a correctness theorem, stating---as for OGS---that any two _normal
 form bisimilar_ language configurations are _substitution equivalent_.
 
@@ -27,24 +27,25 @@ form bisimilar_ language configurations are _substitution equivalent_.
 
 == Normal Form Bisimulations in a Nutshell <sec-nf-bisim>
 
-Implicitly or explicitly, the main idea in all normal form (NF) bisimulations
+Implicitly or explicitly, the main idea in all normal form (NF) bisimulation
 constructions, is to associate to each program a possibly infinite tree. Here,
 we will call these trees _normal form strategies_, that is, strategies for the
 _normal form game_. This induces a notion of program equivalence which holds
 whenever two programs have bisimilar associated strategies: _normal form
 bisimilarity_.
 
-These infinite trees are constructed by reducing the program to a normal form
-for some given reduction strategy---most usually some kind of head-reduction.
-The "head" of the normal form gives us the node of the tree, while the children
-are obtained by coinductively applying the same process to the subterms of the
-normal form. By now this process of splitting a normal forms into a head and a
-sequence of subterms should ring a bell... Although OGS and NF bisimulations
-have historically been introduced in reverse order, we can use our readily
-available knowledge of the OGS game to provide a very succinct and precise
-description of the normal form game. The NF game is nothing else than a
-restriction of the OGS game, where the server is only allowed to query the
-variables introduced by the last client move.
+These infinite trees are constructed by reducing the program to a
+normal form for some given reduction strategy---most usually some kind
+of head-reduction. The "head" of the normal form gives us the node of
+the tree, while the children are obtained by coinductively applying
+the same process to all subterms of the normal form. By now this
+process of splitting a normal form into a head and a sequence of
+subterms should ring a bell... Although OGS and NF bisimulations have
+historically been introduced in reverse order, we can use our readily
+available knowledge of the OGS game to provide a very succinct and
+precise description of the normal form game. The NF game is nothing
+but a restriction of the OGS game, where the server is only allowed to
+query the variables introduced by the last client move.
 
 Reusing our existing infrastructure of binding families and named observations,
 we express the NF game quite similarly to the OGS game, simply changing the
@@ -105,10 +106,14 @@ final scope $Omega$, as for OGS strategies.
       [k_1, k_2] := de("from") th [de("into") th k_1, de("into") th k_2] $)
 ] <rem-nf-unary>
 
-Given a language machine with renamings, we now construct the strategy associated to
-any given language configuration. Once again, it is merely a simplified version of
-the OGS machine strategy: it proceeds by evaluating the current language configuration
-to compute the next move, and using the application map to respond to queries.
+Given a language machine with renamings, we now construct the strategy
+associated to any given language configuration. Once again, it is
+merely a simplified version of the OGS machine strategy:
+#tom[attention, est-ce qu'il ne faudrait pas préciser que c'est une
+simplification de la version simple? Histoire d'éviter de faire peur
+pour pas grand-chose…] it proceeds by evaluating the current language
+configuration to compute the next move, and using the application map
+to respond to queries.
 
 #definition[NF Strategy][
   Given a language machine $M cl ogs.machine th O th V th C$ with renamings,
@@ -133,6 +138,12 @@ to compute the next move, and using the application map to respond to queries.
     rho_1 := [ctx.rcatl, ctx.rcatr[ctx.rcatl]] \
     rho_2 := ctx.rcatr[ctx.rcatr] $
 ] <def-nf-mstrat>
+
+#tom[Attention: dans la def de $base.vsum$ les constructeurs
+s'appelaient $base.vlft$ et $base.vrgt$. Ça devrait bien être les
+mêmes, non? Ah, oulah, je m'aperçois que ça remonte très loin,
+probablement il vaut mieux changer $base.vlft$ et $base.vrgt$, qui ne
+sont utilisés qu'une fois chacun. ]
 
 #definition[NF Interpretation, NF Bisimulation][
   Given a language machine $M cl ogs.machine th O th V th C$ with renamings,

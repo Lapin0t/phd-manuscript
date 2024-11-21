@@ -446,8 +446,10 @@ renamings, we can give the full definition of the machine strategy.
     ) $
 ]
 
-#guil[Il me semble que la notion de big-step system
-n'a pas encore été introduite.]
+#guil[Il me semble que la notion de big-step system n'a pas encore été
+introduite.] #tom[+1: si je comprends bien il faudrait mettre juste
+$strat.t_ogs.g$, ça doit être un leftover d'ancienne notation;
+d'ailleurs, attention, il y en a d'autres occurrences.]
 
 We finish up the model construction by embedding the language configurations
 into active OGS strategies.

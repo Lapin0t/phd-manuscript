@@ -484,13 +484,17 @@ pourquoi).]
 #peio[Oui c'est un peu tricky.. clairement c'est sur papier, je me permet de distinguer la def concrète $ctx.varc$ de la projection de typeclass $ctx.var$ ptet je peux remplacer les variables concrètes par
 $de(϶)$ ou #de("϶")? Je veux garder $ctx.var$ parce que c'est le plus utilisé.]
 
-#tom[A l'usage aussi, les noms choisis ici me semblent bizarre et donc je les
+#tom[A l'usage aussi, les noms choisis ici me semblent bizarres et donc je les
 retiens pas. Par ex, pourquoi $ctx.vcat$?!]
 #peio[C'est pour _voir_ les variables au dessus d'un ctx con#emph[cat]éné comme des éléments
     d'un coproduit. Globalement les "views" c'est des trucs pour case-split des choses
     que tu peux pas nativement case-split. Et la convention de nommage c'est que le type
     s'appelle "MachineView" et la fonction s'appelle "view-machin". Après ça pourrait aussi etre
     qqch comme #pr("split-cat").]
+
+#tom[Aaaaah, cat comme concat! Pour moi cat c'est automatiquement
+ catégorie… Ptet au moins une remarque pour l'expliquer? Ou bien
+ écrire view-concat ou view-⧺?]
 
   _Renamings_ $Gamma ctx.ren Delta$ are mutually defined as follows.
 
