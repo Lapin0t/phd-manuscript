@@ -745,6 +745,16 @@ $ de("swap") th {A th B} cl A base.sum B -> B base.sum A \
   construction should note that we use it very sparingly. In fact, we will
   only use it in head position, as a $ckw("with")$ construction in disguise.
 ]
+#tom[Je sais pas ce qu'est une programmeuse de gauche mais j'imagine que j'en
+suis, pcq cette notation me perturbe pas mal. Je sais pas trop à quoi tu tiens
+là-dedans, mais c'est vraiment le $:=$ qui me perturbe, pcq c'est un contresens
+sémantique.
+Est-ce que tu condescendrais à le remplacer par $↦$? Genre:
+$ de("swap") th {A th B} cl A base.sum B -> B base.sum A \
+  de("swap") th x := kw.case th x \
+  pat(base.inj1 th a & ↦ base.inj2 th a,
+      base.inj2 th b & ↦ base.inj1 th b) $
+]
 
 *(Coinductive) Record Types* #sym.space Record types are introduced by the
 keyword $kw.rec$ and by listing the type of their projections. When the

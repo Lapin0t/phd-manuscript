@@ -139,6 +139,9 @@ to respond to queries.
     rho_2 := ctx.rcatr[ctx.rcatr] $
 ] <def-nf-mstrat>
 
+#tom[$ctx.rcatl$ et ses potes sont un peu indigestes... Ça vaudrait ptet le coup
+d'écrire une remarque pour expliquer comment inférer les arguments implicites?]
+
 #tom[Attention: dans la def de $base.vsum$ les constructeurs
 s'appelaient $base.vlft$ et $base.vrgt$. Ça devrait bien être les
 mêmes, non? Ah, oulah, je m'aperçois que ça remonte très loin,
@@ -189,7 +192,7 @@ weaken the scope of NF strategies.
 
 #definition[NF Strategy Renaming][
   Assuming a scope structure $ctx.scope_T th S$, given a binding family $O cl
-  ctx.bfam_T th S$ and a scope $Omega cl S$, define the _active and passive NF strategy
+  ctx.bfam_T th S$ and a scope $Omega cl S$, define the _active_ and _passive NF strategy
   renamings_ by mutual coinduction as follows.
   #margin-note[This is in fact the definition the action of two renaming
   structures, on $nf.stratA th Omega$ and $nf.stratP th Omega th Gamma$.]
@@ -209,8 +212,8 @@ weaken the scope of NF strategies.
 
 #definition[NF to OGS][
   Assuming a scope structure $ctx.scope_T th S$, given a binding family $O cl
-  ctx.bfam_T th S$ and a scope $Omega cl S$, define as follows the _active and
-  passive embedding from NF strategies to OGS strategies_.
+  ctx.bfam_T th S$ and a scope $Omega cl S$, define as follows the _active_ and
+  _passive embeddings_ from NF strategies to OGS strategies.
 
   $ nf.nf2ogsA th {Omega th Psi} cl nf.stratA th Omega th (ogs.catE Psi) -> nf.stratP th Omega th (ogs.catO Psi) th (ogs.catE Psi) -> ogs.stratA th Omega th Psi \
     nf.nf2ogsA th s th italic("ks") := \
@@ -230,7 +233,7 @@ weaken the scope of NF strategies.
     nf.nf2ogs th s := nf.nf2ogsA th s th [] $
 ] <def-nf-to-ogs>
 
-We can now show that the OGS interpretation can be factorized through the NF
+We can now show that the OGS interpretation can be factorised through the NF
 interpretation. However, because the coinductive call of $nf.nf2ogsP$ is below
 a call to the strategy renaming, renamings will creep up during the
 bisimulation proof. For this reason we first need to prove an up-to-renaming

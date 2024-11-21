@@ -311,6 +311,7 @@ of game. We first need to define two interpretations of half-games as functors.
 
 #tom[Les espaces sont bizarres dans la def ci-dessous, non?]
 #peio[Fixed? Je vois pas trop lesquels]
+#tom[Ben je me rappelle pas, mais là je vois rien d'anormal.]
 #definition[Half-Game Functors][
   Given a half-game $G cl game.hg th I th J$, we define the
   _active interpretation_ and _passive interpretation of $G$_ as functors
@@ -688,6 +689,11 @@ est clair. J'imagine laborieusement que ça veut dire $itree.unrollA th s :=
 
 #tom[Et aussi, ça serait bien de rendre explicite que c'est une def
 coinductive.]
+
+#tom[Ça vaudrait le coup de dire vitef le rapport entre les deux présentations,
+je trouve.]
+
+
 
 == Bisimilarity <sec-bisim>
 
