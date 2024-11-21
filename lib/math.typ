@@ -99,6 +99,7 @@
   fst: pr("fst"),
   snd: pr("snd"),
   bot: de(cop(sym.bot)),
+  empty: de(math.bold("0")),
   exfalso: de(cop("ex-falso")),
   top: de(cop(sym.top)),
   int: de(cnorm("∫")),

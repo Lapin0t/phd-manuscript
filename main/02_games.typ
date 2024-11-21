@@ -2,10 +2,10 @@
 
 = Coinductive Game Strategies <ch-game>
 
-As we have seen, Operational Game Semantics, and more generally interactive
+As we have seen, operational game semantics, and more generally interactive
 semantics, rest upon a dialogue following particular rules, a so-called two
 player game. The main task in this chapter is to properly define what is
-meant by a "game", "strategy", "transition system", and to provide basic
+meant by "game", "strategy", and "transition system", and to provide basic
 building blocks for manipulating them. This chapter thus takes a step back and
 temporarily puts on hold our concerns about programming language semantics, in
 order to introduce the tools required to concretely represent games and
@@ -17,7 +17,7 @@ natural extensions of preexisting devices.
 At heart, a strategy for a given two player game is an automaton of some kind,
 in the loose sense that it has some internal states tracking information
 required to choose moves, and alternates between two kinds of transitions.
-Whenever it is their turn, i.e., in an active state, a strategy must choose a
+Whenever it is its turn, i.e., in an active state, a strategy must choose a
 move to play and transition to a passive state. And in a passive state, the
 strategy must accept any possible move made by a hypothetical opponent and
 transition to an active state.
@@ -28,7 +28,7 @@ the other hand, in game semantics, the traditional approach is more extensional.
 There, a strategy is represented by a subset of traces (finite or infinite
 sequences of moves), i.e., by a formal language, subject to additional
 conditions. While perfectly valid in a classical logic or set-theoretic
-meta-theory, when translated directly to type theory, both of these
+metatheory, when translated directly to type theory, both of these
 representations eschew the computational content of strategies.
 
 Our basis for an idiomatic type theoretical encoding of automata follows the
@@ -63,17 +63,17 @@ of event from interaction trees, with the notion of game introduced by
 #nm[Levy] and #nm[Staton]~#mcite(<LevyS14>). The rest of the chapter is
 organized as follows.
 
-- In @sec-levy-staton, I reconstruct Paul Levy and Sam Staton's notion of
+- In @sec-levy-staton, we reconstruct #nm[Levy] and #nm[Staton]'s notion of
   game and of coalgebraic transition system.
-- In @sec-itree, I introduce _indexed interaction trees_, a novel generalization of
+- In @sec-itree, we introduce _indexed interaction trees_, a novel generalization of
   interaction trees adapted to the above notion of games.
-- In @sec-bisim, I define their bisimilarity together with powerful reasoning
+- In @sec-bisim, we define their bisimilarity together with powerful reasoning
   principles based on a lattice-theoretic fixed point construction.
-- In @sec-itree-monad, I give a little bit of structure to indexed interaction
-  tree, lifted from the non-indexed setting.
-- In @sec-iter I develop upon the theory of iteration operators, providing a
-  novel _eventually guarded iteration_, applicable to the delay
-  monad~#mcite(<Capretta05>), but also to indexed and non-indexed interaction
+- In @sec-itree-monad, we give a little bit of structure to indexed interaction
+  tree, mostly lifted from the non-indexed setting.
+- In @sec-iter we develop upon the theory of iteration operators, providing a
+  novel _eventually guarded iteration_, applicable to indexed interaction trees
+  but also to the delay monad~#mcite(<Capretta05>) and to non-indexed interaction
   trees.
 
 == #nm[Levy] & #nm[Staton] Games <sec-levy-staton>
@@ -86,10 +86,10 @@ a "game". Let's build it up first hand.
 
 In the common sense of the word, a game is described by the moves
 allowed at any point of the play, together with winning conditions and
-their associated rewards. As I am here only interested in games
+their associated rewards. As we are here only interested in games
 insofar as they provide a framework for structured interactions, usual
 notions from classical game theory such as "winning", "reward" or
-"optimal play" will be completely absent. Moreover, I will restrict
+"optimal play" will be completely absent. Moreover, we will restrict our
 attention to games where two agents play in alternating turns. Thus,
 for my purpose, games will just consist of the description of allowed
 moves.#margin-note[Games in such a restricted view---two-player,
@@ -109,10 +109,10 @@ sequences. However, games-as-set-pairs are very restrictive in the sense that
 any move from, say, $M^+$ is valid at any point where it is the first player's
 turn. Thus, games-as-set-pairs are missing a shared game state, a game
 _position_, something enabling the set of allowed moves to evolve over the
-course of the dialogue. In particular, our game of interest, Operational Game
-Semantics, makes use of such evolution of moves: since players introduce
-variables while playing, moves mentioning some variable $x$ should only be
-allowed after $x$ has been introduced. 
+course of the dialogue. In particular, our game of interest in OGS, makes use
+of such evolution of moves: since players introduce variables while playing,
+moves mentioning some variable $x$ should only be allowed after $x$ has been
+introduced. 
 
 Still, this definition has the advantage of being quite symmetric: swapping the
 two sets, we get an involution $(M^+, M^-) |-> (M^-, M^+)$ exchanging the roles of
@@ -131,8 +131,8 @@ player and the second player's turn to play. Then, instead of describing moves
 by mere sets, we can describe them by two families $M^+ cl I^+ -> base.Type$ and
 $M^- cl I^- -> base.Type$, mapping to each position the set of currently allowed
 moves. Finally, we must describe how the position evolves after a move has been
-played. This can be encoded by two maps $"next"^+ cl forall i^+, th M^+ th i^+ ->
-I^-$ and $"next"^- cl forall i^-, th M^- th i^- -> I^+$. This leads us to the
+played. This can be encoded by two maps $"next"^+ cl forall {i^+} -> th M^+ th i^+ ->
+I^-$ and $"next"^- cl forall {i^-} -> th M^- th i^- -> I^+$. This leads us to the
 following definitions.
 
 #definition[Half-Game][
@@ -160,7 +160,7 @@ In order to make (half-)games into a proper category, we will define their
 morphisms. As games are parametrized over sets of positions, game morphisms
 could be naturally defined as parametrized over position morphisms, in the
 displayed style of #nm[Ahrens] and #nm[Lumsdaine]~#mcite(<AhrensL19>),
-but I will resist the urge to dive too
+but we will resist the urge to dive too
 deeply into the structure of games and leave most of it for further work to
 expose. Indeed, we will require none of it for our main goal of proving
 correctness of OGS. Moreover, as already noted by #nm[Dagand] and
