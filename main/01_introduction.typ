@@ -16,13 +16,15 @@ are purely formal constructs, this complexity gives to the study of their semant
 feel of a natural science, where mathematical models are built to capture an
 ever increasing level of detail. For sure, a handful of languages do admit
 truly exhaustive semantic descriptions, but this arguably only ever happens when they
-are designed with this intent (e.g., #nm[Lisp] or #txsc[WebAssembly] #peio[ref]#guil[Plutôt Standard ML que List]).
+are designed with this intent (e.g., Standard #nm[Ml]~#mcite(dy: -2.2em, <MilnerHMT97>) or #txsc[WebAssembly]~#mcite(dy: 0.8em, <WebAsm>)).
 Even for programming languages strongly rooted in the theoretical
 computer science community and routinely used by semanticists, such as proof
 assistants like Agda~#mcite(<Agda>) or Coq~#mcite(dy: 1em, <Coq>), a perfect description is
-elusive#margin-note(mark: true, dy: 2em)[To be completely honest, in the case of Coq _kernel_, the
-#txsc[MetaCoq]~#num-cite(<Metacoq>) project is increasingly close to the ground
-truth.]! #tom[Collision dans la marge →!!!] Yet, this predicament never stopped anyone from programming, nor
+elusive#margin-note(mark: true, dy: 1.8em)[
+  To be completely honest, in the case of Coq _kernel_, the
+  #txsc[MetaCoq]~#num-cite(<Metacoq>) project is increasingly close to the
+  ground truth.
+]! Yet, this predicament never stopped anyone from programming, nor
 simplified semantics from being useful. The value of a mathematical
 model does not reside in its faithfulness to reality with all its gruesome
 details, but in its ability to ease reasoning about a particular aspect of
@@ -49,9 +51,9 @@ upon the notion of _context_, that is, an incomplete program with a _hole_, a mi
 marked as such. Primarily, a context can be
 combined with a program fragment by replacing the marked hole with the fitting fragment, yielding a complete program. Two program
 fragments $a$ and $b$ are then considered _observationally equivalent_, whenever for
-any context $C$ they might be combined with, the final result of the
+any context $C$ they might be combined with, the final results of the
 combinations $C[a]$ and $C[b]$ will satisfy exactly the same basic
-observations, for some sensible notion of "basic observation" on program
+observations. This assumes given some sensible notion of "basic observation" on program
 results. As the name suggests, observational equivalence characterizes program
 fragments which cannot be distinguished in any way by programatically interacting with
 them. It is in a precise sense the "best" (logically weakest)
@@ -72,7 +74,7 @@ to us.
 #let aa = txtt("a")
 #let bb = txtt("b")
 
-For our concerns, the core idea of game semantics is to abstract away the
+A core idea of game semantics is to abstract away the
 concrete nature of the observing contexts and instead put the focus on the
 ways they would _interact_ with a given program fragment. By keeping the inner
 working of the context opaque, we can concentrate on what actually matters,
@@ -117,10 +119,11 @@ bear in mind that they are only tangentially related to the games studied in
 game _theory_, e.g., they are devoid of any notion of reward. This basic idea
 is quite flexible and suitable to model a wide range of programming language
 features. In fact it originates as part of a wider interpretation not of
-programs but of _proofs_, i.e., evidences, in logical systems. Game semantics
-in this wider acception is sometimes known as _dialogical logic_#guil[c'est la première fois que je vois une mentioner _dialogical logic_, tu penses à quel type de travaux ?], but we will
-not try to trace it down to its origins since the connection between logical
-proofs and argumentative dialogues is most likely as old as logic itself.
+programs but of _proofs_, i.e., evidence in logical systems. #nm[Girard]'s
+geometry of interaction~#mcite(<Girard89>) has been particularly influential in
+this respect, but we will not try to trace the game interpretation of logic
+down to its origins, since the connection between logical proofs and
+argumentative dialogues is most likely as old as logic itself.
 
 Although it has been motivated as a practical tool for reasoning with
 observational equivalence, and although its flexibility has been demonstrated to
@@ -129,7 +132,7 @@ not yet truly gone out of the hands of the game semanticists and into the
 everyday toolkit of the generalist programming language researcher. This can be
 contrasted, e.g., with the framework of _logical relations_, also known as
 #nm[Tait]'s method of computability~#mcite(<Tait67>), which has
-interesting use cases~#mcite(dy: 3em, <DreyerNB12>) and which enjoys a very large number
+overlapping use cases~#mcite(dy: 3em, <DreyerNB12>) and which enjoys a very large number
 of introductory material, tutorials and other proof walk-through. While game
 semantics is relatively lively as a research area, it has seen comparably
 little activity in digesting existing methods, streamlining proofs and
@@ -164,14 +167,14 @@ thereafter, #nm[Church]~#mcite(<Church36>) and #nm[Turing]~#mcite(dy: 3em, <Turi
 independently showed that there are some tasks which no program can solve,
 i.e., functions that we can specify but not _compute_. Hence, the "computer
 assistance" we make use of in this thesis is of another kind. Instead of asking
-for a program to come up with the proofs, we will write them ourselves in a
-purpose designed language. A program understanding this language will then help
+for a program to come up with the proofs, we write them ourselves in a
+purpose designed language. A program understanding this language then helps
 us both during the writing, e.g., by providing information about the ongoing
-proof, and at the end, when it will check that the proofs we have written are
+proof, and at the end, when it checks that the proofs we have written are
 correct and missing no argument.
 
 There are a number of such systems, but the one we have used in the code
-artifact accompanying this thesis is Coq~#mcite(<Coq>) (or the #txsc[Rocq] Prover,
+artifact accompanying this thesis is Coq~#mcite(<Coq>) (henceforth the #txsc[Rocq] Prover,
 as it is in the process of being renamed). It is part of a wider family of
 systems which we will simply call _type theories_ and whose distinguishing
 characteristic is that they are in fact programming languages, although perhaps
@@ -183,7 +186,7 @@ when, still in the early 20#super[th] century, some mathematicians started
 insisting that to consider proven the existence of some mathematical object
 satisfying some property, one must actually pinpoint it precisely. In other
 words, we need to provide a concrete way to construct it, so that it is not
-sufficient to merely show that it is impossible for it not to exist without
+sufficient to merely show that it is impossible for it not to exist, without
 saying anything about its shape. In this _intuitionistic_ or _constructive_
 school of thought, the idea emerged that to any such intuitionistic proof can
 be associated a concrete witness or _realizer_, the so-called
@@ -191,7 +194,7 @@ be associated a concrete witness or _realizer_, the so-called
 to be quite suitable for expressing such realizers, in particular the
 #short.llc put forward by #nm[Church]~#mcite(<Kleene45>)#mcite(dy: 3em, <Kreisel59>),
 establishing a link between proofs and programs. The bridge between the these
-two worlds is however quite deeper as around that time and onward, a string of
+two worlds is however quite deeper, as around that time and onward, a string of
 observations have been made. They essentially understood, that with a very
 moderate amount of squinting, the linguistic rules of existing formal logical
 systems were actually the same as the rules of existing programming languages.
@@ -205,7 +208,7 @@ theoretical computer science, namely taking a concept from one side and looking
 at it from the other side. We can now study the behavior of a proof when
 executed, compare the computational complexity of two proofs of the same
 statement, search for the statement(s) that a given algorithm proves, and much
-more! Type theories such as Coq embody this correspondence, so that we are
+more! Type theories such as Rocq embody this correspondence, so that we are
 truly both programming and proving at the same time. I personally believe that
 this opens up a radically new perspective both on programming and on
 mathematical practice of which I outline three important aspects.
@@ -216,7 +219,7 @@ its own proof of correctness. _Types_, akin to syntactic categories, classify
 programs and they are the counterpart of the logical _propositions_, or
 statements, in the programming world. Most programmers are probably familiar with
 some types, such as booleans, byte arrays, functions from some type $A$ to some
-type $B$, records, etc. In type theories such as Coq, these types are now able
+type $B$, records, etc. In type theories such as Rocq, these types are now able
 to express a number of powerful logical constructions. Instead of writing a
 program and then tediously proving that it is correct w.r.t. some
 specification, we can thus write that specification as a type, write the
@@ -227,7 +230,7 @@ be had as to why the program corresponds to the specification, they will now be
 required to be put alongside it. Still, a number of invariants can be pushed into
 programs and data structures in this way, so that a host of basic properties
 are tracked and enforced effortlessly by the language itself. We use this idiom
-extensively throughout our Coq development.
+extensively throughout our Rocq development.
 
 A second aspect is relevant to the mathematician. As we stated earlier,
 programmers, with the support of computer science, have become quite good at
@@ -241,14 +244,14 @@ mostly left to aesthetic judgment and to time. By inflicting upon oneself the
 rigor of entirely formal reasoning as is done when using proof assistants,
 there is no other way than to rationalize the concepts down to their core. When
 programming, nothing can be "left for the reader", which is the gentleman's agreement
-providing an escape hatch for uninteresting and tedious mathematical writing,
-on facts which are usually self-evident for trained mathematicians with a good
-_mental_ representation of the objects in question. When programming, such
-"boilerplate" or "glue code", is usually caused by improper data representations
-or missing abstractions and it can be resolved by refactoring. As such,
-formalization can encourage mathematicians to question the presentational
-status quo, and provide sound criteria for judging the suitability of
-abstractions.
+providing an escape hatch for uninteresting and tedious mathematical writing.
+Such untold details are usually self-evident for trained mathematicians with a
+good _mental_ representation of the objects in question, as indeed, the problem
+is only _formal_. When programming, the similar phenomenon of "boilerplate" or
+"glue code", is usually caused by improper data representations or missing
+abstractions and it can be resolved by refactoring. As such, formalization can
+encourage mathematicians to question the presentational status quo, and provide
+sound criteria for judging the suitability of abstractions.
 
 A third aspect concerns _accessibility_. Programming is quite notable for its
 number of self-taught practitioners, sometimes of very young age or otherwise
@@ -370,18 +373,22 @@ strategy as above with $E[Z]$. If the server instead plays $call(x, Z)$, we
 look up the value $V$ associated to $x$ and restart with $V Z$.
 
 To make this more precise we need to know how to represent strategies, and this
-is an important specificity distinguishing OGS from more usual game semantics
+is an important specificity distinguishing OGS from the most mainstream game semantical
 models. In OGS, these are described quite concretely by mean of an _automaton_,
 or _transition system_, that is, by giving a set of states and a transition
 relation. More precisely, because a strategy needs to both play moves and
 respond to server moves, there will be two sets of states and two transition
-relations, respectively for _active positions_ and _passive positions_.
+relations, respectively for _active positions_ and _passive positions_. We adopt
+the point of view of the client, so that active positions are the ones where
+we need to play a move, while passive positions are the ones in which we are
+waiting for the server to play.
 #guil[Il y a aussi toute une branche de la sémantique des jeux
 qui s'appelle Algorithmic Game Semantics, et qui utilise
 différentes formes d'automates pour représenter les strategies
 de sémantique des jeux, en restreignant l'ordre des types des programmes
 considérés pour pouvoir encoder la structure de pointeurs convenablement.
 Mais dans cette branche-là, on raisonne par induction sur la structure du programme plutôt que d'utiliser une sémantique opérationnelle. ]
+#peio[ok. Bon j'ai changé un poil la phrase. Je pense c'est trop digression de citer l'AGS.]
 
 #let sact = txtt("act")
 #let spas = txtt("pas")
@@ -426,13 +433,13 @@ follows.
 
 A term $P$ can now be interpreted as a strategy by embedding it as the initial
 active state $sact(P, epsilon, {})$. Then, strategies are considered equivalent
-when they are _bisimilar_, which in this case essentially means that they have
-the same set of _traces_ #guil[since the transition system is deterministic], that is, the infinite sequences of moves obtained by
-unfolding any possible transition starting from the initial state. The primary task to
-make sure the model is sensible is to prove that for the above given strategy,
-when two terms are bisimilar, then they are observationally equivalent---a
-statement called _soundness_ of OGS w.r.t. observational equivalence.
-#peio[un mot sur la preuve de soundness/adequacy/composition, et sur CIU?]
+when they are _bisimilar_. As the transition is deterministic, this
+essentially means that they have the same set of _traces_, that is, the same
+infinite sequences of moves obtained by unfolding any possible transition
+starting from the initial state. The primary task to make sure the model is
+sensible is to prove that for the above given strategy, when two terms are
+bisimilar, then they are observationally equivalent---a statement called
+_correctness_, or _soundness_ of OGS w.r.t. observational equivalence.
 
 Although this game seems a priori relatively reasonable, before starting our
 formal treatment in this thesis we will make a slight change of perspective.
@@ -440,8 +447,8 @@ As a hint, it is slightly bothering that our strategy requires two devices
 instead of one for remembering what it needs to: a stack and an environment.
 The blocker for putting evaluation contexts into the environment is that they
 are not named by a symbol. Instead, they are always referred to implicitly, as
-e.g. in $ret(Z)$ which can be read "return $Z$ to the context at the _top
-of the stack_", much like $call(x, Z)$ reads "send $Z$ to the function $x$".
+e.g. in $ret(Z)$ which can be read "return $Z$ to the context _at the top
+of the stack_", much like $call(x, Z)$ reads "send $Z$ to the function _pointed to by_ $x$".
 This change of perspective thus involves naming contexts with symbols, as
 functions are, and unify the return and call moves into one: symbol
 _observation_.
@@ -461,7 +468,7 @@ $ & "Observation"    && in.rev O && ::= ret(Z) | call(Z, alpha) \
   & "Move"           && in.rev M && ::= x dot O $
 #margin-note(dy: -3em)[
   The Agda programmer or #short.uuc aficionado will surely be happy to recognize
-  "observations" as copatterns and "moves" as postfix copattern applications. #peio[ref]
+  "observations" as copatterns and "moves" as postfix copattern applications.
 ]
 
 #let conf(x, y) = $angle.l #x || #y angle.r$
@@ -486,7 +493,7 @@ transition system can be rewritten as follows.
       && quad quad #text(size: 0.8em)[when $(x |-> V) in gamma$] $
 ]
 
-To put the final blow, let us fuse the definition of the return and call transitions, for
+To put the final blow, let us fuse the definition of the return and call moves, for
 active transitions and passive transitions. For the active transitions, notice that
 in essence, what is happening is that the named program is reduced to a named normal
 form, which is subsequently split into three parts: the head symbol, an observation
@@ -521,24 +528,20 @@ $ & sact(conf(P, alpha), gamma) && quad red(x th dot th O) quad && spas(gamma un
 
 The path to generalize the OGS construction to other languages is now ready: we
 will abstract over the notions of named term, generalized values, observations,
-normal form splitting and observation application. Notice how both the
-explicit threading of evaluation contexts as well as the named term
+normal form splitting and observation application. Notice how both the function call
+with explicit continuation as well as the named term
 construction $conf(P, alpha)$ are reminiscent of abstract machines based
-presentations of a language's operational semantics #guil[Est-ce-que tu pourrais détailler ce que tu entends par "explicit threading of evaluation contexts" ?]. In this sense, in our
-opinion, OGS is first and foremost a construction on an abstract machine, and
+presentations of a language's operational semantics. In this sense, in our
+personal opinion, OGS is first and foremost a construction on an abstract machine, and
 not on a "programming language". This point of view will guide us during the
 axiomatization, as we will indeed entirely forget about bare terms and
 evaluation contexts, keeping only _configurations_ (e.g. named terms) and
-generalized values. On top of streamlining the OGS, letting go of evaluation
+generalized values. On top of streamlining the OGS, letting go of
 contexts will also greatly simplify the necessary syntactic metatheory, as
 these "programs with a hole" are perhaps _fun_, but certainly not
 _easy_~#mcite(dy: -5em, <AbbottAGM03>)#mcite(dy: -1em, <McBride08>)#mcite(dy: 1em, <HirschowitzL22>)
-#guil[Les deux premiers papiers que tu cites se concentrent sur contextes généraux plus que sur les contextes d'évaluation.].
-Yet as we have seen, this does not preclude to treating languages
-given by more traditional small- or big-step operational semantics, or even
-with syntactic denotational semantics into some computational metalanguage
-#guil[Qu'est-ce-que tu veux dire par "syntactic denotational semantics" ?].
-
+Yet as we have just seen, this does not preclude to treating languages
+given by more traditional small- or big-step operational semantics.
 
 
 As it happens, this new game with
@@ -556,7 +559,7 @@ theory, and prove it correct w.r.t. observational equivalence. We do not do so
 for a particular concrete language, but instead formalize it on top of an
 axiomatization of pure, simply-typed programming languages, for which we provide
 several instances. This result, as well as most other constructions in this
-thesis have been entirely proven in Coq. The resulting
+thesis have been entirely proven in Rocq. The resulting
 code artifact can be found at the following address.
 
 #align(center)[
@@ -580,14 +583,11 @@ fixed points w.r.t. strong bisimilarity.
 *Theory of Substitution* #sym.space.quad In @ch-subst, we lightly
 review the standard tools for modeling intrinsically typed and scoped
 syntaxes with substitution~#mcite(<FioreS22>)#mcite(dy: 3em,
-<AllaisACMM21>). To fit our needs, we introduce a new notion of
-_substitution module_ #tom[je suis un peu biaisé, mais je pense que
-c'est mon père et Marco Maggesi les premiers à avoir parlé de modules
-sur des monades dans ce contexte, donc je pense que tu devrais les
-citer] over a substitution monoid, generalizing upon the theory of
-renaming. We further introduce a novel notion of _scope structures_,
-generalizing upon the traditional #nm[De-Bruijn] indices. Although
-relatively superficial, scope structures provide us with much
+<AllaisACMM21>). To fit our needs, we present the lesser known notion of
+_substitution module_~#mcite(<HirschowitzM10>) over a substitution monoid,
+generalizing upon the theory of renaming. We further introduce a novel notion
+of _scope structures_, generalizing upon the traditional #nm[De-Bruijn]
+indices. Although relatively superficial, scope structures provide us with much
 appreciated flexibility in choosing how variables should look like.
 
 *OGS Construction* #sym.space.quad With all the necessary scaffolding in place,
@@ -624,8 +624,8 @@ interpretation factors through the NF interpretation.
 
 *Language Machine Instances* #sym.space.quad To demonstrate the viability of
 our axiomatization of language machines, in @ch-instance we provide three
-representative #tom[je pense que c'est un faux ami: illustrative? significant?] examples. For each of them, we define a language machine and prove
-the correctness theorem hypotheses. First, we study Jump-with-Argument, a #tom[collisions dans la marge ←]
+examples forming a cross section of what can be expressed. For each of them, we define a language machine and prove
+the correctness theorem hypotheses. First, we study Jump-with-Argument, a
 minimalistic continuation passing style calculus~#mcite(dy: -1em, <Levy04>).
 Then, we study #short.uuc with recursive types~#mcite(<CurienH00>)#sym.zwj#mcite(dy: 3em, <DownenA20>), a very expressive language
 with explicit control flow. Similarly to Call-by-Push-Value~#mcite(<Levy04>), it has been exhibited as
@@ -637,29 +637,179 @@ thus providing a new proof of their soundness w.r.t. observational equivalence.
 
 == Metatheory
 
-/*
-#pagebreak()
-#pagebreak()
+Before sailing off, there is one last thing we need to do: review
+the metatheory in which we will work. As we said earlier, our concrete code
+artifact is written using the Rocq proof assistant. However, in order to make
+this thesis accessible to a wider community, we have chosen to keep the present
+text self-contained and without any Rocq snippet. Our construction are written
+quite explicitly in a dependently typed programming style, but using an idealized
+type theory. From this point on, we will assume a good understanding of
+dependent type theory in general, and familiarity at least with _reading_ code
+in either Agda, Rocq or some other type theory (#txsc[Lean], #txsc[Idris], ...).
 
-=== Simply-Typed #short.llc
+This type theory can be quite succinctly described as an idealized Rocq kernel
+with an Agda syntax. More explicitly, it is an _intensional_ type theory, with a
+predicative hierarchy of types $base.Type_i$, an impredicative universe of
+propositions $base.Prop$ and _strict_#margin-note(mark: true)[
+  Our use of strict propositions is anecdotic, so do not worry if your favorite
+  proof assistant does not support it. On the other hand, having an
+  impredicative sort is crucial.
+] propositions $base.sProp$. We rely on typical ambiguity and cumulativity to entirely disregard
+the universe levels of types. We moreover assume propositional unicity of
+identity proofs in the form of #nm[Streicher]'s axiom K for
+pattern matching~#mcite(dy: 1em, <Cockx17>), as well as definitional #sym.eta\-law on
+records and functions (in particular for the empty record type
+$base.unit$). We further assume the ability to define inductive data types and
+coinductive record types.
 
-== Mechanizing Mathematics with Coq
+More superficially, we adopt Agda like syntax. Let us go through all the
+constructions. Keywords are highlighted in $ckw("orange")$, definitions in
+$de("blue")$, data type constructors in $cs("green")$, record projections
+in $pr("pink")$ and identifier and some primitive type formers in black.
 
-- coder les maths: important pour l'accessibilité
-- coder les maths: important pour juger l'abstraction
-- cette thèse: manuel du code (idealisé), guide de réimplementation
+*Function Types* #sym.space Given $A cl base.Type$ and $B cl A -> base.Type$, the dependent function type
+is written $(a cl A) -> B th a$, or possibly $forall th a -> B th a$, when $A$ can be
+inferred from the context. We additionally make use of implicit argument,
+written in braces like ${a cl A} -> B th a$ or $forall th {a} -> B th a$. We
+adopt the Rocq convention of writing some argument binders left of the typing
+colon, simply separated by spaces. For example, we may declare the polymorphic
+identity function as $de("id") th {A} cl A -> A$, instead of $de("id") cl
+forall th {A} -> A -> A$. When readability is at stake, we will even entirely
+drop implicit binders, but we will try to use this sparingly. Any
+dangling seemingly free identifier should be considered implicitly universally
+quantified.
 
-explications technique:
-- def-eq vs prop-eq vs ext-eq
-- setoid rewriting, proper?
-- with abstraction
-- copattern matching
-- implicit arguments
-- set vs prop vs strict-prop
-- typical ambiguity
-- typeclasses
+#remark[
+  For Rocq programmers confused by the Agda-like $forall$ symbol: just parse the rest of the
+  type as you do in Rocq when left of the typing colon. Any appearance of $->$
+  switches back the rest to the usual parsing.
+]
 
-== Thesis Overview
+As we will use type families quite heavily, we introduce the notation
+$base.Type^(X_1, ..., X_n)$ to denote $X_1 -> ... -> X_n -> base.Type$.
 
-- expliquer "we" vs "I"
-*/
+*(Inductive) Data Types* #sym.space Data types identifier are declared preceded by the
+keyword $kw.dat$ and we give their constructors as inference rules. When the
+rules are self-referential, the type is always an inductive type. For extremely
+simple finite types, such as booleans, or the empty type, we write the following.
+
+#mathpar(block: true,
+  $kw.dat th base.bool cl base.Type := base.btrue th | th base.bfalse$,
+  $kw.dat th base.empty cl base.Type := #hide($|$)$
+)
+
+We declare so called _mixfix_ identifiers with the symbol $ar$ as a placeholder
+for arguments in the identifier. As such, the disjoint sum $A base.sum B$ is declared as
+$kw.dat th nar""cnorm(base.sum)nar cl base.Type -> base.Type -> base.Type$. Its constructors
+are given as follows.
+
+#mathpar(block: true,
+  inferrule($a cl A$, $base.inj1 th a cl A base.sum B$),
+  inferrule($b cl B$, $base.inj2 th b cl A base.sum B$),
+)
+
+To avoid heavy notations, we may sometimes simply write $base.sum$, or
+$(base.sum)$, when referring to infix combinators such the disjoint sum which
+should normally be identified by $nar""cnorm(base.sum)nar$. The propositional equality
+type is declared as $kw.dat th nar""cnorm(base.eq)nar th {A} cl A -> A -> base.Prop$,
+with the following constructor.
+#v(-1em)
+#mathpar(block: true, inset: 0em,
+  inferrule("", $base.refl cl x base.eq x$)
+)
+
+Pattern matching functions are written by listing their _clauses_.
+Pattern matching is dependent and we do not write absurd clauses, as the $base.inj2$
+case in $de("foo")$ below.
+
+#mathpar(block: true,
+  $de("foo") th {A} cl A base.sum base.empty -> A \
+   de("foo") th (base.inj1 th a) := a \ #v(0.2em) $,
+  box[
+   $de("swap") th {A th B} cl A base.sum B -> B base.sum A$
+   #v(0em)
+   $&de("swap") th (base.inj1 th a) && := base.inj2 th a \
+    &de("swap") th (base.inj2 th b) && := base.inj1 th b$
+  ]
+)
+
+Sometimes, we use the $kw.case$ keyword, to pattern match on an expression. For
+example, we could have alternatively defined $de("swap")$ as follows.
+
+$ de("swap") th {A th B} cl A base.sum B -> B base.sum A \
+  de("swap") th x := kw.case th x \
+  pat(base.inj1 th a & := base.inj2 th a,
+      base.inj2 th b & := base.inj1 th b) $
+#margin-note(dy: -7em)[
+  The leftist programmer~#mcite(dy: 7em, <McBrideM04>) unsettled by this $kw.case$
+  construction should note that we use it very sparingly. In fact, we will
+  only use it in head position, as a $ckw("with")$ construction in disguise.
+]
+
+*(Coinductive) Record Types* #sym.space Record types are introduced by the
+keyword $kw.rec$ and by listing the type of their projections. When the
+declaration is self-referential, record types are always coinductive. The
+sigma type is technically declared as below, but we write it $(a cl A)
+base.prod B th a$, mimicking the dependent function
+type.
+
+$ kw.rec th de("sigma") th (A cl base.Type) th (B cl A -> base.Type) cl base.Type := \
+  pat(
+    base.fst & cl A,
+    base.snd & cl B th base.fst
+  ) $
+
+We write projections in postfix notation and define record elements by
+so-called record expressions, giving the value of each projection, such as
+follows.
+
+$ de("flip") th {A th B} cl A base.prod B -> B base.prod A \
+  de("flip") th p :=
+  pat(
+    base.fst & := p .base.snd,
+    base.snd & := p .base.fst,
+  ) $
+
+We sometimes introduce constructors for record elements. In particular,
+for the sigma type we define the constructor $nar""cm""nar$ allowing us to
+write pairs as the usual $(a cm b)$, and destruct them by pattern matching. We
+additionally define the unit type as the empty record $kw.rec th base.unit cl base.Type
+:= []$, with the constructor $base.tt$.
+
+*Induction and Coinduction* #sym.space.quad We have not described which kind
+of inductive or coinductive functions we should be allowed to write. This is
+quite a tricky subject, as we use self-referential definitions instead of
+eliminators (and coeliminators). As such we will here only mostly say that "it
+works like in Rocq". Slightly more precisely, we will allow ourselves mutually
+recursive definitions with calls on structurally smaller arguments, and
+similarly only corecursive calls below record projections.
+
+*Typeclasses* #sym.space.quad To structure our development, we will make use of
+typeclasses, which are simply records introduced by the keyword $kw.cls$ and
+whose projections are written free standing, i.e., with the record element left
+implicit. We use the keyword $kw.ext$, to denote the fact that a given
+typeclass declaration depends an instance of a previously declared one. As an
+example, we could define magmas and unital magmas as follows.
+
+#mathpar(block: true, spacing: 1fr,
+  $kw.cls de("Magma") th (X cl base.Type) := \
+  pat(nar""pr(cnorm(bullet))nar cl X -> X -> X) \ #v(1.5em)$,
+  $kw.cls de("UnitalMagma") th (X cl base.Type) := \
+    pat(
+      kw.ext th de("Magma") th X,
+      pr("id") cl X,
+      pr("id-"cnorm(bullet)) th {x} cl pr("id") pr(bullet) x base.eq x,
+      pr(cnorm(bullet)"-id") th {x} cl x pr(bullet) pr("id") base.eq x,
+    )$
+)
+
+*Extensional Equality* #sym.space.quad Although we pride ourselves in being
+very precise and explicit in all of our constructions, there will be a small
+technical informality (see @ch-ccl for a mea culpa). Because we work with
+coinductive objects in intensional type theory, propositional equality is
+too strong for several statements. As such, we use _extensional_ equality
+in several places, written $a approx b$. The problem is that the definition of
+extensional equality depends on the type we are considering, so that this
+should by essentially considered as a kind of typeclass giving the extensional
+equality equivalence relation at any given type. We try to be explicit
+around its use. For types $A$ and $B$, $A approx B$ denotes an isomorphism.

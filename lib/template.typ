@@ -195,6 +195,7 @@
   // REPLACEMENTS
   show "Agda": txsc("Agda")
   show "Coq": txsc("Coq") // txsc("Rocq")
+  show "Rocq": txsc("Rocq")
   show "OGS": txsc("Ogs")
   show "NF": txsc("Nf")
   show "JWA": txsc("Jwa")
