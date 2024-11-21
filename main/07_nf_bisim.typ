@@ -4,7 +4,8 @@
 
 Operational game semantics is intimately linked to another slightly older
 family of coinductive constructions: normal form bisimulations. Stemming from
-work on program equivalence, normal form bisimulation #peio[who coined it?] is
+work on program equivalence, normal form bisimulation #peio[who coined it?]
+#guil[à la base c'est Sangiorgi qui a proposé les "open bisimulation" pour le lazy lambda-calculus, et qui a montré le lien avec les arbres de Levy-Longo et l'encodage corrigé de Milner dans le pi-calcul. Puis Lassen a introduit les nf-bisimulations, d'abord en cbn puis en cbv. Lassen s'est notamment intéressé aux preuves de corrections de ces bisimulations vis-à-vis de l'équivalence contextuelle.] is
 an umbrella term for the equivalences induced by several related
 constructions such as #nm[Böhm] trees, #nm[Levy]-#nm[Longo] trees, #nm[Lassen]
 trees, and other constructions tailored to a variety of settings #peio[ref]. In
@@ -28,7 +29,7 @@ form bisimilar_ language configurations are _substitution equivalent_.
 == Normal Form Bisimulations in a Nutshell <sec-nf-bisim>
 
 Implicitly or explicitly, the main idea in all normal form (NF) bisimulation
-constructions, is to associate to each program a possibly infinite tree. Here,
+constructions, is to associate to each program a possibly infinite tree #guil[representing its infinitary normal form]. Here,
 we will call these trees _normal form strategies_, that is, strategies for the
 _normal form game_. This induces a notion of program equivalence which holds
 whenever two programs have bisimilar associated strategies: _normal form
@@ -191,7 +192,7 @@ weaken the scope of NF strategies.
   Assuming a scope structure $ctx.scope_T th S$, given a binding family $O cl
   ctx.bfam_T th S$ and a scope $Omega cl S$, define the _active and passive NF strategy
   renamings_ by mutual coinduction as follows.
-  #margin-note[This is in fact the definition the action of two renaming
+  #margin-note[This is in fact the definition of the action of two renaming
   structures, on $nf.stratA th Omega$ and $nf.stratP th Omega th Gamma$.]
 
   $ //nf.renA th {Omega th Gamma_1 th Gamma_2} cl nf.stratA th Omega th Gamma_1 -> Gamma_1 ctx.ren Gamma_2 -> nf.stratA th Omega th Gamma_2 \
@@ -206,6 +207,9 @@ weaken the scope of NF strategies.
     nf.renP th {Omega th Gamma} cl nf.stratP th Omega th Gamma ctx.arr ctxhom((ctx.var), nf.stratP th Omega th Gamma) \
     nf.renP th k th rho th m := nf.renA th (k th m) th [rho dot ctx.rcatl, ctx.rcatr] $
 ] <def-nf-ren>
+
+#guil[ça aiderait d'expliquer un peu cette def, notamment rappeler ce qu'est le internal substitution hom,
+(où d'au moins remettre un pointeur à la def 3.10), et de donner le type de ρ.]
 
 #definition[NF to OGS][
   Assuming a scope structure $ctx.scope_T th S$, given a binding family $O cl
@@ -281,7 +285,7 @@ bisimulation candidate is closed under renamings.
 ]
 
 In order to finally prove NF bisimulation correctness, we still need to show a technicality,
-namely that $nf.nf2ogs$ respects to weak bisimilarity.
+namely that $nf.nf2ogs$ respects weak bisimilarity.
 
 #lemma[$nf.nf2ogs$ Respects Weak Bisimilarity][
   Assuming a scope structure $ctx.scope_T th S$, a binding family $O cl
@@ -326,13 +330,14 @@ injectivity of $nf.nf2ogs$. There is also much more to say on the relationship
 between the NF game and the OGS game, but we leave this thorough study for
 future work.
 
-Since the server is allowed less moves in the NF game than in the OGS game, it
+Since the server is allowed to play less moves in the NF game than in the OGS game, it
 is naturally easier to prove that two language configurations are normal form
 bisimilar than OGS bisimilar. As such, to prove substitution equivalence of two
 concrete programs, the NF correctness theorem is of greater practical interest
-than the OGS correctness theorem. In fact it can be argued that OGS is merely a
-technical device for proving NF correctness, at least in the realm of program
-equivalence for languages without state. And indeed, in a line of work by
+than the OGS correctness theorem. In fact in the realm of program
+equivalence for languages without state or polymorphism, it can be argued that OGS is merely a
+technical device for proving NF correctness#guil[j'ai modifié un peu la phrase précédente, c'est ok ?]. 
+And indeed, in a line of work by
 #nm[Lassen] and #nm[Levy]~#mcite(dy: -1em, <LassenL07>)#mcite(dy: 2em,
 <LassenL08>), an early appearance of an OGS-like construction can be
 seen during the NF correctness proof.
