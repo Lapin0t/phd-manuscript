@@ -291,7 +291,7 @@ semantics and provide some technical grounding for the rest of this thesis.
 From this point on, we will start assuming some familiarity with the
 #short.llc.
 
-== A Primer to Operational Game Semantics
+== A Primer to Operational Game Semantics <sec-intro-ogs>
 
 To set some intuitions about operational game semantics and to introduce some
 design choices that will follow us throughout the thesis, let us start by

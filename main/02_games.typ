@@ -2012,24 +2012,25 @@ $ (R rel.iarr S) th f th g := forall th {i th x_1 th x_2}
 $ rel.forall cl rel.irel th X_1 th X_2 -> rel.rel th (forall th {i} -> X_1 th i) th (forall th {i} -> X_2 th i) \
   rel.forall R th f th g := forall th {i} -> R th (f th {i}) th (g th {i}) $
 
-Moreover we will write $rel.forall A$ for $rel.forall (kw.fun th {i} |-> th A)$.
+Moreover, we will write $rel.forall A$ for $rel.forall (kw.fun th {i} |-> th A)$, with a very
+weak parsing precedence.
 
 #lemma[ITree Monad Monotonicity][
   Given $Sigma cl icont.t th I$, for any
   $X^rel.r$ and $Y^rel.r$ and for any strong or weak bisimulation candidate $cF in
 itree.sb_Sigma$ or $cF in itree.wb_Sigma$, the following holds.
 
-  1. $itree.ret xrel(X^rel.r rel.arr cF th X^rel.r) itree.ret$
-  2. $(ar""cnorm(itree.fmap)ar) xrel((X^rel.r rel.carr Y^rel.r) rel.arr (cF th X^rel.r rel.carr cF th Y^rel.r)) (ar""cnorm(itree.fmap)ar)$
-  3. $(nar""cnorm(itree.bind)ar) xrel(rel.forall th cF th X^rel.r rel.arr (X^rel.r rel.iarr cF th Y^rel.r) rel.arr cF th Y^rel.r) (ar""cnorm(itree.bind)ar)$
+  1. $itree.ret xrel(rel.forall X^rel.r rel.carr cF th X^rel.r) itree.ret$
+  2. $(ar""cnorm(itree.fmap)ar) xrel((rel.forall X^rel.r rel.carr Y^rel.r) rel.arr (rel.forall cF th X^rel.r rel.carr cF th Y^rel.r)) (ar""cnorm(itree.fmap)ar)$
+  3. $(nar""cnorm(itree.bind)ar) xrel(rel.forall th cF th X^rel.r rel.arr (rel.forall X^rel.r rel.iarr cF th Y^rel.r) rel.arr cF th Y^rel.r) (ar""cnorm(itree.bind)ar)$
 
   As direct consequences, return, fmap, and bind respect both strong and weak bisimilarity:
-  4. $itree.ret xrel(X^rel.r rel.arr cnorm(iteq(X^rel.r))) itree.ret$
-  5. $itree.ret xrel(X^rel.r rel.arr cnorm(itweq(X^rel.r))) itree.ret$
-  6. $(ar""cnorm(itree.fmap)ar) xrel((X^rel.r rel.carr Y^rel.r) rel.arr (cnorm(iteq(X^rel.r)) rel.carr cnorm(iteq(Y^rel.r)))) (ar""cnorm(itree.fmap)ar)$
-  7. $(ar""cnorm(itree.fmap)ar) xrel((X^rel.r rel.carr Y^rel.r) rel.arr (cnorm(itweq(X^rel.r)) rel.carr cnorm(iteq(Y^rel.r)))) (ar""cnorm(itree.fmap)ar)$
-  8. $(ar""cnorm(itree.bind)ar) xrel(rel.forall th cnorm(iteq(X^rel.r)) rel.arr (X^rel.r rel.iarr cnorm(iteq(Y^rel.r))) rel.arr cnorm(iteq(Y^rel.r))) (ar""cnorm(itree.bind)ar)$
-  9. $(ar""cnorm(itree.bind)ar) xrel(rel.forall th cnorm(itweq(X^rel.r)) rel.arr (X^rel.r rel.iarr cnorm(itweq(Y^rel.r))) rel.arr cnorm(itweq(Y^rel.r))) (ar""cnorm(itree.bind)ar)$
+  4. $itree.ret xrel(rel.forall X^rel.r rel.carr cnorm(iteq(X^rel.r))) itree.ret$
+  5. $itree.ret xrel(rel.forall X^rel.r rel.carr cnorm(itweq(X^rel.r))) itree.ret$
+  6. $(ar""cnorm(itree.fmap)ar) xrel((rel.forall X^rel.r rel.carr Y^rel.r) rel.arr (rel.forall cnorm(iteq(X^rel.r)) rel.carr cnorm(iteq(Y^rel.r)))) (ar""cnorm(itree.fmap)ar)$
+  7. $(ar""cnorm(itree.fmap)ar) xrel((rel.forall X^rel.r rel.carr Y^rel.r) rel.arr (rel.forall cnorm(itweq(X^rel.r)) rel.carr cnorm(iteq(Y^rel.r)))) (ar""cnorm(itree.fmap)ar)$
+  8. $(ar""cnorm(itree.bind)ar) xrel(rel.forall th cnorm(iteq(X^rel.r)) rel.arr (rel.forall X^rel.r rel.iarr cnorm(iteq(Y^rel.r))) rel.arr cnorm(iteq(Y^rel.r))) (ar""cnorm(itree.bind)ar)$
+  9. $(ar""cnorm(itree.bind)ar) xrel(rel.forall th cnorm(itweq(X^rel.r)) rel.arr (rel.forall X^rel.r rel.iarr cnorm(itweq(Y^rel.r))) rel.arr cnorm(itweq(Y^rel.r))) (ar""cnorm(itree.bind)ar)$
 ] <lem-up2bind>
 
 #proof[
@@ -2377,18 +2378,18 @@ Furthermore, we prove the following monotonicity statement for iteration.
   Given $Sigma cl icont.t th I$, for all $X^rel.r cl rel.irel th X^1 th X^2$ and
   $Y^rel.r cl rel.irel th Y^1 th Y^2$, the following statements holds.
 
-  1. $ itree.iter xrel((X^rel.r rel.iarr iteqn(Y^rel.r rel.sum th X^rel.r)) rel.arr (X^rel.r rel.iarr iteqn(Y^rel.r))) itree.iter $
-  2. $ itree.iter xrel((X^rel.r rel.iarr itweqn(Y^rel.r rel.sum th X^rel.r)) rel.arr (X^rel.r rel.iarr itweqn(Y^rel.r))) itree.iter $
+  1. $ itree.iter xrel((rel.forall X^rel.r rel.iarr iteqn(Y^rel.r rel.sum th X^rel.r)) rel.arr (rel.forall X^rel.r rel.iarr iteqn(Y^rel.r))) itree.iter $
+  2. $ itree.iter xrel((rel.forall X^rel.r rel.iarr itweqn(Y^rel.r rel.sum th X^rel.r)) rel.arr (rel.forall X^rel.r rel.iarr itweqn(Y^rel.r))) itree.iter $
 ] <lem-iter-mon>
 #proof[
   The proof is by straightforward tower induction. Let us detail it for strong bisimilarity.
   By tower induction, let us prove that for all $cF in tower.t_(itree.sb_Sigma)$ the following
   holds.
-  $ itree.iter xrel((X^rel.r rel.iarr cF th (Y^rel.r rel.sum th X^rel.r)) rel.arr (X^rel.r rel.iarr cF th Y^rel.r)) itree.iter $
+  $ itree.iter xrel((rel.forall X^rel.r rel.iarr cF th (Y^rel.r rel.sum th X^rel.r)) rel.arr (rel.forall X^rel.r rel.iarr cF th Y^rel.r)) itree.iter $
 
   The statement is inf-closed. Assuming the statement for $cF$, let us prove it for
   $itree.sb_Sigma th cF$. Introduce the hypotheses
-  $ f^rel.r cl f^1 xrel(X^rel.r rel.iarr itree.sb_Sigma th cF th (Y^rel.r rel.sum th X^rel.r)) f^2 \
+  $ f^rel.r cl f^1 xrel(rel.forall X^rel.r rel.iarr itree.sb_Sigma th cF th (Y^rel.r rel.sum th X^rel.r)) f^2 \
     x^r cl X^rel.r th x^1 th x^2. $
 
   We need to prove

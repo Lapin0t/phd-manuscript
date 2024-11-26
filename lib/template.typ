@@ -158,7 +158,7 @@
   }
   show math.equation.where(block: false): box
   show math.equation: set text(font: ("EB Garamond", "New Computer Modern Math",), features: ("cv01",))
-  show math.equation: set block(breakable: true)
+  //show math.equation: set block(breakable: true)
 
 
   // FIGURES
