@@ -95,6 +95,9 @@
   sum: de(cbin(sym.plus)),
   inj1: cs(cop("inl")),
   inj2: cs(cop("inr")),
+  xinj1: cs(cop($"inj"_1$)),
+  xinj2: cs(cop($"inj"_2$)),
+  xinj3: cs(cop($"inj"_3$)),
   prod: de(cbin(sym.times)),
   fst: pr("fst"),
   snd: pr("snd"),
@@ -149,10 +152,13 @@
 
 #let delay = (
   t: de(cop("Delay")),
+  F: de(cop("DelayF")),
 )
 
 #let xrel(it) = $th class("opening", angle.l.double) it class("closing", angle.r.double) th$
 #let relr = math.italic(math.bold("r"))
+
+#let relix(it) = $cbin(de(angle.r)) it cbin(de(angle.l))$
 
 #let rel = (
   r: relr,
@@ -165,11 +171,13 @@
   seq: de(cop("seq")),
   seqS: de(crel("⨾")),
   lat: de(cop(math.frak("L"))),
-  forall: math.attach(sym.forall, tr: relr),
-  //isum: crel(math.attach("+", tr: relr)), NEEDED?
+  forall: math.attach(math.inline(sym.integral, cramped: false), tr: relr) + h(-0.1em),
+  sum: de(crel($attach(+, tr: relr)$)),
   arr: crel(math.attach(sym.arrow, tr: relr)),
-  iarr: crel(math.attach(sym.arrow.double, tr: relr)),
+  //iarr: crel(math.attach(sym.arrow.double, tr: relr)),
+  iarr: crel(math.attach("⇾", tr: relr)),
   carr: crel(math.attach("⇾", tr: relr)),
+  rar: $cancel(->, angle: #0deg, length: #0.4em)$
 )
 
 #let tower = (
@@ -185,21 +193,30 @@
 #let itweq(it) = crel($de(approx) #h(-0.1em) de("[") #it de("]")$)
 #let itweqn(it) = cnorm(itweq(it))
 
+#let xsb(it) = $attach(#it, tl: de("s"))$
+#let xwb(it) = $attach(#it, tl: de("w"))$
+
 #let itree = (
   t: de(cop("ITree")),
-  tp: de(sym.prime.rev + "ITree"),
+  tp: de(sym.prime.double.rev + "ITree"),
   obs: pr("out"),
   F: de(cop("Action")),
   RS: [$de("Action")^de(rel.r)_Sigma$],
-  retF: cs(cop("\u{2035}ret")),
+  /*retF: cs(cop("\u{2035}ret")),
   tauF: cs(cop("\u{2035}tau")),
-  visF: cs(cop("\u{2035}vis")),
+  visF: cs(cop("\u{2035}vis")),*/
+  retF: cs(cop(sym.prime.double.rev + "ret")),
+  tauF: cs(cop(sym.prime.double.rev + "tau")),
+  visF: cs(cop(sym.prime.double.rev + "vis")),
   ret: de(cop("ret")),
   tau: de(cop("tau")),
   vis: de(cop("vis")),
-  retR: cs(cop($"\u{2035}ret"^rel.r$)),
+  /*retR: cs(cop($"\u{2035}ret"^rel.r$)),
   tauR: cs(cop($"\u{2035}tau"^rel.r$)),
-  visR: cs(cop($"\u{2035}vis"^rel.r$)),
+  visR: cs(cop($"\u{2035}vis"^rel.r$)),*/
+  retR: cs(cop($prime.double.rev"ret"^rel.r$)),
+  tauR: cs(cop($prime.double.rev"tau"^rel.r$)),
+  visR: cs(cop($prime.double.rev"vis"^rel.r$)),
   unrollA: de(cop($"unroll"^+$)),
   unrollP: de(cop($"unroll"^-$)),
   sb: de(cop("sbisim")),
@@ -209,8 +226,10 @@
   eat: de(cop("Eat")),
   eatR: cs(cop("eat-refl")),
   eatS: cs(cop("eat-step")),
-  eatlr: de(crel(math.attach(sym.arrow.stroked.br, tr: "e"))),
-  eatrl: de(crel(math.attach(sym.arrow.stroked.bl, tr: "e"))),
+  //eatlr: de(crel(math.attach(sym.arrow.stroked.br, tr: "e"))),
+  //eatrl: de(crel(math.attach(sym.arrow.stroked.bl, tr: "e"))),
+  eatlr: de(crel(sym.arrow.stroked.br)),
+  eatrl: de(crel(sym.arrow.stroked.bl)),
   subst: de(cop("subst")),
   bind: de(crel($> #h(-0.42em) > #h(-0.37em) =$)),
   bindbk: crel($> #h(-0.42em) > #h(-0.37em) =$),
@@ -220,17 +239,18 @@
   xvis: de(cop("vis!")),
   spin: de(cop("spin")),
   iter: de(cop("iter")),
-  actguard: de(cop(sym.prime.rev + "guarded")),
-  actevguard: de(cop(sym.prime.rev + "ev-guarded")),
+  iteraux: de(cop("iter-aux")),
+  actguard: de(cop(sym.prime.double.rev + "guarded")),
+  actevguard: de(cop(sym.prime.double.rev + "ev-guarded")),
   guard: de(cop("guarded")),
   evguard: de(cop("ev-guarded")),
   eqguard: de(cop("eqn-guarded")),
   eqevguard: de(cop("eqn-ev-guarded")),
-  gret: cs(cop("g-ret")),
-  gtau: cs(cop("g-tau")),
-  gvis: cs(cop("g-vis")),
-  evs: cs(cop("ev-step")),
-  evg: cs(cop("ev-guard")),
+  gret: cs(cop($prime.double.rev"ret"^"g"$)),
+  gtau: cs(cop($prime.double.rev"tau"^"g"$)),
+  gvis: cs(cop($prime.double.rev"vis"^"g"$)),
+  evs: cs(cop(sym.prime.double.rev + "ev-step")),
+  evg: cs(cop(sym.prime.double.rev + "ev-guard")),
   giter: de(cop("g-iter")),
   eviter: de(cop("ev-iter")),
   gstep: de(cop("g-step")),
@@ -239,12 +259,17 @@
   copr: de(crel($⊞$))
 )
 
+#let weirdcopr(x,y) = $de(prime.rev.double bracket.l) #x de(",") #y de(bracket.r)$
+
 #let icont = (
   t: de(cop("Container")),
   qry: pr("Query"),
   rsp: pr("Reply"),
   nxt: pr("next"),
+  null: de(cop($0_P$)),
 )
+#let g2c(x) = $de(floor.l) #x de(floor.r)$
+#let icext(x) = $de(bracket.double.l) #x de(bracket.double.r)$
 
 #let game = (
   hg: de(cop("HGame")),
@@ -270,6 +295,7 @@
   extP: de(crel(sym.arrow.r.triple)),
   stratA: de(cop($"Strat"^+$)),
   stratP: de(cop($"Strat"^-$)),
+  strat: de(cop($"Strat"$)),
   opp: de($dagger$),
   par: de(crel(sym.parallel)),
   eqA: de(math.attach(sym.approx.eq, tr: $+$)),
@@ -285,7 +311,7 @@
   stn: pr($"state"^-$),
   play: pr("play"),
   coplay: pr("coplay"),
-  bs: de(cop("BS-System")),
+  bs: de(cop("Big-Step-System")),
 )
 
 //#let asgn(x) = de(crel($- #h(-0.2em) [bk(#x)] #h(-0.2em) ->$))

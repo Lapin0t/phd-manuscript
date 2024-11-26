@@ -214,7 +214,7 @@ this opens up a radically new perspective both on programming and on
 mathematical practice of which I outline three important aspects.
 
 A first aspect, relevant to the programmer, is that of _correct-by-construction_
-programming, or type-driven development~#mcite(<Brady17>), whereby a program is
+programming, or type-driven development~#mcite(<AltenkirchMM05>)#mcite(dy: 3em, <Brady17>), whereby a program is
 its own proof of correctness. _Types_, akin to syntactic categories, classify
 programs and they are the counterpart of the logical _propositions_, or
 statements, in the programming world. Most programmers are probably familiar with
@@ -632,8 +632,9 @@ with explicit control flow. Similarly to Call-by-Push-Value~#mcite(<Levy04>), it
 a fine compilation target, so that this instance also implicitly captures all
 the calculi which can be compiled to #short.uuc. Finally, we study a more
 traditional calculus, untyped #short.llc under weak head reduction. In this
-case, our generic#guil["it is known that" plutôt que "our generic", avec une petite citation à Lassen ? La rèf à la thèse de JJ-Levy n'est pas bonne en tout cas.] NF bisimulations specialize to #nm[Levy]-#nm[Longo] trees~#mcite(<Levy75>),
-thus providing a new proof of their soundness w.r.t. observational equivalence.
+case, it is known that NF bisimulation specializes to #nm[Levy]-#nm[Longo] tree
+equivalence~#mcite(<Lassen99>), thus providing a new proof of their soundness
+w.r.t. observational equivalence.
 
 == Metatheory
 

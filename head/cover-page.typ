@@ -60,7 +60,7 @@
           *M. Pierre-Évariste DAGAND* \
           Chargé de Recherche, CNRS, Université Paris Cité, Examinateur\
           *M. Paul Blain LEVY* \
-          Reader in Theoretical Computer Science, University of Birmingham, Examinateur\
+          Reader in Theor. Comput. Sci., University of Birmingham, Examinateur\
           *M. Guilhem JABER* \
           Maître de Conférences, Nantes Université, Invité (Co-encadrant)\
           *M. Yannick ZAKOWSKI* \
