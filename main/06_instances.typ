@@ -18,6 +18,16 @@ several reasons does not look like the prototypical language machine, but still
 can be twisted (rather heavily) to fit our axiomatization: pure untyped #short.llc
 under weak head reduction.
 
+#remark[
+  Be advised that at the time of writing these lines, the set of example calculi
+  presented in this chapter is not exactly the same as the one present in our Rocq
+  artifact. Their respective features are broadly the same, and our present choice
+  is guided by making this collection more comprehensive. I invite you to check the
+  #link("https://github.com/lapin0t/ogs")[online
+  repository]#margin-note(link("https://github.com/lapin0t/ogs")) to see
+  if this has been fixed by the time you are reading.
+]
+
 == Jump-with-Argument <sec-inst-jwa>
 
 === Syntax
