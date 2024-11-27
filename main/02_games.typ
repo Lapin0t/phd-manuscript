@@ -607,7 +607,7 @@ $ (A^+, A^-) #h(0.4em) |-> #h(0.4em) (#h(0.2em) X base.sum A^+ base.sum G.game.c
 
 Then, as by definition any coalgebra maps uniquely into the final coalgebra, it
 is sufficient to work with this final coalgebra, whose states intuitively
-consist of infinite coinductive trees, extentionally describing the traces of
+consist of infinite coinductive trees, extensionally describing the traces of
 any possible transition system over $G$. This "universal" state space---the
 state space of the final coalgebra---will be our core notion of automata.
 
@@ -624,7 +624,7 @@ annoying than anything else to have our constructions like the above
 endofunctor take place in a product category, forcing upon us _two_ kinds of
 positions, _two_ kinds of states and _two_ kinds of transitions.
 
-The trick is to make the whole passive side disappear is to group in one atomic
+The trick to make the whole passive side disappear is to group in one atomic
 unit the act of sending and then receiving a move. In other words, we can
 consider a compound transition, where, starting from an active position, a
 strategy emits a move, waits for an opponent move, and attains a new active
