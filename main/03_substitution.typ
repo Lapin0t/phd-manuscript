@@ -254,13 +254,12 @@ manipulate than others.
 // ctheorems which is broken with typst master
 //#show emoji.sparkles: text(fill: colors.kw, sym.star.filled)
 
-The prime example is the following setting.
-#margin-note[
+The prime example is the following setting#margin-note(mark: true, dy: -4.5em)[
   This situation is not entirely artificial and does in fact appear
   routinely in OGS instances. Indeed, the scopes tracking the shared
   variables of both players are usually restricted to contain only the types of
   some kind of non-transmitted values, typically called _negative types_.
-] We have a set of types $T$ and we construct some syntax $tm cl ctx.ctxc th T
+]. We have a set of types $T$ and we construct some syntax $tm cl ctx.ctxc th T
 -> T -> base.Type$. Now for some reason, we have a subset $ nice cl T ->
 base.Prop$ of let's say, _nice_ types, and we need to work with the sub-syntax
 of terms in _nice_ contexts, that is in contexts containing only nice types.
@@ -786,7 +785,7 @@ We now define the internal substitution hom and subsequently substitution monoid
   $ //ctxhom("" ar "", ar "") cl ctx.fam_T th S -> ctx.fam_T th S -> ctx.fam_T th S \
     ctxhom("" ar "", ar "") cl base.Type^(S,T) -> base.Type^(S,T) -> base.Type^(S,T) \
     ctxhom(X, Y) th Gamma th alpha := forall th {Delta} -> Gamma asgn(X) Delta -> Y th Delta th alpha $
-]
+] <def-sub-hom>
 
 #definition[Substitution Monoids][
   Assuming a scope structure $ctx.scope_T th S$ and a family $X cl base.Type^(S,T)$,
@@ -940,7 +939,7 @@ extend the internal substitution hom to $n$-ary families.
 
   $ ctxhom("" ar "", ar "") cl base.Type^(S,T) -> base.Type^(S,T_1,..,T_n) -> base.Type^(S,T_1,..,T_n) \
     ctxhom(X, Y) th Gamma th alpha_1 th .. th alpha_n := forall th {Delta} -> Gamma asgn(X) Delta -> Y th Delta th alpha_1 th .. th alpha_n $
-]
+] <def-sub-hom-gen>
 
 #definition[Substitution Module][
   Given an abstract scope structure $ctx.scope_T th S$ and a sequence of indexing
@@ -1034,12 +1033,6 @@ Finally, we define the $sub.box_M$ comonad and link it with substitution modules
 ]
 
 #lemma[Substitution Module is Coalgebra][
-#margin-note[
-  This lemma is more or less trivial, since our definition of substitution
-  module can be directly read as the definition of $sub.box_M$ comonad coalgebras. Indeed,
-  $sub.act$ coincides with the coalgebra structure map while $sub.aid$ and 
-  $sub.acomp$ coincide with the two comonad coalgebra laws.
-]
   Assuming a scope structure $ctx.scope_T th S$, given a family $M cl
   base.Type^(S,T)$ equipped with a substitution monoid structure $sub.mon th M$,
   for any $X cl base.Type^(S,T_1,..,T_n)$, substitution module structures over $M$
@@ -1048,10 +1041,16 @@ Finally, we define the $sub.box_M$ comonad and link it with substitution modules
   For any $X$, we directly deduce that $sub.box_M th X$ enjoys a substitution
   module structure over $M$: the free coalgebra structure on $X$.
 ]
+#proof[
+  This lemma is more or less trivial, since our definition of substitution
+  module can be directly read as the definition of $sub.box_M$ comonad coalgebras. Indeed,
+  $sub.act$ coincides with the coalgebra structure map while $sub.aid$ and
+  $sub.acomp$ coincide with the two comonad coalgebra laws.
+]
 
 The above lemma exhibits the link between our substitution modules and
 $sub.box_M$ coalgebras, extending the previous result on renaming
-structures~#mcite(dy: -1em, <AllaisACMM21>)#mcite(dy: 4em, <FioreS22>).
+structures~#mcite(<AllaisACMM21>)#mcite(dy: 5em, <FioreS22>).
 
 Finally, we conclude this chapter by defining one last structure, for families
 that have both renamings and variables, described by #nm[Fiore] and #nm[Szamozvancev] as

@@ -85,7 +85,7 @@
 
 #let base = (
   Prop: de(cop("Prop")),
-  sProp: de(cop($"Prop"_s$)),
+  sProp: de(cop($"SProp"$)),
   Set: de(cop("Set")),
   Type: de(cop("Type")),
   Cat: de(cop("Cat")),
@@ -346,8 +346,8 @@
   //ren: de(crel($arrow.squiggly$)),
   ren: de(crel($subset.eq$)),
   catV: de(cop("ViewCat")),
-  vcatl: cs(cop($"v-cat"_l$)),
-  vcatr: cs(cop($"v-cat"_r$)), 
+  vcatl: cs(cop($"v-left"$)),
+  vcatr: cs(cop($"v-right"$)), 
   scope: de(cop("Scope")),
   vemp: pr("view-emp"),
   vcat: pr("view-cat"),
@@ -553,8 +553,8 @@
 #let uut = (
   uut: de(cop($Mu tilde(Mu)$)),
   pol: de(cop("pol")),
-  pp: cs($+$),
-  pn: cs($-$),
+  pp: cs($sans(upright(v))$),
+  pn: cs($sans(upright(n))$),
   xtyp: de(cop($"typ"^o$)),
   typ: de(cop("typ")),
   tvar: cs(cop("tvar")),

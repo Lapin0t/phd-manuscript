@@ -880,6 +880,14 @@ the interleaved OGS position.
   )
 ]
 
+#remark[
+  The notation $e ogs.tconA$ has been chosen to evoke a sequence extension on
+  the right by "nothing", in contrast to $e ogs.tconP gamma$ which does add
+  $gamma$ to the environment. Indeed, when a player is currently active this
+  means that they did _not_ play the last move, so that what they last stored
+  was indeed _nothing_, only recording the fact that the other side played.
+]
+
 This data is enough to recover the original assignments of the simple OGS model,
 as witnessed by the following _collapsing functions_.
 
@@ -1125,7 +1133,7 @@ has a _redex_, in the sense that its evaluation necessarily starts with a
 make sense: $o$ typically stands for an elimination, so applying an elimination
 to something which is not a variable should yield a redex. Alas, I realized
 that this was severely restricting the language machine. Even the
-simply-typed #short.llc fails this hypothesis#margin-note(mark: true)[
+simply-typed #short.llc fails this hypothesis#margin-note(mark: true, dy: -4.8em)[
   To be completely honest, the particular example of the #short.llc can be made
   to verify the redex hypothesis by designing the observations more smartly,
   but still, we would like to have maximal latitude to design the language

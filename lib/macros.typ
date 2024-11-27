@@ -1,6 +1,6 @@
 #import "/lib/theorems.typ": thmplain, thmproof
 
-#let my_thm(head) = return thmplain(
+#let my_thm(head, bodyfmt: x => [\ #x]) = return thmplain(
   "theorem",
   head,
   radius: 0em,
@@ -8,6 +8,7 @@
   inset: (left: 1em, rest: 0em),
   base: "heading",
   base_level: 1,
+  bodyfmt: bodyfmt,
 )
 
 #let proof = thmproof("proof", inset: (left: 1em, rest: 0em), "Proof")
@@ -15,7 +16,7 @@
 #let lemma = my_thm("Lemma")
 #let definition = my_thm("Definition")
 #let example = my_thm("Example")
-#let remark = my_thm("Remark")
+#let remark = my_thm("Remark", bodyfmt: x => x)
 
 #let centering(it) = align(center, box(it))
 

@@ -54,8 +54,8 @@
     numbering: "1",
     header: header(),
   )
-  //set heading(numbering: "1.1")
-  set heading(numbering: (n1, ..x) => numbering("1.1", n1 - 1, ..x))
+  set heading(numbering: "1.1")
+  //set heading(numbering: (n1, ..x) => numbering("1.1", n1 - 1, ..x))
   counter(page).update(1)
   counter(heading).update(0)
   it

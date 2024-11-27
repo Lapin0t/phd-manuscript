@@ -226,7 +226,7 @@ same fact on games. For the reasons explained above, we leave this sketching as 
 ]
 
 
-=== Example Games
+=== Example Games <sec-game-example>
 
 Let us introduce a couple example games, to get a feel for their expressivity.
 
@@ -682,7 +682,7 @@ $ A |-> X base.sum A base.sum icext(g2c(G)) th A $
 #remark[
   As a matter of fact, as hinted at the beginning of this chapter, I went through this
   journey backwards. Starting from notions of strategies such as interaction
-  trees~#mcite(<XiaZHHMPZ20>) or interaction structures~#mcite(dy: 5em, <HancockH06>)
+  trees~#mcite(dy: -7em, <XiaZHHMPZ20>) or interaction structures~#mcite(dy: -2em, <HancockH06>)
   where "games" are understood as polynomial functors, I had trouble obtaining
   a sensible notion of dual game. With the realization that such polynomials
   can be "cut in halves", I arrived at #nm[Levy] & #nm[Staton]'s more symmetric
@@ -733,7 +733,7 @@ innocuous, this separation has its importance. Because the head type former of
 $F$ is the disjoint union $base.sum$, it would seem natural to implement this definition as
 a coinductive _data_ type with three constructors. However, for metatheoretical
 reasons, it is largely proscribed to pattern-match on coinductive
-objects#margin-note(mark: true)[
+objects#margin-note(dy: -3em, mark: true)[
   Although Rocq allows it, it is folklore knowledge that this breaks subject
   reduction. See #text-cite(<McBride09>)
 ]. As such, we first define the action functor as a data type, and then define
@@ -1254,7 +1254,7 @@ small. Besides some applications and generic theorems, its only additional
 content consist in several helpers e.g., for deriving inf-closedness of
 predicates, the definition of the most useful instances of complete lattices
 and some generic duality and symmetry arguments. The article by #nm[Schäfer] and
-#nm[Smolka]~#mcite(<SchaferS17>) is similarly short, providing the whole theory
+#nm[Smolka]~#mcite(dy: -0.5em, <SchaferS17>) is similarly short, providing the whole theory
 in merely three pages, including the proofs and the derivation of the
 companion. As such, if you need to work with coinduction and are happy with
 an impredicative universe of propositions, I heartily recommend you to try
@@ -2424,7 +2424,7 @@ latter iterative monad. With interaction trees, we find ourselves exactly in thi
 Indeed, as we will see, every equation system is weakly bisimilar to a guarded
 equation system. Our previous unguarded iteration operator can then be recast as
 constructing the unique fixed point of this new guarded equation system, up to strong
-bisimilarity#margin-note(mark: true)[
+bisimilarity#margin-note(dy: -4em, mark: true)[
   In hindsight, it should not come as a surprise that primitively only guarded and
   unique fixed points exist. This is what coinduction in our metatheory provides us with.
   Because we work in a constructive metatheory there is no place for doubt, and
