@@ -735,8 +735,8 @@ to the formal definition of types and syntax.
   #mathpar(block: true, spacing: -0.4em,
     inferrule("", $uut.tzer cl uut.xtyp th Theta th uut.pp$),
     inferrule("", $uut.ttop cl uut.xtyp th Theta th uut.pn$),
-    inferrule("", $uut.tbot cl uut.xtyp th Theta th uut.pp$),
-    inferrule("", $uut.tone cl uut.xtyp th Theta th uut.pn$),
+    inferrule("", $uut.tone cl uut.xtyp th Theta th uut.pp$),
+    inferrule("", $uut.tbot cl uut.xtyp th Theta th uut.pn$),
     inferrule(
       ($A cl uut.xtyp th Theta th uut.pp$, $B cl uut.xtyp th Theta th uut.pp$),
       $A uut.tten B cl uut.xtyp th Theta th uut.pp$
