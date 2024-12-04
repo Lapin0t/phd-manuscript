@@ -10,7 +10,8 @@
 #show: front-matter
 
 #include "head/cover-page.typ"
-#include "head/dedication.typ"
+#include "head/title.typ"
+#include "head/abstract.typ"
 
 #outline(title: "Contents")
 #pagebreak()
