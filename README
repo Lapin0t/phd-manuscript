@@ -1,0 +1,7 @@
+This document should be built with Typst 0.12 (https://typst.app). Prebuilt
+binaries are available from the github release page [1]. The PDF can be
+obtained by the following command:
+
+  $ typst compile --font-path EBGaramond12-otf main.typ
+
+[1] https://github.com/typst/typst/releases/download/v0.12.0

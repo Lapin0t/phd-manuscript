@@ -3,11 +3,17 @@
 = Normal Form Bisimulations <ch-nf-bisim>
 
 Operational game semantics is intimately linked to another slightly older
-family of coinductive constructions: normal form bisimulations. Stemming from
-work on program equivalence, normal form bisimulation #peio[who coined it?] is
-an umbrella term for the equivalences induced by several related
-constructions such as #nm[Böhm] trees, #nm[Levy]-#nm[Longo] trees, #nm[Lassen]
-trees, and other constructions tailored to a variety of settings #peio[ref]. In
+family of coinductive constructions: _normal form bisimulations_. Building upon
+#nm[Sangiorgi]'s _open bisimulations_~#mcite(<Sangiori93>), the term was coined
+by #nm[Lassen]~#mcite(dy: 2em, <Lassen05>)#mcite(dy: 4em, <Lassen06>) as an umbrella
+for coinductive operational characterizations of the equivalences induced by several
+related constructions such as #nm[Böhm] trees, #nm[Levy]-#nm[Longo] trees,
+#nm[Lassen] trees and others tailored to a variety of languages. They
+distinguish themselves from the other big family of _applicative_
+bisimulations~#mcite(dy: 0.5em, <Abramsky90>) mainly by using _fresh variables_
+instead of a _closed values_ as arguments to observations.
+
+In
 this short chapter, we start by introducing our own variant of normal form
 bisimulation, for any given language machine (@sec-nf-bisim). Then, in
 @sec-nf-ogs we show how the interpretation from language configurations to OGS
@@ -17,7 +23,7 @@ form bisimilar_ language configurations are _substitution equivalent_.
 
 #remark[
   Be advised that at the time of writing these lines, the constructions and
-  proofs contained in this chapter are only sketched in the Coq artifact. As
+  proofs contained in this chapter are only sketched in our Rocq artifact. As
   we will see the proofs are not particularly challenging, but this part
   came in quite late during the thesis. I invite you to check the
   #link("https://github.com/lapin0t/ogs")[online
@@ -28,11 +34,11 @@ form bisimilar_ language configurations are _substitution equivalent_.
 == Normal Form Bisimulations in a Nutshell <sec-nf-bisim>
 
 Implicitly or explicitly, the main idea in all normal form (NF) bisimulation
-constructions, is to associate to each program a possibly infinite tree. Here,
-we will call these trees _normal form strategies_, that is, strategies for the
-_normal form game_. This induces a notion of program equivalence which holds
-whenever two programs have bisimilar associated strategies: _normal form
-bisimilarity_.
+constructions, is to associate to each program a possibly infinite tree
+intuitively representing its infinitely expanded normal form. Here, we will
+call these trees _normal form strategies_, that is, strategies for the _normal
+form game_. This induces a notion of program equivalence which holds whenever
+two programs have bisimilar associated strategies: _normal form bisimilarity_.
 
 These infinite trees are constructed by reducing the program to a
 normal form for some given reduction strategy---most usually some kind
@@ -45,14 +51,14 @@ historically been introduced in reverse order, we can use our readily
 available knowledge of the OGS game to provide a very succinct and
 precise description of the normal form game. The NF game is nothing
 but a restriction of the OGS game, where the server is only allowed to
-query the variables introduced by the last client move.
+query the variables introduced by the _last_ client move.
 
 Reusing our existing infrastructure of binding families and named observations,
-we express the NF game quite similarly to the OGS game, simply changing the
-game positions and transition functions. Since the allowed server moves are
+we express the NF game quite similarly to the naive OGS game, slightly changing
+the game positions and transition functions. Since the allowed server moves are
 dictated by the _last_ client move, only the client scope needs to be threaded
-throughout the game positions. As such, client positions consist of a single scope
-$Gamma$, containing the variables the client is allowed to observe, while
+throughout the game positions. As such, client positions consist of a single
+scope $Gamma$, containing the variables the client is allowed to observe, while
 server positions consist of two scopes $(Gamma, Delta)$, containing the
 variables that respectively the server and the client are allowed to observe.
 
@@ -97,7 +103,7 @@ final scope $Omega$, as for OGS strategies.
     & de("from") th sigma th (i ctx.cute o) && := sigma th i th o $
 
   In light of this, we will extend standard assignment notations to passive strategies,
-  in particular the terminal arrow and the copairing.
+  in particular the initial arrow and the copairing.
 
   #mathpar(block: true, spacing: 2em,
     $ [] cl nf.stratP th Omega th ctx.emp th Delta \
@@ -108,15 +114,11 @@ final scope $Omega$, as for OGS strategies.
 
 Given a language machine with renamings, we now construct the strategy
 associated to any given language configuration. Once again, it is
-merely a simplified version of the OGS machine strategy:
-#tom[attention, est-ce qu'il ne faudrait pas préciser que c'est une
-simplification de la version simple? Histoire d'éviter de faire peur
-pour pas grand-chose…] it proceeds by evaluating the current language
-configuration to compute the next move, and using the application map
-to respond to queries.
+merely a simplified version of the (naive) OGS machine strategy: it proceeds by
+evaluating the current language configuration to compute the next move, and
+using the application map to respond to queries.
 
-#definition[NF Strategy][
-  Given a language machine $M cl ogs.machine th O th V th C$ with renamings,
+#definition[NF Strategy][Given a language machine $M cl ogs.machine th O th V th C$ with renamings,
   i.e., such that $sub.pren th V$ and $sub.ren th C$ hold, given a final scope
   $Omega cl S$, the _NF machine strategy_ is the big-step system defined as follows.
   $ nf.mstrat th M cl strat.bs_nf.g th (kw.fun th Gamma |-> O^ctx.named th Omega) \
@@ -128,8 +130,8 @@ to respond to queries.
         quad ((i ctx.cute o), gamma) <- ogs.eval th c th ";" \
         quad kw.case (ctx.vcat th i) \
         quad pat(
-          ctx.vcatl th i & := itree.ret th (base.inj1 th (i ctx.cute o)),
-          ctx.vcatr th j & := itree.ret th (base.inj2 th ((j ctx.cute o), gamma)),
+          base.vlft th i & := itree.ret th (base.inj1 th (i ctx.cute o)),
+          base.vrgt th j & := itree.ret th (base.inj2 th ((j ctx.cute o), gamma)),
         ),
       strat.coplay th gamma th (i ctx.cute o) :=
         ogs.apply th (gamma th i)[rho_1] th o th rho_2 ,
@@ -138,15 +140,6 @@ to respond to queries.
     rho_1 := [ctx.rcatl, ctx.rcatr[ctx.rcatl]] \
     rho_2 := ctx.rcatr[ctx.rcatr] $
 ] <def-nf-mstrat>
-
-#tom[$ctx.rcatl$ et ses potes sont un peu indigestes... Ça vaudrait ptet le coup
-d'écrire une remarque pour expliquer comment inférer les arguments implicites?]
-
-#tom[Attention: dans la def de $base.vsum$ les constructeurs
-s'appelaient $base.vlft$ et $base.vrgt$. Ça devrait bien être les
-mêmes, non? Ah, oulah, je m'aperçois que ça remonte très loin,
-probablement il vaut mieux changer $base.vlft$ et $base.vrgt$, qui ne
-sont utilisés qu'une fois chacun. ]
 
 #definition[NF Interpretation, NF Bisimulation][
   Given a language machine $M cl ogs.machine th O th V th C$ with renamings,
@@ -194,9 +187,6 @@ weaken the scope of NF strategies.
   Assuming a scope structure $ctx.scope_T th S$, given a binding family $O cl
   ctx.bfam_T th S$ and a scope $Omega cl S$, define the _active_ and _passive NF strategy
   renamings_ by mutual coinduction as follows.
-  #margin-note[This is in fact the definition the action of two renaming
-  structures, on $nf.stratA th Omega$ and $nf.stratP th Omega th Gamma$.]
-
   $ //nf.renA th {Omega th Gamma_1 th Gamma_2} cl nf.stratA th Omega th Gamma_1 -> Gamma_1 ctx.ren Gamma_2 -> nf.stratA th Omega th Gamma_2 \
     nf.renA th {Omega} cl nf.stratA th Omega ctx.arr ctxhom((ctx.var), nf.stratA th Omega) \
     nf.renA th s th rho := \
@@ -208,7 +198,21 @@ weaken the scope of NF strategies.
     \
     nf.renP th {Omega th Gamma} cl nf.stratP th Omega th Gamma ctx.arr ctxhom((ctx.var), nf.stratP th Omega th Gamma) \
     nf.renP th k th rho th m := nf.renA th (k th m) th [rho dot ctx.rcatl, ctx.rcatr] $
+  #margin-note(dy: -12em)[
+    This is in fact the definition of the action of two renaming
+    structures, on $nf.stratA th Omega$ and $nf.stratP th Omega th Gamma$.
+  ]
+  #v(-1em)
 ] <def-nf-ren>
+
+#remark[
+  Our definition of the renaming action makes use of the internal substitution
+  hom (@def-sub-hom-gen), which we did not see in a long time! The types can be
+  spelled out more explicitly as follows.
+
+  $ nf.renA th {Omega th Delta_1 th alpha} th (s cl nf.stratA th Omega th Delta_1 th alpha) th {Delta_2} cl Delta_1 ctx.ren Delta_2 -> nf.stratA th Omega th Delta_2 th alpha \
+    nf.renP th {Omega th Gamma th Delta_1} th (s cl nf.stratP th Omega th Gamma th Delta_1) th {Delta_2} cl Delta_1 ctx.ren Delta_2 -> nf.stratP th Omega th Gamma th Delta_2 $
+]
 
 #definition[NF to OGS][
   Assuming a scope structure $ctx.scope_T th S$, given a binding family $O cl
@@ -233,9 +237,9 @@ weaken the scope of NF strategies.
     nf.nf2ogs th s := nf.nf2ogsA th s th [] $
 ] <def-nf-to-ogs>
 
-We can now show that the OGS interpretation can be factorised through the NF
-interpretation. However, because the coinductive call of $nf.nf2ogsP$ is below
-a call to the strategy renaming, renamings will creep up during the
+We can now show that the OGS interpretation can be factored through the NF
+interpretation. However, because the coinductive call of $nf.nf2ogsP$ happens
+on a renamed strategy, renamings will creep up during the
 bisimulation proof. For this reason we first need to prove an up-to-renaming
 reasoning principle for NF strategies, essentially stating that any NF
 bisimulation candidate is closed under renamings.
@@ -243,14 +247,13 @@ bisimulation candidate is closed under renamings.
 #lemma[NF Bisimulation Up-to Renaming][
   Assuming a scope structure $ctx.scope_T th S$, a binding family $O cl
   ctx.bfam_T th S$ and a scope $Omega cl S$, then $nf.renA th {Omega}$
-  respects any member of the strong bisimulation tower and of
-  the weak bisimulation tower, i.e., for any
+  respects any strong or weak bisimulation candidate, i.e., for any
 
-  #box($ cal(C) in tower.t_(itree.sb_nf.g) quad quad "or" quad quad cal(C) in tower.t_(itree.wb_nf.g), $)
+  #box($ cal(F) in tower.t_(itree.sb_nf.g) quad quad "or" quad quad cal(F) in tower.t_(itree.wb_nf.g), $)
 
   the following property holds.
 
-  $ nf.renA xrel(cal(C) th (cnorm(=)) rel.carr ctxhom((cnorm(=)), cal(C) th (cnorm(=)))^de(rel.r)) nf.renA $
+  $ nf.renA xrel(rel.forall cal(F) th (cnorm(=)) rel.carr ctxhom((cnorm(=)), cal(F) th (cnorm(=)))^de(rel.r)) nf.renA $
 ] <lem-nf-ren-mono>
 #proof[
   Both statements (weak and strong) are proven by direct tower induction.
@@ -277,30 +280,32 @@ bisimulation candidate is closed under renamings.
   $ & itree.unrollA_(ogs.mstrat th M) th (c' ctx.cute e) \
     game.eqA & nf.nf2ogsA th (itree.unrollA_(nf.mstrat th M) th c') th (itree.unrollP_(nf.mstrat th M) th (ogs.collA e)) $
 
-  This statement is then proven by direct coinduction, unfolding the
+  This statement is then proven by direct tower induction, unfolding the
   definitions and using @lem-nf-ren-mono where required. The theorem follows
   by direct application, taking $Psi := ctx.nilc ctx.conc Gamma$, $c' :=
   c[ctx.rcatr]$ and $e := []$.
 ]
 
 In order to finally prove NF bisimulation correctness, we still need to show a technicality,
-namely that $nf.nf2ogs$ respects to weak bisimilarity.
+namely that $nf.nf2ogs$ respects weak bisimilarity.
 
 #lemma[$nf.nf2ogs$ Respects Weak Bisimilarity][
   Assuming a scope structure $ctx.scope_T th S$, a binding family $O cl
   ctx.bfam_T th S$, $nf.nf2ogs$ respects weak bisimilarity, i.e.,
   the following property holds.
 
-  $ nf.nf2ogs xrel(cnorm(itree.weq) rel.arr cnorm(itree.weq)) nf.nf2ogs $
+  $ nf.nf2ogs xrel(rel.forall th cnorm(itree.weq) rel.carr cnorm(itree.weq)) nf.nf2ogs $
 ] <lem-nf-mono>
 #proof[
-  We generalize the statement and show monotonicity of $nf.nf2ogsA$:
+  We generalize the statement and show that $nf.nf2ogsA$ respects weak bisimilarity:
   #let ks1 = $italic("ks"_1)$
   #let ks2 = $italic("ks"_2)$
 
-  $ nf.nf2ogsA xrel(cnorm(game.weqA) rel.arr cnorm(game.weqP) rel.arr cnorm(game.weqA)) nf.nf2ogsA. $
+  $ nf.nf2ogsA xrel(rel.forall th cnorm(itree.weq) rel.carr cnorm(game.weqP) rel.carr cnorm(itree.weq)) nf.nf2ogsA $
 
-  This statement is proven by straightforward coinduction, using @lem-nf-ren-mono where required.
+  with $game.weqP$ denoting pointwise weak bisimilarity of passive strategies.
+  This statement is proven by straightforward tower induction, using
+  @lem-nf-ren-mono where required.
 ]
 
 We can now prove the normal form bisimulation correctness theorem.
@@ -310,15 +315,15 @@ We can now prove the normal form bisimulation correctness theorem.
   is correct w.r.t. substitution equivalence, i.e., for any $Gamma cl S$ and $c_1, c_2 cl C th Gamma$, the
   following statement holds.
 
-  $ nfinterpA(c_1) game.weqA nfinterpA(c_2) -> c_1 ogs.subeq c_2 $
+  $ nfinterpA(c_1) itree.weq nfinterpA(c_2) -> c_1 ogs.subeq c_2 $
 ] <thm-nf-correctness>
 #proof[
-  Assume $c_1$ and $c_2$ such that $nfinterpA(c_1) game.weqA nfinterpA(c_2)$. By @thm-correctness
-  it is sufficient to prove $ogsinterpA(c_1) game.weqA ogsinterpA(c_2)$.
+  Assume $c_1$ and $c_2$ such that $nfinterpA(c_1) itree.weq nfinterpA(c_2)$. By @thm-correctness
+  it is sufficient to prove $ogsinterpA(c_1) itree.weq ogsinterpA(c_2)$.
 
-  $ ogsinterpA(c_1) th th & game.eqA nf.nf2ogs th (nfinterpA(c_1)) quad quad quad & #[(@thm-ogs-nf-facto)] \
-                    & game.weqA nf.nf2ogs th (nfinterpA(c_2)) & #[(@lem-nf-mono)] \
-                    & game.eqA ogsinterpA(c_2) & #[(@thm-ogs-nf-facto)] $
+  $ ogsinterpA(c_1) th th & itree.eq nf.nf2ogs th (nfinterpA(c_1)) quad quad quad & #[(@thm-ogs-nf-facto)] \
+                    & itree.weq nf.nf2ogs th (nfinterpA(c_2)) & #[(@lem-nf-mono)] \
+                    & itree.eq ogsinterpA(c_2) & #[(@thm-ogs-nf-facto)] $
   #v(-2em)
 ]
 
@@ -329,13 +334,14 @@ injectivity of $nf.nf2ogs$. There is also much more to say on the relationship
 between the NF game and the OGS game, but we leave this thorough study for
 future work.
 
-Since the server is allowed less moves in the NF game than in the OGS game, it
+Since the server is allowed to play less moves in the NF game than in the OGS game, it
 is naturally easier to prove that two language configurations are normal form
 bisimilar than OGS bisimilar. As such, to prove substitution equivalence of two
 concrete programs, the NF correctness theorem is of greater practical interest
-than the OGS correctness theorem. In fact it can be argued that OGS is merely a
-technical device for proving NF correctness, at least in the realm of program
-equivalence for languages without state. And indeed, in a line of work by
-#nm[Lassen] and #nm[Levy]~#mcite(dy: -1em, <LassenL07>)#mcite(dy: 2em,
+than the OGS correctness theorem. In fact in the realm of program
+equivalence for languages without state or polymorphism, it can be argued that OGS is merely a
+technical device for proving NF correctness. 
+And indeed, in a line of work by
+#nm[Lassen] and #nm[Levy]~#mcite(<LassenL07>)#mcite(dy: 3em,
 <LassenL08>), an early appearance of an OGS-like construction can be
 seen during the NF correctness proof.

@@ -5,10 +5,10 @@
 In @ch-ogs we have constructed the OGS model, interpreting configurations of a
 language machine into OGS strategies. Then we have given the correctness
 theorem (@thm-correctness), stating that when two configurations are equivalent in the OGS model
-(i.e., when they have bisimilar strategies), then they are substitution
-equivalent, an analogue of contextual equivalence tailored for language
-machines. The current chapter is now devoted to providing the actual proof
-of this statement.
+(i.e., when they have weakly bisimilar strategies), then they are _substitution
+equivalent_, the concretization of observational equivalence for language
+machines. The current chapter is now devoted to providing the actual proof of
+this statement.
 
 For the entirety of this chapter, we will globally assume all of the hypotheses
 of the correctness theorem. Hence we assume given
@@ -33,60 +33,58 @@ lemmas in various places. Let us recapitulate the blueprint. To prove the correc
 we will do a detour on composition, as indeed correctness follows
 from two properties of composition, _congruence_ and _adequacy_.
 
-#definition[Congruence of Composition][
-  The composition operator is _congruent_ if for all $Psi cl ctx.ctxc th S$,
+#definition[Congruence for Composition][
+  Weak bisimilarity is a _congruence_ for composition if for all $Psi cl ctx.ctxc th S$,
   $s^+_1, s^+_2 cl ogs.stratA th Omega th Psi$ and $s^- cl ogs.stratP th
   Omega th Psi$, the following property holds.
 
   $ s^+_1 itree.weq s^+_2 -> (s^+_1 game.par s^-) itree.weq (s^+_2 game.par s^-) $
 ] <def-compo-congr>
 
-#guil[En général on dit plutôt que c'est l'équivalence qui
-  est une congruence pour la composition.]
-
 #definition[Adequacy of Composition][
   The composition operator is _adequate_ if for all $Gamma cl S$, $c cl C th Gamma$
   and $gamma cl Gamma asgn(V) Omega$, the following property holds.
 
-  $ ogs.evalo th (c dot gamma) itree.weq (ogsinterpA(c) game.par ogsinterpP(gamma)) $
+  $ ogs.evalo th c[gamma] itree.weq (ogsinterpA(c) game.par ogsinterpP(gamma)) $
 ]
 
-Congruence is quite straightforward to prove, the most important task being the
-proof of adequacy. The idea to prove adequacy boils down to two arguments:
-first we show that $kw.fun th c th gamma |-> ogs.evalo th c[gamma]$ is a fixed
-point of the composition equation and second we show that the composition
-equation is eventually guarded, hence has unique fixed points. At this point
-however, $ogs.evalo$ being a fixed point of composition does not make much
-sense, since the composition equation operates on pairs of OGS strategies while
-$ogs.evalo$ takes a configuration and an assignment. To fix this issue we will
-make two patches, respectively bringing composition and $ogs.evalo$ to a common
-meeting point: machine strategy states.
+Congruence is quite straightforward to prove, it is yet another instance of
+our hard to read and boring relational statements! The most important
+task is the proof of adequacy. The idea to prove adequacy boils down to two
+arguments: first we show that $kw.fun th c th gamma |-> ogs.evalo th c[gamma]$
+is a fixed point of the composition equation and second we show that the
+composition equation is eventually guarded, hence has unique fixed points. At
+this point however, $ogs.evalo$ being a fixed point of composition does not
+make much sense, since the composition equation operates on pairs of OGS
+strategies while $ogs.evalo$ takes a configuration and an assignment. To fix
+this issue we will make two patches, respectively bringing composition and
+$ogs.evalo$ to a common meeting point: pairs of machine strategy states.
 
-First, we will define a second composition equation, called machine composition, 
+First, we will define a second composition equation, called _machine composition_,
 operating not on _opaque_ OGS strategies, 
 but specifically on pairs of active and passive states of the
 machine strategy. The definition will be essentially the same, but instead of
 peeling off layers of a coinductive tree to obtain the next moves, we will call
-the $strat.play$ and $strat.coplay$ functions of a big-step system.
+the $strat.play$ and $strat.coplay$ functions of the big-step system.
 
 Second, notice that in the function $kw.fun th c th gamma |-> ogs.evalo th
 c[gamma]$, the two arguments $c$ and $gamma$ are special cases respectively of
 active and passive machine strategy states (more specifically _initial_
 states). We will thus generalize this function to arbitrary pairs of active and
 passive machine strategy states. Intuitively, this function will _zip_ together
-the telescopic environments of the two states, substitute the active state's
+the telescopic environments of the two states, then substitute the active state's
 configuration by the resulting assignment and finally apply $ogs.evalo$.
 
 More precisely, to conclude adequacy we will show that
-- _machine composition_ is bisimilar to composition,
-- _zip-then-eval-to-obs_ is a fixed point of _machine composition_,
+- _machine composition_ is strongly bisimilar to composition,
+- _zip-then-eval-to-obs_ is a strong fixed point of _machine composition_,
 - _machine composition_ is eventually guarded.
 
 == Machine Strategy Composition
 
 Recall that in @def-compo-eqn we formalized the composition equation as a map of
 type
-$ "Arg" -> delay.t th (O^ctx.named th Omega + "Arg"), $
+$ "Arg" -> delay.t th (O^ctx.named th Omega + "Arg") $
 where the arguments
 $ "Arg" := ogs.stratA th Omega ogs.join ogs.stratP th Omega $
 consisted of pairs of an active strategy $s^+ cl ogs.stratA th Omega th Psi$ and
@@ -125,7 +123,10 @@ introduced in the previous chapter.
   $ ogs.mcomp th (s^+ ctx.cute s^-) itree.eq (itree.unrollA_(ogs.mstrat_M) th s^+ game.par itree.unrollP_(ogs.mstrat_M) th s^-) $
 ] <lem-compo-mcompo>
 #proof[
-  This lemma is proven by an application of @lem-iter-mon. More precisely, define the
+  As both sides are constructed by (unguarded) iteration, this lemma is proven
+  by an application of @lem-iter-mon. In other words, we show that their
+  respective equation systems operate in lockstep, with some relation on their
+  argument being preserved. More precisely, define the
   following relation between the arguments of compositions and machine composition.
 
   $ R cl ogs.mcarg -> ogs.stratA th Omega ogs.join ogs.stratP th Omega -> base.Prop \
@@ -143,11 +144,6 @@ introduced in the previous chapter.
   Then, by @lem-iter-mon we have $R th a th b -> (ogs.mcomp th a) itree.eq
   (ogs.comp th b)$, and we obtain the result by instantiating the relation
   witness $R th a th b$ by $(base.refl, base.refl)$.
-
-#guil[Ça pourrait aider de rappeler que $ogs.mcomp$ et $ogs.comp$ 
-sont tous les deux définis par des iter, ce qui permet d'appliquer le
-@lem-iter-mon]
-
 ]
 
 Finally, before moving on, we will prove a variant of the $ogs.evalsub$ law
@@ -158,27 +154,29 @@ be particularly useful at several points.
   For any $c cl C th (Omega ctx.cat Gamma)$ and $sigma cl Gamma asgn(V) Omega$,
   the following proposition holds.
 
-  $ ogs.eval th (c dot [sub.var,sigma])
+  $ ogs.eval th c[sub.var,sigma]
     itree.eq pat(((i ctx.cute o), gamma) <- ogs.eval th c th ";", 
                   kw.case th ctx.vcat th i,
-                  pat(ctx.vcatl th j & := itree.ret th ((j ctx.cute o), (gamma dot [sub.var,sigma])),
-                       ctx.vcatr th j & := ogs.eval th (ogs.apply th (sigma th j) th o th (gamma dot [sub.var,sigma]))))
+                  pat(base.vlft th j & := itree.ret th ((j ctx.cute o), gamma[sub.var,sigma]),
+                       base.vrgt th j & := ogs.eval th (ogs.apply th (sigma th j) th o th gamma[sub.var,sigma])))
   $
 ] <lem-evalsub-shift>
 #proof[
   By $ogs.evalsub$, unfolding the definition of $ogs.emb$, we have the following.
 
-  $ ogs.eval th (c dot [sub.var,sigma])
+  $ ogs.eval th c[sub.var,sigma]
     itree.eq
     pat(((i ctx.cute o), gamma) <- ogs.eval th c th ";",
-        ogs.eval th (ogs.apply th ([sub.var,sigma] th i) th o th (gamma dot [sub.var,sigma]))) $
+        ogs.eval th (ogs.apply th ([sub.var,sigma] th i) th o th gamma[sub.var,sigma])) $
 
-  The right-hand sides of both the lemma and the equivalence above start by $ogs.eval th c$. Hence
-  by monotonicity of bind, consider some $((i ctx.cute o), gamma)$ #guil[la phrase s'arrête trop tôt, qu'est-ce-que tu déduis de la monotonie du bind ?]. By case on $ctx.vcat th i$.
-  - If $ctx.vcat th i = ctx.vcatl th j$, then $[sub.var,sigma] th i = sub.var th j$. Conclude
+  The right-hand sides of both the lemma and the equivalence above start by
+  binding $ogs.eval th c$. 
+  Hence by monotonicity of bind (@lem-up2bind) it suffices to relate their
+  continuations. Introduce some normal form $((i ctx.cute o), gamma)$. By case on $ctx.vcat th i$.
+  - If $ctx.vcat th i := ctx.vcatl th j$, then $[sub.var,sigma] th i := sub.var th j$. Conclude
     by $ogs.evalnf$, showing that $ogs.eval th (ogs.apply th (sub.var th j) th o th
     gamma[sub.var,sigma]) itree.eq itree.ret th ((j ctx.cute o), gamma[sub.var, sigma]).$
-  - If $ctx.vcat th i = ctx.vcatr th j$, then $[sub.var,sigma] th i = sigma th j$ and
+  - If $ctx.vcat th i := ctx.vcatr th j$, then $[sub.var,sigma] th i := sigma th j$ and
     we conclude by reflexivity.
 ]
 
@@ -211,10 +209,15 @@ which nicely mesh into one together.
     & ogs.tnilA     & ogs.zlr & ogs.tnilP           && := [] \
     & (a ogs.tconA) & ogs.zlr & (b ogs.tconP gamma) && := b ogs.zrl a \ $
 ]
-#guil[Cette définition est assez dure à type-checker, ça vaudrait le coup
-de rappeler le type de $gamma$, et d'expliquer pourquoi
-on le met à la pouvelle dans la def de 
-$(ogs.tconA a) ogs.zlr (b ogs.tconP gamma)$.]
+
+#remark[
+  Intuitively, #ogs.zrl is concerned with providing hereditarily substituted values for every
+  variable introduced by the currently passive player (i.e., the RHS), while #ogs.zlr provides
+  hereditarily substituted values for every variable introduced by the currently active
+  player (i.e., the LHS). It is thus normal that only #ogs.zrl does any real work: since
+  the LHS is always the currently active side, it did not play the last move and thus did
+  not store anything at the top of its environment.
+]
 
 Before going further, let us prove the crucial property relating the zipping of two telescopic
 environments and their respective collapse. Recall that the collapsing functions have the
@@ -267,12 +270,12 @@ composition.
     & itree.eq &&  base.fst itree.fmap ogs.eval c[sub.var, a ogs.zrl b] quad & #[(def.)] \
     & itree.eq &&  base.fst itree.fmap pat(((i ctx.cute o), gamma) <- ogs.eval th c th ";", 
                       kw.case th ctx.vcat th i,
-                      pat(ctx.vcatl th j & := itree.ret th ((j ctx.cute o), gamma[sub.var,a ogs.zrl b]),
-                          ctx.vcatr th j & := ogs.eval th (ogs.apply th (rho th j) th o th gamma[sub.var,a ogs.zrl b]))) #h(1.5em) & #[(@lem-evalsub-shift)] \
+                      pat(base.vlft th j & := itree.ret th ((j ctx.cute o), gamma[sub.var,a ogs.zrl b]),
+                          base.vrgt th j & := ogs.eval th (ogs.apply th (rho th j) th o th gamma[sub.var,a ogs.zrl b]))) #h(1.5em) & #[(@lem-evalsub-shift)] \
     & itree.eq &&  pat(((i ctx.cute o), gamma) <- ogs.eval th c th ";", 
                       kw.case th ctx.vcat th i,
-                      pat(ctx.vcatl th j & := itree.ret th (j ctx.cute o),
-                          ctx.vcatr th j & := ogs.evalo th (ogs.apply th ((a ogs.zrl b) th j) th o th gamma[sub.var,a ogs.zrl b]))) & #[(monad)] \
+                      pat(base.vlft th j & := itree.ret th (j ctx.cute o),
+                          base.vrgt th j & := ogs.evalo th (ogs.apply th ((a ogs.zrl b) th j) th o th gamma[sub.var,a ogs.zrl b]))) & #[(monad)] \
   $
 
   The last computation above is now simple enough. We will remember it and seek
@@ -298,28 +301,32 @@ composition.
         ((i ctx.cute o), gamma) <- ogs.eval th c th ";",
         kw.case (ctx.vcat th i) \
         pat(
-          ctx.vcatl th j & := itree.ret th (base.inj1 th (j ctx.cute o)),
-          ctx.vcatr th j & := itree.ret th (base.inj2 th ((j ctx.cute o), (a ogs.tconP gamma))))
+          base.vlft th j & := itree.ret th (base.inj1 th (j ctx.cute o)),
+          base.vrgt th j & := itree.ret th (base.inj2 th ((j ctx.cute o), (a ogs.tconP gamma))))
         ),
                 kappa th (f th x))     & #[(def.)] \
     & itree.eq && pat(
         ((i ctx.cute o), gamma) <- ogs.eval th c th ";",
         kw.case (ctx.vcat th i) \
         pat(
-          ctx.vcatl th j & := kappa th (f th (base.inj1 th (j ctx.cute o))),
-          ctx.vcatr th j & := kappa th (f th (base.inj2 th ((j ctx.cute o), (a ogs.tconP gamma))))
+          base.vlft th j & := kappa th (f th (base.inj1 th (j ctx.cute o))),
+          base.vrgt th j & := kappa th (f th (base.inj2 th ((j ctx.cute o), (a ogs.tconP gamma))))
         )) & #[(monad)] \
     & itree.eq && pat(
         ((i ctx.cute o), gamma) <- ogs.eval th c th ";",
         kw.case (ctx.vcat th i) \
         pat(
-          ctx.vcatl th j & := itree.ret th (j ctx.cute o),
-          ctx.vcatr th j & := ogs.zipev th (ogs.mstrat_M.strat.coplay th b th (j ctx.cute o) ctx.cute (a ogs.tconP gamma))
+          base.vlft th j & := itree.ret th (j ctx.cute o),
+          base.vrgt th j & := ogs.zipev th (ogs.mstrat_M.strat.coplay th b th (j ctx.cute o) ctx.cute (a ogs.tconP gamma))
         )) & #[(def.)] \
   $
 
-  At this point, our two rewriting chains almost match up, with only the second case $ctx.vcatr th j$
-  differing. To avoid the clutter, we will focus on the differing part. What is left is to prove is thus
+  At this point, our two rewriting chains almost match up, with only the second branch
+  of the respective case split differing. More precisely, both computations
+  start by binding $ogs.eval th c$, so that by @lem-up2bind it suffices to
+  prove the continuations pointwise bisimilar. Then, we eliminate $ctx.vcat th
+  i$. In case of $ctx.vcatl th j$ we conclude by reflexivity. We now turn to the
+  $ctx.vcatr th j$ case. What is left is to prove is
 
   $          & ogs.evalo th (ogs.apply th ((a ogs.zrl b) th j) th o th gamma[sub.var,a ogs.zrl b]))) \
     itree.eq & ogs.zipev th (ogs.mstrat_M.strat.coplay th b th (j ctx.cute o) ctx.cute (a ogs.tconP gamma)). $
@@ -473,10 +480,10 @@ We can now prove eventual guardedness.
 Now that the core properties are proven (@lem-zipev-fix and
 @lem-compo-guarded), what is left to do is mostly to combine them in the right
 way to deduce adequacy. Still, to finish up and deduce correctness we have left
-out one benign step described in the proof outline: congruence of composition
-(@def-compo-congr). Let us prove it now.
+out one benign step described in the proof outline: congruence of weak
+bisimilarity for composition (@def-compo-congr). Let us prove it now.
 
-#lemma[Congruence of Composition][
+#lemma[Congruence for Composition][
   For all $Psi cl ctx.ctxc th S$, $s^+_1, s^+_2 cl ogs.stratA th Omega th Psi$
   and $s^- cl ogs.stratP th Omega th Psi$, the following property holds.
 
@@ -506,48 +513,56 @@ out one benign step described in the proof outline: congruence of composition
   $ ogs.evalo th c[gamma] itree.eq & ogs.zipev th ((c[ctx.rcatr], (ogs.tnilP ogs.tconA)) ctx.cute (ogs.tnilA ogs.tconP gamma[ctx.rcatl])) $
 
   By @lem-evfix-uniq and @lem-compo-guarded, the machine strategy composition equation has
-  unicity of strong fixed points, hence by @lem-zipev-fix, $ogs.mcomp$ and $ogs.zipev$ are
-  pointwise strongly bisimilar, hence,
+  unicity of strong fixed points, hence by @lem-zipev-fix, $ogs.zipev$ is pointwise
+  strongly bisimilar to its _eventually guarded iteration_. Continuing the above chain
+  we obtain the following.
 
-  $ #hide($ogs.evalo th c[gamma]$) itree.eq & ogs.mcomp th ((c[ctx.rcatr], (ogs.tnilP ogs.tconA)) ctx.cute (ogs.tnilA ogs.tconP gamma[ctx.rcatl])) $
+  $ ogs.evalo th c[gamma] itree.eq & itree.eviter_ogs.mcompeq th ((c[ctx.rcatr], (ogs.tnilP ogs.tconA)) ctx.cute (ogs.tnilA ogs.tconP gamma[ctx.rcatl])) $
 
-  Finally conclude by using @lem-compo-mcompo to bridge between machine
+  By @lem-eviter-iter, the eventually guarded iteration is pointwise weakly bisimilar
+  the unguarded iteration, i.e., $ogs.mcomp$. We obtain the following.
+
+  $ ogs.evalo th c[gamma] itree.weq & ogs.mcomp th ((c[ctx.rcatr], (ogs.tnilP ogs.tconA)) ctx.cute (ogs.tnilA ogs.tconP gamma[ctx.rcatl])) $
+
+  Finally we conclude by using @lem-compo-mcompo to bridge between machine
   strategy compositions and opaque composition.
 
-  $ #hide($ogs.evalo th c[gamma]$) itree.weq & ogsinterpA(c) game.par ogsinterpP(gamma) $
-  #v(-1em)
+  $ ogs.evalo th c[gamma] itree.weq & ogsinterpA(c) game.par ogsinterpP(gamma) $
+  #v(-2em)
 ]
 
 We finally prove OGS correctness w.r.t. contextual equivalence (@thm-correctness).
 #proof[
-  Given $c_1 c_2 cl C th Gamma$ such that $ogsinterpA(c_1) itree.weq ogsinterpA(c_2)$ and
-  $gamma cl Gamma asgn(V) Omega$, then,
+  Given $c_1, c_2 cl C th Gamma$ such that $ ogsinterpA(c_1) itree.weq ogsinterpA(c_2), $ for any
+  $gamma cl Gamma asgn(V) Omega th th $ we have
 
   $ ogs.evalo th c_1[gamma] & itree.weq (ogsinterpA(c_1) game.par ogsinterpP(gamma)) quad quad & #[(@lem-compo-adequacy)] \
                           & itree.weq (ogsinterpA(c_2) game.par ogsinterpP(gamma)) & #[(@lem-compo-congr)] \
                           & itree.weq ogs.evalo th c_2[gamma] & #[(@lem-compo-adequacy)] $
-  #v(-1em)
+  #v(-2em)
 ]
 
 To conclude this chapter, and with it the proof of the central result of this
 thesis, let me say a couple words about its significance. First of all, OGS
-models which are sound with respect to contextual equivalence have already been
+models which are sound with respect to observational equivalence have already been
 published, some in fact for instances which we do not cover here, such as, say,
-impure languages with references #peio[ref]. As such, although there is some
+impure languages with references~#mcite(<Laird07>)#mcite(dy: 2em, <JaberM21>). As such, although there is some
 progress in providing a generic proof for all languages which are expressible
 as language machines, I believe that the core contribution is in the way we
 streamline the correctness proof, hopefully making it accessible to a broader
-community. Indeed, while the decomposition into an adequacy and congruence
-proof for composition is common, in the published proofs adequacy is typically
-proven monolithically #peio[ref]. The method provided here further decomposes
-adequacy into two independent arguments, each quite informative on its own.
-#guil[Je dirais plutôt que la principale nouveauté de cette preuve, 
-c'est d'avoir isolé les axiomes clés que la présentation du langage machine
-doit satisfaire pour obtenir la correction de l'OGS;
-Avant ton travail, il n'y avait aucune preuve générique de correction
-de l'OGS.]
+community. There are two novelties which contribute to this.
 
-First, @lem-zipev-fix provides what we can think of as the core semantical
+First, by working with an abstract _language machine_, we can more precisely
+see and isolate which parts of the proofs are generic and which parts are
+language specific. This has led us to formalize precise requirements, as well
+as recognize previously hidden details, such as the finite redex hypothesis.
+
+Second, while the decomposition into an adequacy and congruence proof for
+composition is common, in published articles, adequacy is typically proven
+monolithically. The method provided here further decomposes adequacy into two
+independent arguments, each quite informative on its own.
+
+@lem-zipev-fix provides what we can think of as the core semantical
 argument for adequacy: one step of composition does not change the result
 obtained by syntactically substituting the two machine strategy states and
 evaluating the obtained language configuration. Satisfyingly, the proof is
@@ -565,5 +580,6 @@ equation is "nice" enough and thus enjoys unicity of fixed points.
 I hope that this separation between the high-level argument and the tedious
 technical justification demystifies the adequacy proof, and enables a better
 understanding of it by non specialists. In particular, it opens up an
-intermediate level of explanation in which @lem-zipev-fix is detailed but
-where unicity is taken for granted.
+intermediate level of explanation of the OGS correctness in which @lem-zipev-fix
+is detailed but where unicity is taken for granted, leaving @lem-compo-guarded
+to the specialist.

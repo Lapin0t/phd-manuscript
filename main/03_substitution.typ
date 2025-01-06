@@ -30,7 +30,7 @@ typed and scoped_ representation of syntax. Quoting #nm[Fiore] and
 In this setting, the sort of terms is indexed both by a scope (or typing
 context) and by a type, so as to form a family $de("Term") cl de("Scope") ->
 de("Ty") -> base.Type$. This indexing may then be used to enforce that only
-well-typed terms are represented and that only variables in scope are used.
+well-typed terms are represented and that all the mentioned variables are in scope.
 
 An important specificity of the point of view we will adopt in this
 chapter is to be completely silent on the actual construction of the syntax.
@@ -44,24 +44,32 @@ construction could very well be instantiated not by syntax but by some other
 denotational model of a language. However, for clarity, we will keep using
 syntactic terminology.
 
-We start in @sec-sub-ovw with a short overview of the core points of the
-intrinsic representation and the axiomatization of substitution. This overview
-largely follows two comprehensive papers with beautifully crafted Agda
-implementations which I heartily recommend~#mcite(dy: -1em,
-<FioreS22>)#mcite(dy: 2em, <AllaisACMM21>). 
-The main point is the introduction of _substitution monoids_, which axiomatize type- and scope-indexed families supporting variables and
-substitutions.
-In @sec-sub-scope, we motivate
-and introduce a small contribution. Typically, the notion of scope is fixed in
-the abstract theory of substitution and defined as lists of types, but this
-rigidity can be cumbersome for some languages. This is remedied by providing a
-simple abstraction for scopes #tom["succint" est un peu bizarre: "simple", "basic"?]. Finally, in @sec-sub-monoid, we adapt the
-definition of substitution monoid to this new abstraction. We #tom[je passe certains verbes du futur au présent, je trouve que tu emploies parfois le futur à mauvais escient.] also introduce _substitution
-modules_, a second mild contribution required to deal with substitution inside
-other syntactic objects than just terms, such as evaluation contexts.
-#tom[C'est pas hyper juste de dire que c'est une contrib, l'idée des modules dans le cadre de la substitution date au mieux de "modules over monads and linearity", d'un certain A. Hirschowitz avec Maggesi. De même, les monoides de substitution existent à un niveau bien plus abstrait que FinSet, en fait dans n'importe quelle cat skew monoïdale (cf "... dependently-sorted..." de Fiore et notre "cellular Howe theorem").]
+We start in @sec-sub-ovw with a short informal overview of the core points of
+the intrinsic representation and the axiomatization of substitution. This
+overview largely follows two comprehensive papers with beautifully crafted Agda
+implementations which I heartily recommend reading~#mcite(dy: -1em,
+    <FioreS22>)#mcite(dy: 2em, <AllaisACMM21>). The main point is the
+introduction of _substitution monoids_, which axiomatize type- and
+scope-indexed families supporting variables and substitutions. In
+@sec-sub-scope, we motivate and introduce a small contribution. In typical type
+theory formalizations, the notion of scope is fixed in the abstract theory of
+substitution and defined as lists of types, but this rigidity can be cumbersome
+for some languages. This is remedied by providing a simple abstraction for
+scopes. Finally, in @sec-sub-monoid, we adapt the definition of substitution
+monoid to this new abstraction. We also present _substitution modules_, a
+notion required to deal with syntactic objects which have a substitution
+operation, but whose arguments may be of a different kind, such as evaluation
+contexts, whose variables can be substituted by values.
+Substitution module have already been studied~#mcite(<HirschowitzM10>), but
+they are rarely presented even though they become necessary quite quickly in
+lots of concrete examples.
 
 == The Theory of Intrinsically-Typed Substitution <sec-sub-ovw>
+
+#remark[
+  The following section will consist in an informal overview. As such every
+  introduced notion will be properly defined later on.
+]
 
 *Contexts* #sym.space.quad The type- and scope-safe approach starts by defining
 typing contexts as lists of types (written backwards, for consistency with the
@@ -72,15 +80,14 @@ $ kw.dat th ctx.ctxc th (T cl base.Type) cl base.Type th kw.whr \
     pat(ctx.nilc cl ctx.ctxc th T,
         ar ctx.conc ar cl ctx.ctxc th T -> T -> ctx.ctxc th T) $
 
-$ kw.dat th ar ctx.varc ar th {T} cl ctx.ctxc th T -> T -> base.Type th kw.whr \
+$ kw.dat th ar""cnorm(ctx.varc)ar th {T} cl ctx.ctxc th T -> T -> base.Type th kw.whr \
   pat(
     ctx.topc th {Gamma th alpha} cl (Gamma ctx.conc alpha) ctx.varc alpha,
     ctx.popc th {Gamma th alpha th beta} cl Gamma ctx.varc alpha
     -> (Gamma ctx.conc beta) ctx.varc alpha) $
 
 The main category of interest for syntactic objects is given by _scoped-and-typed
-families_ $ctx.ctxc th T -> T -> base.Type$. Arrows are lifted pointwise from
-$base.Type$ and written $ctx.arr$. Variables given by $ar ctx.var ar$ #tom[ici on ne fait pas le lien avec $ctx.varc$, notationnellement] are already such a
+families_ $ctx.ctxc th T -> T -> base.Type$. Variables given by $ar""cnorm(ctx.varc)ar$ are already such a
 family, but so too will be terms, and more generally "things
 by which variables can be substituted".
 
@@ -95,54 +102,58 @@ mapping from variables over $Gamma$ to $X$-terms over $Delta$.
 $ Gamma asgn(X) Delta := forall th {alpha} -> Gamma ctx.varc alpha -> X th Delta th alpha \
   Gamma ctx.ren Delta := Gamma asgn(ctx.varc) Delta $
 
-#yann[Ci-dessus faire explicitement apparaitre que ce sont les définitions respectives de assignment et de renaming, probablement dans un environnement definition tant qu'à faire.]
-
 #remark[
   As contexts are finite, assignments are maps with finite domain, and may
   thus be tabulated and represented as tuples. The tuple representation makes
   intensional equality of assignments better behaved. However as other parts
-  of my Coq development already depend on setoids, I will not shy away from
-  the setoid of functions with pointwise equality.
+  of my Rocq development already depend on extensional equality, I will not shy away from
+  the pointwise extensional equality of functions.
 
   Although it does have this issue, the representation of assignments as functions
-  has other benefits: thanks to #{sym.eta}-equality,
+  has other benefits. Thanks to the #{sym.eta}-law
   renamings as defined above construct a _strict_ category, where all the laws
-  hold w.r.t. _definitional_ equality.
-  #tom[Ne serait-ce pas le cas aussi avec des n-uplets?]
+  hold w.r.t. _definitional_ equality. This would be lost when working
+  with tabulated representations.
 ]
 
 #remark[
   When computational efficiency is a concern, another typical choice is to
   define a more economic subcategory of contexts, whose renamings consist
-  only of order-preserving embeddings (#txsc[ope]~#peio[ref?]). An #txsc[ope] can
+  only of order-preserving embeddings (#txsc[Ope]). An #txsc[Ope] can
   be computationally modeled by a bitvector, where a 0 at position $i$ means
   that the $i$-th variable is dropped while 1 means that it is kept. However as
   computational efficiency is not our prime concern, we will not go down this
   route. Still, we keep this idea around, borrowing and slightly abusing the
   notation $ctx.ren$ for renamings, which is traditionally associated with
-  embeddings. #tom[Tjs pas fan de cette notation, au passage, mais bon, j'abandonne.]
-  #peio[Tu préférerais qqch comme $Gamma de(~>) Delta$?]
+  embeddings.
 ]
 
 *Substitution Monoids* #sym.space.quad It is now direct to express that a given
 scoped-and-typed family $X$ has variables and substitution. First, variables
-must map into $X$. #tom[Wow! Ici, l'espacement après le point était tellement faible que j'ai cru que c'était une projection de record X.Second.] Second, given an $X$-term over $Gamma$ and an
+must map into $X$. Second, given an $X$-term over $Gamma$ and an
 $X$-assignment from $Gamma$ to $Delta$, substitution should return some $X$-term over
 $Delta$. In other words, $X$ must admit maps of the following types.
 
 $ pr("var") th {Gamma th alpha} cl Gamma ctx.varc alpha -> X th Gamma th alpha \
   pr("sub") th {Gamma th Delta th alpha} cl X th Gamma th alpha -> (Gamma asgn(X) Delta) -> X th Delta th alpha $
 
-This structure is dubbed a _substitution monoid_~#mcite(<FioreS22>) #tom[le terme est plus vieux que ça] #peio[avec cette def skew-monoidale? t'as une ref?] and is
-further subject to the usual associativity and left and right identity laws of
-monoids. #yann[Tu as la place, spell them out?] #peio[will do] To explain how these two maps can be seen as the unit and
-multiplication maps of a monoid, notice that their types may be
-refactored as
+This structure is dubbed a _substitution monoid_~#mcite(<FioreS22>)
+and is further subject to the usual associativity and left
+and right identity laws.
+
+$ sub.sub th (sub.var th i) th gamma & = gamma th i \
+  sub.sub th x th sub.var & = x \
+  sub.sub th (sub.sub th x th gamma) th delta & = sub.sub th x th (kw.fun th i |-> sub.sub th (gamma th i) th delta)
+  $
+
+To explain how these two maps can be seen as the unit and
+multiplication maps of a monoid, notice that their types
+may be refactored as
 
 $ pr("var") cl ar ctx.varc ar ctx.arr X \
   pr("sub") cl X ctx.arr ctxhom(X, X) $
 
-where $ctxhom("" ar "", ar "")$ is the following _internal substitution hom_ functor~#num-cite(<FioreS22>).
+where $ctxhom("" ar "", ar "")$ is the following _internal substitution hom_ functor~#mcite(<FioreS22>).
 
 $ ctxhom(X,Y) th Gamma th alpha := forall th {Delta} -> Gamma asgn(X) Delta -> Y th Delta th alpha $
 
@@ -153,10 +164,11 @@ $ (X ctx.tens Y) th Gamma th alpha := (Delta cl ctx.ctxc th T) times X th Delta 
 
 This substitution tensor exhibits scoped-and-typed families as a _skew monoidal
 category_~#mcite(dy: -1em,<AltenkirchCU10>)#mcite(dy: 2em,<Szlachanyi>) with unit $ctx.varc$.
-#guil[Peut-être brievement rappeler ce qu'est une  _skew monoidal category_ ?]
- By adjointness, the
-substitution map could be alternatively written with the isomorphic type $
-pr("sub") cl X ctx.tens X ctx.arr X. $
+Being _skew_ monoidal is slightly weaker than monoidal, as the left and right
+unit laws as well as associativity laws on the tensor product are not true
+w.r.t. isomorphisms, but w.r.t. morphisms in one direction. By
+adjointness, the substitution map could be alternatively written with the
+isomorphic type $ pr("sub") cl X ctx.tens X ctx.arr X. $
 
 Thus, although we prefer using the internal substitution hom presentation
 which gives a much more easily manipulated _curried_ function type to
@@ -177,18 +189,11 @@ entirely eliminating families _not_ supporting renamings. However, as shown by
 folklore practice in the dependently-typed community, and stressed by
 #nm[Fiore] and #nm[Szamozvancev]~#mcite(<FioreS22>), working solely in the
 functor category is problematic as it crucially requires to work with quotients.
-#guil[Pourquoi il y a besoin de quotients ?]
-#peio[C'est quand on construit la syntaxe comme algèbre initiale d'un certain foncteur
-qui décrit les opérations du langage: par induction sur la syntaxe on a une structure de renommage,
-sauf que si on fait tout dans la catégorie des foncteurs, par def tout le monde a toujours déjà une
-structure de renommage. Du coup je crois qu'il faut quotienter pour que les deux coincident. Ou sinon
-la manière propre c'est de momentanément oublier les structures de foncteurs, prendre l'algèbre initiale dans les
-familles, construire les renommages par induction et en déduire que ça construit bien la syntaxe dans
-la cat des foncteurs. Mais donc ça compte pas comme bosser _uniquement_ dans la cat de foncteurs.
-(C'est l'explication avec les mains, d'après ce que j'ai compris de Fiore) Ya aussi
-d'autres quotients habituellement, mais on peut les esquiver. En caté souvent ils définissent
-le tenseur de substitution avec un quotient, ce qui permet d'avoir une structure monoidale non-skew.
-Mais ça on peut s'en passer en faisant du skew.]
+Essentially, the reason is that when constructing the syntax, one can _implement_
+renamings by induction on terms. This implementation does not appeal to the
+automatic renaming operation that exists by virtue of working only with functors.
+As such, we are left with two renaming operations, and quotients are necessary to
+make sure they coincide.
 
 The trick to provide a theoretical account of the renaming operation while
 avoiding functors is to notice that the faithful functor $ (ctx.ctxcat th T ->
@@ -197,10 +202,10 @@ associated comonad given by $square X := ctxhom(ctx.varc, X)$, i.e.,
 
 $ square X th Gamma th alpha := forall {Delta} -> (Gamma ctx.ren Delta) -> X th Delta th alpha. $
 
-In other words, families supporting renamings, i.e., functors $ctx.ctxcat th T
--> T -> base.Type$ can be equivalently seen as families with $square$-coalgebra
-structure~#mcite(<AllaisACMM21>)#num-cite(<FioreS22>).
-This means that we can express the operation of renaming as a map
+In plain words, families supporting renamings, i.e., functors $ctx.ctxcat th T
+-> T -> base.Type$ can be equivalently seen as families with a $square$-coalgebra
+structure~#mcite(<AllaisACMM21>)#num-cite(<FioreS22>). This coalgebra structure
+exactly gives the renaming map, expressing it as
 
 $ pr("ren") cl X ctx.arr square X. $
 
@@ -211,13 +216,11 @@ $ pr("ren") th {Gamma th Delta th alpha} cl X th Gamma th alpha -> Gamma ctx.ren
 
 Every substitution monoid induces such a renaming coalgebra structure since
 renamings can be implemented by substitution with variables. However, the
-typical implementation of substitution on a syntax with binders requires readily
-available $pr("ren")$ and $pr("var")$ operations to go through. This package of
-renamings and variables can be formalized as a _pointed coalgebra
-structure_~#mcite(<FioreS22>) and its compatibility conditions with a
-substitution monoid structure are straightforward.
-
-#yann[Ce serait pas mal de faire bien ressortir les remarques vs. les défs explicitement utiles pour la suite. Du coup je pense au moins utiliser un environnement de définition pour chaque définition qui sera réutilisée.]
+typical implementation of substitution on a syntax with binders requires
+readily available $pr("ren")$ and $pr("var")$ operations to allow substitution
+to go under binders. This package of renamings and variables can be formalized as a
+_pointed coalgebra structure_~#mcite(<FioreS22>) and its compatibility
+conditions with a substitution monoid structure are straightforward.
 
 == What is a Variable? Abstracting #nm[De Bruijn] Indices <sec-sub-scope>
 
@@ -251,13 +254,12 @@ manipulate than others.
 // ctheorems which is broken with typst master
 //#show emoji.sparkles: text(fill: colors.kw, sym.star.filled)
 
-The prime example is the following setting.
-#margin-note[
+The prime example is the following setting#margin-note(mark: true, dy: -4.5em)[
   This situation is not entirely artificial and does in fact appear
   routinely in OGS instances. Indeed, the scopes tracking the shared
   variables of both players are usually restricted to contain only the types of
   some kind of non-transmitted values, typically called _negative types_.
-] We have a set of types $T$ and we construct some syntax $tm cl ctx.ctxc th T
+]. We have a set of types $T$ and we construct some syntax $tm cl ctx.ctxc th T
 -> T -> base.Type$. Now for some reason, we have a subset $ nice cl T ->
 base.Prop$ of let's say, _nice_ types, and we need to work with the sub-syntax
 of terms in _nice_ contexts, that is in contexts containing only nice types.
@@ -350,13 +352,12 @@ $ sub.var^snice th i & := sub.var th i \
   sub.sub^snice th {Gamma} th x th gamma & := sub.sub th x th (kw.fun th {alpha} th i |-> gamma th {alpha, Gamma .base.snd th i} th i) $
 
 ]
-#tom[Un peu rapide pour être lisible, non? Tu pourrais pas comparer le type de la nouvelle substitution avec celui de la bonne instance, puis expliquer pourquoi cette fois ça passe mieux?]
 
 The conclusion of this small case study is that although our two definitions of
 nice contexts are _isomorphic_, they are by no means equivalent in term of ease
 of use. Because I believe it is important to build abstractions that people will actually
 willingly instantiate in their particular case of interest, it becomes
-necessary to provide some slack #tom[pas sûr que "slack" soit approprié ici...] in the concrete definition of contexts and
+necessary to provide some breathing room in the concrete definition of contexts and
 crucially in their notion of variables.
 
 === Abstract Scopes
@@ -409,7 +410,7 @@ consists of
   may be easily added in applications other than OGS for which it is required.
 ]
 
-To formalize the two isomorphisms, I will not take the route of axiomatising
+To formalize the two isomorphisms, we will not take the route of axiomatizing
 two maps, _forward_ and _backward_, which compose to the identity. First remark
 that by initiality of $base.bot$, it suffices to have the forward direction
 $ctx.emp ctx.var t -> base.bot$ to obtain the first isomorphism (4) in full.
@@ -417,53 +418,77 @@ $ctx.emp ctx.var t -> base.bot$ to obtain the first isomorphism (4) in full.
 For the second isomorphism (5), taking hints both from Homotopy Type
 Theory~#mcite(<hottbook>, supplement: [§4.4, pp.~136--137]) and
 from the _view_ methodology~#mcite(<McBrideM04>, dy: 4em, supplement: [§6,
-pp.~98--102])#mcite(<Allais23>, dy: 7em), I will axiomatize only the
-backward map and ask that its fibers are _contractible_, i.e., inhabited by
-exactly one element. This will make the isomorphism much easier to use, enabling
-inversions by a simple dependent pattern matching instead of tedious equational
-rewriting. #yann[Ça mérite plus d'explication : qu'est-ce qu'une fibre; en quoi la rendre contractible rend l'iso plus facile à utiliser; en quoi d'ailleurs ça permet de récupérer la map forwards; inversion de quoi ? Et plus loin, faire le lien explicitemetn avec view-cat-eq, dis toi bien que ton lecteur est lent, faut êter agile pour le lire et y reconnaitre immédiatement que c'est la contractibilité de la fibre mentionnée avant que ça exprime.]
-#guil[+1]
+pp.~98--102])#mcite(<Allais23>, dy: 7em), we will axiomatize only the
+backward map and ask that its fibers (sets of preimages) are _contractible_,
+i.e., inhabited by exactly one element. This will make the isomorphism much
+easier to use, enabling inversions by a simple dependent pattern matching
+instead of tedious equational rewriting.
 
-As the domain of the backward map of the second isomorphism has as domain a
-sum type, I will axiomatize it implicitly as the copairing of two simpler maps:
+#remark[
+    Let us quickly see why contractible fibers are of practical interest.
+The fibers of a function $f$ can be encoded in type theory by the following family.
 
-$ Gamma ctx.var t -> (Gamma ctx.cat Delta) ctx.var t \
-  Delta ctx.var t -> (Gamma ctx.cat Delta) ctx.var t, $
+#mathpar(block: true, spacing: 1em,
+  $kw.dat subs.fiber th {A th B} th (f : A -> B) : base.Type^B \ #v(0.1em)$,
+  inferrule($a cl A$, $subs.fib th a cl subs.fiber th f th (f th a)$),
+)
 
-which can be concisely written
+Then, given a function $f cl A -> B$ and a proof that its fibers are
+inhabited $ "inv" cl (b cl B) -> subs.fiber th f th b, $ in any proof with a variable
+$b cl B$ in scope, we can do a dependent elimination on $"inv" th b$. This will
+introduce an $a cl A$ and magically unify $b$ with $f th a$, clearing $b$ from
+the scope. It is for example trivial to obtain an left-inverse to $f$, given
+by $de("get") compose "inv"$ as follows.
 
-$ Gamma ctx.ren (Gamma ctx.cat Delta) \
-  Delta ctx.ren (Gamma ctx.cat Delta). $
+#mathpar(block: true, spacing: 1fr,
+  $de("get") th {b} cl subs.fiber th f th b -> A \
+   de("get") th (subs.fib th a) := a $,
+  $de("left-inv") th (b cl B) cl f th (de("get") th ("inv" th b)) = b \
+   de("left-inv") := kw.case th p th b \
+    pat(
+      subs.fib th a := base.refl
+    )$,
+)
 
-#tom[Ça aiderait sans doute de préciser le statut de cette notation: est-ce une
-notation au sens de coq, ou bien est-ce l'ancienne notation $ctx.ren$ combinée
-avec le fait de voir $ctx.var$ comme une coercion implicite de $S$ vers $T ->
-base.Set$?]
+From an additional proof that every element of the fiber $x cl
+subs.fiber th f th b$ is equal to $"inv" th b$
 
-The fibers of the copairing of two maps can be generally characterized by the
+$ H cl forall th {b} th (x cl subs.fiber th f th b) -> x = "inv" th b, $
+
+it is again not much work to obtain the right-inverse property, recognizing that
+by definition $de("get") th (subs.fib th a) = a$
+
+$ de("right-inv") th (a : A) cl de("get") th ("inv" th (f th a)) = a \
+  de("right-inv") a := de("congr") th de("get") th (H th (subs.fib th a)) $
+]
+
+As the domain of the backward map of the isomorphism in (5) has as domain a sum
+type, I will axiomatize it implicitly as the copairing of two simpler maps:
+
+$ forall th {t} -> Gamma ctx.var t -> (Gamma ctx.cat Delta) ctx.var t \
+  forall th {t} -> Delta ctx.var t -> (Gamma ctx.cat Delta) ctx.var t, $
+
+which are respectively definitionally equal to more concise notations
+
+$ & Gamma && ctx.ren (Gamma ctx.cat Delta) \
+  & Delta && ctx.ren (Gamma ctx.cat Delta). $
+
+The fibers of the copairing of two maps can be more directly characterized by the
 following data type.
 
-$ kw.dat base.vsum th (f cl A -> C) th (g cl B -> C) cl C -> base.Type kw.whr \
-    pat(base.vlft th (i cl A) cl base.vsum th (f th i),
-        base.vrgt th (j cl B) cl base.vsum th (g th j)) $
+$ kw.dat base.vsum th (f cl A -> C) th (g cl B -> C) cl C -> base.Type $
+
+#mathpar(block: true,
+  inferrule($i cl A$, $base.vlft th i cl base.vsum th f th g th (f th i)$),
+  inferrule($j cl B$, $base.vrgt th j cl base.vsum th f th g th (g th j)$),
+)
+
+We are now ready to give the definition of abstract scope structures.
 
 #definition[Abstract Scope Structure][
   Given $S,T cl base.Type$, an _abstract scope structure on $S$ over $T$_
-  is given by the following typeclass.
-  #tom[La formule "with types $T$" sonne un peu bizarre. Je préfèrerais "over
-  $T$", probablement.] #peio[ok]
-  #margin-note(dy: 2em)[
-    Note that in this definition, the set $T$ plays almost no role, being only
-    used to form the family category $T -> base.Type$ in the sort of $ctx.var$.
-    In future work I believe to be particularly fruitful to replace $T ->
-    base.Type$ with an arbitrary suitably well-behaved category $cal("A")$,
-    i.e. axiomatizing variables as $ar ctx.var cl S -> cal("A")$.
-
-    In particular $cal("A") := base.Type$ provides a more satisfying account of
-    untyped calculi than setting $T := base.unit$, i.e. $cal("A") :=
-    base.unit -> base.Type$ (as is currently required). In general, it would
-    allow much more flexibility in choosing the sort of term families.
-  ]
+  is given by the following typeclass, mutually defined with a notation for
+  renamings.
 
   $ kw.cls ctx.scope_T th S kw.whr \
     pat(
@@ -476,42 +501,56 @@ $ kw.dat base.vsum th (f cl A -> C) th (g cl B -> C) cl C -> base.Type kw.whr \
       ctx.vcat th {Gamma th Delta th t} th (i cl (Gamma ctx.cat Delta) ctx.var t) cl base.vsum th ctx.rcatl th ctx.rcatr th i,
       ctx.vcatirr th {Gamma th Delta th t} th {i cl (Gamma ctx.cat Delta) ctx.var t} th v cl ctx.vcat th i = v) $
 
-#tom[Purée, je me rends compte beaucoup plus tard (mais je l'écris ici) qu'il y
-a $ctx.var$ et $ctx.varc$ et que c'est pas la même chose. A mon sens ça mérite
-clairement au moins une remarque, et si possible une explication de comment ça
-se passe en coq (est-ce qu'on peut vraiment employer le même symbole et
-pourquoi).]
-#peio[Oui c'est un peu tricky.. clairement c'est sur papier, je me permet de distinguer la def concrète $ctx.varc$ de la projection de typeclass $ctx.var$ ptet je peux remplacer les variables concrètes par
-$de(϶)$ ou #de("϶")? Je veux garder $ctx.var$ parce que c'est le plus utilisé.]
-
-#tom[A l'usage aussi, les noms choisis ici me semblent bizarres et donc je les
-retiens pas. Par ex, pourquoi $ctx.vcat$?!]
-#peio[C'est pour _voir_ les variables au dessus d'un ctx con#emph[cat]éné comme des éléments
-    d'un coproduit. Globalement les "views" c'est des trucs pour case-split des choses
-    que tu peux pas nativement case-split. Et la convention de nommage c'est que le type
-    s'appelle "MachineView" et la fonction s'appelle "view-machin". Après ça pourrait aussi etre
-    qqch comme #pr("split-cat").]
-
-#tom[Aaaaah, cat comme concat! Pour moi cat c'est automatiquement
- catégorie… Ptet au moins une remarque pour l'expliquer? Ou bien
- écrire view-concat ou view-⧺?]
-
-  _Renamings_ $Gamma ctx.ren Delta$ are mutually defined as follows.
-
   $ ar ctx.ren ar cl S -> S -> base.Type \
     Gamma ctx.ren Delta := forall th {t} -> Gamma ctx.var t -> Delta ctx.var t $
-] <def-scope>
 
-#tom[en quoi c'est mutuel?]
-#peio[la def dépend de $ctx.var$, qui est dans $ctx.scope$, dont certains
-  champs utilisent les renommages. En fait faut voir ça comme une notation, qui est
-  définie mutuellement avec $ctx.scope$]
+  Note that the mnemonic "cat" in the above stands for con#[_cat_]enation (and not for #[_cat_]egory).
+] <def-scope>
 
 #definition[Scope Category][
   A scope structure $ctx.scope_T th S$ defines a _category of
   scopes_ $ctx.ctxcat_S$ whose objects are given by $S$ and whose morphisms are
   given by renamings $Gamma ctx.ren Delta$.
-  #margin-note[In other words, $ctx.ctxcat_S$ is the _full image_ of $""ctx.var$.]
+  In other words, $ctx.ctxcat_S$ is the _full image_ of $ar""cnorm(ctx.var)$.
+]
+
+#remark[
+  Note that in the definition of abstract scope structures, the set $T$ plays
+  almost no role, being only
+  used to form the family category $T -> base.Type$ in the sort of $ctx.var$.
+  In future work I believe to be particularly fruitful to replace $T ->
+  base.Type$ with an arbitrary suitably well-behaved category $cal("A")$,
+  i.e. axiomatizing variables as $ar ctx.var cl S -> cal("A")$.
+
+  In particular $cal("A") := base.Type$ provides a more satisfying account of
+  untyped calculi than setting $T := base.unit$, i.e. $cal("A") :=
+  base.unit -> base.Type$ (as is currently required). In general, it would
+  allow much more flexibility in choosing the sort of term families.
+]
+
+#remark[
+  Our definition of abstract scope structure is quite close in spirit to the
+  the _nameless, painless_ (#txsc[NaPa]) abstraction of
+  #nm[Pouillard]~#mcite(<Pouillard11>). Their notion is only concerned with
+  untyped scopes and variables, but this is only a superficial difference as
+  their theory could certainly be lifted to indexed settings, or ours lowered
+  as sketched in the previous remark. Apart from this, the actual difference is
+  twofold.
+
+  First, they focus on extending scopes by one variable on the right, whereas we
+  axiomatize arbitrary concatenation. We believe that such single variable extension
+  is an accident of the typical lists and #nm[De-Bruijn] indices, and that it is
+  more practical to abstract over a more symmetric core operation, namely binary
+  concatenation. This leads to a rather more concise axiomatization of the laws,
+  and to an easier instantiation of the structure in cases where extending on the
+  right is not the natural primitive operation.
+
+  Second, they further _axiomatize_ a notion of scope inclusions, whereas we
+  _derived_ $ctx.ren$ as functions from variables to variables. Again, this
+  leads to their addition of several more laws and coherence conditions. These
+  essentially state that scopes and inclusions form a category and that $ctx.var$
+  is functorial. Because we decreed that the category of scopes is given by the
+  full image of $ctx.var$, every single such law is true _definitionally_.
 ]
 
 This axiomatization of scopes is enough to derive the two isomorphisms describing the
@@ -522,12 +561,12 @@ $ ctx.emp ctx.var t & approx th base.bot \
 
 In particular, this entails that $ctx.rcatl$ and $ctx.rcatr$ are both injective
 and have disjoint images. In fact, assuming an abstract scope structure
-$ctx.scope_S th T$, the category $ctx.ctxcat_S$ has an initial object $ctx.emp$
-and a coproduct structure given by $ctx.cat$.
+$ctx.scope_S th T$, the category $ctx.ctxcat_S$ is cocartesian, with the initial object $ctx.emp$
+and the coproduct given by $ctx.cat$.
 
 Before moving on to the theory of scoped-and-typed families and substitution
 monoids, let us reap the benefits of this new abstraction and conclude with
-some useful instances of abstract scopes.
+some instances of abstract scopes.
 
 === Instances
 
@@ -542,19 +581,9 @@ $ & Gamma ctx.catc ctx.nilc & := & Gamma \
 
 I will not provide the full instantiation of the scope structure, suffice it to say that
 statements about concatenation are proven by induction on the second context
-argument. Notably, proving the subsingleton property of the fibers of the coproduct
-injections ($ctx.vcatirr$) requires the use of #nm[Streicher]'s axiom K.
-
-#tom[J'imagine que dans des cadres incompatibles avec l'axiome K, genre HoTT, on
-demanderait que $S$ soit un hset, non?]
-#peio[Possiblement, mais bon l'usage de K vient de ma def des fibres, avec une
- famille inductive "catholique" (bouh!) dans la nomenclature McBride: comme le type identité inductif
- ça vient de containers $I -> de("Fam") (de("Pow") I)$, vs les "protestants" $I -> de("Fam") (de("Fam") I)$. En contexte HoTT on ferait des
- trucs plus matheux moins tricky et on poserait juste $base.vsum th f th g
- th c := (x cl A + B) base.prod ([f,g] th x = c)$, i.e. $de("fiber") th
- [f,g]$. Ou a minima $base.vsum th f th g th c := (a cl A) base.prod (f th a = c) + (b cl B) base.prod (g th b = c)$.
- Ca se comporte bien mieux avec un sigma-type elt+egalité qu'avec un inductif.
-]
+argument. Notably, I believe that proving the contractibility property of the
+fibers of the coproduct injections ($ctx.vcatirr$) requires the use of
+#nm[Streicher]'s axiom K, although I am not entirely sure about this.
 
 #definition[Concrete Scopes][
   Given $T cl base.Type$, _concrete scopes_ $ctx.ctxc th T$ have an abstract
@@ -568,23 +597,34 @@ demanderait que $S$ soit un hset, non?]
           ...) $
 ]
 
-*Subset Scopes* #sym.space.quad We can now revisit our introductory example motivating
-the introduction of abstract scope structures: _subset scopes_.
-Given an abstract scope structure $C cl ctx.scope_T th S$, define the following
-predicate lifting.
+Pay attention to the difference between $ctx.var$ and $ctx.varc$! The former denotes the
+family of concrete #nm[De-Bruijn] indices, while the latter denotes the abstract variables
+of a scope structure instance. I apologize for this abuse of notation to the color blind
+reader. In any case the symbol $in.rev$ can without any loss be considered to always denote
+the abstract notion of variable. In the concrete case it will be definitionally equal to
+#nm[De-Bruijn] indices. Further note that this symbol is entirely different to
+$in$, which we used to denote predicate membership proofs, i.e., a specialized notation for
+reverse function application. The latter will be use exceedingly rarely from
+this point on.
 
-$ ctx.all_S cl (T -> base.Prop) -> (S -> base.Prop) \
+
+*Subset Scopes* #sym.space.quad We can now revisit our introductory example motivating
+the notion of abstract scope structures: _subset scopes_.
+Given an abstract scope structure $C cl ctx.scope_T th S$, define the following
+(strict) predicate lifting.
+
+$ ctx.all_S cl (T -> base.sProp) -> (S -> base.sProp) \
   ctx.all_S th P th Gamma := forall th {alpha} -> Gamma ctx.var alpha -> P th alpha $
 
 We define the subset type of elements of $x$ satisfying $P th x$, i.e., the _total
 space_ of the predicate $P$ as follows.
 
-$ base.int th {X cl base.Type} cl (X -> base.Prop) -> base.Type \
+$ base.int th {X cl base.Type} cl (X -> base.sProp) -> base.Type \
   base.int P := (x cl X) times P th x $
 
 #definition[Subset Scopes][ Given an abstract scope instance $ctx.scope_T th S$
   and a predicate $P cl T -> base.Prop$, the type $base.int (ctx.all_S th P)$ of
-  _subset scopes_ bears an abstract scope structure with types $base.int P$,
+  _subset scopes_ bears an abstract scope structure on types $base.int P$,
   given by the following (incomplete) definition.
 
   $ de("SubScope") cl ctx.scope_(base.int P) th base.int (ctx.all_S th P) \
@@ -601,15 +641,14 @@ $ base.int th {X cl base.Type} cl (X -> base.Prop) -> base.Type \
       ...) $
 ] <def-subset-scope>
 
-*Direct Sum of Scopes* #sym.space.quad Another useful instance #tom[forward ref?
-ou ref à une annonce passée?] is the case
-where a language is designed with two kinds of variables, i.e., where terms are
-indexed by two contexts. We can capture this as the direct sum of abstract
+*Direct Sum of Scopes* #sym.space.quad Languages exist in various shapes and
+forms, and sometimes the designers deem it useful to have _two_ kinds of variables,
+stored in _two_ different scopes. We can capture this pattern as the direct sum of abstract
 scope structures.
 
 #definition[Direct Sum Scopes][ Given two abstract scope instances
   $ctx.scope_(T_1) th S_1$ and $ctx.scope_(T_2) th S_2$, the type $S_1 base.prod
-  S_2$ of _direct sum scopes_ bears an abstract scope structure with types $T_1
+  S_2$ of _direct sum scopes_ bears an abstract scope structure on types $T_1
   base.sum T_2$ given by the following (incomplete) definition.
 
   $ de("SumScope") cl ctx.scope_(T_1 base.sum T_2) th (S_1 base.prod S_2) \
@@ -621,6 +660,66 @@ scope structures.
       ...) $
 ]
 
+*Untyped Scopes* #sym.space.quad An untyped syntax can always be made to fit into
+a typed setting by seeing it as un#[*i*]typed, i.e., where the set of types is given
+by the singleton $base.unit$, but it is not _that_ simple.
+Setting $T := base.unit$ and going on working with e.g., concrete scopes
+$ctx.ctxc th base.unit$ and #nm[De-Bruijn] indices is slightly unsatisfying. First
+of all, $ctx.ctxc th base.unit$ is isomorphic to the more idiomatic $base.nat$
+and likewise, the corresponding #nm[De-Bruijn] indices $th ar""cnorm(ctx.varc) th base.tt cl
+base.Type^(ctx.ctxc th base.unit)$ are isomorphic to $base.fin cl
+base.Type^base.nat$, the finite sets. Apart from these esthetical
+considerations, a more worrying technicality arises when your chosen type theory does
+_not_ support the #sym.eta\-rule on $base.unit$. This law
+is quite important as it makes all inhabitants of $base.unit$
+definitionally equal, and, more importantly, all function $f cl base.unit -> X$
+definitionally constant. In the idealized type theory chosen for this thesis we
+do assume this #sym.eta\-rule, but our concrete code artifact is stuck with a
+theory which does not (Rocq!).
+
+Recall the definition of _finite sets_ $kw.dat th base.fin cl base.Type^base.nat$.
+
+#mathpar(block: true,
+  inferrule("", $base.ze cl base.fin th (base.su th n)$),
+  inferrule($i cl base.fin th n$, $base.su th i cl base.fin th (base.su th n)$),
+)
+
+Further define the following helpers.
+
+$ base.fwkn th {m th n} cl base.fin th m -> base.fin th (m + n) $
+#v(-0.8em)
+$ & base.fwkn th base.ze && := base.ze \
+  & base.fwkn th (base.su i) && := base.su th (base.fwkn th i) $
+
+$ base.fshft th {m th n} cl base.fin th n -> base.fin th (m + n) $
+#v(-0.8em)
+$ & base.fshft th {base.ze}   && th i && := i \
+  & base.fshft th {base.su m} && th i && := base.su th (base.fshft th {m} th i) $
+
+Finally define _untyped scopes_ as the following instance of scope structure.
+
+$ ctx.untyped cl ctx.scope_base.unit th base.nat \
+  ctx.untyped := \
+  pat(
+    ctx.emp & := base.ze,
+    m ctx.cat n & := n + m,
+    n ctx.var x & := base.fin th n,
+    ctx.rcatl th i & := base.fshft th i,
+    ctx.rcatr th i & := base.fwkn th i,
+    dots
+  ) $
+#margin-note(dy: -11em)[
+  Note that we swap $m$ and $n$ in the definition of $m ctx.cat n$. The
+  reason for this is that scopes are traditionally taken to grow towards
+  the right, while unary natural numbers grow towards the left, i.e.,
+  addition is defined by recursion on the first argument. This is technically
+  unnecessary but helps avoid unpleasant surprises during index juggling.
+]
+
+We will use concrete scopes in @ch-ogs, and subset scopes will make an
+appearance in @ch-instance but the other instances are mostly here for
+illustration.
+
 == Substitution Monoids and Modules <sec-sub-monoid>
 
 Equipped with this new abstraction for scopes, we are ready to continue the
@@ -629,47 +728,64 @@ outlined in @sec-sub-ovw. We will however introduce one novel contribution:
 substitution modules. Let us start with scoped families and assignments.
 
 #definition[Scoped-and-Typed Family][
-  Given an abstract scope structure $ctx.scope_T th S$, the set of
-  _scoped-and-typed families_ is given by the following sort.
+  Given $S, T cl base.Type$, the set of _scoped-and-typed families_ is given by the following sort.
 
   $ ctx.fam_T th S := S -> T -> base.Type $
 
   Scoped-and-typed families form a category with arrows $X ctx.arr Y$ lifted pointwise
   from $base.Type$.
-  #guil[Où est-ce-que tu utilises la structure d'abstract scope structure $ctx.scope_T th S$
-dans cette def?]
-#tom[Tu veux dire que cette définition marcherait aussi avec $S: base.Set$? Je
-crois que je suis d'accord.]
 ]
 
-#definition[Assignments][ Assuming a scope structure $ctx.scope_T th S$, given a
-  scoped-and-typed family /*$X cl ctx.fam_T th S$*/ $X cl base.Type^(S,T)$ and $Gamma, Delta : S$, the set
+#definition[Assignments][
+  Assuming a scope structure $ctx.scope_T th S$, given a
+  scoped-and-typed family $X cl base.Type^(S,T)$ and $Gamma, Delta : S$, the set
   of _$X$-assignments from $Gamma$ to $Delta$_ is defined as follows.
 
   $ ar asgn(X) ar : S -> S -> base.Type \
     Gamma asgn(X) Delta := forall th {alpha} -> Gamma ctx.var alpha -> X th Delta th alpha $
+
+  As seen in @sec-sub-ovw, because assignments are represented as functions, we will
+  use of extensional equality on assignments at several places. Given $gamma, delta
+  cl Gamma asgn(X) Delta$, it is expressed as follows.
+
+  $ gamma approx delta := forall th {alpha} th (i cl Gamma ctx.var alpha) -> gamma th i approx delta th i $
 ]
 
-As seen in @sec-sub-ovw, because assignments are represented as functions, we will
-make implicit use of extensional equality on assignments. Given $gamma, delta
-cl Gamma asgn(X) Delta$, it is expressed as follows.
+#remark[
+  By definition, renamings $Gamma ctx.ren Delta$ are exactly given by
+  $ctx.var$-assignments $Gamma asgn(ctx.var) Delta$.
+]
 
-$ gamma approx delta := forall th {alpha} th (i cl Gamma ctx.var alpha) -> gamma th i approx delta th i $
+#definition[Copairing][
+  Given a scope structure $ctx.scope_T th S$ and a family $X cl
+  base.Type^(S,T)$, we extend the initial renaming $ctx.emp ctx.ren Gamma$ and
+  the renaming copairing derived from the cocartesian structure of
+  $ctx.ctxcat_S$ to arbitrary $X$-assignments as follows.
 
-#tom[Mauvais choix de noms $gamma$ et $delta$, non?]
+  $ de([]) th {Gamma} cl ctx.emp asgn(X) Gamma \
+    de([]) th i := kw.case ctx.vemp th i th [] $
+
+  $ de("[")""ar""de(",")ar""de("]") th {Gamma_1 th Gamma_2 th Delta} cl (Gamma_1 asgn(X) Delta) -> (Gamma_2 asgn(X) Delta) \
+    #h(6em) -> (Gamma_1 ctx.cat Gamma_2) asgn(X) Delta \
+    de("[")""f""de(",")g""de("]") th i := kw.case ctx.vcat th i \
+    pat(
+      base.vlft th i & := f th i,
+      base.vrgt th j & := g th i,
+    ) $
+]
+
 
 === Substitution Monoids
 
 We now define the internal substitution hom and subsequently substitution monoids.
 
 #definition[Internal Substitution Hom][
-  Assuming a scope structure $ctx.scope_T th S$, the _internal substitution hom_ functor
+  Assuming a scope structure $ctx.scope_T th S$, the _internal substitution hom_
   is defined as follows.
-#tom[Comme tu montres pas que c'est un foncteur, ptet pas le dire?]
   $ //ctxhom("" ar "", ar "") cl ctx.fam_T th S -> ctx.fam_T th S -> ctx.fam_T th S \
     ctxhom("" ar "", ar "") cl base.Type^(S,T) -> base.Type^(S,T) -> base.Type^(S,T) \
     ctxhom(X, Y) th Gamma th alpha := forall th {Delta} -> Gamma asgn(X) Delta -> Y th Delta th alpha $
-]
+] <def-sub-hom>
 
 #definition[Substitution Monoids][
   Assuming a scope structure $ctx.scope_T th S$ and a family $X cl base.Type^(S,T)$,
@@ -681,7 +797,7 @@ We now define the internal substitution hom and subsequently substitution monoid
     pat(
       sub.var cl ar ctx.var ar ctx.arr X,
       sub.sub cl X ctx.arr ctxhom(X, X),
-      sub.sext cl sub.sub xrel(eqx th attach(ctx.arr, tr: rel.r) ctxhom(eqx, eqx)^de(rel.r)) sub.sub,
+      sub.sext cl sub.sub xrel(rel.forall eqx th attach(ctx.arr, tr: rel.r) ctxhom(eqx, eqx)^de(rel.r)) sub.sub,
       //sub.sext cl base.ext th sub.sub,
       sub.idl th {Gamma th alpha} th (x cl X th Gamma th alpha)
         cl sub.sub th x sub.var approx x,
@@ -692,8 +808,6 @@ We now define the internal substitution hom and subsequently substitution monoid
         quad cl sub.sub (sub.sub th x th gamma) th delta approx sub.sub x th (kw.fun th i |-> sub.sub th (gamma th i) th delta)
     ) $
 ]
-
-#tom[Pourquoi $sub.sext$ est-il nécessaire? Est-ce qu'on travaille avec des setoïdes?]
 
 To make substitution a bit less wordy we will use the notation $v[gamma] :=
 sub.sub th v th gamma$. Moreover, we extend substitution pointwise to assignments with the same
@@ -719,22 +833,65 @@ $x[gamma][delta] = x[gamma[delta]]$.
 
 #remark[
   As stated previously, to avoid functional extensionality, we need to know
-  that every function taking assignments as arguments respects their extensional
+  that every function taking assignments as arguments respects their pointwise
   equality. This is the case for $sub.sub$, for which $sub.sext$ is the corresponding
-  congruence property. As in the previous chapter, we hide the rather large type
-  of $sub.sext$ by liberally using a form of relational translation of type theory, denoted
-  by the superscript $ar^rel.r$ #guil[Il manque une ref là, à Bernardy par exemple ?]. Explicitly, the type of $sub.sext$ unfolds as
-  follows.
+  "congruence" property (sometimes we say "monotonicity"). As in the previous chapter, we hide the rather large type
+  of $sub.sext$ by liberally using a form of relational translation of type
+  theory~#mcite(<BernardyJP12>), denoted by the superscript $ar^rel.r$.
+  Explicitly, given $X^1, X^2, Y^1, Y^2 cl base.Type^(S,T)$ and
+
+  $ X^rel.r cl forall th {Gamma th alpha} -> X^1 th Gamma th alpha -> X^2 th Gamma th alpha -> base.Prop \
+    Y^rel.r cl forall th {Gamma th alpha} -> Y^1 th Gamma th alpha -> Y^2 th Gamma th alpha -> base.Prop, $
+
+  $ctxhom(X^rel.r, Y^rel.r)^de(rel.r)$ is defined as follows.
+
+  $ ctxhom(X^rel.r, Y^rel.r)^de(rel.r) th {Gamma th alpha} cl ctxhom(X^1, Y^1) th Gamma th alpha -> ctxhom(X^2, Y^2) th Gamma th alpha -> base.Prop \
+    ctxhom(X^rel.r, Y^rel.r)^de(rel.r) th f th g := \
+    quad forall th {Delta} th (gamma^1 cl Gamma asgn(X^1) Delta) th (gamma^2 cl Gamma asgn(X^2) Delta) \
+    quad -> (forall th {alpha} th (i cl Gamma ctx.var th alpha) -> X^rel.r th (gamma^1 th i) th (gamma^2 th j)) \
+    quad -> Y^rel.r th (f th gamma^1) th (g th gamma^2) $
+
+  Then, the type of $sub.sext$ can be seen to unfolds as follows.
 
   $ forall th & {Gamma th alpha} th {x_1 th x_2 cl X th Gamma th alpha} th (x^rel.r cl x_1 approx x_2) \
-              & {Delta} th {gamma_1 th gamma_2 cl Gamma asgn(X) Delta} th (gamma^rel.r cl forall th {beta} th (i cl Gamma ctx.var beta) -> gamma_1 th i approx gamma_2 th i) \
+              & {Delta} th {gamma_1 th gamma_2 cl Gamma asgn(X) Delta} \
+              & -> (forall th {beta} th (i cl Gamma ctx.var beta) -> gamma_1 th i approx gamma_2 th i) \
               & -> x_1 [gamma_1] approx x_2[gamma_2] $
-]
 
-#tom[C'est un peu ouf que ça se déplie en ça... Si t'as le temps à la fin, je
-serais preneur d'un poil plus d'explications, notamment sur le fait que
-#let eqx = math.attach(sym.eq, br: "X")
-  $ctxhom(eqx, eqx)^de(rel.r)$ fait le bon truc.]
+  Remark that with our notation for extensional equality of assignments, the
+  above type is the same as the following one.
+
+  $ forall th & {Gamma th alpha} th {x_1 th x_2 cl X th Gamma th alpha} th (x^rel.r cl x_1 approx x_2) \
+              & {Delta} th {gamma_1 th gamma_2 cl Gamma asgn(X) Delta} \
+              & -> gamma_1 approx gamma_2 \
+              & -> x_1 [gamma_1] approx x_2[gamma_2] $
+
+  As such, an alternative compact way to write once again the exact same thing would have been the following
+
+  $ sub.sub xrel(rel.forall cnorm(approx) rel.carr rel.forall (cnorm(approx) rel.arr cnorm(approx))) sub.sub. $
+
+  The extraordinarily scrupulous reader will have noticed that our use of
+  $rel.forall$ is here slightly inconsistent with its definition (right before @lem-up2bind). Because
+  type-and-scoped families have _two_ indices (the scope and the type), we
+  should have written the last expression above as well as our actual type
+  for $sub.sext$ with _two_ corresponding $rel.forall$ at the head, i.e., respectively
+
+  $ sub.sub xrel(rel.forall rel.forall cnorm(approx) rel.carr rel.forall (cnorm(approx) rel.arr cnorm(approx))) sub.sub \
+    sub.sub xrel(rel.forall rel.forall cnorm(approx) th attach(ctx.arr, tr: rel.r) ctxhom(cnorm(approx), cnorm(approx))^de(rel.r)) sub.sub. $
+
+  This abuse is "easily" made formal by extending the definition of $rel.forall$ to $n$-ary type
+  families (and their $n$-ary relation families) as follows.
+
+  $ rel.forall th {X^1 th X^2 cl base.Type^(I_1, .., I_n)} \
+    quad cl (forall th {i_1 th .. th i_n} -> X^1 th i_1 th .. th i_n -> X^2 th i_1 th .. th i_n -> base.Prop) \
+    quad -> (forall th {i_1 th .. th i_n} -> X^1 th i_1 th .. th i_n) \
+    quad -> (forall th {i_1 th .. th i_n} -> X^2 th i_1 th .. th i_n) \
+    quad -> base.Prop \
+    rel.forall th X^rel.r th F^1 th F^2 := forall th {i_1 th .. th i_n} -> X^rel.r th {i_1} th .. th {i_n} th F^1 th F^2 $
+
+  I hope that this glimpse into pure bureaucratic madness makes it clearer why we
+  _need_ our terse and perhaps slightly magical relational combinators.
+]
 
 === Substitution Modules
 
@@ -746,19 +903,17 @@ serais preneur d'un poil plus d'explications, notamment sur le fait que
 
 Substitution monoids have neatly been generalized to abstract scopes, but for the purpose of
 modeling OGS, a part of the theory of substitution is still missing. As
-explained in the introductory chapter #peio[ref précise?], in OGS we will
-typically see#yann[refer to? Manipulate?] other syntactic constructs such as _values_, _evaluation
-contexts_ and evaluator _configurations_. 
-#tom[Values c'est un mauvais exemple pcq c'est elles le substitution monoid. Ce
-qui est un module c'est les termes généraux dans un contexte cbv, où on ne
-substitute que par des valeurs.]
-Values can be readily represented as a
+explained in our introductory primer (@sec-intro-ogs), in OGS we will
+typically refer to various different syntactic constructs such as _values_, _evaluation
+contexts_, _terms_ and evaluator _configurations_.
+
+Values (as well as terms) can be readily represented as a
 scoped-and-typed family $ val cl S -> T -> base.Type. $ In contrast, evaluation
 contexts are better represented as a family $ ecx cl S -> T -> T -> base.Type, $
 where $E cl ecx th Gamma th alpha th beta$ typically denotes an evaluation
 context in scope $Gamma$, with a _hole_ of type $alpha$ and an _outer type_
-$beta$. The family of configurations has yet a different sort as it
-is only indexed by a scope: $ cfg cl S -> base.Type. $
+$beta$. The family of configurations of an abstract machine has yet a different
+sort as it is only indexed by a scope: $ cfg cl S -> base.Type. $
 
 We already know how to axiomatize substitution for values: their
 scoped-and-typed family should form a substitution monoid. But for the other
@@ -774,50 +929,30 @@ $ sub.sub th {Gamma th alpha th beta} cl ecx th Gamma th alpha th beta -> Gamma 
 As we will see, these two maps can be accounted for by constructing a
 _substitution module structure over_ $val$ for both $ecx$ and $cfg$.
 
-To capture both kinds of variously indexed families, let us define family
-categories.
-
-#peio[TODO: bouger la def suivante bien avant, pour la notation.]
-#definition[Family Categories][
-  A _family category_ is a category of the form $T_1 -> .. -> T_n -> base.Type$,
-  or otherwise written $base.Type^(T_1, .., T_n)$,
-  for some sequence of types $T_i cl base.Type$, with arrows lifted pointwise
-  from $base.Type$.
-]
+To capture the substitution of both kinds of variously indexed families, let us
+extend the internal substitution hom to $n$-ary families.
 
 #definition[Generalized Substitution Hom][
-  Given an abstract scope structure $ctx.scope_T th S$ and a family category
-  $cc$, the _generalized substitution hom_ functor is defined as follows.
+  Given an abstract scope structure $ctx.scope_T th S$ and a sequence of indexing
+  types $T_1, .., T_n cl base.Type$,
+  the _generalized substitution hom_ is defined as follows.
 
-#tom[Pareil, tu démontres pas que c'est un foncteur, si?]
-#peio[nope, mais bon c'est un peu tout trivial (modulo les 1000 arguments implicites). L'action
-sur les morphismes c'est:
-$ ctxhom(F,G)[x] := kw.fun th gamma |-> G th (x th (kw.fun th i |-> F th (gamma th i))) $
-Les lois sont strictes (vraies par def).
-]
-  //$ ctxhom("" ar "", ar "") cl ctx.fam_T th S -> (S -> cc) -> (S -> cc) \
   $ ctxhom("" ar "", ar "") cl base.Type^(S,T) -> base.Type^(S,T_1,..,T_n) -> base.Type^(S,T_1,..,T_n) \
     ctxhom(X, Y) th Gamma th alpha_1 th .. th alpha_n := forall th {Delta} -> Gamma asgn(X) Delta -> Y th Delta th alpha_1 th .. th alpha_n $
-]
+] <def-sub-hom-gen>
 
 #definition[Substitution Module][
-  Given an abstract scope structure $ctx.scope_T th S$, a family category $cc$,
-  a substitution monoid $sub.mon_S th M$ and a family $X cl S -> cc$, a
+  Given an abstract scope structure $ctx.scope_T th S$ and a sequence of indexing
+  types $T_1, .., T_n cl base.Type$,
+  a substitution monoid $sub.mon_S th M$ and a family $X cl base.Type^(S,T_1,..,T_n)$, a
   _substitution module over $M$ on $X$_ is given by the following typeclass.
   #margin-note(dy: 2em)[
     I am slightly sloppy around the $n$-ary binders denoted by "$..$". In the
-    current Coq code, I have rather unsatisfyingly special-cased this
+    current Rocq code, I have rather unsatisfyingly special-cased this
     definition for scoped families indexed by 0, 1 or 2 types, which are
     sufficient for our purpose. In further work this precise definition
     could be captured by building upon~#text-cite(<Allais19>)
   ]
-
-  #tom[Tout ça me donne l'impression qu'on n'a pas bien bien nettoyé la notion
-  de module "hétérogène"...]
-  #peio[Ouaip.. En fait pour faire ça propre il faudrait parler de cat (co)powered, voir
-  meme de cat avec les (co)limites weighted je pense, pour le $forall th {Delta} -> ...$.
-  Ca nous emmene un peu trop loin, et surtout ça s'éloigne des choix de formalisation
-  de garder les catégories au niveau méta.]
 
   #let eqx = sym.approx
   #let eqm = sym.approx
@@ -858,7 +993,7 @@ Let's give a bit more details. First, the monoid structure on $ctx.var$.
   $ar ctx.var ar cl base.Type^(S,T)$ can be equipped with a substitution monoid
   structure as follows.
 
-  $ de(cnorm(in.rev)"-sub-monoid") cl sub.mon th (ar ctx.var ar) \
+  $ de(cnorm(in.rev)"-sub-monoid") cl sub.mon th (ar""cnorm(ctx.var)ar) \
     de(cnorm(in.rev)"-sub-monoid") := \
     pat(
       sub.var th i := i,
@@ -898,12 +1033,6 @@ Finally, we define the $sub.box_M$ comonad and link it with substitution modules
 ]
 
 #lemma[Substitution Module is Coalgebra][
-#margin-note[
-  This lemma is more or less trivial, since our definition of substitution
-  module can be directly read as the definition of $sub.box_M$ comonad coalgebras. Indeed,
-  $sub.act$ coincides with the coalgebra structure map while $sub.aid$ and 
-  $sub.acomp$ coincide with the two comonad coalgebra laws.
-]
   Assuming a scope structure $ctx.scope_T th S$, given a family $M cl
   base.Type^(S,T)$ equipped with a substitution monoid structure $sub.mon th M$,
   for any $X cl base.Type^(S,T_1,..,T_n)$, substitution module structures over $M$
@@ -912,10 +1041,16 @@ Finally, we define the $sub.box_M$ comonad and link it with substitution modules
   For any $X$, we directly deduce that $sub.box_M th X$ enjoys a substitution
   module structure over $M$: the free coalgebra structure on $X$.
 ]
+#proof[
+  This lemma is more or less trivial, since our definition of substitution
+  module can be directly read as the definition of $sub.box_M$ comonad coalgebras. Indeed,
+  $sub.act$ coincides with the coalgebra structure map while $sub.aid$ and
+  $sub.acomp$ coincide with the two comonad coalgebra laws.
+]
 
 The above lemma exhibits the link between our substitution modules and
 $sub.box_M$ coalgebras, extending the previous result on renaming
-structures~#mcite(dy: -1em, <AllaisACMM21>)#mcite(dy: 4em, <FioreS22>).
+structures~#mcite(<AllaisACMM21>)#mcite(dy: 5em, <FioreS22>).
 
 Finally, we conclude this chapter by defining one last structure, for families
 that have both renamings and variables, described by #nm[Fiore] and #nm[Szamozvancev] as
@@ -940,5 +1075,5 @@ axiomatize the object language of our generic OGS construction. Although we
 have only seen a glimpse of what can be done using the intrinsically typed and
 scoped approach for modeling binders, I hope to have demonstrated the ease
 with which it can be adapted to specific situations like different indexing
-(such as substitution modules) or new context representations (such as abstract
+(with substitution modules) or new scope representations (with abstract
 scope structures).

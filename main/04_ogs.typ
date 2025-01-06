@@ -5,54 +5,38 @@
 In @ch-game we have seen a general definition of games and the structure of
 their strategies and in @ch-subst we have seen an axiomatic framework for
 intrinsically typed and scoped substitution. Everything is now in place to
-define the generic operational game semantics construction. The plan unfolds
-as follows.
+define the generic operational game semantics construction. Our goal for this
+chapter in threefold. We need to define the OGS game, then axiomatize an
+abstract notion of language with evaluator, and finally construct a model of
+this language inside OGS game strategies.
 
-/*
-1. We first define in @sec-ogs-game the _statics_ of the construction, i.e., the
-  description of the game, in the sense of @def-g, parametrized by the
-  corresponding statics of the _object language_. These object
-  language statics comprise the usual set of _object types_, but also a
-  description of _observations_, which we will introduce. After defining the game,
-  thanks to the generic construction of strategies over a game from @ch-game,
-  we directly obtain the set of OGS strategies and counter-strategies, on which
-  we further define an _interaction_ operator for composing strategies.
+While a naive definition of the OGS game is not too hard to develop, as we will
+see this naive construction hits several related roadblocks quite a bit later,
+when trying to prove the model correct w.r.t. observational equivalence. These
+roadblocks can be overcome, but at the cost of several small tweaks,
+distracting us from the core of the construction.
 
-2. Next, in @sec-machine-lang we introduce a lightweight axiomatization of the
-  dynamics of a language with evaluator called a _machine language_, suitable
-  for then constructing the OGS model.
+As such, we start in @sec-ogs-naive by pushing as far as we can the naive
+construction, to get a good understanding of the important parts of the
+model, and to grasp what these roadblocks precisely are. In @sec-ogs-game we
+introduce an abstract notion of _observation_ and define the naive OGS game,
+parametrized by such observations. We then provide in @sec-ogs-diving an
+informal and progressive construction of the model. In @sec-ogs-langm we
+introduce our novel axiomatization of languages, and properly define their
+interpretation into naive OGS strategies. Finally in @sec-ogs-fail we discuss
+the correctness proof and the problematic points of the naive model.
 
-3. Building upon this, in @sec-machine-strat we finally construct the OGS model,
-  building a _machine strategy_ embedding machine configurations into OGS
-  strategies. We further introduce substitution equivalence, an analogue of
-  #txsc[ciu] equivalence for machine languages and state the correctness theorem for OGS.
+We present the refined model in @sec-ogs-refined. We start by refining the game
+(@sec-ogs-interlaced), then the strategies and their
+composition (@sec-ogs-compo), and finally the OGS model (@sec-ogs-tele). We conclude in
+@sec-ogs-correct by stating the correctness theorem, making all of its
+hypotheses explicit.
 
-
-#peio[
-  Dans un autre monde je refais le truc en 2 parties, d'abord avec le jeu naif
-  (pas de coups finaux, position = paire de scopes), puis dans un 2ème temps
-  avec tous les hacks: le jeu avec contextes alternées et environnements
-  telescopiques, coups finaux. Ca serait bien plus graduel...
-
-  1. Observations
-  2. Simple OGS
-    1. OGS Game
-    2. Machine Language
-    3. Machine Strategy
-    4. Correctness
-    5. Composition (Here Be Dragons)
-  3. Remembering Time
-    1. Refined Game
-    2. Refined Strategy
-]
-*/
-
-== A Simple OGS Model
+== A Simple OGS Model <sec-ogs-naive>
 
 === The OGS Game <sec-ogs-game>
 
-Recall from the informal
-introductory description (#peio[ref]) that the OGS model proceeds by computing
+Recall from the informal introductory description (@sec-intro-ogs) that the OGS model proceeds by computing
 the normal form of a given configuration (or term) and then splitting it into
 a _head variable_, an _observation_ on it, and a _filling assignment_,
 associating a value to each _hole_ or _argument_ of the observation. An OGS
@@ -67,7 +51,8 @@ Intuitively, the set of observations should be indexed by an object type: the
 type of values they are meant to be observing. Moreover, each observation has a
 given arity, a list of arguments or holes, i.e., a scope. At first sight it
 might seem natural to describe observations simply as a scoped-and-typed family
-$de("Obs") cl base.Type^(S,T)$, #guil[C'est quoi S,T ?] where $o cl de("Obs") th Gamma th alpha$
+with scopes $S$ and types $T$ given by
+$de("Obs") cl base.Type^(S,T)$, where $o cl de("Obs") th Gamma th alpha$
 denotes an observation $o$ on some value of type $alpha$ with arity $Gamma$.
 While this representation could work out, it would be quite unnatural to
 manipulate. To explain this, let us take a step back.
@@ -81,7 +66,9 @@ sort of terms _depend_ on a scope (and also on an object type).  On the other
 hand, the scope of an observation is not there to constrain anything but to make
 known the arity of that observation. Here, the more natural information flow is
 to have the scope come _after_ the observation, which would thus only depend on
-the type. 
+the type. In the language of bidirectional typing~#mcite(<LennonBertrand22>),
+this amounts to saying that for patterns, the scope is being _inferred_ while
+the type is being _checked_.
 
 These fine encoding considerations might be dismissed as philosophical or even
 aesthetic. But they do  have pragmatic consequences, typically on universe
@@ -91,17 +78,14 @@ scopes is infinite. As such, only a fraction of scopes can be the arity of some
 observation, wasting the expressivity of scoped-and-typed families since for
 most $Gamma$, $de("Obs") th Gamma th alpha$ would be empty.
 
-#guil[Est-ce-qu'une autre manière de dire les choses en utilisant le vocabulaire du typage bidirectionnel, 
-c'est que lorsqu'on type une observation, on infère son scope (i.e. il est généré) ?
-C'est en général (par example chez Zeilberger et Krishnaswami) comme ça que l'on présente le jugement de typage des patterns,
-qui génère le contexte (linéaire) des variables qu'ils bindent.]
-
 This leads us to axiomatize observations as _binding families_, which we now define.
 
 #definition[Binding Family][
   #margin-note[
-    Note that this definition is isomorphic to $T -> subs.Fam th S$. The record presentation
-    is simply for clarity.
+    Note that this definition is isomorphic to $T -> subs.Fam th S$, the record
+    presentation is simply for clarity. In fact, up-to the name of the
+    projections, it is exactly the same definition as the half-games from
+    @ch-game, but it is used for a different purpose (or maybe not).
   ]
   Given $S,T cl base.Type$, a _binding family_ is given by records of the following type.
 
@@ -176,13 +160,11 @@ as interaction trees developed in @ch-game, we obtain OGS strategies easily.
   family $O cl ctx.bfam_T th S$ _active and passive OGS strategy over $O$_ are
   given as follows.
 
-  $ ogs.stratA := game.stratA_(ogs.g) th (kw.fun th (Gamma, Delta) |-> base.bot) \
-    ogs.stratP := game.stratP_(ogs.g) th (kw.fun th (Gamma, Delta) |-> base.bot) $
+  $ ogs.stratA := game.stratA_(ogs.g) th (kw.fun th (Gamma, Delta) |-> base.empty) \
+    ogs.stratP := game.stratP_(ogs.g) th (kw.fun th (Gamma, Delta) |-> base.empty) $
 ] <def-ogs-strat>
 
-#guil[À ce moment là on ne sait pas ce que c'est $base.bot$]
-
-=== Diving Into the Machine Strategy
+=== Diving Into the Machine Strategy <sec-ogs-diving>
 
 For now we know relatively little about the abstract language for which
 we are constructing an OGS model: we know about its scope structure, its set
@@ -191,10 +173,10 @@ construction of the OGS model, that is, to implement a strategy for the OGS
 game, we will need to know quite a bit more. Concretely, our goal is to
 axiomatize something which we call a _language machine_, and to deduce from it
 the _machine strategy_, implementing the OGS game. More precisely, we will
-implement the machine strategy as a big-step system (#peio[def + ref]) over the
+implement the machine strategy as a big-step system (@def-big-tsys) over the
 OGS game. As our axiomatization of the language machine is largely guided by
-what we need to implement the machine strategy, we introduce both of them in
-lock-step, walking gradually through all of their components.
+what we need to implement the machine strategy, we informally introduce both of
+them in lock-step, walking gradually through all of their components. 
 
 *States* #sym.space.quad The starting point to implement a strategy is to
 choose two families for the active and passive states. Recall that intuitively,
@@ -249,7 +231,7 @@ arguments of the observation (in other words, a named observation and a filling
 assignment). Instead of axiomatizing a family of normal forms and a splitting
 map, exploding each normal form into our three components, we will simply
 _define_ normal forms as such triples. Although this might seem overly
-restrictive, as we will see later #peio[ref] it makes no real difference on the
+restrictive, it makes no real difference on the
 implementation side. These _split normal forms_ can be defined as follows.
 
 #definition[Split Normal Forms][
@@ -260,11 +242,14 @@ implementation side. These _split normal forms_ can be defined as follows.
 
   $ ctx.norm^(#h(0.15em) O)_V th Gamma := (o cl O^ctx.named th Gamma) base.prod (ctx.domnm th o asgn(V) Gamma) $
 
-  Extensional equality of normal is given by the following data type, overloading
-  as usual the symbol $approx$.
+  Extensional equality of normal is given by the data type
+  $ kw.dat th ar approx ar cl rel.irel th ctx.norm^(#h(0.15em) O)_V th ctx.norm^(#h(0.15em) O)_V $
+  overloading as usual the symbol $approx$. It has the following only constructor.
 
-  $ kw.dat th ar approx ar th {Gamma} kw.whr \
-    pat1(cs("refl"_"nf") th {o cl O^ctx.named th Gamma} th {gamma_1 th gamma_2} cl gamma_1 approx gamma_2 -> (o ctx.cute gamma_1) approx (o ctx.cute gamma_2)) $
+  $ inferrule(
+      H cl gamma_1 approx gamma_2,
+      cs("refl"_"nf") th H cl (o ctx.cute gamma_1) approx (o ctx.cute gamma_2)
+    ) $
 ] <def-split-nf>
 
 Using the newly defined split normal forms, the evaluation map of a machine
@@ -275,12 +260,12 @@ $ ogs.eval th {Gamma} cl "Conf" th Gamma -> delay.t th (ctx.norm^(#h(0.15em) O)_
 This evaluator is sufficient to implement the active transition function of the machine
 strategy as follows.
 
-$ ogs.mstratplay th {Psi} cl ogs.mstratA th Psi -> delay.t th (base.bot base.sum (ogs.hg game.extA ogs.mstratP) th Psi) \
+$ ogs.mstratplay th {Psi} cl ogs.mstratA th Psi -> delay.t th (base.empty base.sum (ogs.hg game.extA ogs.mstratP) th Psi) \
   ogs.mstratplay th (c , sigma) := kw.do \
     quad (o, gamma) <- ogs.eval th c th ";" \
     quad itree.ret th (base.inj2 th (o, [sigma, gamma])) $
 
-#margin-note(dy: -7em)[Here, $base.bot$ stands for the output family of the
+#margin-note(dy: -7em)[Here, $base.empty$ stands for the output family of the
 machine strategy, which is empty in concordance with @def-ogs-strat.]
 The
 function starts by computing the normal form $(o, gamma)$, where $o$ is a named
@@ -304,14 +289,12 @@ which indeed matches the type of the copairing $[sigma, gamma]$.
 passive machine strategy state, a move and returns the next active machine strategy
 state. Active states contain a configuration, but also an assignment quite similar to the passive
 configuration. This assignment will simply be weakened and passed along: when the opponent
-plays a move, we do not introduce any new shared variable, hence, the list of
-values we need to remember does not change. #guil[j'ai peur que cette phrase
-puisse générer un contre-sens, car Opposant introduit bien des nouvelles variables dans
-l'observation qu'il joue.] We can already provide a partial definition.
+plays a move, the player does not share anything new. Hence, the list of
+values we need to remember does not change. We can already provide a partial definition.
 
 $ ogs.mstratresp th {Psi} cl ogs.mstratP th Psi -> (ogs.hg game.extP ogs.mstratA) th Psi \
   ogs.mstratresp th sigma th o := \
-    pat(base.fst & := th th #box(outset: 0.08em, stroke: 0.5pt, $?$),
+    pat(base.fst & := ...,
         base.snd & := sigma[ctx.rcatl]) $
 
 What is left is to compute the configuration part of the next active
@@ -345,19 +328,17 @@ transition function.
 
 $ ogs.mstratresp th {Psi} cl ogs.mstratP th Psi -> (ogs.hg game.extP ogs.mstratA) th Psi \
   ogs.mstratresp th sigma th (i ctx.cute o) := \
-  pat(base.fst & := ogs.apply th (sigma th i)[ctx.rcatl] th o th (ctx.rcatr dot sub.var),
+  pat(base.fst & := ogs.apply th (sigma th i)[ctx.rcatl] th o th (ctx.rcatr compose sub.var),
       base.snd & := sigma[ctx.rcatl]) $
 
 Note that this definition crucially requires that values has a pointed renaming
 structure. Indeed, both variables and renamings are used to weaken the
 assignment part of the state and to "synthesize" the filling assignment passed
-to $ogs.apply$.
+to $ogs.apply$. As noted above, the second apply operator is indeed superfluous.
+If we had used the first one, the first projection of the strategy state would
+have simply read $ ogs.apply th (sigma th i) th o. $
 
-#guil[J'ai du mal à comprendre le deuxième apply, 
-en pratique on ne lui fournit toujours comme value assignment
-qu'un weakening ?]
-
-=== The OGS Interpretation
+=== Language Machines and OGS Interpretation <sec-ogs-langm>
 
 Let us sum up the previous section and properly define the language machines
 and then the machine strategy. We have seen that language machines consist of
@@ -374,15 +355,30 @@ values, configurations, an evaluation map and an observation application map.
       ogs.eval th {Gamma} cl C th Gamma -> delay.t th (ctx.norm^(#h(0.15em) O)_V th Gamma),
       ogs.apply th {Gamma th alpha} th (v cl V th Gamma th alpha) th (o cl O.ctx.Oper th alpha) \
         quad cl (O.ctx.dom th o asgn(V) Gamma) -> C th Gamma,
-      ogs.appext {Gamma th alpha} th (v cl V th Gamma th alpha) th o \
-        quad cl (ogs.apply th v th o) xrel(cnorm(approx) rel.arr cnorm(approx)) (ogs.apply th v th o),
+      ogs.evalext cl ogs.eval xrel(rel.forall th cnorm(approx) rel.carr cnorm(itree.eq)) ogs.eval,
+      ogs.appext cl ogs.apply xrel(rel.forall th cnorm(approx) rel.carr rel.forall th cnorm(approx) rel.arr cnorm(approx)) ogs.apply,
     ) $
+]
+#remark[
+  Note that we added two congruence properties to the language machine. The first states that
+  $ogs.eval$ sends extensionally equal configurations to strongly bisimilar computations
+  of extensionally equal normal forms. Similarly, we require that $ogs.apply$ sends
+  extensionally equal values applied to _the same_ observation and two extensionally
+  equal assignments to extensionally equal configurations. There is some slight notational
+  abuse in the above type of this last statement so we give it here in full.
+
+  $ forall th {Gamma th alpha} th (v^1 th v^2 cl V th Gamma th alpha) th (v^rel.r cl v^1 approx v^2) \
+    quad (o cl O.ctx.Oper th alpha) th (gamma^1 th gamma^2 cl O.ctx.dom th o asgn(V) Gamma) th (gamma^rel.r cl gamma^1 approx gamma^2) \
+    quad -> ogs.apply th v^1 th o th gamma^1 approx ogs.apply th v^2 th o th gamma^2 $
 ]
 
 #remark[
-  Note that we added an extensionality lemma to the language machine, stating that
-  $ogs.apply$ respects pointwise equality of assignments.
+  Note that the above definition only gives the computational structure of a language machine,
+  only requiring very lightweight laws concerned with extensional equality. This will of course
+  not be enough to prove the OGS model correct w.r.t. observational equivalence of configurations,
+  so that we will gradually define more properties on language machines.
 ]
+
 
 /*
 Next, for the machine strategy definition to work, we also required that values
@@ -431,7 +427,7 @@ renamings, we can give the full definition of the machine strategy.
   Given a language machine $M cl ogs.machine th O th V th C$
   such that $V$ and $C$ have renamings, i.e., such that $sub.pren th V$
   and $sub.ren th C$ hold, then the _machine strategy_ is the big-step system
-  $ogs.mstrat th M cl strat.bs_ogs.g th base.bot$ defined as follows.
+  $ogs.mstrat th M cl strat.bs_ogs.g th base.empty$ defined as follows.
 
   $ ogs.mstrat th M := \
     pat(
@@ -445,11 +441,6 @@ renamings, we can give the full definition of the machine strategy.
             base.snd & := sigma[ctx.rcatl])
     ) $
 ]
-
-#guil[Il me semble que la notion de big-step system n'a pas encore été
-introduite.] #tom[+1: si je comprends bien il faudrait mettre juste
-$strat.t_ogs.g$, ça doit être un leftover d'ancienne notation;
-d'ailleurs, attention, il y en a d'autres occurrences.]
 
 We finish up the model construction by embedding the language configurations
 into active OGS strategies.
@@ -467,7 +458,7 @@ into active OGS strategies.
     ogsinterpP(gamma) := itree.unrollP_(ogs.mstrat th M) th gamma $
 ]
 
-=== Correctness?
+=== Correctness? <sec-ogs-fail>
 
 Now that the OGS interpretation is defined, we can at last state the
 correctness property. Intuitively, the goal is to say that if two programs
@@ -493,8 +484,6 @@ will discuss after the actual definition.
 
   $ ogs.evalo th {Gamma} cl C th Gamma -> delay.t th (O^ctx.named th Gamma) \
     ogs.evalo th c := base.fst itree.fmap M.ogs.eval th c $
-
-  #guil[$itree.fmap$ n'a pas encore été introduit.]
 
   Then, given a scope $Omega cl S$, _substitution equivalence at final scope
   $Omega$_ is the indexed relation on $C$ defined as follows.
@@ -545,14 +534,9 @@ $Omega$ unconstrained but dropping the problematic part of the normal forms.
 Finally, we can state the much awaited correctness property of the OGS model.
 
 #definition[OGS Correctness][
-  Assume a language machine $M cl ogs.machine th O th V th C$ such that $V$
+  Assume a language machine $ M cl ogs.machine th O th V th C $ such that $V$
   forms a substitution monoid $sub.mon th V$ and that $C$ forms a
-  substitution module over it $sub.mod_V th C$
-  #guil[Pourquoi tu n'imposes pas dans la def de language machine que $V$ et $C$ 
-  soient des substitution monoid/module ?]. #guil[Ah je vois que tu fais ça 
-  dans la def de _Language Machine Respects Substitution_.
-  Du coup tu pourrais peut-être annoncer que tu vas raffiner au fur-et-à-mesure
-  les axiomes nécessaires pour les languages machines.] Given a scope $Omega cl S$,
+  substitution module over it $sub.mod_V th C$. Given a scope $Omega cl S$,
   _OGS is correct with respect to substitution equivalence at $Omega$_ if
   the following holds.
 
@@ -654,7 +638,7 @@ work we can show that the left-hand side, $ogs.evalo th c[gamma]$, seen as a
 function of $c$ and $gamma$, is also a fixed point of the same equation. Then,
 since both sides are fixed points of the same equation, to conclude adequacy it
 is sufficient to show that this composition equation has unicity of fixed
-points #guil[up-to bisimulation ?]. To ensure this, we build upon our new theory of fixed points and prove
+points (w.r.t. strong bisimilarity). To ensure this, we build upon our new theory of fixed points and prove
 that the composition equation is _eventually guarded_.
 
 What eventual guardedness means in this case, is that synchronizations (move
@@ -662,38 +646,22 @@ exchanges) do not happen _too often_. More precisely, in the output of
 composition, silent moves have two sources: the ones arising from seeking the
 next non-silent move of the active strategy, and the ones arising from a
 synchronization. Then, eventual guardedness of composition means that
-"move-seeking" #itree.tauF#""s happen infinitely often 
-#guil[Je suis perdu,
-je pensais que l'eventual guardedness c'était qu'il n'y avait qu'un nombre fini
-de synchronization entre deux move-seeking #itree.tauF#"".]. 
+every so many synchronizations we can find a guard, i.e., a "move-seeking" #itree.tauF.
+In other words, "move-seeking" #itree.tauF happen infinitely often.
 
-This is no small
-property and it does not hold for the composition of arbitrary strategies,
-only for _visible_ ones. Essentially, visibility mandates that in a position
-$(Gamma, Delta)$ when a strategy is queried on a given variable in its scope,
-say $i cl Gamma ctx.var alpha$, it must only query variables in $Delta$ that
-were introduced _before_ $i$ during the play. However, and this is the problem,
+This is no small property. It does not hold for the composition of arbitrary
+strategies, but only for the composition of strategies verifying a weak form of
+_visibility_. Essentially, visibility mandates that in a position $(Gamma,
+Delta)$ when a strategy is queried on a given variable in its scope, say $i cl
+Gamma ctx.var alpha$, it must only query variables in $Delta$ that were
+introduced _before_ $i$ during the play. However, and this is the problem,
 because we have kept the two scopes $Gamma$ and $Delta$ separate, it is not
 evident which variables in $Delta$ were introduced before some given variable
-in $Gamma$.
-#peio[j'ai bougé ton commentaire]
-#guil[
-  Dans la preuve de soundness, 
-  on a besoin de cette restriction uniquement 
-  que lorsqu'on n'a pas le droit d'effectuer une évaluation
-  entre l'observation sur $i$ et celle que l'on déclenche sur $j$
-  (ce qui corresponds aux prémisses de l'hypothèse mystère).
-  C'est pour ça que l'on reste sound dans un cadre avec references d'ordre supérieure,
-  où l'on n'est plus visible. Dans ce cas là, on a besoin d'aller récupérer dans
-  l'état mémoire le nom $j$ (s'il n'est pas dans notre vue),
-  ce qui nécessite une étape d'évaluation.
-  Du coup je pense qu'il faut soit préciser, soit supprimer 
-  le lien avec la visibilité.
-]
+in $Gamma$ as they are not stored contiguously.
 
 Our solution to this second problem is conceptually quite simple: we will
 switch to a more informative set of positions for the OGS game. Instead of
-using a pair of scopes, we will use a single _list of scopes_, containing an
+using a pair of scopes, we will use a single _sequence_ of scopes, containing an
 alternation of scopes of variables introduced by each player, hence keeping
 track of their relative order.
 
@@ -708,9 +676,9 @@ The next section is thus devoted to the definition of an OGS game refined with
 our two patches: final moves and interlaced positions. We will then fix the
 machine strategy, properly define composition and state the correctness theorem.
 
-== A Refined OGS Model
+== A Refined OGS Model <sec-ogs-refined>
 
-=== Interlaced Positions
+=== Interlaced Positions <sec-ogs-interlaced>
 
 As explained in the previous section, instead of tracking the OGS position
 using two scopes, where after each move the fresh increment
@@ -753,7 +721,7 @@ We can now give the definition of the refined OGS game.
         game.server := ogs.hg) $
 ]
 
-=== Final Moves and Composition
+=== Final Moves and Composition <sec-ogs-compo>
 
 Besides refining the OGS positions, our second patch is to add _final moves_
 to the OGS strategies. Intuitively, OGS strategies will now be parametrized
@@ -774,16 +742,18 @@ Instead, they should be thought of as _final moves_, ending the game.
 
 As explained before, this is now enough to define a meaningful composition
 operator. However, instead of the direct construction we have shown earlier, we
-will construct composition as the fixed point of an equation in the #delay.t
-monad. As the composition operator has two arguments, to express it as the
-fixed point of an equation system, we first need to uncurry it. As the type of
-its uncurried argument is a bit of a mouthful, we express it with a small
-gadget which will also be useful later on.
+will construct composition as the fixed point of an equation (see @sec-iter) in the #delay.t
+monad. This construction of composition as the solution of an equation system
+will allow us to be more precise during its manipulation. As the composition
+operator has two arguments, to express it as the fixed point of an equation
+system, we first need to uncurry it. The type of its uncurried argument is a
+bit of a mouthful, so we express it with a small gadget which will also be useful
+later on.
 
 #definition[Family Join][
   Define the _family join_ operator as follows.
 
-  $ ar ogs.join ar th {I} cl base.Type^I -> base.Type^I -> base.Type^I \
+  $ ar""cnorm(ogs.join)ar th {I} cl base.Type^I -> base.Type^I -> base.Type^I \
     X ogs.join Y := (i : I) base.prod X th i base.prod Y th i $
 
   Borrowing from the similarly structured named observations, we will use the
@@ -791,7 +761,7 @@ gadget which will also be useful later on.
   component $i$ left implicit.
 ]
 
-The domain of the OGS interaction can now be expressed as the family join of
+The domain of the OGS composition function can now be expressed as the family join of
 active and passive OGS strategies $(ogs.stratA th Omega) ogs.join (ogs.stratP
 th Omega)$. We follow up with the composition equation.
 
@@ -810,9 +780,6 @@ th Omega)$. We follow up with the composition equation.
   $
 ] <def-compo-eqn>
 
-#guil[Je suis un peu perdu par cette def. Est-ce-que ça ne serait pas
-plus éclairant de juste fournir les équations explicites ?
-Tu pourrais aussi faire un renvoi à la section sur Iteration Operators ici.]
 #remark[
   Note the different treatment of iteration in the #itree.tauF case and in the
   #itree.visF case. In the #itree.tauF case, we
@@ -843,13 +810,13 @@ only w.r.t. weak bisimilarity.
   $ ogs.comp cl (ogs.stratA th Omega) ogs.join (ogs.stratP th Omega) -> delay.t th (O^ctx.named th Omega) \
     ogs.comp := itree.iter_ogs.compeq $
 
-  $ ar game.par ar th {Psi} cl ogs.stratA th Omega th Psi -> ogs.stratP th Omega th Psi -> delay.t th (O^ctx.named th Omega) \
+  $ ar""cnorm(game.par)ar th {Psi} cl ogs.stratA th Omega th Psi -> ogs.stratP th Omega th Psi -> delay.t th (O^ctx.named th Omega) \
     s^+ game.par s^- := ogs.comp th (s^+ ctx.cute s^-) $
 ] <def-compo-opaq>
 
 This concludes our abstract constructions on the refined OGS game.
 
-=== Precise Scopes for the Machine Strategy
+=== Precise Scopes for the Machine Strategy <sec-ogs-tele>
 
 Thankfully, the axiomatization of language machines has been left intact by our
 two patches to the OGS game. We however need to modify the machine strategy.
@@ -863,7 +830,7 @@ two families $V cl base.Type^(S,T)$ and $C cl base.Type^S$ such that $sub.pren
 th V$ and $sub.ren th C$, and a language machine $M cl ogs.machine th O th V th
 C$.
 
-Recall that with the simple OGS game, machine strategy states were defined as
+Recall that in the naive OGS game, machine strategy states were defined as
 follows.
 
 $ ogs.mstratA th (Gamma, Delta) := C th Gamma base.prod (Delta asgn(V) Gamma) \
@@ -891,27 +858,12 @@ the interleaved OGS position.
 
 #definition[Telescopic Environments][
   Given a final scope $Omega cl S$, _active and passive telescopic environments_
-  are given by the two families $ogs.teleA$ and $ogs.teleP$ of sort $ctx.ctxc
-  th S -> base.Type$ given by the following mutually inductive definitions.
+  are given by the two mutually defined inductive families
 
-  $ kw.dat ogs.teleA kw.whr \
-    pat(
-      ogs.tnilA cl ogs.teleA th ctx.nilc,
-      ar ogs.tconA th {Psi th Gamma} cl ogs.teleP th Psi -> ogs.teleA th (Psi ctx.conc Gamma),
+  $ kw.dat th ogs.teleA cl ctx.ctxc th S -> base.Type \
+    kw.dat th ogs.teleP cl ctx.ctxc th S -> base.Type $
 
-    ) \
-    kw.dat ogs.teleP kw.whr \
-    pat(
-      ogs.tnilP cl ogs.teleP th ctx.nilc,
-      ar ogs.tconP ar th {Psi th Gamma} cl ogs.teleA th Psi -> Gamma asgn(ogs.val) (Omega ctx.cat ogs.catE Psi) -> ogs.teleP th (Psi ctx.conc Gamma),
-    ) $
-
-  #guil[C'est quoi $ogs.tconA$ ?]
-
-  #peio[j'hésite avec la présentation règle de déduction ci-dessous. Mais si je
-        fais ça va falloir que je change toutes les defs pour etre cohérents..]
-  #guil[Je trouve ça beaucoup plus lisible avec les règles de déductions.
-  Qu'est-ce-que tu devrais changer dans les autres defs pour être cohérent ?]
+  given by the following constructors.
 
   #mathpar(block: true, inset: 0.2em,
     inferrule([], $ogs.tnilA cl ogs.teleA th ctx.nilc$),
@@ -919,12 +871,21 @@ the interleaved OGS position.
       $e cl ogs.teleP th Psi$,
       $e ogs.tconA cl ogs.teleA th (Psi ctx.conc Gamma)$
     ),
+    h(3em),
     inferrule([], $ogs.tnilP cl ogs.teleP th ctx.nilc$),
     inferrule(
       ($e cl ogs.teleA th Psi$, $gamma cl Gamma asgn(ogs.val) (Omega ctx.cat ogs.catE Psi)$),
       $e ogs.tconP gamma cl ogs.teleP th (Psi ctx.conc Gamma)$
     ),
   )
+]
+
+#remark[
+  The notation $e ogs.tconA$ has been chosen to evoke a sequence extension on
+  the right by "nothing", in contrast to $e ogs.tconP gamma$ which does add
+  $gamma$ to the environment. Indeed, when a player is currently active this
+  means that they did _not_ play the last move, so that what they last stored
+  was indeed _nothing_, only recording the fact that the other side played.
 ]
 
 This data is enough to recover the original assignments of the simple OGS model,
@@ -935,16 +896,16 @@ as witnessed by the following _collapsing functions_.
   telescopic environment collapsing functions_, by mutual induction.
 
   $ ogs.collA cl ogs.teleA th Psi -> ogs.catO Psi asgn(ogs.val) (Omega ctx.cat ogs.catE Psi) $
-  #v(-0.5em)
+  #v(-0.8em)
   $ &ogs.collA th ogs.tnilA     && := [] \
     &ogs.collA th (e ogs.tconA) && := (ogs.collP e)[rho] $
   $ ogs.collP cl ogs.teleP th Psi -> ogs.catE Psi asgn(ogs.val) (Omega ctx.cat ogs.catO Psi) $
-  #v(-0.5em)
+  #v(-0.8em)
   $ &ogs.collP th ogs.tnilP           && := [] \
     &ogs.collP th (e ogs.tconP gamma) && := [ogs.collA e, gamma] $
 
-  Where $rho$ is the renaming $(Omega ctx.cat ogs.catO Psi) ctx.ren (Omega ctx.cat (ogs.catO Psi ctx.cat Gamma))$, given
-  by $[ctx.rcatl, ctx.rcatr[ctx.rcatl]]$.
+  The shorthand $rho$ is the obvious renaming of type $ (Omega ctx.cat ogs.catO Psi) ctx.ren (Omega ctx.cat (ogs.catO Psi ctx.cat Gamma)) $ given
+  by $rho := [ctx.rcatl, ctx.rcatr[ctx.rcatl]]$.
 ] <def-tele-collapse>
 
 The refined machine strategy is now simply a matter of adapting to the new telescopic
@@ -978,8 +939,6 @@ final scope $Omega$ or "normal" variables.
       rho_2 := ctx.rcatr[ctx.rcatr] $
 ] <def-machine-strat>
 
-#peio[ch2: introduce big-step strategies instead of small-step]
-
 OGS interpretation can now be defined just like before, by unrolling of the big-step system
 defined by the machine strategy.
 
@@ -994,7 +953,7 @@ defined by the machine strategy.
     ogsinterpP(gamma) := itree.unrollP_(ogs.mstrat th M) th (ogs.tnilA ogs.tconP gamma[ctx.rcatl]) $
 ] <def-ogs-interp>
 
-=== Correctness!
+=== Correctness! <sec-ogs-correct>
 
 Finally we arrive at correctness. The statement is still the same as for the simple OGS model:
 
@@ -1006,7 +965,7 @@ depends.
 
 *Respecting Substitution* #sym.space.quad Until now, we have required very
 little on the language machine. For the machine strategy construction, we have
-required renaming structures on values and configurations, while for the
+required a renaming structure on values and configurations, while for the
 correctness statement we have required substitution monoid and module
 structures on values and configurations. In both cases, we did not constrain
 in any way $M.ogs.eval$ and $M.ogs.apply$, this is of course unrealistic!
@@ -1052,15 +1011,20 @@ $ M.ogs.eval th c[gamma] itree.eq (M.ogs.eval th c)[c] $
 since it is a well-known fact that normal forms are never stable by
 substitution. Instead, after evaluating $c$ to a normal form $n$, we need to
 embed it into configurations, substitute it _and then_ evaluate the result
-again. The last law $ogs.evalnf$ should have a clear meaning: it justifies
-calling normal forms _normal_ as it requires them to be stable under
-evaluation #guil["it requires them to be already fully evaluated" plutôt que stable under evaluation ?]. Although, it might be a bit surprising to find it in this package
-since it does not seem to have anything to do with substitution. The reason
+again.
+
+#remark[
+The last law $ogs.evalnf$ should have a clear meaning: it justifies
+calling normal forms _normal_ as it requires them to be fully evaluated.
+It might be a bit surprising to find it in this package since it does
+not seem to have anything to do with substitution. The reason
 for including it here, is that assuming $ogs.submachine th M$, although there
-is no hope of defining substitution of normal forms, we can show that the family
-$Gamma |-> delay.t th (ctx.norm^(#h(0.15em) O)_V th Gamma)$ is a substitution
-module over values, crucially depending on $ogs.evalnf$ for proving the
-substitution identity law.
+is no hope of defining a substitution operator on normal forms, we can show
+that the family $Gamma |-> delay.t th (ctx.norm^(#h(0.15em) O)_V th Gamma)$
+is a substitution module over values. Its substitution action is simple:
+first evaluate the delayed normal form, embed it into configurations,
+substitute it using the module structure of configurations, and further
+evaluate the result.
 
 $ de("NfSub") cl sub.mod_V th (delay.t compose ctx.norm^(#h(0.15em) O)_V) \
   de("NfSub") := \ pat(
@@ -1068,8 +1032,28 @@ $ de("NfSub") cl sub.mod_V th (delay.t compose ctx.norm^(#h(0.15em) O)_V) \
     ..
   ) $
 
-#guil[Est-ce-que tu peux donner plus de détails sur le lien entre
-eval-nf et la substitution identity law ?]
+The proof for identity law of this substitution module structure crucially
+depends on $ogs.evalnf$. Given $u cl delay.t th (ctx.norm^(#h(0.15em) O)_V th Gamma$,
+its statement is the following.
+
+$ u itree.bind kw.fun th n |-> M.ogs.eval th (ogs.emb th n)[sub.var] quad itree.eq quad u $
+
+Then, by monad laws, the above is easily reduced to proving that for any $n cl ctx.norm^(#h(0.15em) O)_V th Gamma$
+
+$ M.ogs.eval th (ogs.emb th n)[sub.var] quad itree.eq quad itree.ret th n $
+
+which can be further simplified using the identity substitution law of configurations to
+
+$ M.ogs.eval th (ogs.emb th n) quad itree.eq quad itree.ret th n $
+
+in other words, exactly $ogs.evalnf$.
+
+We conjecture that this hints at less ad-hoc route for formalizing language
+machines respecting substitution. Instead of $ogs.evalsub$ and
+$ogs.appsub$, we would require that $delay.t compose ctx.norm^(#h(0.15em)
+O)_V$ forms a substitution module over values, and that $ogs.eval$ and
+$ogs.emb$ are substitution module morphisms.
+]
 
 We are now done with the core hypotheses, but there are two more technical
 hypotheses we must require.
@@ -1085,14 +1069,13 @@ $ sub.isvar th {Gamma th alpha} cl V th Gamma th alpha -> base.Type \
 
 Then, our case-splitting requirement can be formalized by asking that
 $sub.isvar th v$ is decidable for all $v$. We define the standard decidability
-data type as follows.
+data type $ kw.dat base.decidable th (X cl base.Type) cl base.Type $
+by the following constructors.
 
-$ kw.dat base.decidable th (X cl base.Type) cl base.Type kw.whr \
-  pat(
-    base.yes th (x cl X),
-    base.no th (r cl X -> base.bot)
-  ) $
-
+#mathpar(block: true,
+    inferrule($p cl X$, $base.yes th p cl base.decidable th X$),
+    inferrule($p cl X -> base.empty$, $base.no th p cl base.decidable th X$),
+)
 
 We package this into a typeclass, together with some additional requirements
 making $sub.isvar$ well-behaved.
@@ -1117,13 +1100,12 @@ injective. The second law, $sub.isvarren$, validates the fact that if the
 renaming of a value is a variable, then it must have been a variable in the
 first place. Note that we do not need to ask the reverse implication: since
 $(sub.var th i)[rho] approx sub.var th (rho th i)$, we can deduce that
-$sub.isvar th v -> sub.isvar th v[rho]$. In fact, thanks to $sub.isvarirr$, we
-can even deduce that these two implications are inverse to each other.
+$sub.isvar th v -> sub.isvar th v[rho]$.
 
 *Finite Redexes* #sym.space.quad The last technical hypothesis is perhaps the
 most mysterious. To me it was, at least, and I was quite surprised when I
 realized I could _still_ not conclude the eventual guardedness proof of the
-composition equation.
+composition equation with the two previously presented hypotheses.
 
 In essence, what interlaced positions and telescopic environment buy us, is a
 bound on the number of what we call _chit-chats_. These chit-chats are
@@ -1131,16 +1113,19 @@ synchronizations events during the composition, for which the exchanged move
 $(i ctx.cute o)$ targets a variable $i$ that is associated in the opponent's
 environment to a value which happens to be some variable $j$. As such, the
 composition continues with some new active configuration $M.ogs.apply th
-(sub.var th j) o th gamma$, which by $ogs.evalnf$ evaluates instantly to
+(sub.var th j) th o th gamma$, which by $ogs.evalnf$ evaluates instantly to
 $((j ctx.cute o), gamma)$. Hence, in case of such a chit-chat, the original
-move $(i ctx.cute o)$ is immediately "bounced" #guil[copycat ?] back to the original player with
-the move $(j ctx.cute o)$. Recalling that to prove eventual guardedness, the
+move $(i ctx.cute o)$ is immediately "bounced" back to the original player with
+the move $(j ctx.cute o)$. The observation $o$ is the same, but the new
+variable $j$ is different, in fact it must have been introduced _before_
+$i$, which limits the number of bounces.
+Recalling that to prove eventual guardedness, the
 goal is to find a #itree.tauF move in the reduction of the active configuration,
 it is quite nice to be able to limit the number of such bounces.
 
 As such, we can assume that after some amount of chit-chat, the active
 configuration will be of the form $M.ogs.apply th v th o th gamma$, where $v$
-_is not_ a variable. At this point, we are however completely stuck without any
+_is not_ a variable. But this is the surprise, at this point we are completely stuck without any
 further hypothesis. The natural thing to do would be to postulate that such a
 configuration $M.ogs.apply th v th o th gamma$ where $v$ is not a variable
 has a _redex_, in the sense that its evaluation necessarily starts with a
@@ -1148,16 +1133,15 @@ has a _redex_, in the sense that its evaluation necessarily starts with a
 make sense: $o$ typically stands for an elimination, so applying an elimination
 to something which is not a variable should yield a redex. Alas, I realized
 that this was severely restricting the language machine. Even the
-simply-typed #short.llc fails this hypothesis!
-#margin-note[
+simply-typed #short.llc fails this hypothesis#margin-note(mark: true, dy: -4.8em)[
   To be completely honest, the particular example of the #short.llc can be made
   to verify the redex hypothesis by designing the observations more smartly,
   but still, we would like to have maximal latitude to design the language
   machine as we wish.
-] We thus need a weaker hypothesis.
+]! We thus need a weaker hypothesis.
 
 Concretely the statement of the hypothesis is quite technical, but the idea is
-relatively simple, we simply ask for a bound on the number of consecutive times
+relatively simple. We simply ask for a bound on the number of consecutive times
 that the redex hypothesis can fail. As such, although the configuration may not
 have a redex _right now_, we know that after some more composition steps we will
 eventually find one.
@@ -1196,11 +1180,11 @@ that this relation is well-founded.
 #remark[
   Recall that in type theory, well-foundedness is defined in terms of inductive _accessibility_.
 
-  $ kw.dat de("Acc") th {X} th (R cl rel.rel th X th X) th (a cl X) cl base.Type \
+  $ kw.dat de("Acc") th {X} th (R cl rel.rel th X th X) th (a cl X) cl base.Prop \
     pat1(cs("acc") cl (forall th {b} -> R th b th a -> de("Acc") th R th b) -> de("Acc") th R th a
     ) \
     \
-    de("WellFounded") th {X} cl rel.rel th X th X -> base.Type \
+    de("WellFounded") th {X} cl rel.rel th X th X -> base.Prop \
     de("WellFounded") th R := (a cl X) -> de("Acc") th R th a $
 
   Then, well-founded induction is simply obtained by induction on the accessibility proof.
@@ -1229,8 +1213,9 @@ We are finally in a position to state the correctness theorem.
   $ forall th {Gamma} th (c_1 th c_2 cl C th Gamma) -> ogsinterpA(c_1) itree.weq ogsinterpA(c_2) -> c_1 ogs.subeq c_2 $
 ] <thm-correctness>
 
-#peio[wip finir un peu moins abrupte]
-
+This correctness theorem concludes our presentation of the OGS game and
+language machine model. What is left to do is to actually prove it, and this is
+the subject of the next chapter.
 
 
 

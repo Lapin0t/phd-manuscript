@@ -214,7 +214,7 @@ this opens up a radically new perspective both on programming and on
 mathematical practice of which I outline three important aspects.
 
 A first aspect, relevant to the programmer, is that of _correct-by-construction_
-programming, or type-driven development~#mcite(<Brady17>), whereby a program is
+programming, or type-driven development~#mcite(<AltenkirchMM05>)#mcite(dy: 3em, <Brady17>), whereby a program is
 its own proof of correctness. _Types_, akin to syntactic categories, classify
 programs and they are the counterpart of the logical _propositions_, or
 statements, in the programming world. Most programmers are probably familiar with
@@ -291,14 +291,13 @@ semantics and provide some technical grounding for the rest of this thesis.
 From this point on, we will start assuming some familiarity with the
 #short.llc.
 
-== A Primer to Operational Game Semantics
+== A Primer to Operational Game Semantics <sec-intro-ogs>
 
 To set some intuitions about operational game semantics and to introduce some
 design choices that will follow us throughout the thesis, let us start by
 describing its rules and the obtained strategies in the case of a very simple
 programming language: simply-typed #short.llc with recursive functions and
-booleans. We recall its syntax, typing, and operational semantics in @fig-stlc
-#peio[todo numbering].
+booleans. We recall its syntax, typing, and operational semantics in @fig-stlc.
 
 === First Steps
 
@@ -373,7 +372,7 @@ strategy as above with $E[Z]$. If the server instead plays $call(x, Z)$, we
 look up the value $V$ associated to $x$ and restart with $V Z$.
 
 To make this more precise we need to know how to represent strategies, and this
-is an important specificity distinguishing OGS from the most mainstream game semantical
+is an important specificity distinguishing OGS from a lot of other game semantical
 models. In OGS, these are described quite concretely by mean of an _automaton_,
 or _transition system_, that is, by giving a set of states and a transition
 relation. More precisely, because a strategy needs to both play moves and
@@ -382,13 +381,6 @@ relations, respectively for _active positions_ and _passive positions_. We adopt
 the point of view of the client, so that active positions are the ones where
 we need to play a move, while passive positions are the ones in which we are
 waiting for the server to play.
-#guil[Il y a aussi toute une branche de la sémantique des jeux
-qui s'appelle Algorithmic Game Semantics, et qui utilise
-différentes formes d'automates pour représenter les strategies
-de sémantique des jeux, en restreignant l'ordre des types des programmes
-considérés pour pouvoir encoder la structure de pointeurs convenablement.
-Mais dans cette branche-là, on raisonne par induction sur la structure du programme plutôt que d'utiliser une sémantique opérationnelle. ]
-#peio[ok. Bon j'ai changé un poil la phrase. Je pense c'est trop digression de citer l'AGS.]
 
 #let sact = txtt("act")
 #let spas = txtt("pas")
@@ -539,14 +531,14 @@ evaluation contexts, keeping only _configurations_ (e.g. named terms) and
 generalized values. On top of streamlining the OGS, letting go of
 contexts will also greatly simplify the necessary syntactic metatheory, as
 these "programs with a hole" are perhaps _fun_, but certainly not
-_easy_~#mcite(dy: -5em, <AbbottAGM03>)#mcite(dy: -1em, <McBride08>)#mcite(dy: 1em, <HirschowitzL22>)
+_easy_~#mcite(dy: -8.4em, <AbbottAGM03>)#mcite(dy: -5.4em, <McBride08>)#mcite(dy: -3.4em, <HirschowitzL22>)
 Yet as we have just seen, this does not preclude to treating languages
 given by more traditional small- or big-step operational semantics.
 
 
 As it happens, this new game with
 explicit return pointers is common in OGS constructions for languages with
-first-class continuations~#mcite(dy: 1em, <LassenL07>)#mcite(dy: 4em, <JaberM21>). However, we stress that even for
+first-class continuations~#mcite(dy: -2.2em, <LassenL07>)#mcite(dy: 0.8em, <JaberM21>). However, we stress that even for
 languages without such control operators, as in our #short.llc, it is an
 important tool to streamline the system.
 
@@ -570,12 +562,12 @@ code artifact can be found at the following address.
 *Games and Strategies in Type Theory* #sym.space.quad In order to represent dialogue games and
 game strategies in type theory, we start off in @ch-game by reviewing a notion
 of game by #nm[Levy] and #nm[Staton]~#mcite(<LevyS14>). We then generalize upon the
-construction of _interaction trees_~#mcite(dy: 0.8em, <XiaZHHMPZ20>) and
+construction of _interaction trees_~#mcite(dy: 0.6em, <XiaZHHMPZ20>) and
 introduce _indexed interaction trees_, to represent game strategies as finely
 typed coinductive automata. In order to reason on such strategies, we show
 powerful reasoning principles for their strong and weak bisimilarity, inside a
 framework for coinduction based on complete
-lattices~#mcite(dy: 2em, <Pous16>)#mcite(dy: 4em, <SchaferS17>). Further, we
+lattices~#mcite(dy: 1.8em, <Pous16>)#mcite(dy: 4em, <SchaferS17>). Further, we
 introduce a new notion of _eventually guarded_ systems of recursive equations on
 indexed interaction trees, which we prove to have existence and uniqueness of
 fixed points w.r.t. strong bisimilarity.
@@ -584,7 +576,7 @@ fixed points w.r.t. strong bisimilarity.
 review the standard tools for modeling intrinsically typed and scoped
 syntaxes with substitution~#mcite(<FioreS22>)#mcite(dy: 3em,
 <AllaisACMM21>). To fit our needs, we present the lesser known notion of
-_substitution module_~#mcite(<HirschowitzM10>) over a substitution monoid,
+_substitution module_~#mcite(dy: 6.6em, <HirschowitzM10>) over a substitution monoid,
 generalizing upon the theory of renaming. We further introduce a novel notion
 of _scope structures_, generalizing upon the traditional #nm[De-Bruijn]
 indices. Although relatively superficial, scope structures provide us with much
@@ -626,14 +618,17 @@ interpretation factors through the NF interpretation.
 our axiomatization of language machines, in @ch-instance we provide three
 examples forming a cross section of what can be expressed. For each of them, we define a language machine and prove
 the correctness theorem hypotheses. First, we study Jump-with-Argument, a
-minimalistic continuation passing style calculus~#mcite(dy: -1em, <Levy04>).
-Then, we study #short.uuc with recursive types~#mcite(<CurienH00>)#sym.zwj#mcite(dy: 3em, <DownenA20>), a very expressive language
-with explicit control flow. Similarly to Call-by-Push-Value~#mcite(<Levy04>), it has been exhibited as
+minimalistic continuation passing style calculus~#mcite(<Levy04>).
+Then, we study #short.uuc with recursive
+types~#mcite(dy: 0.8em, <CurienH00>)#sym.zwj#mcite(dy: 3em, <DownenA20>), a very
+expressive language with explicit control flow. Similarly to
+Call-by-Push-Value~#num-cite(<Levy04>), it has been exhibited as
 a fine compilation target, so that this instance also implicitly captures all
 the calculi which can be compiled to #short.uuc. Finally, we study a more
 traditional calculus, untyped #short.llc under weak head reduction. In this
-case, our generic NF bisimulations specialize to #nm[Levy]-#nm[Longo] trees~#mcite(<Levy75>),
-thus providing a new proof of their soundness w.r.t. observational equivalence.
+case, it is known that NF bisimulation specializes to #nm[Levy]-#nm[Longo] tree
+equivalence~#mcite(<Lassen99>), thus providing a new proof of their soundness
+w.r.t. observational equivalence.
 
 == Metatheory
 

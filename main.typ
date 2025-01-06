@@ -10,11 +10,11 @@
 #show: front-matter
 
 #include "head/cover-page.typ"
-#pagebreak()
-#pagebreak()
-#include "head/dedication.typ"
+#include "head/title.typ"
+#include "head/abstract.typ"
 
 #outline(title: "Contents")
+#pagebreak()
 //#outline(title: "List of Figures", target: figure.where(kind: image))
 //#outline(title: "List of Tables", target: figure.where(kind: table))
 

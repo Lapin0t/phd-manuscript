@@ -18,6 +18,16 @@ several reasons does not look like the prototypical language machine, but still
 can be twisted (rather heavily) to fit our axiomatization: pure untyped #short.llc
 under weak head reduction.
 
+#remark[
+  Be advised that at the time of writing these lines, the set of example calculi
+  presented in this chapter is not exactly the same as the one present in our Rocq
+  artifact. Their respective features are broadly the same, and our present choice
+  is guided by making this collection more comprehensive. I invite you to check the
+  #link("https://github.com/lapin0t/ogs")[online
+  repository]#margin-note(link("https://github.com/lapin0t/ogs")) to see
+  if this has been fixed by the time you are reading.
+]
+
 == Jump-with-Argument <sec-inst-jwa>
 
 === Syntax
@@ -26,32 +36,26 @@ Jump-with-Argument (JWA) was introduced by #nm[Levy]~#mcite(<Levy04>) as a
 target for his _stack passing style_ transform of Call-By-Push-Value
 (CBPV). As such, it is a minimalistic language with first-class
 continuations centered around so-called _non-returning commands_: an ideal
-target for our first language machine. We will assume some familiarity with the
-language and refer the reader to #nm[Levy]~#num-cite(<Levy04>) as a more gentle
-entry point.
-#guil[Je pense que tu fournis ce qu'il faut pour comprendre JWA à part $jwa.vlam$ dans le paragraphe d'après, du coup je pense que tu peux presque supprimer cette remarque précédente.]
-In fact we also direct the interested reader to two existing
-constructions of normal form bisimulation and OGS construction for increasingly
+target for our first language machine.
+We direct the interested reader to two existing
+constructions of NF bisimulations and OGS-like model for increasingly
 featureful variants of JWA by #nm[Levy] and
 #nm[Lassen]~#mcite(<LassenL07>)#mcite(dy: 3em, <LassenL08>).
-#guil[Peut-être mettre une footnote pour expliquer que dans #mcite(<LassenL08>),
-les états sur lesquels leur normal-form bisimulations sont définis
-utilisent une notion d'environnement,
-et sont donc plutôt des bisimulations sur le LTS de l'OGS.]
 This is a typed
 language, so as is usual, there is some leeway regarding which types are
 included. As we are aiming for simplicity, we will only look at a
 representative fragment featuring three types of values: booleans $jwa.base$,
 continuations $jwa.neg A$ and pairs $A jwa.prod B$.
 
-The language consists of two judgments: commands and values. Commands play the
+The language consists of two judgments: non-returning commands and values. Commands play the
 role of the configurations of an abstract machine, and are only parametrized by
 a scope. They are of three kinds: sending a value to a continuation (the
 eponymous "jump with argument"), splitting a value of product type into its
 two components and case splitting on a boolean. Values are parametrized by a
-scope and a type and can be either a variable, a continuation abstraction, a
-pair or a boolean. Let us present its syntax by an intrinsically typed and scoped
-representation inside type theory.
+scope and a type and can be either a variable, a continuation abstraction which
+binds its argument and continues as a command, a pair of values or a boolean.
+Let us present its syntax by an intrinsically typed and scoped representation
+inside type theory.
 
 #definition[Syntax][JWA types are given by the following data type.
 
@@ -103,7 +107,13 @@ jwa.jval ar$ when it is more practical. The constructors are as follows.
 ]
 ]
 
-#guil[Une petite explication pour $jwa.vlam$ ne serait pas de refus.]
+#remark[
+  Among the surprising elements is probably the continuation abstraction $jwa.vlam c$.
+  Intuitively it can be understood as a #sym.lambda\-abstraction, but which never returns.
+  As such, its body is not a term as in #short.llc but a non-returning command.
+  The "jump-with-argument" $v jwa.capp k$ can then be seen as the counter-part
+  to function application, written in reverse order.
+]
 
 #lemma[Substitution][
   JWA values form a substitution monoid, and JWA commands form a substitution
@@ -113,16 +123,17 @@ jwa.jval ar$ when it is more practical. The constructors are as follows.
 ] <lem-jwa-sub>
 #proof[
   Although quite tedious, these constructions are entirely
-  standard~#mcite(<FioreS22>)#mcite(dy: 1.8em, <AllaisACMM21>). One essentially starts by
-  mutually defining the renaming structures on commands and values, unlocking the definition
-  of the weakening operation necessary for substitution. Then, on top of this,
-  one mutually defines the monoid and module structures. The proofs of the laws as similarly
-  layered.
+  standard~#mcite(dy: -5.5em, <FioreS22>)#mcite(dy: -3.8em, <AllaisACMM21>). One
+  essentially starts by mutually defining the renaming operation on commands
+  and values, unlocking the definition of the weakening operation necessary
+  for substitution. Then, on top of this, one mutually defines the
+  substitution operation, giving the monoid and module structures. The proofs
+  of the laws as similarly layered.
 ]
 
 === Patterns and Negative Types
 
-The next logical step is the definition of the evaluation. Informally the reduction rules
+The next logical step is the definition of the evaluation. Informally, the reduction rules
 are defined on commands as follows.
 
 $ v jwa.capp jwa.vlam c & quad ~> quad c[sub.var,v] \
@@ -140,7 +151,7 @@ form configuration, which is to be expressed using a binding family of
 _observations_. As the definition of observations is central and essentially
 decides the shape that the OGS model will take, let us take a small step back.
 
-Recall from the introduction that in OGS models, depending on their type, some
+Recall from the introduction (@sec-intro-ogs) that in OGS models, depending on their type, some
 values are "given" to the opponent as part of a move, while some other are
 "hidden" behind fresh variables. We did not, however, worry about this
 distinction at all during our generic development, as we simply assumed there
@@ -155,14 +166,14 @@ the ones that have static content, the _value types_. For concision we will
 call them respectively _negative_ and _positive_ types. Although the concrete
 assignment of types to either category can be somewhat varied, obtaining models
 with different properties, for JWA it is most natural to decide that
-continuations are negative types and that all the other are positive.
+continuations are negative types while booleans and pairs are positive.
 
 #definition[Negative Types][
-The definition of JWA negative types is based on a predicate picking out
+The definition of JWA negative types is based on a strict predicate picking out
 the continuation types.
 
 #mathpar(block: true,
-block[$ jwa.isneg cl jwa.typ -> base.Prop $
+block[$ jwa.isneg cl jwa.typ -> base.sProp $
 #v(-0.8em)
 $ & jwa.isneg th jwa.base && := base.bot \
   & jwa.isneg th jwa.neg A && := base.top \
@@ -177,11 +188,12 @@ block(height: 6em, align(horizon,
   of the _subset scope_ structure introduced in @def-subset-scope.
 
   Further, as $jwa.isneg$ is trivially decidable, we will allow ourselves a bit
-  of informality by using $jwa.neg A$ as a negative type, instead of the more
+  of informality by using $jwa.neg A$ as an element of $jwa.ntyp$, instead of the more
   correct $(jwa.neg A, base.tt)$. Moreover, we will do as if elements of $jwa.ntyp$
   could be pattern-matched on, with the sole pattern being $jwa.neg A$, although
   technically this has to be justified with a
-  _view_~#mcite(<McBrideM04>)#mcite(dy: 2em, <Allais23>).
+  _view_~#mcite(<McBrideM04>)#mcite(dy: 2em, <Allais23>), adding a small amount of
+  syntactic noise.
 ]
 
 #lemma[Restricted Values and Commands][
@@ -190,10 +202,13 @@ block(height: 6em, align(horizon,
   $ (kw.fun th Gamma th alpha |-> jwa.val th Gamma .base.fst th alpha .base.fst) cl base.Type^(jwa.nctx,jwa.ntyp) \
     (kw.fun th Gamma |-> jwa.cmd th Gamma .base.fst) cl base.Type^jwa.nctx $
 
-  again form respectively a substitution monoid and a substitution module. We will
-  overload the notations $jwa.val$ and $jwa.cmd$ for both the unrestricted and restricted
-  families. Similarly we will drop the projections $base.fst$ and implicitly treat negative
-  types and scopes as normal ones.
+  again form respectively a substitution monoid and a substitution module, with respect
+  to the subset scope structure (@def-subset-scope).
+
+  We will overload the notations $jwa.val$ and $jwa.cmd$ for both the
+  unrestricted and restricted families. Similarly we will stop writing the
+  projection $base.fst$ and implicitly use it as a coercion from negative
+  types and scopes to normal ones.
 ]
 #proof[By #sym.eta\-expansion of the records and functions witnessing the unrestricted structures.]
 
@@ -236,8 +251,13 @@ _ultimate patterns_ of type $A$, i.e., maximally deep patterns of type $A$.
     ) $
 ]
 
-#guil[Tu pourrais expliciter que $jwa.plam_A$ est
-une variable représentant un trou de type $A$.]
+#remark[
+  The continuation pattern $jwa.plam_A$ should be understood intuitively as the
+  pattern consisting of one fresh variable. This is comforted by the fact
+  that its domain is indeed a singleton scope. More generally, the domain of
+  a pattern collects the set of continuations inside a value, when seeing
+  patterns as a subset of values.
+]
 
 The first thing to do with ultimate patterns is to show how to embed them into values.
 
@@ -254,7 +274,7 @@ The first thing to do with ultimate patterns is to show how to embed them into v
 ]
 
 The next step is to do the reverse: given a value whose scope is entirely negative (as will happen
-during the OGS game), split it into an ultimate pattern and a filling assignment.
+during the OGS game, since only negative variables are exchanged), split it into an ultimate pattern and a filling assignment.
 
 #remark[The fact that
   we only do this in negative scopes is important as we will be able to refute the case of, e.g.
@@ -321,16 +341,13 @@ machine, this leaves us to define the evaluation and application maps, which
 have the following types.
 
 $ ogs.eval th {Gamma cl jwa.nctx} cl jwa.cmd th Gamma -> delay.t th (ctx.norm^(""jwa.obs)_jwa.val th Gamma) \
-  ogs.apply th {Gamma cl jwa.nctx} th {A cl jwa.ntyp} th (v cl jwa.val th Gamma th A) th (o cl jwa.obs"".ctx.Oper th Gamma th alpha) \
+  ogs.apply th {Gamma cl jwa.nctx} th {A cl jwa.ntyp} th (v cl jwa.val th Gamma th A) th (o cl jwa.obs"".ctx.Oper th A) \
     quad cl jwa.obs"".ctx.dom th o asgn(jwa.val) Gamma -> jwa.cmd th Gamma $
-
-#guil[Je pense que le type de $o$ est plutôt 
-$(o cl jwa.obs"".ctx.Oper th A)$]
 
 Let us start with the evaluation map. Although it is not really necessary, for
 clarity we will implement an _evaluation step_ function, taking a command
-to either a normal form or to a new command to be evaluated. The evaluation map is
-then simply obtained by iteration in the #delay.t monad.
+to either a normal form or to a new command to be evaluated further. The evaluation map is
+then simply obtained by unguarded iteration in the #delay.t monad.
 
 #definition[Evaluation][
   Define evaluation by iteration of an evaluation step as follows.
@@ -364,13 +381,16 @@ case it would be better written with the following isomorphic representation.
 $ jwa.apply th {Gamma cl jwa.nctx} th {A cl jwa.typ} th (v cl jwa.val th Gamma th jwa.neg A) th (o cl jwa.pat th A) \
     quad cl jwa.dom o asgn(jwa.val) Gamma -> jwa.cmd th Gamma $
 
+What needs to be done is then more clear: embed the pattern, substitute it by the given assignment, and
+send the whole thing to the continutation value $v$.
+
 #definition[Observation Application][
   Define observation application as follows.
 
   $ jwa.apply th {Gamma cl jwa.nctx} th {A cl jwa.ntyp} th (v cl jwa.val th Gamma th A) th (o cl jwa.obs"".ctx.Oper th A) \
     quad cl jwa.obs"".ctx.dom th o asgn(jwa.val) Gamma -> jwa.cmd th Gamma \
     jwa.apply th {Gamma} th {jwa.neg A} th v th o th gamma := (jwa.p2v th o)[gamma] jwa.capp v $
-]
+] <def-jwa-obsapp>
 
 We now have everything to instantiate the JWA language machine.
 
@@ -381,11 +401,13 @@ We now have everything to instantiate the JWA language machine.
     jwa.jwa := pat(
       ogs.eval   & := jwa.eval,
       ogs.apply  & := jwa.apply,
+      ogs.evalext & := ...,
       ogs.appext & := ...
     ) $
 
   Note that $ogs.appext$ is proven by direct application of $sub.sext$ from the
-  substitution monoid structure of values.
+  substitution monoid structure of values. $ogs.evalext$ is obtained by simple rewriting,
+  as extensional equality of commands is simply propositional equality.
 ]
 
 By the above definition we can already instantiate the OGS model, but
@@ -405,7 +427,7 @@ redexes (@def-finite-redex).
 
   $ jwa.eval th c[sigma] itree.eq jwa.eval th c itree.bind kw.fun th n |-> jwa.eval th (ogs.emb th n)[sigma] $
 
-  Proceed by coinduction and then by cases on $c$, following the elimination
+  Proceed by tower induction and then by cases on $c$, following the elimination
   pattern of $jwa.evalstep$.
 
   - $jwacasein((jwa.vvar th i), c_1, c_2)$ #sym.space.quad Impossible by $base.exfalso th (ctx.eltupg th i)$.
@@ -428,7 +450,7 @@ redexes (@def-finite-redex).
       = quad & v[sigma] jwa.capp (sigma th i) quad & #[by def.] $
   - $v jwa.capp jwa.vlam c'$ #sym.space.quad Unfold the LHS and rewrite as follows.
     $ & (jwa.eval th (v jwa.capp jwa.vlam c')[sigma]) .itree.obs & \
-      & (jwa.eval th (v[sigma] jwa.capp jwa.vlam c'[sigma[ctx.popc],ctx.topc])) .itree.obs & \
+      = quad & (jwa.eval th (v[sigma] jwa.capp jwa.vlam c'[sigma[ctx.popc],ctx.topc])) .itree.obs & #[by def.] \
       = quad & itree.tauF th (jwa.eval th c'[sigma[ctx.popc],ctx.topc][sub.var,v[sigma]]) quad & #[by def.] \
       = quad & itree.tauF th (jwa.eval th c'[sub.var,v][sigma]) quad & #[by sub. fusion] $
     Unfolding the RHS reduces to $ itree.tauF th (jwa.eval th c'[sub.var,v] itree.bind kw.fun th n |-> jwa.eval th (ogs.emb th n)[sigma]). $
@@ -437,9 +459,9 @@ redexes (@def-finite-redex).
   - $jwaletin((jwa.vvar th i), c')$ #sym.space.quad Impossible by $base.exfalso th (ctx.eltupg th i)$.
   - $jwaletin(jwavpair(v,w), c')$ #sym.space.quad Unfold the LHS and rewrite as follows.
     $ & (jwa.eval th (jwaletin(jwavpair(v,w), c'))[sigma]) .itree.obs & \
-      & (jwa.eval th (jwaletin(jwavpair(v[sigma],w[sigma]), c'[sigma[ctx.popc compose ctx.popc, ctx.popc th ctx.topc, ctx.topc]]))) .itree.obs quad & #[by def.] \
-      & itree.tauF th (jwa.eval th c'[sigma[ctx.popc compose ctx.popc], ctx.popc th ctx.topc, ctx.topc][sub.var,v[sigma],w[sigma]]) quad & #[by def.] \
-      & itree.tauF th (jwa.eval th c'[sub.var,v,w][sigma]) quad & #[by sub. fusion] \
+      = quad & (jwa.eval th (jwaletin(jwavpair(v[sigma],w[sigma]), c'[sigma[ctx.popc compose ctx.popc, ctx.popc th ctx.topc, ctx.topc]]))) .itree.obs & #[by def.] \
+      = quad & itree.tauF th (jwa.eval th c'[sigma[ctx.popc compose ctx.popc], ctx.popc th ctx.topc, ctx.topc][sub.var,v[sigma],w[sigma]]) & #[by def.] \
+      = quad & itree.tauF th (jwa.eval th c'[sub.var,v,w][sigma]) quad & #[by sub. fusion] \
     $
     Unfolding the RHS reduces to $ itree.tauF th (jwa.eval th c'[sub.var,v,w][sigma] itree.bind kw.fun th n |-> jwa.eval th (ogs.emb th n)[sigma]). $
     The two $itree.tauF$ provide a synchronization and we conclude by coinduction hypothesis on $c'[sub.var,v,w]$
@@ -450,14 +472,14 @@ redexes (@def-finite-redex).
   Upon hitting a normal form, apply a refolding lemma and conclude by reflexivity.
 
   Thankfully the other two properties are almost trivial. $ogs.appsub$ is a
-  direct application of substitution fusion.
+  direct application of substitution fusion, as follows.
 
   $        & jwa.apply th v[sigma] th o th gamma[sigma] & \
     = quad & (jwa.p2v th o)[gamma[sigma]] jwa.capp v[sigma] quad quad & #[by def.] \
     = quad & ((jwa.p2v th o)[gamma] jwa.capp v)[sigma] quad quad & #[by sub. fusion] \
     = quad & (jwa.apply th v th o th gamma)[sigma] & #[by def.] $
 
-  $ogs.evalnf$ is proven by unicity of splitting after one-step unfolding.
+  $ogs.evalnf$ is proven by unicity of splitting after one-step unfolding, as follows.
 
   $        & (jwa.eval th (ogs.emb th ((i ctx.cute o), gamma))) .itree.obs & \
     = quad & (jwa.eval th (jwa.apply th (jwa.vvar th i) th o th gamma)) .itree.obs quad & #[by def.] \
@@ -471,9 +493,9 @@ redexes (@def-finite-redex).
   The JWA language machine has finite redexes.
 ] <thm-jwa-finred>
 #proof[
-  Once again, we do a benign preprocessing to express the property using
+  As explained for @def-jwa-obsapp, we silently do a benign preprocessing to express the property using
   patterns instead of observations, for else the notational weight would be
-  unbearable. We need to prove that the following relation is well founded.
+  unbearable. We need to prove that the relation defined by the following inference rule is well founded.
 
   #inferrule(
     ($i cl Gamma ctx.var alpha_1$,
@@ -528,14 +550,16 @@ equivalence to use a notion of big-step reduction $c arrow.b.double b$.
 #proof[
   By @thm-correctness applied to $jwa.jwa$, with hypotheses proven in @lem-jwa-sub, @thm-jwa-respsub and @thm-jwa-finred,
   obtain $ base.fst itree.fmap jwa.eval th c_1[gamma] quad itree.weq quad base.fst itree.fmap jwa.eval th c_2[gamma]. $
-  Conclude by the fact that $itree.weq$ is an equivalence relation.
-  #margin-note(dy: -6em)[
+  Conclude by the fact that $itree.weq$ is an equivalence
+  relation#margin-note(mark: true)[
     For the beauty of the game, let us say that a tiny generalization of the
     last proof step, shifting an equivalence relation around a bi-implication,
     is a very useful fact of any symmetric transitive relation $R$,
     namely that $R xrel(R rel.arr R rel.arr (<->)) R.$
-  ]
+  ].
 ]
+
+We also obtain NF model correctness in the exact same way.
 
 #theorem[NF Correctness][
   For all $Gamma cl jwa.nctx$ and $c_1, c_2 cl jwa.cmd th Gamma$, if
@@ -548,10 +572,10 @@ equivalence to use a notion of big-step reduction $c arrow.b.double b$.
   Conclude by the fact that $itree.weq$ is an equivalence relation.
 ]
 
-Note that we obtain correctness only for commands in negative contexts. This is
-easily dealt with, by defining an extended equivalence relation on such
-commands, which first quantifies over an ultimate pattern for each type in
-$Gamma cl ctx.ctxc th jwa.typ$ and asserts OGS equivalence of the configurations
+Note that we obtain correctness only for commands in negative scopes. This is
+easily dealt with, by defining an extended equivalence relation on
+commands in arbitrary scopes $Gamma cl ctx.ctxc th jwa.typ$, which first quantifies over an ultimate pattern for each type in
+$Gamma$ and asserts OGS equivalence of the configurations
 substituted by the given sequence of patterns. First, let us sketch the pointwise lifting
 from types to scopes of several constructs related to patterns.
 
@@ -571,8 +595,8 @@ from types to scopes of several constructs related to patterns.
   $ jwa.embX th {Gamma} th (gamma cl jwa.patX th Gamma) cl Gamma asgn(jwa.val) jwa.domX th gamma \
     jwa.embX th gamma th i := (jwa.p2v th (gamma th i))[de("aux") th gamma th i] $
 
-  We only give the type of the required family of renamings $de("aux")$ as it is purely
-  administrative.
+  We only give the type of the required family of renamings $de("aux")$ as it is not a joy
+  to write down.
 
   $ de("aux") th {Gamma} th (gamma cl jwa.patX th Gamma) th {A} th (i cl Gamma ctx.varc A) cl jwa.dom th (gamma th i) ctx.ren jwa.domX th gamma $
 ]
@@ -594,7 +618,7 @@ And finally we recover correctness.
   asgn(jwa.val) (ctx.nilc ctx.conc jwa.neg jwa.base)$, $ c_1[gamma] arrow.b.double jwa.pyes <-> c_2[gamma] arrow.b.double jwa.pyes. $
 ]
 #proof[
-  By pointwise lifting of $jwa.v2p$ and $jwa.v2a$ applyied $gamma$, compute $alpha
+  By pointwise lifting of $jwa.v2p$ and $jwa.v2a$ applyied to $gamma$, compute $alpha
   cl jwa.patX th Gamma$ and $beta cl jwa.domX th alpha asgn(jwa.val)
   (ctx.nilc ctx.conc jwa.neg jwa.base)$. By $c_1 de(approx_"ext") c_2$, we have
 
@@ -610,8 +634,8 @@ And finally we recover correctness.
 
 #remark[
   Of course the extended correctness results would hold just as well when
-  considering normal form bisimulation instead of the OGS strategy
-  equivalence, by following exactly the same pattern, replacing the OGS
+  considering NF bisimularity instead of the OGS strategy
+  bisimilarity, by following exactly the same step, replacing the OGS
   interpretation by the NF strategy interpretation.
 ]
 
@@ -652,17 +676,20 @@ as witnessed by the following critical pair
 
 $ c_1[alpha |-> uut.mut x cs(.)c_2] quad <~ quad uutcfg(uut.mu alpha cs(.)c_1, uut.mut x cs(.)c_2) quad ~> quad c_2[x |-> uut.mu alpha cs(.)c_1], $
 
+#let cbv = txsc("Cbv")
+#let cbn = txsc("Cbn")
+
 depending on which of $uut.mu$ or $uut.mut$ reduces first. A simple way
 to overcome this non-determinism is to bias the calculus to either
 call-by-value, prioritizing #uut.mu or call-by-name, prioritizing #uut.mut.
 We adopt the other standard solution, arguably more general, which is to
-parametrize configurations by a _polarity_, recording whether they are
-currently in call-by-value mode (#uut.pp) call-by-name mode (#uut.pn). This
+parametrize configurations by a mode, or _polarity_, recording whether they are
+currently in call-by-value mode (#uut.pp) or call-by-name mode (#uut.pn). This
 _polarized_ #short.uuc thus has the ability to express both execution
 strategies. In effect, each type is assigned a polarity, and the polarity of a
 configuration is determined by the type on which it is cutting. The type system
 is entirely symmetric with respect to polarity, so that every type former has a
-dual of opposite polarity. Do not confuse the #txsc[Cbv]-#txsc[Cbn] duality of
+dual of opposite polarity. Do not confuse the #cbv\-#cbn duality of
 type polarities with the producer-consumer duality of terms and coterms as the
 two are entirely orthogonal!
 
@@ -671,29 +698,30 @@ managed is by restricting both of their reduction rules to only apply when the
 other side of the configuration is a _value_. Now pay attention because the
 different dualities mingle!
 
-- A *value of positive type* is a new syntactic category included in terms,
-  _weak-head normal terms_, consisting essentially of variables and of the
-  _constructors_ of this type.
-- A *covalue of positive type* is simply a coterm of that type.
+- A *value of #cbv type* is a new syntactic category included in terms,
+  the _weak head normal terms_, consisting of variables and of
+  _constructors_ of that type.
+- A *covalue of #cbv type* is simply a coterm of that type.
 // LOL
 #scale(x: -100%, y: -100%)[
-  - A *covalue of negative type* is a new syntactic category included in
-    coterms, _forcing coterms_, consisting essentially of covariables and of the
-    _destructors_ of this type.
-  - A *value of negative type* is simply a term of that type.
+  - A *covalue of #cbn type* is a new syntactic category included in
+    coterms, _weak head normal coterms_, consisting of covariables and of
+    _destructors_ of that type.
+  - A *value of #cbn type* is simply a term of that type.
 ]
 
 We hope that all the symmetries are enjoyable. The consequence is that at a
-positive type, the #uut.mu reduction rule will fire across any coterm, while the #uut.mut
-rule will only fire across a weak-head normal term, and symmetrically at
-negative types. For a more general introduction to #short.uuc, we can recommend
-the tutorial by #nm[Binder] _et. al_~#mcite(<BinderTMO24>).
-#guil[Je ne pense pas que ce soit une bonne ref, vu qu'ils ne présentent pas
-le #short.uuc polarisé dans ce papier]
- Technically, our
-polarized presentation approximately follows the one from #nm[Downen]
-and #nm[Ariola]~#mcite(dy: 1.8em, <DownenA20>), obtaining a middle ground
-between their #nm[System L] and #nm[System D]. Without further ado, let us jump
+#cbv type, the #uut.mu reduction rule will fire across any coterm, while
+the #uut.mut rule will only fire across a weak-head normal term (of which
+#uut.mu is not). The opposite happens at #cbn types.
+
+Technically, our polarized presentation approximately follows the one from
+#nm[Downen] and #nm[Ariola]~#mcite(<DownenA20>), obtaining a middle
+ground between their #nm[System L] and #nm[System D]. For a more general
+introduction to unpolarized #short.uuc, we can recommend the tutorial by
+#nm[Binder] _et. al_~#mcite(dy: 0.5em, <BinderTMO24>).
+
+Without further ado, let us jump
 to the formal definition of types and syntax.
 
 #definition[Types][
@@ -707,8 +735,8 @@ to the formal definition of types and syntax.
   #mathpar(block: true, spacing: -0.4em,
     inferrule("", $uut.tzer cl uut.xtyp th Theta th uut.pp$),
     inferrule("", $uut.ttop cl uut.xtyp th Theta th uut.pn$),
-    inferrule("", $uut.tbot cl uut.xtyp th Theta th uut.pp$),
-    inferrule("", $uut.tone cl uut.xtyp th Theta th uut.pn$),
+    inferrule("", $uut.tone cl uut.xtyp th Theta th uut.pp$),
+    inferrule("", $uut.tbot cl uut.xtyp th Theta th uut.pn$),
     inferrule(
       ($A cl uut.xtyp th Theta th uut.pp$, $B cl uut.xtyp th Theta th uut.pp$),
       $A uut.tten B cl uut.xtyp th Theta th uut.pp$
@@ -743,10 +771,10 @@ to the formal definition of types and syntax.
 ]
 
 The types of our language thus comprise the usual bunch of empty, singleton,
-product and sum types, each in their positive ($uut.tzer$, $uut.tone$,
-$uut.tten$, $uut.tplu$) and negative ($uut.tbot$, $uut.ttop$, $uut.tand$,
+product and sum types, each in their #cbv ($uut.tzer$, $uut.tone$,
+$uut.tten$, $uut.tplu$) and #cbn ($uut.tbot$, $uut.ttop$, $uut.tand$,
 $uut.tpar$) variants. We then have the two shifts, $uut.tdw$ for _thunks_ of
-a negative type and $uut.tup$ for _returners_ of a positive type, and two
+a #cbn type and $uut.tup$ for _returners_ of a #cbv type, and two
 negations ($uut.tmin$, $uut.tneg$), basically swapping terms and coterms.
 Finally, we do not consider existential and universal quantification, but
 replace them by two fixed point types, $uut.tmu$ for inductive-like types and
@@ -786,14 +814,11 @@ obtaining a #nm[Turing]-complete language.
     (uut.tk""A)^uut.sneg := uut.tv""A $
 ]
 
-#guil[ça crée de la confusion d'utiliser les symboles $+$
-et $-$ pour les deux formes de polarisation 
-(terme/pile) et (positif/negatif) je trouve.]
 //#show figure.where(kind: "full-page"): context {
 //  set block(width: page.width + 4.4cm)
 //}
 
-#figure(placement: top, caption: [#short.uuc Syntax],
+#figure(placement: bottom, caption: [#short.uuc Syntax],
   full-page(box(stroke: 0.5pt, outset: 4pt, radius: 2pt)[
   #mathpar(block: true, spacing: 1fr,
     inferrule(
@@ -957,7 +982,7 @@ et $-$ pour les deux formes de polarisation
     uut.val th Gamma th (uut.tv""A cl uut.typ th uut.pn) & := uut.tm th Gamma th uut.tv""A \
     uut.val th Gamma th (uut.tk""A cl uut.typ th uut.pn) & := uut.wht th Gamma th uut.tk""A $
 ]
-]
+
 
 #lemma[Substitution][
   #short.uuc values form a substitution monoid, and #short.uuc configurations form a substitution
@@ -979,14 +1004,16 @@ a pattern and a filling, together with the associated refolding lemmas. In JWA
 we called the observable types "negative", but here this word is already quite
 overloaded so we call them "private" instead. Recall that these are the types
 that will appear in the OGS construction, as they denote syntactic objects
-whose sharing between players is mediated by variables.
+whose sharing between players is mediated by variables. Their definition follows
+the pattern of values, with only #cbv consumers and #cbn producers being considered
+private.
 
 #definition[Private Types][
   Define private types as a subset of types given by the following predicate.
 
   #mathpar(block: true,
     block[
-      $ uut.isneg cl uut.styp -> base.Prop $
+      $ uut.isneg cl uut.styp -> base.sProp $
       #v(-0.8em)
       $ uut.isneg th (uut.tv""A cl uut.typ th uut.pp) & := base.bot \
         uut.isneg th (uut.tk""A cl uut.typ th uut.pp) & := base.top \
@@ -1098,10 +1125,11 @@ we first go through the dual notion of _patterns_.
   $)
 ]
 
-With patterns defined, we introduce the embedding and splitting in one go, without giving
-the entire definitions as they are becoming quite unwieldy.
+With patterns defined, we introduce the embedding and splitting in one go. We do not
+spell out their definition but only characterize it by its refolding properties as
+writing them down would become quite unwieldy.
 
-#lemma[Value Splitting][
+#definition[Value Splitting][
   Define the following functions
 
   $ uut.p2v th {A} th (p cl uut.pat th A) cl uut.val th (uut.dom th p) th A \
@@ -1115,8 +1143,6 @@ the entire definitions as they are becoming quite unwieldy.
   2. For all $Gamma cl uut.nctx$, $A cl uut.typ$, $p cl uut.pat th A$ and $gamma cl uut.dom th p asgn(uut.val) Gamma$,
     $ (p, gamma) approx (uut.v2p th (uut.p2v th p)[gamma], uut.v2a th (uut.p2v th p)[gamma]). $
 ] <lem-uut-refold>
-
-#guil[l'énoncé ne ressemble pas à un lemme mais plutôt à une définition]
 
 #proof[
   $uut.p2v$ is defined by direct induction on patterns. $uut.v2p$ is defined through the following two
@@ -1133,8 +1159,8 @@ the entire definitions as they are becoming quite unwieldy.
     quad cl uut.dom th (uut.v2p^uut.pn th v) asgn(uut.val) Gamma $
 
   The first property (refolding) is then obtained by similar decomposition into
-  two auxiliary properties concerned with positive weak head normal terms and
-  negative weak head normal coterms. The second property (unicity of
+  two auxiliary properties respectively concerned with #cbv weak head normal terms and
+  #cbn weak head normal coterms. The second property (unicity of
   splitting) is proven by direct induction on patterns.
 ]
 
@@ -1183,18 +1209,21 @@ and application maps.
     & uut.evalstep th & agl uut.vw th (uut.vinl th v) & xpp uut.vw th uutpm(uut.tplu, c_1, c_2) agr && := base.inj2 th c_1[sub.var,v] \
     & uut.evalstep th & agl uut.vw th (uut.vinr th v) & xpp uut.vw th uutpm(uut.tplu, c_1, c_2) agr && := base.inj2 th c_2[sub.var,v] \
     & uut.evalstep th & agl uut.vw th uutabs(uut.tand, c_1, c_2) & xpn uut.vw th (uut.vfst th k) agr && := base.inj2 th c_1[sub.var,k] \
-    & uut.evalstep th & agl uut.vw th uutabs(uut.tand, c_1, c_2) & xpn uut.vw th (uut.vfst th k) agr && := base.inj2 th c_2[sub.var,k] \
+    & uut.evalstep th & agl uut.vw th uutabs(uut.tand, c_1, c_2) & xpn uut.vw th (uut.vsnd th k) agr && := base.inj2 th c_2[sub.var,k] \
     & uut.evalstep th & agl uut.vw th uut.vdw t & xpp uut.vw th uutpm(uut.tdw, c) agr && := base.inj2 th c[sub.var,t] \
     & uut.evalstep th & agl uut.vw th uutabs(uut.tup, c) & xpn uut.vw th uut.vdw e agr && := base.inj2 th c[sub.var,e] \
-    & uut.evalstep th & agl uut.vw th uut.vmin v & xpp uut.vw th uutpm(uut.tmin, c) agr && := base.inj2 th c[sub.var,v] \
-    & uut.evalstep th & agl uut.vw th uutabs(uut.tneg, c) & xpn uut.vw th uut.vneg k agr && := base.inj2 th c[sub.var,k] \
+    & uut.evalstep th & agl uut.vw th uut.vmin k & xpp uut.vw th uutpm(uut.tmin, c) agr && := base.inj2 th c[sub.var,k] \
+    & uut.evalstep th & agl uut.vw th uutabs(uut.tneg, c) & xpn uut.vw th uut.vneg v agr && := base.inj2 th c[sub.var,v] \
     & uut.evalstep th & agl uut.vw th (uut.vmu th v) & xpp uut.vw th uutpm(uut.tmu, c) agr && := base.inj2 th c[sub.var,v] \
     & uut.evalstep th & agl uut.vw th uutabs(uut.tnu, c) & xpn uut.vw th (uut.vnu th k) agr && := base.inj2 th c[sub.var,k]
   $
 ]
 
-#guil[J'ai l'impression que la fonction eval-step est non-déterministe
-à cause de la règle sur le &]
+#remark[
+  It should not be obvious, but it can be checked that all the (co)terms and
+  weak head normal (co)terms by which we are substituting are indeed (co)values,
+  with the type polarity and side annotation properly lining up.
+]
 
 #definition[Observation Application][
   Define observation application as follows.
@@ -1214,6 +1243,7 @@ We can now define the language machine.
     uut.uut := pat(
       ogs.eval   & := uut.eval,
       ogs.apply  & := uut.apply,
+      ogs.evalext & := ...,
       ogs.appext & := ...
     ) $
 ]
@@ -1229,7 +1259,7 @@ Let us now sketch the proof of the correctness hypotheses.
 
     $ uut.eval th c[sigma] itree.eq uut.eval th c itree.bind kw.fun th n |-> uut.eval th (ogs.emb th n)[sigma] $
 
-    Proceed by coinduction, then pattern-match on $c$, following the splitting pattern of $uut.evalstep$. In
+    Proceed by tower induction, then pattern match on $c$, following the case tree of $uut.evalstep$. In
     case of a redex, i.e., when $uut.evalstep$ returns $base.inj2 th c'[gamma]$ for some $c'$ and $gamma$, commute $gamma$ and $sigma$
     in the LHS and conclude by coinduction hypothesis. In case of a normal form, i.e., when $uut.evalstep$ returns
     $base.inj1 th ((i ctx.cute uut.v2p th v), uut.v2a th v)$ for some $i$ and $v$, apply @lem-uut-refold(1) to
@@ -1302,11 +1332,12 @@ evaluator operates and which is only indexed by a scope. The way out is
 two-fold.
 
 First, we switch to a common, but perhaps not the most standard presentation of
-weak head reduction: some variant of the #nm[Krivine] machine. This is a bit of
-a goalpost moving, as arguably we will not present a #short.llc language
-machine but rather a #nm[Krivine] language machine. However it is best to go
-with the flow of the axiomatization and adopt the abstract machine mindset.
-This will pay off when proving the correctness theorem hypotheses.
+weak head reduction: some variant of the #nm[Krivine]
+machine~#mcite(<Curien93>). This is a bit of a goalpost moving, as arguably we
+will not present a #short.llc language machine but rather a #nm[Krivine]
+language machine. However it is best to go with the flow of the axiomatization
+and adopt the abstract machine mindset. This will pay off when proving the
+correctness theorem hypotheses.
 
 Second, since continuations, a.k.a. _stacks_, will start floating around our
 #nm[Krivine] machine configurations, we will need to introduce formal
@@ -1318,22 +1349,25 @@ now we already have two: one for terms and one for continuations. To avoid
 confusion, we will stop referring to them as types and instead call them
 _sorts_.
 
+In a sense, our #nm[Krivine] will operate on _radically open_ configurations,
+in the sense that not only terms might contain free variables, but also stacks!
+
 *Observations* #sym.space.quad The usual intuition behind the design of the
 binding family of observations is that they denote some kind of copatterns, or
 eliminators. This understanding is enough to get a satisfying definition when
 the language already circles around this concept, like our first two examples.
 More pragmatically, as our axiomatization derives the normal forms
 from these observations, we better engineer them to fit the normal forms we
-intend to have. For call-by-value #short.llc, as sketched in the introduction,
-it does not take much squinting to see that the two shapes of normal forms---
-a value and a stuck application in an evaluation context---do indeed look
-like eliminators. Namely calls (on opponent functions) and returns (on implicit
-opponent continuations).
+intend to have. For call-by-value #short.llc, as sketched in the introduction
+(@sec-intro-ogs), it does not take much squinting to see that the two shapes of
+normal forms---a value and a stuck application in an evaluation context---do
+indeed look like eliminators. Namely calls (on opponent functions) and returns
+(on implicit opponent continuations).
 
-For weak head reduction, there are two shapes for normal forms: lambda
+For weak head reduction #short.llc, there are two shapes for normal forms: lambda
 abstractions $lambda x.T$ and stuck applications $x T_1 ... T_n$. Applications
 are not too difficult to see as being eliminators. We deduce that in this
-world, functions are eliminated by giving not one but a spine of arguments. In
+world, functions are eliminated by giving not one but a whole spine of arguments. In
 fact, one can recognize this spine as a stack, which is nice since our earlier
 choices start to make more sense. However, the lambda abstraction is rather
 devilish. It does not look like it is stuck on anything, so once again, this
@@ -1343,14 +1377,18 @@ at it backwards: what kind of elimination would make sense for a stack? Stacks
 are sequences of terms, so it would make sense to pattern match on them. And indeed,
 the $lambda x.T$ normal form is simply a request to _grab_ the next argument
 from the stack. If the stack is empty, this request cannot be fulfilled. But
-if it is not, we the opponent may answer it by a "here it is", giving us two
+if it is not, the opponent may answer the request by a "here it is", giving us two
 new handles, a term variable for the head and a stack variable for the rest.
+Another way to look at requests is to understand them as fully evaluated,
+or _forced_ functions.
 
 Putting things back together, what we just did is to introduce a _third_ sort,
 for argument _requests_, which will accordingly need be accompanied by
 request variables. Eliminating a stack introduces a new _request variable_ for
 the opponent, and eliminating a request introduces a term variable and a stack
-variable. Let us formalize that!
+variable.
+
+Let us formalize that!
 
 === Syntax and Semantics
 
@@ -1415,7 +1453,7 @@ _configurations_, but they unsurprisingly pair a term with a stack.
 ]
 
 We can now define the binding family of observations. Because technically there is exactly
-one observation at each sort, we could take the tricky $kw.fun th s |-> base.top$
+one observation at each sort, we could take the tricky $kw.fun th s |-> base.unit$
 definition. The $ctx.dom$ map would be quite puzzling though, so that we prefer defining
 a special purpose family and give these observations nice names.
 
@@ -1433,9 +1471,9 @@ a special purpose family and give these observations nice names.
 
   $ kriv.dom th {s} cl kriv.fobs th s -> kriv.ctx $
   #v(-0.8em)
-  $ & kriv.dom th kriv.force & := ctx.nilc ctx.conc kriv.sstk \
-    & kriv.dom th kriv.grab & := ctx.nilc ctx.conc kriv.sreq \
-    & kriv.dom th kriv.push & := ctx.nilc ctx.conc kriv.stm ctx.conc th kriv.sstk $
+  $ & kriv.dom th kriv.force && := ctx.nilc ctx.conc kriv.sstk \
+    & kriv.dom th kriv.grab && := ctx.nilc ctx.conc kriv.sreq \
+    & kriv.dom th kriv.push && := ctx.nilc ctx.conc kriv.stm ctx.conc th kriv.sstk $
 
   Further define their binding family as follows.
 
@@ -1446,10 +1484,10 @@ a special purpose family and give these observations nice names.
     ) $
 ]
 
-Let us recapitulate. We have a $kriv.force$ observation on terms, which has one argument, a stack
+Let us recapitulate. We have a $kriv.force$ observation on terms, which has one argument: a stack
 in which it should be evaluated. We have a $kriv.grab$ observation on stacks,
-which has one argument, a request, that is, a lambda abstraction. And finally we have a $kriv.push$
-observation on requests, which has two arguments, a head term and a tail stack. We are ready
+which has one argument: a request, that is, a lambda abstraction. And finally we have a $kriv.push$
+observation on requests, which has two arguments: a head term and a tail stack. We are ready
 to see the evaluator.
 
 #definition[Evaluator][
@@ -1475,7 +1513,7 @@ to see the evaluator.
 Let us rejoice! The journey to obtain this may have been convoluted, but the
 resulting observations and evaluator are even shorter than for JWA. In fact, once
 the pattern is ingrained, the proofs that this language machine verifies the
-correctness hypotheses is similarly straightforward. The sole exception is that the
+correctness hypotheses are similarly straightforward. The sole exception is that the
 well-foundedness of our so called _redex failure_ relation will not be
 entirely vacuous, as indeed chains of length greater than zero do exist. This
 phenomenon is a trademark of natural deduction style calculi implemented as
@@ -1500,6 +1538,7 @@ observation application map and finally the language machine.
     pat(
       ogs.eval & := kriv.eval,
       ogs.apply & := kriv.apply,
+      ogs.evalext & := ...,
       ogs.appext & := ...
     ) $
 ]
@@ -1576,24 +1615,10 @@ This concludes the correctness of the #nm[Krivine] language machine! Its NF
 strategies from @ch-nf-bisim can be recognized as #nm[Levy]-#nm[Longo]
 trees~#mcite(<Levy75>)#mcite(dy: 3em, <Longo83>). Thus, @thm-nf-correctness
 gives us a soundness proof of #nm[Levy]-#nm[Longo] tree w.r.t. weak head
-observational equivalence, giving an alternative to #nm[Hyland]'s set
-theoretical proof~#mcite(dy: 2em, <Hyland76>). #peio[Guilhem tu comprends qqch
-à ces papiers? Je dis pas de betise?]
-#guil[Le papier de Hyland ne prouve pas ça il me semble,
-il relie plutôt l'équivalence observationnelle
-du lambda-calcul en (strong) CBN, où les observations
-peuvent des formes normales de tête (faible), avec les modèles D-infini 
-et P-omega.
-Les arbres de Levy-Longo n'ont pas été étudié
-avant les années 90, lorsque Abramsky et Ong ont introduit
-le lazy lambda-calculus.
-Il y a au moins trois preuves que
-l'egalité des arbres de Levy-Longo implique l'equivalence observationnelle,
-par Ong, par Sangiorgi et par Lassen.
-]
- This fact should probably be properly
-justified by formalizing a clean representation of these trees and proving them
-isomorphic to our NF strategies, but we will not go further than this.
+observational equivalence, although this fact was already known~#mcite(dy: 3.3em, <Sangiori93>).
+This claim should probably be properly justified better, by formalizing a clean
+representation of these trees and proving them isomorphic to our NF strategies,
+but we will not go further than this.
 
 For the sake of it, let us simply state the normal form bisimulation
 correctness theorem, for the last time in this thesis!
@@ -1626,5 +1651,5 @@ correctness theorem, for the last time in this thesis!
 
 We could further post-process the above theorem to obtain a statement on the
 more standard #sym.lambda\-terms and evaluation contexts, as they embed into our
-#nm[Krivine] machine syntax, but we will stop
-it here.
+#nm[Krivine] machine syntax. This would clear away our non-standard stack and request
+variables, but we will stop our case study at this point.

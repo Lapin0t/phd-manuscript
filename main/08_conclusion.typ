@@ -5,10 +5,9 @@
 I hope that this thesis has somewhat demystified operational game semantics to
 the type theorist. Let us review some of the most important steps we have taken.
 
-- We started off in @ch-game by presenting a new iteration upon
-  coinductive automata representations in type theory. #tom[“a new
-  iteration”?! ça veut dire une nouvelle version? Pas super clair pour
-  moi… Ptet “a new data structure for”?] This puts a new item in the
+- We started off in @ch-game by presenting a new data structure
+  for representing
+  coinductive automata in type theory. This puts a new item in the
   already large bag of constructions based on polynomial functors. But
   perhaps most importantly, we demonstrated that with a small twist,
   namely splitting these polynomials in halves, we can obtain
@@ -20,17 +19,22 @@ the type theorist. Let us review some of the most important steps we have taken.
   structures. They untie the intrinsically scoped and typed theory of
   substitution from the (too) concrete #nm[De-Bruijn] indices. This
   brings a bit more flexibility in the practical formalization of
-  syntactic objects. #tom[Balisage: ptet ici pointer vers les endroits
-  où c'était vraiment utile.]
+  syntactic objects. Subset scopes in particular were of great use in the OGS
+  instances we have shown (@ch-instance), although it mostly smoothed the
+  work behind the scene, so you may have to take my word for it#margin-note(mark: true)[
+    As I recall, when I stopped working with the "wrong" notion of variable
+    and introduced subset scopes, I cut the size of the Rocq code for
+    the polarized #short.uuc instance by roughly a third.
+  ].
 
 - In @ch-ogs we arrived at operational game semantics. We constructed a generic
-  OGS model, proposing an axiomatization of languages with open evaluation. This
-  axiomatization is inspired by abstract machines, taking a computational approach
+  OGS model, proposing an axiomatization of languages with an evaluator for open programs.
+  This axiomatization is inspired by abstract machines, taking a computational approach
   to operational semantics. Most notably, it leaves the syntax entirely opaque and
   devoid of any inductive nature, to be contrasted, e.g., with structural
   operational semantics~#mcite(<Plotkin04a>). Yet this is enough to construct an
   OGS model, and to prove it correct w.r.t. an observational equivalence
-  under suitable hypotheses (@ch-proof). This underlines that, much like
+  under suitable hypotheses (@ch-proof). This underlines that much like
   denotational semantics, operational semantics can also beneficially manage to
   push the clutter and technicalities of syntax out of sight.
 
@@ -39,7 +43,7 @@ the type theorist. Let us review some of the most important steps we have taken.
   through OGS strategy bisimilarity (@ch-nf-bisim). Then, we instantiated our
   language axiomatization with three standard calculi (@ch-instance). 
 
-As always #tom[Ma parole, tu parles déjà comme un vieux briscard!],
+As always,
 there is the feeling that we have barely started scratching the
 surface. Formally proving this correctness theorem turned out to be a
 long and narrow track. Along the way we zoomed past many opportunities
@@ -47,8 +51,8 @@ for more in-depth study. Furthermore, although we already capture a
 number of languages, the level of generality of our OGS model could be
 improved. Indeed, we neither handle effectful languages (apart from
 partiality), nor polymorphic type systems, two features for which OGS
-models have already been demonstrated~#mcite(dy: -4em,
-<Laird07>)#mcite(dy: -2em, <LassenL08>) #mcite(dy: 1em, <JaberT18>).
+models have already been demonstrated~#mcite(dy: 0em,
+<Laird07>)#mcite(dy: 2em, <LassenL08>)#mcite(dy: 5em, <JaberT18>).
 Let us discuss in more details what we managed to glimpse from a
 couple of these windows into the unknown.
 
@@ -61,19 +65,19 @@ notoriously a can of worms. However, #nm[Levy] and #nm[Staton]'s games
 and strategies, presented in @ch-game, enjoy a rich categorical
 theory, which we have mostly skipped over. As a consequence, we did
 not say anything about the properties of OGS as a game, beyond the
-fact that it is symmetric.
+trivial fact that it is symmetric.
 
-First of all, games are routinely used as models for linear logic. It would be
-interesting to see how our notion of games fare in this respect. In fact our
-OGS game is strongly reminiscent of "bang" games in typical such interpretations.
-In both cases, the game position is a list (or scope) of possible game copies
-to choose from, and moving _spawns_ new possible positions (by concatenation on
-this list).
+First of all, games are regularly used as models for (parts of) linear logic.
+It would be interesting to see how our notion of games fare in this respect. In
+fact our OGS game is strongly reminiscent of "bang" games in typical such
+interpretations. In both cases, the game position is a list (or scope) of
+possible game copies to choose from, and moving _spawns_ new possible positions
+(by concatenation on this list).
 
 But linear logic is not the sole provider of structure on games, as #nm[Conway]
 also studied quite similar objects. Slightly more precisely, it is not too
-difficult to see the following definition as creating a variant of the
-#nm[Conway] sum of two games.
+difficult to see the following definition (which we saw in passing in
+@sec-game-example) as creating a variant of the #nm[Conway] sum of two games.
 
 #[
 #show math.equation: set block(breakable: false)
@@ -112,7 +116,7 @@ return some final observation, but a whole OGS strategy. We conjecture
 that at this point, by ditching this cumbersome final scope, we will
 be able to slightly strengthen the adequacy theorem. This would yield
 a stronger conclusion than correctness, namely that OGS model
-equivalence is closed under substitution.
+equivalence is closed under substitution (i.e., substitutive).
 
 *NF Strategies as a Language Machine* #sym.space.quad We conjecture that with a
 slight tweak and a suitable definition of morphisms, NF strategies can be
@@ -149,46 +153,43 @@ coinductive counterpart, their more intensional nature can be at times useful.
 
 *A Logic for Strategies* #sym.space.quad Besides correctness w.r.t.
 observational equivalence, a common property to investigate is the reverse
-implication, i.e., completeness. Following game semantical insights, it is
+implication, i.e., completeness. When both correctness and completeness are true,
+the model is said to be _fully abstract_. Following game semantical insights, it is
 largely expected that our OGS model of effect-free languages can only hope to
 be complete when restricted to _innocent_ strategies. Innocence is a property
 of a strategy, essentially meaning that it plays the same moves in any two
-observationally equivalent situations. It is a characterization of _purity_ at
-the level of strategies. Logically, it is a _safety property_, in the sense
+observationally equivalent situations. Logically, it is a _safety property_, in the sense
 that it can be expressed as the inability to play certain moves, solely based
-on the past history: nothing bad ever happens.
+on the past history: no bad moves are ever played.
 
-More generally, other such predicates are of interest in game semantics,
-such as _well-bracketedness_ (following a stack discipline for answering
-questions) or _visibility_ (only observing variables which are in the causal
-past). Further, perhaps our novel eventual guardedness condition can be
-rephrased as a particular _liveness_ property, as it is intuitively stating
-that every so many numbers of trivial looping, we do find a non-trivial step in
-the equation body: something good eventually happens.
+More generally, other similarly structured predicates are of interest in game
+semantics, such as _well-bracketedness_ (following a stack discipline for
+answering questions) or _visibility_ (only observing variables which are in the
+causal past). As such it would be useful to design a logic for strategy
+properties, with temporal features.
 
 Such a logic on the traces arising from coinductive automata has already been
-proposed in the case of non-indexed interaction trees~#mcite(<SilverZ21>)#mcite(dy: 4em, <YoonZZ22>).
-There are even very expressive frameworks for reasoning with arbitrary monadic
-computations~#mcite(dy: 6.7em, <MaillardAAMHRT19>). We conjecture that it is
+proposed in the case of non-indexed interaction
+trees~#mcite(<SilverZ21>)#mcite(dy: 4em, <YoonZZ22>). There are even very
+expressive frameworks for reasoning with arbitrary monadic
+computations~#mcite(dy: 5.7em, <MaillardAAMHRT19>). We conjecture that it is
 possible to follow their lead and adapt these techniques to the indexed
-setting. Indexing, however, unlocks even more possibilities by building upon
-the theory of _ornaments_~#mcite(dy: 6.8em, <McBride11a>)#mcite(dy: 9em, <Dagand17>).
+setting.
+
+Indexing, however, unlocks even more possibilities by building upon
+the theory of _ornaments_~#mcite(dy: 3.7em, <McBride11a>)#mcite(dy: 5.8em, <Dagand17>).
 Indeed, it is not too hard to enrich the positions of any game to keep track of
 the history of what has been played. Then, any safety predicate on strategies
-over a game can be backed into a new game, by requiring any move to be played
+over a game can be backed into a _safe_ game, by requiring any move to be played
 to be paired with a witness that it is safe with respect to the current
-history. Strategies for this new game may then be proven equivalent to the
-subset of strategies of the old game for which the safety property holds: the
+history. Ordinary strategies for this _safe_ game may then be proven equivalent to the
+subset of strategies of the original game for which the safety property holds: the
 fundamental theorem of correct-by-construction programming. Although ornaments
 are still only known to some circles, the unreasonable effectiveness of
-correct-by-construction programming in type theory is well established. We believe
-that this could pave a way forward to tackle more advanced game semantical
-questions in type theory.
-
-#tom[Pas sûr de comprendre où tu as voulu en venir de le paragraphe
- ci-dessus. Es-tu juste en train d'expliquer comment tu t'y prendrais
- pour faire l'innocence et le bon parenthésage?]
-
+correct-by-construction programming in type theory is well established. We
+believe that adapting this toolkit to our indexed trees could provide novel
+reformulations and proof techniques for more advanced game semantical questions
+in type theory.
 
 *Effectful Language Machines* #sym.space.quad How do we scale our constructions
 and proofs to effectful languages? This is the big question, as these languages
@@ -199,32 +200,31 @@ $ ogs.eval cl C th Gamma -> M th (ctx.norm_O th Gamma) $
 
 for some arbitrary monad $M$, suitably modelling the language's effects. We can
 play this game of replacing every instance of $delay.t$ with $M$ throughout our
-development. What we shall obtain, is the realization that $M$ needs to support
-arbitrary fixed points, and that disregarding indexing for simplicity, our
+development. What we shall obtain, is that disregarding indexing for simplicity, our
 interaction tree monad has become the following _coinductive resumption
 monad_~#mcite(<PirogG14>).
 $ de("Res")_(M,Sigma) th X := nu A. th M th (X + Sigma th A) $
 
-However, in my opinion, a sometimes overlooked practical insight
-contributed by interaction trees, is that partiality should be built
-in. Notice that in the above situation, we do not have any
-$itree.tauF$ node anymore, only $itree.retF$ and $itree.visF$.
-Instead, we have traded it with the requirement that $M$ is iterative
-#tom[ref?], i.e., intuitively it behaves as $delay.t$. Partiality is
-ubiquitous when manipulating coinductive game strategies, as for
-example it is completely expected that under some circumstances,
-composition of two total strategies may fail to be total. We thus
-conjecture that it would be more fruitful to keep partiality, and
-$itree.tauF$ nodes, under our concrete control. We should then study
-the following generalization of interaction trees, where $M$ is an
-arbitrary (of course strictly positive) monad.
+Notice that in the above situation, we do not have any $itree.tauF$ node
+anymore, only $itree.retF$ and $itree.visF$. Instead, to recover unguarded
+recursion we require that $M$ is (completely) #nm[Elgot]~#mcite(<PirogG14>),
+intuitively that it behaves as $delay.t$. But partiality is ubiquitous when
+manipulating coinductive game strategies, as for example it is entirely
+expected that under some circumstances, composition of two _total_ strategies
+may fail to be total. It is a sometimes overlooked practical insight
+contributed by interaction trees, that for a whole lot of applications,
+partiality should be built into the notion of automata. We thus conjecture that
+it would be more fruitful to keep partiality under our control by reinstating
+the #itree.tauF nodes and avoid depending on some particular language's monad
+$M$ for evaluation effects. We should then study the following generalization
+of interaction trees, where $M$ is an arbitrary (of course strictly positive)
+monad.
 
 $ de("itreeT")_(M,Sigma) th X := nu A. th M th (X + A + Sigma th A) $
 
 We conjecture that with a suitable notion of weak bisimilarity, this
 can be precised to form the initial #nm[Elgot] monad with a monad
-morphism from $M$ and a $Sigma$-algebra. #tom[Pas très clair: … and a
-natural transformation from $Sigma$?] The hard part however, starts
+morphism from $M$ and a natural transformation from $Sigma$. The hard part however, starts
 even before proving any property: a good notion of _weak_ bisimilarity
 remains elusive! In other words, given a _relator_ on $M$, we have
 some trouble defining a good relator on $de("itreeT")_(M,Sigma)$ for
@@ -239,7 +239,7 @@ said very little of the accompanying code artifact, but it leaves a
 lot to be desired as it is nowhere near a reusable software library.
 As one would imagine, a number of design mistakes have been made
 during the development and partially patched out, so that it would
-greatly benefit #tom[from?] a thorough re-architecturing. In fact,
+greatly benefit from a thorough re-architecturing. In fact,
 because we tried to remain faithful to the actual code, some of these
 oddities can at times be felt in the present manuscript.
 
