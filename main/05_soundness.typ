@@ -528,7 +528,7 @@ bisimilarity for composition (@def-compo-congr). Let us prove it now.
   Finally we conclude by using @lem-compo-mcompo to bridge between machine
   strategy compositions and opaque composition.
 
-  $ ogs.evalo th c[gamma] itree.weq & ogsinterpA(c) game.par ogsinterpP(gamma)$
+  $ ogs.evalo th c[gamma] itree.weq & ogsinterpA(c) game.par ogsinterpP(gamma) $
   #v(-2em)
 ]
 
