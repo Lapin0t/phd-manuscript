@@ -1315,12 +1315,12 @@ Our first two examples were in several aspects quite similar: two simply-typed
 languages, rather low level and centered around explicit control flow using
 some form of first-class continuations. Let us now turn to a radically
 different language: pure untyped #short.llc with weak head reduction semantics.
-There will be several hurdles to overcome, so lets give an overview, in increasing
+There will be several hurdles to overcome, so let us give an overview, in increasing
 order of difficulty.
 
 *Typing* #sym.space.quad The language is untyped, but our framework for
 substitution requires some set of types. This is quite easy to overcome with a
-benign change of perspective, we can see any untyped language as an
+benign change of perspective, as we can see any untyped language as an
 un#[*i*]typed language, that is, a language with a single type.
 
 *Configurations* #sym.space.quad The language is presented with natural
@@ -1349,7 +1349,7 @@ now we already have two: one for terms and one for continuations. To avoid
 confusion, we will stop referring to them as types and instead call them
 _sorts_.
 
-In a sense, our #nm[Krivine] will operate on _radically open_ configurations,
+In a sense, our #nm[Krivine] machine will operate on _radically open_ configurations,
 in the sense that not only terms might contain free variables, but also stacks!
 
 *Observations* #sym.space.quad The usual intuition behind the design of the

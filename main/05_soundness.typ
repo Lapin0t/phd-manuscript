@@ -177,7 +177,7 @@ be particularly useful at several points.
     by $ogs.evalnf$, showing that $ogs.eval th (ogs.apply th (sub.var th j) th o th
     gamma[sub.var,sigma]) itree.eq itree.ret th ((j ctx.cute o), gamma[sub.var, sigma]).$
   - If $ctx.vcat th i := ctx.vcatr th j$, then $[sub.var,sigma] th i := sigma th j$ and
-    we conclude by reflexivity.
+    we conclude by reflexivity. #qedhere
 ]
 
 == Evaluation as a Fixed Point of Machine Composition
@@ -356,7 +356,7 @@ composition.
   - passing a substitution under an application using $ogs.appsub$,
   - the use of @lem-zip-coll-fix to fuse collapsing and zipping,
   - and a series of basic rewriting steps using the monad laws of #delay.t and
-    the categorical structure of assignments.
+    the categorical structure of assignments. #qedhere
 ]
 
 == Eventual Guardedness of Machine Composition
@@ -473,6 +473,7 @@ We can now prove eventual guardedness.
     - If it is a $itree.retF th ((k ctx.cute o'), delta)$, then, by case on $ctx.vcat th k$.
       If $k$ is a final move then composition is guarded. Else $k$ is non-final and we
       conclude by applying the outermost induction hypothesis, as indeed $o' ogs.badinst o$.
+      #qedhere
 ]
 
 == Conclusion
@@ -527,7 +528,7 @@ bisimilarity for composition (@def-compo-congr). Let us prove it now.
   Finally we conclude by using @lem-compo-mcompo to bridge between machine
   strategy compositions and opaque composition.
 
-  $ ogs.evalo th c[gamma] itree.weq & ogsinterpA(c) game.par ogsinterpP(gamma) $
+  $ ogs.evalo th c[gamma] itree.weq & ogsinterpA(c) game.par ogsinterpP(gamma)$
   #v(-2em)
 ]
 

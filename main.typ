@@ -11,7 +11,9 @@
 
 #include "head/cover-page.typ"
 #include "head/title.typ"
+#include "head/colophon.typ"
 #include "head/abstract.typ"
+//#include "head/acknowledgments.typ"
 
 #outline(title: "Contents")
 #pagebreak()

@@ -145,9 +145,9 @@ following definitions.
 ] <def-hg>
 
 #definition[Game][
-  #margin-note[This is called _discrete game_ by #nm[Levy] & #nm[Staton]~#num-cite(<LevyS14>).]
   Given $I^+, I^- cl base.Type$ a _game with active positions $I^+$
   and passive positions $I^-$_ is given by a record of the following type.
+  #margin-note(dy: -1.4em)[This is called _discrete game_ by #nm[Levy] & #nm[Staton]~#num-cite(<LevyS14>).]
 
   $ kw.rec th game.g th I^+ th I^- th kw.whr \
     pat(game.client cl game.hg th I^+ th I^-,
@@ -297,9 +297,9 @@ We thus obtain the single-heap Nim game as follows.
 We could obtain the many-heap Nim game by a similar construction. We would define
 the positions as lists of natural numbers, the moves as first selecting a heap and
 then choosing a number of matchsticks to take away, etc. Let us seek a more structured
-approach. Intuitively, the multi-heap Nim game is just a some fixed number of
+approach. Intuitively, the multi-heap Nim game is just some fixed number of
 copies of the single-heap game played simultaneously, in _parallel_. In case
-of two copies, the game positions consists of pairs of single-heap Nim
+of two copies, the game positions consist of pairs of single-heap Nim
 positions. A move is then defined as choosing either a single-heap move on the
 first position or on the second. Let us define this as a generic binary
 combinator on games.
@@ -391,7 +391,7 @@ as #nm[Joyal]~#mcite(dy: 3em, <Joyal77>).
 
 In order to translate this definition into type theory, the only
 question is how to represent subsets.
-The most familiar one is the powerset construction, adopting the point of view
+The most familiar representation is the powerset construction, adopting the point of view
 of subsets as (proof-relevant) predicates:
 
 $ subs.Pow cl base.Type -> base.Type \
@@ -450,7 +450,7 @@ Then, the _game of #nm[Conway] games_ can be given as follows.
           game.server := de("fam-to-hg") th conway.rgt) $
 ]
 
-To make this example more solid, we should relate the notion strategy in the
+To make this example more solid, we should relate the notion of strategy in the
 sense of #nm[Conway] to the strategies on #conway.ls in the sense of
 #nm[Levy] & #nm[Staton]. But let's not get ahead of ourselves, as the latter
 are only introduced in the next section. We will leave this little sketch as
@@ -519,7 +519,7 @@ $X th i$ ~~ _"return move"_
 #block(inset: (x: 1.5em, bottom: 1em), spacing: 0.8em)[
   This case was not present in #nm[Levy] & #nm[Staton]~#num-cite(<LevyS14>), but
   it allows a strategy to end the game, provided it exhibits an output. As we
-  will see with interaction trees in @sec-itree, this allows to equip transition
+  will see with interaction trees in @sec-itree, this allows us to equip transition
   systems with a monad structure, an important tool for compositional manipulation.
 ]
 
@@ -633,7 +633,7 @@ position. This exhibits strategies as coalgebras for the following functor.
 $ A |-> X base.sum A base.sum G.game.client game.extA (G.game.server game.extP A) $
 
 We can apply this "fusing" trick not only to strategies but also to games.
-Quite satisfyingly, when forgetting about the passive positions games will morph into the well-known notion of
+Quite satisfyingly, when forgetting about the passive positions, games will morph into the well-known notion of
 indexed polynomial functors, or more precisely their type-theoretic incarnation
 as _indexed containers_~#mcite(dy: -0.7em, <AltenkirchGHMM15>). As such, our
 notion of strategy will not directly be parametrized by a game, but more
@@ -809,7 +809,7 @@ _game_ strategies.
 
 #definition[Strategies][
   Given a game $G cl game.g th I^+ th I^-$ and output $X cl base.Type^(I^+)$,
-  the active and passive _strategies over $G$ with output $R$_ are defined as follows.
+  the active and passive _strategies over $G$ with output $X$_ are defined as follows.
 
   #mathpar(block: true, spacing: 1fr,
     $game.stratA_G th X cl I^+ -> base.Type \
@@ -1095,7 +1095,7 @@ is derivable.
   [$x lt.tilde nu f$]
 ))
 
-The map $g$ will typically enlarge or its argument $y$, or otherwise tweak it,
+The map $g$ will typically enlarge its argument $y$, or otherwise tweak it,
 making $g$-enhanced bisimulations $y$ easier to exhibit than proper bisimulations.
 As an example on relations, reasoning up-to transitivity means working with
 such a principle for $g th R := R ; R$. Because valid up-to principles are not
@@ -1411,11 +1411,11 @@ Given $Sigma cl icont.t th I$, an output relation $X^rel.r cl rel.irel th X^1 th
 
 #remark[
   Although we never formally provide a definition of relators, their list of
-  conditions be inferred from the above definition, which exhibits $itree.RS_Sigma$ as a relator
+  conditions can be inferred from the above definition, which exhibits $itree.RS_Sigma$ as a relator
   in two arguments. More precisely, the statement related to the converse
   operator is not always required and defines a lax _conversive_
-  relator~#mcite(<Levy11>). Note that although all the reverse inequality
-  also hold, we will not make use of them.
+  relator~#mcite(<Levy11>). Note that although all the reverse inequalities
+  also holds, we will not make use of them.
 
   Intuitively, the relator conditions are heterogeneous generalizations
   (strengthenings) of the facts that a relator sends reflexive relations to
@@ -1774,7 +1774,7 @@ proof.
 #lemma[Up-to Strong Bisimilarity][
   Given $Sigma cl icont.t th I$, $X^rel.r_1 cl rel.irel th X_1 th X_2$,
   $X^rel.r_2 cl rel.irel th X_2 th X_3$ and $X^rel.r_3 cl rel.irel th X_3 th X_4$,
-  the following holds. for any weak bisimulation candidates $cF in
+  the following holds for any weak bisimulation candidates $cF in
   tower.t_(itree.wb_Sigma)$,
 
   $ cnorm(iteq(X^rel.r_1)) rel.seqS cF th X^rel.r_2 rel.seqS cnorm(iteq(X^rel.r_3))
@@ -2306,8 +2306,8 @@ tailored to work well with Rocq's syntactic guardedness checker. We try to
 comment on each one, but some will surely remain mysterious. Let us start with
 such a function.
 
-#definition[Weird Copairing][
-  Given $Sigma cl icont.t th I$ define the following _weird copairing_ function.
+#definition[Exposed Copairing][
+  Given $Sigma cl icont.t th I$ define the following _exposed copairing_ function.
 
   $ weirdcopr(ar,ar) th {X th Y th Z} cl (X ctx.arr itree.tp_Sigma th Z) -> (Y ctx.arr itree.tp_Sigma th Z) \
     #h(6em) -> (X base.sum Y) ctx.arr itree.t_Sigma th Z \
@@ -2351,7 +2351,7 @@ This helper is enough to provide a clean definition of unguarded iteration.
   bind operator to the usual one.
 ]
 
-#lemma[Iter Fixed Point][ \
+#lemma[Iter Fixed Point][
   Given $Sigma cl icont.t th I$, for all $f cl X ctx.arr itree.t_Sigma th (Y + X)$,
   $itree.iter_f$ is a weak fixed point of $f$, i.e., the following holds.
 
@@ -2374,7 +2374,7 @@ This helper is enough to provide a clean definition of unguarded iteration.
 
 Furthermore, we prove the following monotonicity statement for iteration.
 
-#lemma[Iter Monotonicity][ \
+#lemma[Iter Monotonicity][
   Given $Sigma cl icont.t th I$, for all $X^rel.r cl rel.irel th X^1 th X^2$ and
   $Y^rel.r cl rel.irel th Y^1 th Y^2$, the following statements holds.
 

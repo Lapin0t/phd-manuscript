@@ -157,7 +157,7 @@ proofs.
 
 For most people, the phrase "computer-assisted proof" usually evokes the idea
 of a computer program, checking if some formula or some other kind of
-mathematical problem is true or false. This kind of algorithms, known as
+mathematical problem is true or false. This kind of algorithm, known as
 _solvers_ are indeed useful in a number of situations, but several landmark
 results early in the 20#super[th] century have shown that this can very quickly
 become unfeasible. First, #nm[Gödel]~#mcite(<Godel31>) showed that for any
@@ -193,7 +193,7 @@ be associated a concrete witness or _realizer_, the so-called
 #nm[Brouwer]-#nm[Heyting]-#nm[Kolmogorov] interpretation. Programs turned out
 to be quite suitable for expressing such realizers, in particular the
 #short.llc put forward by #nm[Church]~#mcite(<Kleene45>)#mcite(dy: 3em, <Kreisel59>),
-establishing a link between proofs and programs. The bridge between the these
+establishing a link between proofs and programs. The bridge between these
 two worlds is however quite deeper, as around that time and onward, a string of
 observations have been made. They essentially understood, that with a very
 moderate amount of squinting, the linguistic rules of existing formal logical
@@ -389,9 +389,9 @@ waiting for the server to play.
 
 For our OGS strategy, an active state consists of a term $P$ being evaluated, and
 the data that we need to remember: a stack of evaluation contexts $S$ and an
-environment of function values $gamma$. Passive states only contains the
+environment of function values $gamma$. Passive states only contain the
 evaluation stack and the environment. We write them respectively as $sact(P, S, gamma)$
-and $spas(S, gamma)$. Before giving the transitions, let us precise
+and $spas(S, gamma)$. Before giving the transitions, let us make precise
 the _abstraction_ procedure, which hides function expressions from values. It
 takes a type and a value of that type and returns a pattern, together with a
 _filling_, i.e., an environment containing the value which may have been
@@ -445,7 +445,7 @@ This change of perspective thus involves naming contexts with symbols, as
 functions are, and unify the return and call moves into one: symbol
 _observation_.
 
-=== More Symbols and Less Moves <sec-intro-cps>
+=== More Symbols and Fewer Moves <sec-intro-cps>
 
 We amend the game as follows. First, the exchanged symbols may now refer either
 to functions or to evaluation contexts, which we will sometimes (but not
@@ -531,7 +531,7 @@ evaluation contexts, keeping only _configurations_ (e.g. named terms) and
 generalized values. On top of streamlining the OGS, letting go of
 contexts will also greatly simplify the necessary syntactic metatheory, as
 these "programs with a hole" are perhaps _fun_, but certainly not
-_easy_~#mcite(dy: -8.4em, <AbbottAGM03>)#mcite(dy: -5.4em, <McBride08>)#mcite(dy: -3.4em, <HirschowitzL22>)
+_easy_~#mcite(dy: -8.4em, <AbbottAGM03>)#mcite(dy: -5.4em, <McBride08>)#mcite(dy: -3.4em, <HirschowitzL22>).
 Yet as we have just seen, this does not preclude to treating languages
 given by more traditional small- or big-step operational semantics.
 
@@ -648,11 +648,11 @@ predicative hierarchy of types $base.Type_i$, an impredicative universe of
 propositions $base.Prop$ and _strict_#margin-note(mark: true)[
   Our use of strict propositions is anecdotic, so do not worry if your favorite
   proof assistant does not support it. On the other hand, having an
-  impredicative sort is crucial.
+  impredicative sort is crucial for our lattice theoretic treatment of coinduction.
 ] propositions $base.sProp$. We rely on typical ambiguity and cumulativity to entirely disregard
 the universe levels of types. We moreover assume propositional unicity of
 identity proofs in the form of #nm[Streicher]'s axiom K for
-pattern matching~#mcite(dy: 1em, <Cockx17>), as well as definitional #sym.eta\-law on
+pattern matching~#mcite(dy: 2em, <Cockx17>), as well as definitional #sym.eta\-law on
 records and functions (in particular for the empty record type
 $base.unit$). We further assume the ability to define inductive data types and
 coinductive record types.
@@ -805,6 +805,6 @@ coinductive objects in intensional type theory, propositional equality is
 too strong for several statements. As such, we use _extensional_ equality
 in several places, written $a approx b$. The problem is that the definition of
 extensional equality depends on the type we are considering, so that this
-should by essentially considered as a kind of typeclass giving the extensional
+should be essentially considered as a kind of typeclass giving the extensional
 equality equivalence relation at any given type. We try to be explicit
 around its use. For types $A$ and $B$, $A approx B$ denotes an isomorphism.

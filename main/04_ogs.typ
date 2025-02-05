@@ -66,7 +66,7 @@ sort of terms _depend_ on a scope (and also on an object type).  On the other
 hand, the scope of an observation is not there to constrain anything but to make
 known the arity of that observation. Here, the more natural information flow is
 to have the scope come _after_ the observation, which would thus only depend on
-the type. In the language of bidirectional typing~#mcite(<LennonBertrand22>),
+the type. In the language of bidirectional typing~#mcite(<PierceT98>)#mcite(dy: 2em, <DunfieldK21>),
 this amounts to saying that for patterns, the scope is being _inferred_ while
 the type is being _checked_.
 
@@ -331,7 +331,7 @@ $ ogs.mstratresp th {Psi} cl ogs.mstratP th Psi -> (ogs.hg game.extP ogs.mstratA
   pat(base.fst & := ogs.apply th (sigma th i)[ctx.rcatl] th o th (ctx.rcatr compose sub.var),
       base.snd & := sigma[ctx.rcatl]) $
 
-Note that this definition crucially requires that values has a pointed renaming
+Note that this definition crucially requires that the syntax of values has a pointed renaming
 structure. Indeed, both variables and renamings are used to weaken the
 assignment part of the state and to "synthesize" the filling assignment passed
 to $ogs.apply$. As noted above, the second apply operator is indeed superfluous.
@@ -346,8 +346,8 @@ values, configurations, an evaluation map and an observation application map.
 
 #definition[Language Machine][
   Given a scope structure $ctx.scope_T th S$, a binding family $O cl
-  ctx.bfam_T th S$ and families $V cl base.Type^(S,T)$ and $C cl base.Type^S,
-  $a _language machine over $O$ with values $V$ and configurations $C$_ is
+  ctx.bfam_T th S$ and families $V cl base.Type^(S,T)$ and $C cl base.Type^S$,
+  a _language machine over $O$ with values $V$ and configurations $C$_ is
   given by records of the following type.
 
   $ kw.rec ogs.machine th O th V th C kw.whr \
@@ -496,12 +496,12 @@ The first subtlety is that in the above definition the final _scope_ $Omega$
 plays the same role as the ground _type_ of contextual equivalence. The
 generalization from a single type to an entire scope is required simply
 because in the abstract scope structure axiomatization we did not introduce any
-mean to talk about singleton scopes. However, as this scope is freely chosen in
+means to talk about singleton scopes. However, as this scope is freely chosen in
 the instances, it may very well be instantiated by a singleton scope, which usually
-exist in concrete cases.
+exists in concrete cases.
 
 Second, instead of directly comparing two normal forms obtained by evaluation,
-substitution equivalence first project them onto their named observation part,
+substitution equivalence first projects them onto their named observation part,
 disregarding the filling assignments. The reason for this stems from what makes
 a "good" ground type. For standard calculi, the ground type of contextual
 equivalence is invariably taken to be a very simple type such as booleans or
@@ -538,7 +538,8 @@ Finally, we can state the much awaited correctness property of the OGS model.
   forms a substitution monoid $sub.mon th V$ and that $C$ forms a
   substitution module over it $sub.mod_V th C$. Given a scope $Omega cl S$,
   _OGS is correct with respect to substitution equivalence at $Omega$_ if
-  the following holds.
+  weak bisimilarity of OGS strategy interpretations entails substitution
+  equivalence.
 
   $ forall th {Gamma} th (c_1, c_2 cl C th Gamma) -> ogsinterpA(c_1) itree.weq ogsinterpA(c_2) -> c_1 ogs.subeq c_2 $
 ]
@@ -583,7 +584,7 @@ beginning of the active strategy, searching for the first _return_ or _visible_
 move. In case of a $itree.retF th r$ move, composition ends, returning the
 result $r$. In case of a $itree.visF th m th k$ move, $m$ is passed to the
 opponent strategy and a _synchronization_ occurs: the active strategy becomes passive,
-the passive strategy becomes active, the roles and switched and the composition
+the passive strategy becomes active, the roles are switched and the composition
 starts again. Assuming for simplicity that both the player and the opponent
 strategies have a constant output family $R cl base.Type$, given a game $G cl
 game.g th I th J$, these intuitions guide us to the following definition.
@@ -753,7 +754,7 @@ later on.
 #definition[Family Join][
   Define the _family join_ operator as follows.
 
-  $ ar""cnorm(ogs.join)ar th {I} cl base.Type^I -> base.Type^I -> base.Type^I \
+  $ ar""cnorm(ogs.join)ar th {I} cl base.Type^I -> base.Type^I -> base.Type \
     X ogs.join Y := (i : I) base.prod X th i base.prod Y th i $
 
   Borrowing from the similarly structured named observations, we will use the
@@ -1006,12 +1007,12 @@ renamings we will skip over this notion.]
 Our statement of the law $ogs.appsub$ should be relatively straightforward.
 However, $ogs.evalsub$ is a bit more tricky. Indeed, there is no hope of
 stating a simple law such as
-$ M.ogs.eval th c[gamma] itree.eq (M.ogs.eval th c)[c] $
+$ M.ogs.eval th c[gamma] itree.eq (M.ogs.eval th c)[gamma] $
 
 since it is a well-known fact that normal forms are never stable by
 substitution. Instead, after evaluating $c$ to a normal form $n$, we need to
 embed it into configurations, substitute it _and then_ evaluate the result
-again.
+again. In other words, we perform a _hereditary substitution_.
 
 #remark[
 The last law $ogs.evalnf$ should have a clear meaning: it justifies
@@ -1021,8 +1022,8 @@ not seem to have anything to do with substitution. The reason
 for including it here, is that assuming $ogs.submachine th M$, although there
 is no hope of defining a substitution operator on normal forms, we can show
 that the family $Gamma |-> delay.t th (ctx.norm^(#h(0.15em) O)_V th Gamma)$
-is a substitution module over values. Its substitution action is simple:
-first evaluate the delayed normal form, embed it into configurations,
+is a substitution module over values. Its substitution action is a form of hereditary
+substitution: first evaluate the delayed normal form, embed it into configurations,
 substitute it using the module structure of configurations, and further
 evaluate the result.
 

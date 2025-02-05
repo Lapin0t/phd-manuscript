@@ -60,7 +60,7 @@ monoid to this new abstraction. We also present _substitution modules_, a
 notion required to deal with syntactic objects which have a substitution
 operation, but whose arguments may be of a different kind, such as evaluation
 contexts, whose variables can be substituted by values.
-Substitution module have already been studied~#mcite(<HirschowitzM10>), but
+Substitution modules have already been studied~#mcite(<HirschowitzM10>), but
 they are rarely presented even though they become necessary quite quickly in
 lots of concrete examples.
 
@@ -232,7 +232,7 @@ efficient execution is a concern, one typically chooses an off-the-shelf finite
 map data structure such as binary trees, which enjoy logarithmic time lookup and
 logarithmic size membership proofs.
 
-Although I like to imagine that my Coq development makes sound computational
+Although I like to imagine that my Rocq development makes sound computational
 choices, I must admit that I have not yet been truly serious about efficiency.
 But there is a more type-theoretical objection to lists and #nm[De Bruijn]
 indices: while all free monoid constructions are isomorphic (extensionally
@@ -254,17 +254,18 @@ manipulate than others.
 // ctheorems which is broken with typst master
 //#show emoji.sparkles: text(fill: colors.kw, sym.star.filled)
 
-The prime example is the following setting#margin-note(mark: true, dy: -4.5em)[
-  This situation is not entirely artificial and does in fact appear
-  routinely in OGS instances. Indeed, the scopes tracking the shared
-  variables of both players are usually restricted to contain only the types of
-  some kind of non-transmitted values, typically called _negative types_.
-]. We have a set of types $T$ and we construct some syntax $tm cl ctx.ctxc th T
+The prime example is the following setting. We have a set of types $T$ and we
+construct some syntax $tm cl ctx.ctxc th T
 -> T -> base.Type$. Now for some reason, we have a subset $ nice cl T ->
 base.Prop$ of let's say, _nice_ types, and we need to work with the sub-syntax
 of terms in _nice_ contexts, that is in contexts containing only nice types.
 Assuming we have worked out the theory of substitution for bare terms, we want
-to lift it to the nice setting.
+to lift it to the nice setting#margin-note(mark: true)[
+  This situation is not entirely artificial and does in fact appear
+  routinely in OGS instances. Indeed, the scopes tracking the shared
+  variables of both players are usually restricted to contain only the types of
+  some kind of non-transmitted values, typically called _negative types_.
+].
 
 In the framework of lists and #nm[De Bruijn] indices, we must define
 nice contexts as lists of pairs of a type together with a proof that it is nice:
@@ -597,14 +598,14 @@ fibers of the coproduct injections ($ctx.vcatirr$) requires the use of
           ...) $
 ]
 
-Pay attention to the difference between $ctx.var$ and $ctx.varc$! The former denotes the
+Pay attention to the difference between $ctx.varc$ and $ctx.var$! The former denotes the
 family of concrete #nm[De-Bruijn] indices, while the latter denotes the abstract variables
 of a scope structure instance. I apologize for this abuse of notation to the color blind
 reader. In any case the symbol $in.rev$ can without any loss be considered to always denote
 the abstract notion of variable. In the concrete case it will be definitionally equal to
 #nm[De-Bruijn] indices. Further note that this symbol is entirely different to
 $in$, which we used to denote predicate membership proofs, i.e., a specialized notation for
-reverse function application. The latter will be use exceedingly rarely from
+reverse function application. The latter will be used very rarely from
 this point on.
 
 

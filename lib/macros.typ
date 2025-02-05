@@ -1,4 +1,4 @@
-#import "/lib/theorems.typ": thmplain, thmproof
+#import "/lib/theorems.typ": thmplain, thmproof, qedhere
 
 #let my_thm(head, bodyfmt: x => [\ #x]) = return thmplain(
   "theorem",

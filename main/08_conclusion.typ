@@ -6,8 +6,7 @@ I hope that this thesis has somewhat demystified operational game semantics to
 the type theorist. Let us review some of the most important steps we have taken.
 
 - We started off in @ch-game by presenting a new data structure
-  for representing
-  coinductive automata in type theory. This puts a new item in the
+  for coinductively representing automata in type theory. This puts a new item in the
   already large bag of constructions based on polynomial functors. But
   perhaps most importantly, we demonstrated that with a small twist,
   namely splitting these polynomials in halves, we can obtain
