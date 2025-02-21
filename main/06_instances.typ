@@ -1587,7 +1587,7 @@ observation application map and finally the language machine.
   )
 
   Introduce $s_2$ and $o_2 cl kriv.fobs th s_2$ and let us show that $o_2$ is accessible. By
-  constructor, assume $s_1$ and $o_1 cl kriv.fobs th s_1$ such that $o_1 ogs.badc o_2$, and
+  constructor, assume $s_1$ and $o_1 cl kriv.fobs th s_1$ such that $o_1 ogs.badinst o_2$, and
   let us show that $o_1$ is accessible. Destruct the relation witness and
   introduce all the hypotheses as above. Proceed by case on $o_2$.
 
