@@ -16,11 +16,11 @@ are purely formal constructs, this complexity gives to the study of their semant
 feel of a natural science, where mathematical models are built to capture an
 ever increasing level of detail. For sure, a handful of languages do admit
 truly exhaustive semantic descriptions, but this arguably only ever happens when they
-are designed with this intent (e.g., Standard #nm[Ml]~#mcite(dy: -2.2em, <MilnerHMT97>) or #txsc[WebAssembly]~#mcite(dy: 0.8em, <WebAsm>)).
+are designed with this intent (e.g., Standard #nm[Ml]~#mcite(<MilnerHMT97>) or #txsc[WebAssembly]~#mcite(dy: 3em, <WebAsm>)).
 Even for programming languages strongly rooted in the theoretical
 computer science community and routinely used by semanticists, such as proof
-assistants like Agda~#mcite(<Agda>) or Coq~#mcite(dy: 1em, <Coq>), a perfect description is
-elusive#margin-note(mark: true, dy: 1.8em)[
+assistants like Agda~#mcite(dy: 2.3em, <Agda>) or Coq~#mcite(dy: 3.3em, <Coq>), a perfect description is
+elusive#margin-note(mark: true, dy: 4em)[
   To be completely honest, in the case of Coq _kernel_, the
   #txsc[MetaCoq]~#num-cite(<Metacoq>) project is increasingly close to the
   ground truth.
@@ -163,7 +163,7 @@ results early in the 20#super[th] century have shown that this can very quickly
 become unfeasible. First, #nm[Gödel]~#mcite(<Godel31>) showed that for any
 logical system, as soon as some moderate level of expressivity is attained,
 there are some statements which are neither provable nor disprovable. Quickly
-thereafter, #nm[Church]~#mcite(<Church36>) and #nm[Turing]~#mcite(dy: 3em, <Turing37>)
+thereafter, #nm[Church]~#mcite(dy: 0.3em, <Church36>) and #nm[Turing]~#mcite(dy: 3.3em, <Turing37>)
 independently showed that there are some tasks which no program can solve,
 i.e., functions that we can specify but not _compute_. Hence, the "computer
 assistance" we make use of in this thesis is of another kind. Instead of asking
@@ -531,7 +531,7 @@ evaluation contexts, keeping only _configurations_ (e.g. named terms) and
 generalized values. On top of streamlining the OGS, letting go of
 contexts will also greatly simplify the necessary syntactic metatheory, as
 these "programs with a hole" are perhaps _fun_, but certainly not
-_easy_~#mcite(dy: -8.4em, <AbbottAGM03>)#mcite(dy: -5.4em, <McBride08>)#mcite(dy: -3.4em, <HirschowitzL22>).
+_easy_~#mcite(dy: -8.5em, <AbbottAGM03>)#mcite(dy: -5.5em, <McBride08>)#mcite(dy: -3.5em, <HirschowitzL22>).
 Yet as we have just seen, this does not preclude to treating languages
 given by more traditional small- or big-step operational semantics.
 
@@ -551,23 +551,17 @@ theory, and prove it correct w.r.t. observational equivalence. We do not do so
 for a particular concrete language, but instead formalize it on top of an
 axiomatization of pure, simply-typed programming languages, for which we provide
 several instances. This result, as well as most other constructions in this
-thesis have been entirely proven in Rocq. The resulting
-code artifact can be found at the following address.
-
-#align(center)[
-  #link("https://github.com/lapin0t/ogs")
-]
-#block()
+thesis have been entirely proven in Rocq.
 
 *Games and Strategies in Type Theory* #sym.space.quad In order to represent dialogue games and
 game strategies in type theory, we start off in @ch-game by reviewing a notion
 of game by #nm[Levy] and #nm[Staton]~#mcite(<LevyS14>). We then generalize upon the
-construction of _interaction trees_~#mcite(dy: 0.6em, <XiaZHHMPZ20>) and
+construction of _interaction trees_~#mcite(dy: 0.7em, <XiaZHHMPZ20>) and
 introduce _indexed interaction trees_, to represent game strategies as finely
 typed coinductive automata. In order to reason on such strategies, we show
 powerful reasoning principles for their strong and weak bisimilarity, inside a
 framework for coinduction based on complete
-lattices~#mcite(dy: 1.8em, <Pous16>)#mcite(dy: 4em, <SchaferS17>). Further, we
+lattices~#mcite(dy: 1.7em, <Pous16>)#mcite(dy: 3.75em, <SchaferS17>). Further, we
 introduce a new notion of _eventually guarded_ systems of recursive equations on
 indexed interaction trees, which we prove to have existence and uniqueness of
 fixed points w.r.t. strong bisimilarity.
@@ -576,7 +570,7 @@ fixed points w.r.t. strong bisimilarity.
 review the standard tools for modeling intrinsically typed and scoped
 syntaxes with substitution~#mcite(<FioreS22>)#mcite(dy: 3em,
 <AllaisACMM21>). To fit our needs, we present the lesser known notion of
-_substitution module_~#mcite(dy: 6.6em, <HirschowitzM10>) over a substitution monoid,
+_substitution module_~#mcite(dy: 6.65em, <HirschowitzM10>) over a substitution monoid,
 generalizing upon the theory of renaming. We further introduce a novel notion
 of _scope structures_, generalizing upon the traditional #nm[De-Bruijn]
 indices. Although relatively superficial, scope structures provide us with much
@@ -588,11 +582,14 @@ _observation_, inspired by copatterns~#mcite(<AbelPTS13>). We then introduce
 _language machines_, axiomatizing languages with open evaluators and derive
 from them a strategy for the OGS game, constructing the OGS model. We then
 state and discuss the hypotheses for correctness of equivalence in the model
-w.r.t. observational equivalence and state the correctness theorem. A notable
-finding is the appearance of a hypothesis which was never isolated in previous
-OGS correctness proofs, as for most concrete languages it is a simple annoyance
-to deal with. The language-generic setting, however, makes the requirement and
-its reason clear.
+w.r.t. a variant of observational equivalence and state the correctness
+theorem. A notable finding is the appearance of a hypothesis which was never
+isolated in previous OGS correctness proofs, as for most concrete languages it
+is a simple annoyance to deal with. The language-generic setting, however,
+makes the requirement and its reason clear. Our variant of observational
+equivalence, _substitution equivalence_, is an analogue of #txsc[Ciu]
+equivalence~#mcite(<MasonT91>) tailored to our axiomatization of language
+machines.
 
 *OGS Correctness* #sym.space.quad We prove the correctness theorem in
 @ch-proof. After a standard detour on game strategy composition, we provide a
@@ -620,7 +617,7 @@ examples forming a cross section of what can be expressed. For each of them, we 
 the correctness theorem hypotheses. First, we study Jump-with-Argument, a
 minimalistic continuation passing style calculus~#mcite(<Levy04>).
 Then, we study #short.uuc with recursive
-types~#mcite(dy: 0.8em, <CurienH00>)#sym.zwj#mcite(dy: 3em, <DownenA20>), a very
+types~#mcite(dy: 0.7em, <CurienH00>)#sym.zwj#mcite(dy: 2.75em, <DownenA20>), a very
 expressive language with explicit control flow. Similarly to
 Call-by-Push-Value~#num-cite(<Levy04>), it has been exhibited as
 a fine compilation target, so that this instance also implicitly captures all
@@ -629,6 +626,17 @@ traditional calculus, untyped #short.llc under weak head reduction. In this
 case, it is known that NF bisimulation specializes to #nm[Levy]-#nm[Longo] tree
 equivalence~#mcite(<Lassen99>), thus providing a new proof of their soundness
 w.r.t. observational equivalence.
+
+*Rocq Artifact* #sym.space.quad The source repository of the resulting code
+artifact is hosted at #link("https://github.com/lapin0t/ogs"). As part of
+a publication of the main results of this thesis, it has been
+archived as
+#link("https://doi.org/10.5281/zenodo.14697618")[#txtt("doi:10.5281/zenodo.14697618")].
+This publication "An Abstract, Certified Account of Operational Game
+Semantics", to appear in #txsc[Esop]\'25, is co-authored by my PhD advisors Tom
+#nm[Hirschowitz], Guilhem #nm[Jaber] and Yannick #nm[Zakowski], and covers most
+of the material from @ch-game, @ch-ogs and @ch-proof, although with far less details in the
+various proofs.
 
 == Metatheory
 
@@ -736,7 +744,7 @@ $ de("swap") th {A th B} cl A base.sum B -> B base.sum A \
   pat(base.inj1 th a & := base.inj2 th a,
       base.inj2 th b & := base.inj1 th b) $
 #margin-note(dy: -7em)[
-  The leftist programmer~#mcite(dy: 7em, <McBrideM04>) unsettled by this $kw.case$
+  The leftist programmer~#mcite(dy: 6.7em, <McBrideM04>) unsettled by this $kw.case$
   construction should note that we use it very sparingly. In fact, we will
   only use it in head position, as a $ckw("with")$ construction in disguise.
 ]
@@ -806,5 +814,10 @@ too strong for several statements. As such, we use _extensional_ equality
 in several places, written $a approx b$. The problem is that the definition of
 extensional equality depends on the type we are considering, so that this
 should be essentially considered as a kind of typeclass giving the extensional
-equality equivalence relation at any given type. We try to be explicit
-around its use. For types $A$ and $B$, $A approx B$ denotes an isomorphism.
+equality equivalence relation at any given type. Note that this does not mean
+that we use any extensionality axiom, only that we use a slightly sloppy
+overloading of the $approx$ notation, as it cannot easily be given a single
+definition. We mostly make use of it at function types (denoting pointwise
+equality) and coinductive types (denoting strong bisimilarity) as well as on
+compound structures containing such objects. In any case, we try to be as
+explicit as possible around its use. 

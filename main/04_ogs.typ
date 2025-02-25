@@ -1219,7 +1219,6 @@ language machine model. What is left to do is to actually prove it, and this is
 the subject of the next chapter.
 
 
-
 /*
 TODO: utiliser cette remarque sur la compo générale (ouverte)
 #remark[

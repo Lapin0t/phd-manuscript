@@ -797,10 +797,11 @@ proof assistants.
   observational type theory~#mcite(<McBride09>).
 ]
 
-The above definition is to interaction trees~#mcite(<XiaZHHMPZ20>)
-what inductive families are to inductive data types. As we will discover
-in the remainder of this chapter, all of the monadic theory of interaction
-trees lifts neatly to this newly indexed setting.
+The above definition is to interaction trees~#mcite(<XiaZHHMPZ20>) what
+inductive families are to inductive data types, in other words, the same
+construction but taking place in the category $base.Set^I$ instead of
+$base.Set$. As we will discover in the remainder of this chapter, all of the
+monadic theory of interaction trees lifts neatly to this newly indexed setting.
 
 Before moving on to define bisimilarity and other useful structure, let us
 first link this definition to transition systems over games. First, as indexed
@@ -948,8 +949,12 @@ be available on the delay monad.
   Because the delay monad is not indexed, it is given by a _trivially_
   indexed interaction tree. This choice is rather debatable in our concrete
   code artifact, as Rocq's inability to provide an #sym.eta\-law on the empty
-  record $base.unit$ makes it rather painful to work with trivially indexed
-  interaction trees. We gloss over these issues and assume the #sym.eta\-law
+  record $base.unit$ makes it sometimes painful to work with trivially indexed
+  interaction trees. Indeed, when exhibiting a trivially indexed family $(i cl base.unit) -> X th i$ for some given $X$,
+  we have the choice of pattern matching, or not, on the given index $i$. It is
+  usually best not to, so that the family is definitionally constant, but
+  this unknown $i$ can sometimes clash when a concrete $base.tt$ is expected.
+  We gloss over these issues and assume the #sym.eta\-law
   on $base.unit$. This makes every element of $base.unit$ _definitionally_ equal
   to $base.tt$, and more importantly, every function $base.unit -> X$
   definitionally constant.
@@ -1600,8 +1605,9 @@ $ itree.tp_Sigma th X := itree.F_Sigma th X th (itree.t_Sigma th X) $
 #remark[
   The weak bisimulation map can be understood quite simply. Given a pre-relator $cF$ over
   $Sigma$ and a relation on outputs, it relates interaction trees which both "reduce" to
-  some smaller trees, peeling away some number of silent steps, then both emit "synchronized" moves,
-  as constrained by $itree.RS$, and finally are related by $cF$.
+  some smaller trees, peeling away some number of silent steps, then both emit "synchronized" moves
+  as constrained by $itree.RS$, i.e., both return, silent or visible moves, and
+  finally the resulting subtrees are related by $cF$.
 ]
 
 We can now give a first batch of easy properties on weak bisimilarity and weak bisimulation
@@ -2632,9 +2638,14 @@ uniqueness of fixed points. This principle will provide us with a big hammer,
 very useful for hitting nails looking like $itree.giter_f th x itree.eq t th x$.
 However, being guarded is quite a strong requirement! Notably, our equation of
 interest in this thesis, the one defining the composition of OGS strategies and
-counter-strategies, has no hope of being guarded. However, observe that if
-there is a finite chain $x_1 ↦ x_2 ↦ ... ↦ x_n ↦ t$, such that $t$ is guarded,
-then after $n$ iteration step, $x_1$ will be mapped to a guarded $t$. The
+counter-strategies, has no hope of being guarded. However, observe that if the
+equation contains a finite chain
+$ x_1 & ↦ itree.ret th (base.inj2 th x_2) \
+  x_2 & ↦ itree.ret th (base.inj2 th x_3) \
+  dots.v \
+  x_n & ↦ t, $
+such that $t$ is guarded,
+then after unfolding the equation $n$ times, $x_1$ will be mapped to a guarded tree $t$. The
 iteration starting from $x_1$ is then still uniquely defined. This was already
 noted by #nm[Adámek], #nm[Milius] and #nm[Velebil]~#mcite(<AdamekMV10>) with
 their notion of _grounded_ variables. However, a clear definition and study of

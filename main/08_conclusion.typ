@@ -179,7 +179,7 @@ Indexing, however, unlocks even more possibilities by building upon
 the theory of _ornaments_~#mcite(dy: 3.7em, <McBride11a>)#mcite(dy: 5.8em, <Dagand17>).
 Indeed, it is not too hard to enrich the positions of any game to keep track of
 the history of what has been played. Then, any safety predicate on strategies
-over a game can be backed into a _safe_ game, by requiring any move to be played
+over a game can be baked into a _safe_ game, by requiring any move to be played
 to be paired with a witness that it is safe with respect to the current
 history. Ordinary strategies for this _safe_ game may then be proven equivalent to the
 subset of strategies of the original game for which the safety property holds: the

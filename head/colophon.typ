@@ -10,7 +10,7 @@
 
 #align(left)[
   Sémantique des jeux operationelle en théorie des types \
-  #sym.copyright~Peio Borthelle, 2024 \
+  #sym.copyright~Peio Borthelle, 2025 \
   Cette thèse est distribuée sous la licence
   #link("https://creativecommons.org/licenses/by-nc-sa/4.0/")[
     CC BY-NC-SA 4.0

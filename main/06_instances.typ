@@ -45,7 +45,12 @@ This is a typed
 language, so as is usual, there is some leeway regarding which types are
 included. As we are aiming for simplicity, we will only look at a
 representative fragment featuring three types of values: booleans $jwa.base$,
-continuations $jwa.neg A$ and pairs $A jwa.prod B$.
+continuations $jwa.neg A$ and pairs $A jwa.prod B$. This language is strongly
+normalizing, although it is not directly obvious from the evalutator and usually
+proven by a reducibility argument. As such, although we know that the evaluator
+is semantically quite simple, we will still benefit from our framework allowing
+for non-termination, by simply side-stepping any proof of totality of
+said evaluator.
 
 The language consists of two judgments: non-returning commands and values. Commands play the
 role of the configurations of an abstract machine, and are only parametrized by
@@ -240,7 +245,7 @@ _ultimate patterns_ of type $A$, i.e., maximally deep patterns of type $A$.
   $ & jwa.dom th jwa.plam_A   && := ctx.nilc ctx.conc jwa.neg A \
     & jwa.dom th jwa.pyes && := ctx.nilc \
     & jwa.dom th jwa.pno && := ctx.nilc \
-    & jwa.dom th jwappair(p, q) && := jwa.dom p ctx.catc jwa.dom q $
+    & jwa.dom th jwappair(p, q) && := jwa.dom p ctx.cat jwa.dom q $
 
   Finally define _observations_ as the following binding family.
 
@@ -493,9 +498,10 @@ redexes (@def-finite-redex).
   The JWA language machine has finite redexes.
 ] <thm-jwa-finred>
 #proof[
-  As explained for @def-jwa-obsapp, we silently do a benign preprocessing to express the property using
-  patterns instead of observations, for else the notational weight would be
-  unbearable. We need to prove that the relation defined by the following inference rule is well founded.
+  As explained for @def-jwa-obsapp, we silently do a benign preprocessing to
+  express the property using patterns instead of observations, for else the
+  notational weight would be unbearable. We need to prove that the relation
+  defined by the following inference rule is well founded.
 
   #inferrule(
     ($i cl Gamma ctx.var alpha_1$,
@@ -510,23 +516,26 @@ redexes (@def-finite-redex).
     $ogs.badc th H_1 th H_2 cl o_1 ogs.badinst o_2$
   )
 
-  Let $alpha_2 cl jwa.ntyp$ and $o_2 cl jwa.pat th alpha_2$. By the
-  accessibility constructor, we need to prove that for any $alpha_1$ and $o_1
-  cl jwa.pat th alpha_1$ such that $o_1 ogs.badinst o_2$, $o_1$ is
-  accessible. Destruct the proof of $o_1 ogs.badinst o_2$, introduce all
-  the hypotheses as above and proceed by case on $v$, as it is a continuation value,
-  it can be either an abstraction or a variable. If $v := jwa.vlam th c$,
-  $jwa.apply th v th o_2 th gamma$ reduces to $(jwa.p2v th o_2)[gamma]
-  jwa.capp th jwa.vlam c$. This is a redex, thus its evaluation start with
-  #itree.tauF and thus $H_2$ is absurd as the RHS starts with #itree.retF. If instead $v
-  := jwa.vvar th i$, then $H_1$ is absurd.
+  What we will prove is in fact that this relation is empty, directly implying
+  that it is wellfounded.
+
+  Assume $alpha_1, alpha_2 cl jwa.ntyp$, $o_1 cl jwa.pat th alpha_1$ and $o_2
+  cl jwa.pat th alpha_2$ such that $o_1 ogs.badinst o_2$. Destruct the proof of
+  $o_1 ogs.badinst o_2$, introduce all the hypotheses as above and proceed by
+  case on $v$, as it is a continuation value, it can be either an abstraction
+  or a variable. If $v := jwa.vlam th c$, $jwa.apply th v th o_2 th gamma$
+  reduces to $(jwa.p2v th o_2)[gamma] jwa.capp th jwa.vlam c$. This is a
+  redex, thus its evaluation start with #itree.tauF and thus $H_2$ is absurd
+  as the RHS starts with #itree.retF. If instead $v := jwa.vvar th i$, then
+  $H_1$ is absurd.
 ]
 
 #remark[
-  The above proof of finite redex is quite remarkable: no "redex failure" can happen,
-  and evaluating the application of a non-variable value _always_ creates a redex. "Low-level"
-  languages such as JWA which are designed around first-class continuations
-  usually have this stronger property.
+  The above proof of finite redex is quite remarkable: as the relation is
+  empty no "redex failure" can happen, i.e., evaluating the application of a
+  non-variable value _always_ creates a redex. "Low-level" languages such as
+  JWA which are designed around first-class continuations usually have this
+  stronger property.
 ]
 
 This concludes the proof of the hypotheses for correctness. We may now deduce
@@ -559,18 +568,8 @@ equivalence to use a notion of big-step reduction $c arrow.b.double b$.
   ].
 ]
 
-We also obtain NF model correctness in the exact same way.
-
-#theorem[NF Correctness][
-  For all $Gamma cl jwa.nctx$ and $c_1, c_2 cl jwa.cmd th Gamma$, if
-  $nfinterpA(c_1) itree.weq nfinterpA(c_2)$, then for all $gamma cl Gamma
-  asgn(jwa.val) (ctx.nilc ctx.conc jwa.neg jwa.base)$, $ c_1[gamma] arrow.b.double jwa.pyes <-> c_2[gamma] arrow.b.double jwa.pyes. $
-] <thm-jwa-nf-correctness>
-#proof[
-  By @thm-nf-correctness applied to $jwa.jwa$, with hypotheses proven in @lem-jwa-sub, @thm-jwa-respsub and @thm-jwa-finred,
-  obtain $ base.fst itree.fmap jwa.eval th c_1[gamma] quad itree.weq quad base.fst itree.fmap jwa.eval th c_2[gamma]. $
-  Conclude by the fact that $itree.weq$ is an equivalence relation.
-]
+By @thm-nf-correctness, we can then deduce NF model correctness w.r.t.
+substitution equivalence.
 
 Note that we obtain correctness only for commands in negative scopes. This is
 easily dealt with, by defining an extended equivalence relation on
@@ -691,11 +690,15 @@ configuration is determined by the type on which it is cutting. The type system
 is entirely symmetric with respect to polarity, so that every type former has a
 dual of opposite polarity. Do not confuse the #cbv\-#cbn duality of
 type polarities with the producer-consumer duality of terms and coterms as the
-two are entirely orthogonal!
+two are entirely orthogonal! The distinction between producer and consumers is
+the one between programs and continuations, while the distinction between #cbv
+and #cbn is between strict and lazy programs (and between lazy and strict
+continuations). Because of the profusion of dualities we have deliberately
+avoided the "positive" and "negative" nomenclature of polarities.
 
 The concrete way by which the priority of the #uut.mu or #uut.mut rule is
 managed is by restricting both of their reduction rules to only apply when the
-other side of the configuration is a _value_. Now pay attention because the
+other side of the configuration is a _(co)value_. Now pay attention because the
 different dualities mingle!
 
 - A *value of #cbv type* is a new syntactic category included in terms,
@@ -737,6 +740,8 @@ to the formal definition of types and syntax.
     inferrule("", $uut.ttop cl uut.xtyp th Theta th uut.pn$),
     inferrule("", $uut.tone cl uut.xtyp th Theta th uut.pp$),
     inferrule("", $uut.tbot cl uut.xtyp th Theta th uut.pn$),
+    parbreak(),
+    parbreak(),
     inferrule(
       ($A cl uut.xtyp th Theta th uut.pp$, $B cl uut.xtyp th Theta th uut.pp$),
       $A uut.tten B cl uut.xtyp th Theta th uut.pp$
@@ -775,12 +780,10 @@ product and sum types, each in their #cbv ($uut.tzer$, $uut.tone$,
 $uut.tten$, $uut.tplu$) and #cbn ($uut.tbot$, $uut.ttop$, $uut.tand$,
 $uut.tpar$) variants. We then have the two shifts, $uut.tdw$ for _thunks_ of
 a #cbn type and $uut.tup$ for _returners_ of a #cbv type, and two
-negations ($uut.tmin$, $uut.tneg$), basically swapping terms and coterms.
+negations ($uut.tmin$, $uut.tneg$), for continuations of the two polarities.
 Finally, we do not consider existential and universal quantification, but
 replace them by two fixed point types, $uut.tmu$ for inductive-like types and
-$uut.tnu$ for coinductive-like types. Their presence is mainly motivated by
-allowing us write a combinator *Y* for general recursion and thus
-obtaining a #nm[Turing]-complete language.
+$uut.tnu$ for coinductive-like types.
 
 #remark[
   The above type variables and type substitution might raise some questions. In
@@ -794,6 +797,19 @@ obtaining a #nm[Turing]-complete language.
   constant type-variable scope throughout the term syntax. In particular,
   proving OGS correctness will _not_ require _any_ law on substitution or
   renaming of types.
+]
+
+#remark[
+  The inclusion of the recursive $uut.tmu$ and $uut.tnu$ types is mainly motivated by
+  making the language non-terminating, as indeed they should allow us to write a
+  fixed point combinator. A classical case study is then to show that any two
+  fixed point combinators are normal form bisimilar, hence substitution equivalent, as
+  e.g. done by #nm[Lassen] and #nm[Levy]~#mcite(<LassenL07>) for a #txsc[Jwa]
+  with recursive types. However, because both normal form bisimulations and the
+  precise language machine instance presented here, have not yet been entirely
+  mechanized in the Rocq artifact, we will not do this case study on fixed point
+  combinators. We nonetheless present the language with recursive types here, to
+  show off how their expressivity still fits into our language machine axiomatization.
 ]
 
 #definition[Side-Annotated Types][
@@ -1110,8 +1126,8 @@ we first go through the dual notion of _patterns_.
     & uut.dom th uutpbox(uut.pn, A) && := ctx.nilc ctx.conc uut.tk""A \
     & uut.dom th uut.ptt && := ctx.nilc \
     & uut.dom th uut.pff && := ctx.nilc \
-    & uut.dom th uutppair(p_1, p_2) && := uut.dom th p_1 ctx.catc uut.dom th p_2 \
-    & uut.dom th uutpcase(p_1, p_2) && := uut.dom th p_1 ctx.catc uut.dom th p_2 \
+    & uut.dom th uutppair(p_1, p_2) && := uut.dom th p_1 ctx.cat uut.dom th p_2 \
+    & uut.dom th uutpcase(p_1, p_2) && := uut.dom th p_1 ctx.cat uut.dom th p_2 \
     & uut.dom th (uut.pinl p) && := uut.dom th p \
     & uut.dom th (uut.pinr p) && := uut.dom th p $,
   $ & uut.dom th (uut.pfst p) && := uut.dom th p \
@@ -1206,6 +1222,7 @@ and application maps.
     & uut.evalstep th & agl uut.vw th uutabs(uut.tbot, c) & xpn uut.vw th uut.vff agr && := base.inj2 th c \
     & uut.evalstep th & agl uut.vw th uutvpair(v_1, v_2) & xpp uut.vw th uutpm(uut.tten, c) agr && := base.inj2 th c[sub.var,v_1,v_2] \
     & uut.evalstep th & agl uut.vw th uutabs(uut.tpar, c) & xpn uut.vw th uutvcase(k_1,k_2) agr && := base.inj2 th c[sub.var,k_1,k_2] \
+  $ $
     & uut.evalstep th & agl uut.vw th (uut.vinl th v) & xpp uut.vw th uutpm(uut.tplu, c_1, c_2) agr && := base.inj2 th c_1[sub.var,v] \
     & uut.evalstep th & agl uut.vw th (uut.vinr th v) & xpp uut.vw th uutpm(uut.tplu, c_1, c_2) agr && := base.inj2 th c_2[sub.var,v] \
     & uut.evalstep th & agl uut.vw th uutabs(uut.tand, c_1, c_2) & xpn uut.vw th (uut.vfst th k) agr && := base.inj2 th c_1[sub.var,k] \
@@ -1442,6 +1459,11 @@ _configurations_, but they unsurprisingly pair a term with a stack.
   ))
 ]
 
+#remark[
+  One may be surprised by the absence of empty stack: the base case for stacks is provided
+  by the stack variables.
+]
+
 #lemma[Substitution][
   The family $kriv.syn$ forms a substitution monoid with decidable variables, and $kriv.conf$ forms a substitution module
   over it.
@@ -1511,14 +1533,9 @@ to see the evaluator.
 ]
 
 Let us rejoice! The journey to obtain this may have been convoluted, but the
-resulting observations and evaluator are even shorter than for JWA. In fact, once
-the pattern is ingrained, the proofs that this language machine verifies the
-correctness hypotheses are similarly straightforward. The sole exception is that the
-well-foundedness of our so called _redex failure_ relation will not be
-entirely vacuous, as indeed chains of length greater than zero do exist. This
-phenomenon is a trademark of natural deduction style calculi implemented as
-abstract machines. But before jumping to the proofs, let us actually define the
-observation application map and finally the language machine.
+resulting observations and evaluator are even shorter than for JWA. But before
+jumping to the proofs, let us actually define the observation application map
+and finally the language machine.
 
 #definition[Observation Application][
   Define the observation application map as follows.
@@ -1586,10 +1603,13 @@ observation application map and finally the language machine.
     $ogs.badc th H_1 th H_2 cl o_1 ogs.badinst o_2$
   )
 
-  Introduce $s_2$ and $o_2 cl kriv.fobs th s_2$ and let us show that $o_2$ is accessible. By
-  constructor, assume $s_1$ and $o_1 cl kriv.fobs th s_1$ such that $o_1 ogs.badinst o_2$, and
-  let us show that $o_1$ is accessible. Destruct the relation witness and
-  introduce all the hypotheses as above. Proceed by case on $o_2$.
+  We will show that this relation only contains $kriv.push ogs.badinst kriv.grab$, $kriv.push ogs.badinst kriv.force$
+  and $kriv.grab ogs.badinst kriv.force$. As such it has chains of length at most 3 and is thus
+  accessible.
+
+  Assume $s_1, s_2 cl kriv.sort$, $o_1 cl kriv.fobs th s_1$ and $o_2 cl kriv.fobs th s_2$
+  such that $o_1 ogs.badinst o_2$. Destruct the relation witness and introduce all the hypotheses
+  as above. By case on $o_2$, let us determine $o_1$.
 
   1. When $o_2 := kriv.push$, then $x$ must be a request.
      - When $x := kriv.var th i$, then $H_1$ is absurd.
@@ -1598,15 +1618,15 @@ observation application map and finally the language machine.
   2. When $o_2 := kriv.grab$, then $x$ must be a stack.
      - When $x := kriv.var th i$, then $H_1$ is absurd.
      - When $x := b kriv.cons k$, let $r := gamma th ctx.topc$.
-       - When $r := kriv.var th i$, by $H_2$, $o_1$ must be $kriv.push$, which is accessible by (1).
+       - When $r := kriv.var th i$, by $H_2$, $o_1$ must be $kriv.push$.
        - When $r := kriv.lam th a$, then $H_2$ is absurd.
   3. When $o_2 := kriv.force$, then $x$ must be a term. Proceed by case on $x$.
      - When $x := kriv.var th i$, then $H_1$ is absurd.
      - When $x := a kriv.app b$, then $H_2$ is absurd.
      - When $x := krivreq(r)$, pose $k := gamma th ctx.topc$.
-       - When $k := kriv.var th i$, by $H_2$, $o_1$ must be $kriv.grab$, which is accessible by (2).
+       - When $k := kriv.var th i$, by $H_2$, $o_1$ must be $kriv.grab$.
        - When $k := a kriv.cons k'$, by case on $r$.
-         - When $r := kriv.var th i$, by $H_2$, $o_1$ must be $kriv.push$ which is accessible by (1).
+         - When $r := kriv.var th i$, by $H_2$, $o_1$ must be $kriv.push$.
          - When $r := kriv.lam th a$, then $H_2$ is absurd.
   #v(-1.8em)
 ]

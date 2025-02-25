@@ -1,5 +1,8 @@
 #import "/lib/all.typ": *
-#pagebreak()
+
+#state("content.switch").update(false)
+#pagebreak(to: "odd")
+#state("content.switch").update(true)
 
 #v(0.5fr)
 
@@ -27,8 +30,8 @@ model construction and its correctness proof.
 
 Cette thèse construit un modèle de sémantique des jeux opérationelle (OGS) de manière
 entièrement formelle dans le langage de la théorie des types, et prouve
-sa correction vis-à-vis de l'équivalence observationelle. Un artefact de code
-implémente ces résultats en utilisant le Rocq Prover.
+sa correction vis-à-vis de l'équivalence observationelle. Ces résultats sont mécanisés
+avec l'assistant de preuve Rocq.
 La construction du modèle d'OGS et sa correction sont génériques par
 rapport à un langage de programmation axiomatisé et à son évaluateur. L'axiomatisation
 dans le style des machines abstraites capture les langages simplement typés avec
@@ -44,3 +47,5 @@ pour les systèmes d'équations ultimement gardés sur les arbres d'intéraction
 forme normale et sa preuve de correction.
 
 #v(1fr)
+
+#pagebreak()

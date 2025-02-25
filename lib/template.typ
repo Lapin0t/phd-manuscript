@@ -6,6 +6,75 @@
   if in-outline.get() { short } else { long }
 }
 
+#let header-post() = context {
+  let hyd = hydra()
+  if hyd == none { return [] }
+
+  let title = block(inset: 0.3cm, hyd)
+  let num = block(inset: 0.3cm, counter(page).display())
+
+  if calc.even(here().page()) {
+    place(top + left, dx: 0.7cm, dy: 0cm,
+      block(height: page.margin.top/2, align(bottom, title))
+    )
+    place(top + left, dx: 0.7cm, dy: 0cm,
+      line(length: 1.6cm, angle: 90deg)
+    )
+    place(top + left, dx: -1.3cm, dy: 0cm,
+      block(height: page.margin.top/2, width: 2cm, align(bottom + right, num))
+    )
+  } else {
+    place(top + right, dx: -0.7cm, dy: 0cm,
+      block(height: page.margin.top/2, align(bottom, title))
+    )
+    place(top + right, dx: -0.7cm, dy: 0cm,
+      line(length: 1.6cm, angle: 90deg)
+    )
+    place(top + right, dx: 1.3cm, dy: 0cm,
+      block(height: page.margin.top/2, width: 2cm, align(bottom + left, num))
+    )
+  }
+}
+
+#let header() = context {
+  let hyd = hydra()
+  if hyd == none { return [] }
+
+  let pg = here().page()
+  let is-start-chapter = query(heading.where(level:1))
+    .map(it => it.location().page())
+    .contains(pg)
+  if not state("content.switch", false).get() or is-start-chapter {
+    return []
+  }
+
+  let title = block(inset: 0.3cm, hyd)
+  let num = block(inset: 0.3cm, counter(page).display())
+
+  if calc.even(here().page()) {
+    place(top + left, dx: -3.7cm, dy: 0cm,
+      block(height: page.margin.top/2, align(bottom, title))
+    )
+    place(top + left, dx: -3.7cm, dy: 0cm,
+      line(length: 1.6cm, angle: 90deg)
+    )
+    place(top + left, dx: -5.7cm, dy: 0cm,
+      block(height: page.margin.top/2, width: 2cm, align(bottom + right, num))
+    )
+  } else {
+    place(top + right, dx: 3.7cm, dy: 0cm,
+      block(height: page.margin.top/2, align(bottom, title))
+    )
+    place(top + right, dx: 3.7cm, dy: 0cm,
+      line(length: 1.6cm, angle: 90deg)
+    )
+    place(top + right, dx: 5.7cm, dy: 0cm,
+      block(height: page.margin.top/2, width: 2cm, align(bottom + left, num))
+    )
+  }
+}
+
+/*
 #let header() = context {
   let hyd = hydra()
   if hyd == none { return [] }
@@ -35,9 +104,22 @@
     )
   }
 }
+*/
 
 #let front-matter(it) = {
-  set page(numbering: "i")
+  set page(numbering: "i", footer: context {
+    if counter(page).get().at(0) < 3 { return [] }
+    if not state("content.switch", false).get()  { return [] }
+    align(center, counter(page).display("i"))
+  })
+  /*set page(footer: context {
+    let cnt = counter(page).display("i")
+    if calc.even(here().page()) {
+        cnt + h(1fr)
+    } else {
+        h(1fr) + cnt
+    }
+  })*/
   set heading(numbering: none)
   counter(page).update(1)
   it
@@ -53,6 +135,7 @@
     ),
     numbering: "1",
     header: header(),
+    footer: [],
   )
   set heading(numbering: "1.1")
   //set heading(numbering: (n1, ..x) => numbering("1.1", n1 - 1, ..x))
@@ -63,6 +146,7 @@
 
 #let back-matter(it) = {
   set heading(numbering: "A.1", supplement: [Appendix])
+  set page(header: context header-post())
   counter(heading.where(level: 1)).update(0)
   counter(heading).update(0)
   it
@@ -86,7 +170,7 @@
     height: 246mm,
     margin: (
       bottom: 2.17cm,
-      top: 3.51cm,
+      top: 2.17cm,
       inside: 2.1835cm,
       outside: 2.1835cm,
     ),
@@ -103,7 +187,10 @@
   show heading: it => v(2.5em, weak: true) + it + v(2em, weak: true)
 
   show heading.where(level: 1): it => context {
+    state("content.switch").update(false)
     pagebreak(to: "odd")
+    state("content.switch").update(true)
+
     set text(size: 22pt, weight: "bold")
 
     if heading.numbering == none {

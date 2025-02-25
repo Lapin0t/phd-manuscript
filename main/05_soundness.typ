@@ -421,10 +421,10 @@ We can now prove eventual guardedness.
 ] <lem-compo-guarded>
 #proof[
   More formally, the goal is to prove $itree.eqevguard th ogs.mcompeq$, i.e.,
-  $ (a cl ogs.mcarg) -> itree.evguard_ogs.mcompeq th (ogs.mcomp th a). $
+  $ (a cl ogs.mcarg) -> itree.evguard_ogs.mcompeq th (ogs.mcompeq th a). $
 
   Introducing and fully destructing the argument $a$ as $((c, sigma^+) ctx.cute sigma^-)$, obtain $c cl C th (Omega ctx.cat ogs.catE Psi)$,
-  $sigma^+ cl ogs.teleA th Psi$ and $sigma^- cl ogs.teleP th Psi$. As $ogs.mcomp$ starts
+  $sigma^+ cl ogs.teleA th Psi$ and $sigma^- cl ogs.teleP th Psi$. As $ogs.mcompeq$ starts
   by evaluating $c$, lets look at the first step of $ogs.eval th c$:
   - If it is a #itree.tauF step, we directly conclude by guardedness (#itree.evg).
   - If it is a return $itree.retF th ((i ctx.cute o), gamma)$ where $i$ belongs to the final scope $Omega$, the composition returns and

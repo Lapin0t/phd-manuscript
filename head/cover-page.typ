@@ -44,27 +44,29 @@
 
         #v(1fr)
 
-        Thèse soutenue publiquement le 1#super[er] Janvier 2025 \
+        Thèse soutenue publiquement le *12 Mars 2025* \
         devant le jury composé de#sym.space.punct: \
         #par(leading: 0.5em, [
           *M. David MONNIAUX* \
-          Directeur de Recherche, Université Grenoble Alpes, Président \
+          Directeur de Recherche, CNRS, Université Grenoble Alpes, Président \
           *Mme. Stephanie WEIRICH* \
           Distinguished Professor, University of Pennsylvania, Rapportrice \
           *M. Damien POUS* \
           Directeur de Recherche, CNRS, ENS de Lyon, Rapporteur \
-          *M. Hugo HERBELIN* \
-          Directeur de Recherche, INRIA, Université Paris Cité, Examinateur\
-          *Mme. Kathrin STARK* \
-          Assistant Professor, Heriot-Watt University, Examinatrice\
           *M. Pierre-Évariste DAGAND* \
           Chargé de Recherche, CNRS, Université Paris Cité, Examinateur\
+          *M. Hugo HERBELIN* \
+          Directeur de Recherche, INRIA, Université Paris Cité, Examinateur\
           *M. Paul Blain LEVY* \
-          Reader in Theor. Comput. Sci., University of Birmingham, Examinateur\
+          Senior Lecturer, University of Birmingham, Examinateur\
+          *Mme. Kathrin STARK* \
+          Assistant Professor, Heriot-Watt University, Examinatrice\
+          *M. Tom HIRSCHOWITZ* \
+          Directeur de Recherche, CNRS, Université Savoie Mont Blanc, Directeur de thèse\
           *M. Guilhem JABER* \
-          Maître de Conférences, Nantes Université, Invité (Co-encadrant)\
+          Maître de Conférences, Nantes Université, Invité, Co-encadrant de thèse\
           *M. Yannick ZAKOWSKI* \
-          Chargé de Recherche, INRIA, ENS de Lyon, Invité (Co-encadrant)\
+          Chargé de Recherche, INRIA, ENS de Lyon, Invité, Co-encadrant de thèse\
         ])
 
         #v(0.3fr)

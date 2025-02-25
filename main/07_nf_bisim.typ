@@ -118,7 +118,8 @@ merely a simplified version of the (naive) OGS machine strategy: it proceeds by
 evaluating the current language configuration to compute the next move, and
 using the application map to respond to queries.
 
-#definition[NF Strategy][Given a language machine $M cl ogs.machine th O th V th C$ with renamings,
+#definition[NF Strategy][
+  Given a language machine $M cl ogs.machine th O th V th C$ with renamings,
   i.e., such that $sub.pren th V$ and $sub.ren th C$ hold, given a final scope
   $Omega cl S$, the _NF machine strategy_ is the big-step system defined as follows.
   $ nf.mstrat th M cl strat.bs_nf.g th (kw.fun th Gamma |-> O^ctx.named th Omega) \
@@ -181,7 +182,7 @@ on the face of it, an NF strategy does not know how to respond to. However, ever
 was once new! So if we remember all the continuations of an NF strategy along the way,
 we can accumulate enough information to respond to any OGS server queries, by restarting
 the relevant old continuation. In order to do so, we will first need a small helper to
-weaken the scope of NF strategies.
+rename the scope of NF strategies.
 
 #definition[NF Strategy Renaming][
   Assuming a scope structure $ctx.scope_T th S$, given a binding family $O cl
@@ -311,15 +312,16 @@ namely that $nf.nf2ogs$ respects weak bisimilarity.
 We can now prove the normal form bisimulation correctness theorem.
 
 #theorem[NF Correctness][
-  Assuming the same set of hypotheses as OGS correctness (@thm-correctness), NF bisimulation
-  is correct w.r.t. substitution equivalence, i.e., for any $Gamma cl S$ and $c_1, c_2 cl C th Gamma$, the
-  following statement holds.
+  Given a language machine $M cl ogs.machine th O th V th C$ with renamings,
+  i.e., such that $sub.pren th V$ and $sub.ren th C$ hold, given a final scope
+  $Omega cl S$, NF bisimulation
+  is correct w.r.t. OGS bisimulation, i.e., for any $Gamma cl S$ and $c_1, c_2
+  cl C th Gamma$, the following statement holds.
 
-  $ nfinterpA(c_1) itree.weq nfinterpA(c_2) -> c_1 ogs.subeq c_2 $
+  $ nfinterpA(c_1) itree.weq nfinterpA(c_2) -> ogsinterpA(c_1) itree.weq ogsinterpA(c_2) $
 ] <thm-nf-correctness>
 #proof[
-  Assume $c_1$ and $c_2$ such that $nfinterpA(c_1) itree.weq nfinterpA(c_2)$. By @thm-correctness
-  it is sufficient to prove $ogsinterpA(c_1) itree.weq ogsinterpA(c_2)$.
+  Assume $c_1$ and $c_2$ such that $nfinterpA(c_1) itree.weq nfinterpA(c_2)$.
 
   $ ogsinterpA(c_1) th th & itree.eq nf.nf2ogs th (nfinterpA(c_1)) quad quad quad & #[(@thm-ogs-nf-facto)] \
                     & itree.weq nf.nf2ogs th (nfinterpA(c_2)) & #[(@lem-nf-mono)] \
@@ -328,20 +330,27 @@ We can now prove the normal form bisimulation correctness theorem.
 ]
 
 The above correctness theorem concludes the treatment of normal form
-bisimulations for this thesis. There is definitely a number of side results on
-NF strategies which we have glossed over, such as, among others, the
-injectivity of $nf.nf2ogs$. There is also much more to say on the relationship
-between the NF game and the OGS game, but we leave this thorough study for
-future work.
+bisimulations for this thesis. By combining it with
+@thm-correctness proving OGS correctness w.r.t. substitution equivalence, we can directly
+deduce that NF bisimulations are correct w.r.t. substitution equivalence.
+Since the server is allowed to play less moves in the NF game than in the OGS
+game, it is naturally easier to prove that two language configurations are
+normal form bisimilar than OGS bisimilar. As such, to prove substitution
+equivalence of two concrete programs, the NF correctness theorem is a more
+practical entry point than the OGS correctness theorem. In fact in the realm of
+program equivalence for languages without state or polymorphism, it can be
+argued that OGS is merely a technical device for proving NF correctness.
+And indeed, in a line of work by #nm[Lassen] and
+#nm[Levy]~#mcite(dy: 0em, <LassenL07>)#mcite(dy: 1.6em, <LassenL08>), an early appearance
+of an OGS-like construction can be seen during the NF correctness proof.
 
-Since the server is allowed to play less moves in the NF game than in the OGS game, it
-is naturally easier to prove that two language configurations are normal form
-bisimilar than OGS bisimilar. As such, to prove substitution equivalence of two
-concrete programs, the NF correctness theorem is of greater practical interest
-than the OGS correctness theorem. In fact in the realm of program
-equivalence for languages without state or polymorphism, it can be argued that OGS is merely a
-technical device for proving NF correctness. 
-And indeed, in a line of work by
-#nm[Lassen] and #nm[Levy]~#mcite(<LassenL07>)#mcite(dy: 3em,
-<LassenL08>), an early appearance of an OGS-like construction can be
-seen during the NF correctness proof.
+There is definitely a number of side results on NF strategies which we have
+glossed over. Indeed, much of the above constructions and proofs are still to
+be written in the Rocq artifact, and it is quite uncomfortable to program
+without the safety net of an actual type checker! Among the presumably low
+hanging fruits, proving the injectivity of $nf.nf2ogs$ would give us the
+reverse of the above implication, in other words that the NF model is correct
+and complete w.r.t. the OGS model. There is also much more to say on the
+relationship between the NF game and the OGS game, but we leave this thorough
+study for future work.
+

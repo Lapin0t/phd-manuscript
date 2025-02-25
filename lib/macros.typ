@@ -1,6 +1,14 @@
 #import "/lib/theorems.typ": thmplain, thmproof, qedhere
 
-#let my_thm(head, bodyfmt: x => [\ #x]) = return thmplain(
+#let bodyfmt-base(body) = {
+  show math.equation.where(block: true): it => {
+    pad(left: -1em, it)
+  }
+
+  body
+}
+
+#let my_thm(head, bodyfmt: x => bodyfmt-base[\ #x]) = return thmplain(
   "theorem",
   head,
   radius: 0em,
@@ -16,7 +24,7 @@
 #let lemma = my_thm("Lemma")
 #let definition = my_thm("Definition")
 #let example = my_thm("Example")
-#let remark = my_thm("Remark", bodyfmt: x => x)
+#let remark = my_thm("Remark", bodyfmt: bodyfmt-base)
 
 #let centering(it) = align(center, box(it))
 
@@ -35,6 +43,7 @@
 */
 
 #let mathpar(spacing: 1em, block: false, inset: 0em, ..it) = {
+  set par(justify: false)
   it.pos()
     .map(x => box(inset: inset, math.equation(block: block, x)))
     .join(h(weak: true, spacing))
@@ -78,7 +87,7 @@
 }
 
 #let margin-note(mark: false, dy: 0em, content) = {
-  let note = block(width: 4cm, {
+  let note = block(stroke: 0pt, outset: 0.2em, width: 4cm, {
     set text(size: 7pt)
     if mark { box(move(dy: 0.2em, scale(150%, "* "))) }
     content
