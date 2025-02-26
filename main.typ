@@ -13,12 +13,9 @@
 #include "head/title.typ"
 #include "head/colophon.typ"
 #include "head/abstract.typ"
-//#include "head/acknowledgments.typ"
+#include "head/acknowledgments.typ"
 
 #outline(title: "Contents")
-#pagebreak()
-//#outline(title: "List of Figures", target: figure.where(kind: image))
-//#outline(title: "List of Tables", target: figure.where(kind: table))
 
 #show: main-matter
 
