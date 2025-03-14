@@ -15,7 +15,7 @@ sur le terrain scientifique ou dans d'autres domaines, vous m'avez à la fois
 donné une confiance et un enthousiasme sans limite, et su me tempérer et me
 remettre dans le droit chemin avec patience chaque fois qu'il le fallait. Ces
 trois et quelques années riches en enseignements ont été un réel plaisir. Pour
-cela vous avez toute ma gratitude, je n'aurai rien pu espérer de mieux.
+cela vous avez toute ma gratitude, je n'aurais rien pu espérer de mieux.
 
 Je remercie toute l'équipe du #txsc[Lama] pour tout les bons moments en salle
 café et ailleurs. Je pense entre autres aux habitués du #txsc[Sco], Pierre,
@@ -49,7 +49,7 @@ autour d'un babyfoot endiablé ou d'une partie de cartes, Léna, Clair, Samuel,
 Quentin, Joséphine, Rémy, Ciara, Antoine et tou·te·s les autres... Les
 invocateurs fous de la Martin\', Paul, Victor, Alexis, Brice, Corentin, Manu.
 Joseph et Loïs pour toutes les découvertes musicales et politiques, Léo, quand
-même, pour tout ces super moments passés à regarder des classiques. La grande
+même, pour tous ces super moments passés à regarder des classiques. La grande
 famille de Die, celle de Soleihas, d'Artignosc et de S#super[t] André, pour
 votre bienveillance et votre curiosité, Véro, Tif, Nico, Max, Damien, Clémence
 $times 2$, Marie, Pauline, Constance, Thomas $times 2$, Marine... Mention
@@ -66,7 +66,7 @@ voulez encore, je vous renvoie au travail de Tabitha #nm[Carvan]#footnote[
 ].
 
 À Gribouille, Farine, M#super[lle] Jeanne, Gravillon, Looping, Gaston, Roc, Ratatouille
-et Albus, pour tout vos câlins.
+et Albus, pour tous vos câlins.
 
 #h(1fr) Domène, 22 février 2025, P.B.
 
