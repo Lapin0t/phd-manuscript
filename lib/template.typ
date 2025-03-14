@@ -214,7 +214,8 @@
   }
 
   // OUTLINE
-  set outline(indent: auto, fill: repeat([#h(2.5pt) . #h(2.5pt)]))
+  set outline(indent: auto)
+  set outline.entry(fill: repeat([#h(2.5pt) . #h(2.5pt)]))
 
   show outline: it => {
     in-outline.update(true)
