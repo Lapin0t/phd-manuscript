@@ -12,7 +12,7 @@
   "theorem",
   head,
   radius: 0em,
-  stroke: (left: stroke(thickness: 1pt, dash: "loosely-dotted"), rest: 0pt),
+  stroke: (left: stroke(thickness: 1pt, dash: "loosely-dotted"), rest: none),
   inset: (left: 1em, rest: 0em),
   base: "heading",
   base_level: 1,
