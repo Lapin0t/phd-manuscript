@@ -36,7 +36,7 @@ notion of _interaction tree_ introduced by #nm[Xia] et
 al.~#mcite(<XiaZHHMPZ20>), originally motivated by representing executable
 denotational semantics of programs with general recursion. Interaction trees
 are a coinductive data structure encoding possibly non-terminating
-computation, interacting with its environment by means of uninterpreted
+computations, interacting with their environment by means of uninterpreted
 events. Recognizing "programs" as Player strategies, "environments" as yet
 unknown Opponent strategies and "uninterpreted events" as move exchanges, we
 are quite close to our setting of alternating two player games. However, there
@@ -91,7 +91,7 @@ insofar as they provide a framework for structured interactions, usual
 notions from classical game theory such as "winning", "reward" or
 "optimal play" will be completely absent. Moreover, we will restrict our
 attention to games where two agents play in alternating turns. Thus,
-for my purpose, games will just consist of the description of allowed
+for our purpose, games will just consist of the description of allowed
 moves.#margin-note[Games in such a restricted view---two-player,
 alternating, no notion of winning---are similar to combinatorial games
 and might perhaps be more appropriately named _protocols_, as

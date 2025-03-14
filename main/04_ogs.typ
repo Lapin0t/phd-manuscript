@@ -1168,7 +1168,7 @@ that this relation is well-founded.
      $o_2 cl O.ctx.Oper th alpha_2$,
      $gamma_2 cl O.ctx.dom th o_2 asgn(V) Gamma$,
      $H_1 cl sub.isvar th v -> base.bot$,
-     $H_2 cl M.ogs.eval th (M.ogs.apply th v th o_2 th gamma) itree.eq itree.ret th ((i ctx.cute o_1), gamma_1)$
+     $H_2 cl M.ogs.eval th (M.ogs.apply th v th o_2 th gamma_2) itree.eq itree.ret th ((i ctx.cute o_1), gamma_1)$
     ),
     $ogs.badc th H_1 th H_2 cl o_1 ogs.badinst o_2$
   )
