@@ -270,7 +270,7 @@
   set table(stroke: none)
 
   // RAW BLOCKS
-  show raw: set text(font: ("FiraCode Nerd Font",), size: 9pt)
+  show raw: set text(font: ("Fira Mono",), size: 9pt)
   show raw.where(block: true): block.with(inset: (x: 5pt))
 
   // LINKS
