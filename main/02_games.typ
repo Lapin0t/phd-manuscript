@@ -673,7 +673,7 @@ Like games, containers can be interpreted as functors.
 
 Notice that the mapping from games to containers preserves the functor interpretation,
 in the sense that for all $A cl game.g th I^+ th I^-$, the functor
-$A.game.client game.extA (A.game.server game.extP ar))$ is definitionally equal
+$A.game.client game.extA (A.game.server game.extP ar)$ is definitionally equal
 to $icext(g2c(A))$. As such, our compound transition function can be recast as a
 coalgebra for the following functor.
 
@@ -1431,7 +1431,7 @@ Given $Sigma cl icont.t th I$, an output relation $X^rel.r cl rel.irel th X^1 th
   Given $Sigma cl icont.t th I$, we define the interaction _pre-relator
   lattice over $Sigma$_ as follows.
 
-  $ rel.lat_Sigma := forall th {X^1 th X^2} -> rel.irel th X^1 th X^2 -> rel.irel th (itree.t_Sigma th X^1) th (itree.t_Sigma th X^2)) $
+  $ rel.lat_Sigma := forall th {X^1 th X^2} -> rel.irel th X^1 th X^2 -> rel.irel th (itree.t_Sigma th X^1) th (itree.t_Sigma th X^2) $
 
   It is ultimately a set of dependent functions into $base.Prop$, as such it
   forms a complete lattice by pointwise lifting of the structure on $base.Prop$.
